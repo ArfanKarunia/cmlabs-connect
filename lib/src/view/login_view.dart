@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:quotation_app/src/utils/color.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -14,8 +16,8 @@ class _LoginViewState extends State<LoginView> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(40),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(40),
+        decoration: const BoxDecoration(
           gradient: LinearGradient(colors: [
             Color(0xff50AAF3),
             Color(0xff1F95F5),
@@ -25,8 +27,8 @@ class _LoginViewState extends State<LoginView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(),
-            Column(
+            const SizedBox(),
+            const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Title
@@ -35,7 +37,7 @@ class _LoginViewState extends State<LoginView> {
                   style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                      color: AppColors.white),
                 ),
 
                 SizedBox(
@@ -45,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
                 // Description
                 Text(
                   "Log in first, so you don't get the wrong server",
-                  style: TextStyle(fontSize: 14, color: Colors.white),
+                  style: TextStyle(fontSize: 14, color: AppColors.white),
                 ),
               ],
             ),
@@ -56,7 +58,7 @@ class _LoginViewState extends State<LoginView> {
                 // Text Input Email
                 Text(
                   "Email",
-                  style: TextStyle(fontSize: 14, color: Colors.white),
+                  style: TextStyle(fontSize: 14, color: AppColors.white),
                 ),
                 SizedBox(
                   height: 5,
@@ -65,7 +67,7 @@ class _LoginViewState extends State<LoginView> {
                 // TextFormField
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                   ),
                   child: TextFormField(
@@ -79,7 +81,7 @@ class _LoginViewState extends State<LoginView> {
                       hintText: "Your email",
                       hintStyle: TextStyle(
                         fontSize: 14,
-                        color: Color(0xff9C9C9C),
+                        color: AppColors.secondaryText,
                       ),
                     ),
                   ),
@@ -92,7 +94,7 @@ class _LoginViewState extends State<LoginView> {
                 // Text Input Password
                 Text(
                   "Password",
-                  style: TextStyle(fontSize: 14, color: Colors.white),
+                  style: TextStyle(fontSize: 14, color: AppColors.white),
                 ),
                 SizedBox(
                   height: 5,
@@ -104,7 +106,7 @@ class _LoginViewState extends State<LoginView> {
                   //   horizontal: 10,
                   // ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                   ),
                   child: TextFormField(
@@ -131,18 +133,22 @@ class _LoginViewState extends State<LoginView> {
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 38, vertical: 10),
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () => Get.toNamed('/'),
                 style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(Colors.white),
-                    overlayColor: WidgetStatePropertyAll(Color(0xffE8F4FF)),
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)))),
+                  backgroundColor: WidgetStatePropertyAll(AppColors.white),
+                  overlayColor: WidgetStatePropertyAll(AppColors.lightBlue),
+                  shape: WidgetStatePropertyAll(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
                 child: Text(
                   "Submit",
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xff1F95F5),
+                    color: AppColors.primary,
                   ),
                 ),
               ),
@@ -154,9 +160,9 @@ class _LoginViewState extends State<LoginView> {
               height: 30,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage('assets/images/logos/logo_name_cmlabs.png'),
-                  fit: BoxFit.contain
-                ),
+                    image:
+                        AssetImage('assets/images/logos/logo_name_cmlabs.png'),
+                    fit: BoxFit.contain),
               ),
             )
           ],

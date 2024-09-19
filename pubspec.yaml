@@ -39,6 +39,8 @@ dependencies:
   sentry_flutter: ^8.9.0
   dio: ^5.7.0
   flutter_native_splash: ^2.4.1
+  ionicons: ^0.2.2
+  persistent_bottom_nav_bar: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -67,6 +69,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/logos/
+    - assets/icons/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
