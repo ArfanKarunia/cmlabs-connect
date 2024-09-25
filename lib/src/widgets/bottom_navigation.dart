@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
+import 'package:quotation_app/src/controllers/Tab_nav_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/view/home_view.dart';
 import 'package:quotation_app/src/view/inbox_view.dart';
@@ -10,8 +9,7 @@ import 'package:quotation_app/src/view/inbox_view.dart';
 class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
 
-  final BottomNavController bottomNavController =
-      Get.put(BottomNavController());
+  final TabNavController tabController = Get.put(TabNavController());
 
   final List<Widget> _pages = [
     HomeView(), // Halaman pertama
@@ -19,39 +17,100 @@ class BottomNavigation extends StatelessWidget {
     Container(color: Colors.blue), // Halaman ketiga
   ];
 
-  List<BottomNavigationBarItem> _navBarsItems() {
-    return [
-      BottomNavigationBarItem(
-                icon: Icon(Ionicons.cube_outline),
-                label: "Home",
-                backgroundColor: AppColors.activeBottomNav),
-            BottomNavigationBarItem(
-              icon: Icon(Ionicons.file_tray_full_outline),
-              label: "Inbox",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Ionicons.prism_outline),
-              label: "Setting",
-            ),
-    ];
-  }
+  final List<Widget> _tabList = [
+    Tab(
+      icon: Icon(Ionicons.cube_outline),
+      text: "Home",
+    ),
+    Tab(
+      icon: Icon(Ionicons.cube_outline),
+      text: "Inbox",
+    ),
+    Tab(
+      icon: Icon(Ionicons.cube_outline),
+      text: "Settings",
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() => IndexedStack(
-        index: bottomNavController.selectedIndex.value,
-        children: _pages,
-      ),),
-      bottomNavigationBar: Obx(
-        () => BottomNavigationBar(
-          selectedItemColor: AppColors.white,
-          unselectedItemColor: AppColors.secondaryText,
-          backgroundColor: AppColors.inactiveBottomNav,
-          currentIndex: bottomNavController.selectedIndex.value,
-          onTap: bottomNavController.selectedIndex.call,
-          items: _navBarsItems(),
-        ),
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          GetBuilder<TabNavController>(
+            builder: (_) {
+              return TabBarView(
+                controller: tabController.tabController,
+                children: _pages,
+              );
+            },
+          ),
+          GetBuilder<TabNavController>(
+            builder: (_) {
+              return Container(
+                color: AppColors.inactiveBottomNav,
+                child: TabBar(
+                  overlayColor: WidgetStatePropertyAll(Colors.transparent),
+                  dividerHeight: 0,
+                  indicatorColor: Colors.transparent,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(color: AppColors.activeBottomNav),
+                  labelColor: AppColors.white,
+                  unselectedLabelColor: AppColors.secondaryText,
+                  controller: tabController.tabController,
+                  tabs: _tabList,
+                ),
+              );
+            },
+          ),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              Container(
+                color: Colors.black26,
+              ),
+              Container(
+                padding: EdgeInsets.all(25),
+                width: double.infinity,
+                height: 400,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  border: Border.all(
+                    color: AppColors.primary,
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Filter",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Text(
+                      "Data range",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          )
+        ],
       ),
     );
   }
