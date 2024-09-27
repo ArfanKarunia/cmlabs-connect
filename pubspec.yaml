@@ -41,6 +41,7 @@ dependencies:
   flutter_native_splash: ^2.4.1
   ionicons: ^0.2.2
   persistent_bottom_nav_bar: ^6.2.1
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

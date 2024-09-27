@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:quotation_app/src/controllers/Tab_nav_controller.dart';
+import 'package:quotation_app/src/controllers/filter_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/view/home_view.dart';
 import 'package:quotation_app/src/view/inbox_view.dart';
+import 'package:quotation_app/src/widgets/filter_container.dart';
 
 class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
@@ -18,23 +20,27 @@ class BottomNavigation extends StatelessWidget {
   ];
 
   final List<Widget> _tabList = [
-    Tab(
+    const Tab(
       icon: Icon(Ionicons.cube_outline),
       text: "Home",
     ),
-    Tab(
-      icon: Icon(Ionicons.cube_outline),
+    const Tab(
+      icon: Icon(Ionicons.file_tray_full_outline),
       text: "Inbox",
     ),
-    Tab(
-      icon: Icon(Ionicons.cube_outline),
+    const Tab(
+      icon: Icon(Ionicons.prism_outline),
       text: "Settings",
     ),
   ];
 
+  final FilterController filterController = Get.put(FilterController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.white,
+      resizeToAvoidBottomInset: false,
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -51,11 +57,13 @@ class BottomNavigation extends StatelessWidget {
               return Container(
                 color: AppColors.inactiveBottomNav,
                 child: TabBar(
-                  overlayColor: WidgetStatePropertyAll(Colors.transparent),
+                  overlayColor:
+                      const WidgetStatePropertyAll(Colors.transparent),
                   dividerHeight: 0,
                   indicatorColor: Colors.transparent,
                   indicatorSize: TabBarIndicatorSize.tab,
-                  indicator: BoxDecoration(color: AppColors.activeBottomNav),
+                  indicator:
+                      const BoxDecoration(color: AppColors.activeBottomNav),
                   labelColor: AppColors.white,
                   unselectedLabelColor: AppColors.secondaryText,
                   controller: tabController.tabController,
@@ -64,52 +72,7 @@ class BottomNavigation extends StatelessWidget {
               );
             },
           ),
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              Container(
-                color: Colors.black26,
-              ),
-              Container(
-                padding: EdgeInsets.all(25),
-                width: double.infinity,
-                height: 400,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  border: Border.all(
-                    color: AppColors.primary,
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Filter",
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      "Data range",
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          )
+          FilterContainer(filterController: filterController),
         ],
       ),
     );

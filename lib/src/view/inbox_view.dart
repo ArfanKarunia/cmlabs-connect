@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:quotation_app/src/constant/const.dart';
+import 'package:quotation_app/src/controllers/filter_controller.dart';
 import 'package:quotation_app/src/controllers/quotation_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/widgets/filter_status.dart';
@@ -12,6 +13,8 @@ class InboxView extends StatelessWidget {
 
   final QuotationController quotationController =
       Get.put(QuotationController());
+
+  final FilterController filterController = Get.put(FilterController());
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,7 @@ class InboxView extends StatelessWidget {
             SizedBox(
               height: 8,
             ),
-    
+
             // Search & Filter
             Container(
               child: Row(
@@ -73,8 +76,7 @@ class InboxView extends StatelessWidget {
                       child: TextFormField(
                         decoration: InputDecoration(
                           focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.transparent),
+                            borderSide: BorderSide(color: AppColors.primary),
                           ),
                           border: OutlineInputBorder(
                             borderSide:
@@ -86,73 +88,74 @@ class InboxView extends StatelessWidget {
                             color: Color(0xff9C9C9C),
                           ),
                         ),
+                        onChanged: (value) {
+                          quotationController.setSearch(value);
+                        },
                       ),
                     ),
                   ),
                   SizedBox(
                     width: 10,
                   ),
-                  Container(
-                    width: 40,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Icon(
-                          Ionicons.options_outline,
-                          color: AppColors.primaryText,
-                          size: 24,
-                        ),
-                        OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            alignment: Alignment.center,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
+                  Obx(
+                    () {
+                      return GestureDetector(
+                        onTap: filterController.toggleFilterVisibility,
+                        child: Container(
+                          padding: EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: filterController.filterVisible.value
+                                  ? AppColors.primary
+                                  : AppColors.primaryText,
+                              width: 1,
                             ),
                           ),
-                          onPressed: () {},
-                          child: Container(),
+                          child: Icon(
+                            Ionicons.options_outline,
+                            color: filterController.filterVisible.value
+                                ? AppColors.primary
+                                : AppColors.primaryText,
+                            size: 24,
+                          ),
                         ),
-                      ],
-                    ),
-                  )
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
-    
+
             SizedBox(
               height: 15,
             ),
-    
+
             SelectStatus(
               controller: quotationController,
             ),
-    
+
             SizedBox(
               height: 15,
             ),
-    
+
             Obx(
               () {
                 if (quotationController.filteredQuotations.isEmpty) {
                   return Center(child: Text('No quotations available.'));
                 }
-    
+
                 return SizedBox(
                   width: double.infinity,
                   height: 500,
                   child: ListView.builder(
                     padding: EdgeInsets.symmetric(vertical: 0),
-                    itemCount:
-                        quotationController.filteredQuotations.length,
+                    itemCount: quotationController.filteredQuotations.length,
                     itemBuilder: (context, index) {
                       var quotation =
                           quotationController.filteredQuotations[index];
                       return QuotationListTile(
-                        companyName:
-                            quotation.companyName ?? "Nama Perusahaan",
-                        category: quotation.category ?? ['-'],
-                        pic: quotation.pic ?? '-',
-                        statusLead: quotation.statusLead,
+                        quotation: quotation,
                       );
                     },
                   ),

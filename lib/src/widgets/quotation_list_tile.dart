@@ -1,82 +1,85 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:quotation_app/src/constant/const.dart';
+import 'package:quotation_app/src/models/quotation_model.dart';
 import 'package:quotation_app/src/utils/color.dart';
 
 class QuotationListTile extends StatelessWidget {
   const QuotationListTile({
     super.key,
-    required this.companyName,
-    required this.category,
-    required this.pic, 
-    required this.statusLead,
+    required this.quotation,
   });
 
-  final String companyName;
-  final List<String> category;
-  final String pic;
-  final StatusLead statusLead;
+  final Quotation quotation;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
-      margin: const EdgeInsets.only(
-        bottom: 10,
-      ),
-      decoration: BoxDecoration(
-        boxShadow: [
-          const BoxShadow(
-            color: AppColors.secondaryText,
-            offset: Offset(2, 2),
-            blurRadius: 2,
-          ),
-        ],
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.lightBlue,
-            AppColors.white,
-          ],
+    return GestureDetector(
+      onTap: () => Get.toNamed('/detailQuotation', arguments: {'quotation': quotation},),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
         ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                companyName.isEmpty ? "Nama Perusahaan" : companyName,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primaryText,
-                ),
-              ),
-              Text(
-                category.isNotEmpty ? category.join(', ') : "-",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.primaryText,
-                ),
-              ),
-              Text(
-                "PIC : ${pic.toUpperCase()}",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: AppColors.primaryText,
-                ),
-              )
+        margin: const EdgeInsets.only(
+          bottom: 10,
+          left: 5,
+          right: 5,
+        ),
+        decoration: BoxDecoration(
+          boxShadow: [
+            const BoxShadow(
+              color: AppColors.secondaryText,
+              offset: Offset(2, 2),
+              blurRadius: 2,
+            ),
+          ],
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.lightBlue,
+              AppColors.white,
             ],
           ),
-          StatusLeadUI(statusLead: statusLead,),
-        ],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  quotation.companyName!.isEmpty ? "Nama Perusahaan" : quotation.companyName!,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryText,
+                  ),
+                ),
+                Text(
+                  quotation.category!.isNotEmpty ? quotation.category!.join(', ') : "-",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.primaryText,
+                  ),
+                ),
+                Text(
+                  "PIC : ${quotation.pic!.toUpperCase()}",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.primaryText,
+                  ),
+                )
+              ],
+            ),
+            StatusLeadUI(
+              statusLead: quotation.statusLead,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -92,7 +95,6 @@ class StatusLeadUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Color color;
     String status;
 

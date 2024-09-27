@@ -5,6 +5,7 @@ import 'package:quotation_app/src/models/quotation_model.dart';
 class QuotationController extends GetxController {
   var quotationList = <Quotation>[].obs;
   var filter = Rx<StatusLead?>(null);
+  var search = Rx<String?>(null);
 
   List<Quotation> dummyQuotations = [
     Quotation(
@@ -120,21 +121,35 @@ class QuotationController extends GetxController {
     quotationList.assignAll(dummyQuotations);
   }
 
-  void addFilter(filter) {}
-
   void setFilter(StatusLead? newFilter) {
     filter.value = newFilter;
   }
 
+  void setSearch(String? query){
+    search.value = query;
+  }
+
+
   List<Quotation> get filteredQuotations {
-    // Jika filter kosong, tampilkan semua data
-    if (filter.value == null) {
-      return quotationList;
+    List<Quotation> result = quotationList;
+
+    // Jika filter status lead tidak null, lakukan filter berdasarkan status lead
+    if (filter.value != null) {
+      result = result.where((quotation) => quotation.statusLead == filter.value).toList();
     }
-    
-    return quotationList
-        .where((quotation) => quotation.statusLead == filter.value)
-        .toList();
+
+    // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
+    if (search.value != null && search.value!.isNotEmpty) {
+      result = result.where((quotation) {
+        final query = search.value!.toLowerCase();
+        return quotation.name!.toLowerCase().contains(query) ||
+               quotation.email!.toLowerCase().contains(query) ||
+               quotation.companyName!.toLowerCase().contains(query) ||
+               quotation.pic!.toLowerCase().contains(query);
+      }).toList();
+    }
+
+    return result;
   }
 
 }
