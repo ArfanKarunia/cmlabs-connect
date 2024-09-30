@@ -1,0 +1,1 @@
+enum StatusLead { newLead, followedUp, accepted, rejected }

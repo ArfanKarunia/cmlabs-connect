@@ -41,6 +41,9 @@ dependencies:
   flutter_native_splash: ^2.4.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  ionicons: ^0.2.2
+  persistent_bottom_nav_bar: ^6.2.1
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -71,6 +74,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/logos/
+    - assets/icons/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
