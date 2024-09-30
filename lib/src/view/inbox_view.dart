@@ -19,14 +19,14 @@ class InboxView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 50),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 50),
       color: AppColors.white,
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               "Quotations Inbox",
               style: TextStyle(
                 fontSize: 20,
@@ -34,10 +34,10 @@ class InboxView extends StatelessWidget {
                 color: AppColors.primaryText,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 7,
             ),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
@@ -62,7 +62,7 @@ class InboxView extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 8,
             ),
 
@@ -71,10 +71,10 @@ class InboxView extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
+                    child: SizedBox(
                       height: 40,
                       child: TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: AppColors.primary),
                           ),
@@ -94,7 +94,7 @@ class InboxView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Obx(
@@ -102,7 +102,7 @@ class InboxView extends StatelessWidget {
                       return GestureDetector(
                         onTap: filterController.toggleFilterVisibility,
                         child: Container(
-                          padding: EdgeInsets.all(7),
+                          padding: const EdgeInsets.all(7),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(5),
                             border: Border.all(
@@ -127,7 +127,7 @@ class InboxView extends StatelessWidget {
               ),
             ),
 
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
 
@@ -135,21 +135,21 @@ class InboxView extends StatelessWidget {
               controller: quotationController,
             ),
 
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
 
             Obx(
               () {
                 if (quotationController.filteredQuotations.isEmpty) {
-                  return Center(child: Text('No quotations available.'));
+                  return const Center(child: Text('No quotations available.'));
                 }
 
                 return SizedBox(
                   width: double.infinity,
                   height: 500,
                   child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 0),
+                    padding: const EdgeInsets.symmetric(vertical: 0),
                     itemCount: quotationController.filteredQuotations.length,
                     itemBuilder: (context, index) {
                       var quotation =

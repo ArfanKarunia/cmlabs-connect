@@ -27,8 +27,8 @@ class QuotationListTile extends StatelessWidget {
           right: 5,
         ),
         decoration: BoxDecoration(
-          boxShadow: [
-            const BoxShadow(
+          boxShadow: const [
+            BoxShadow(
               color: AppColors.secondaryText,
               offset: Offset(2, 2),
               blurRadius: 2,
@@ -53,7 +53,7 @@ class QuotationListTile extends StatelessWidget {
               children: [
                 Text(
                   quotation.companyName!.isEmpty ? "Nama Perusahaan" : quotation.companyName!,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryText,
@@ -61,14 +61,14 @@ class QuotationListTile extends StatelessWidget {
                 ),
                 Text(
                   quotation.category!.isNotEmpty ? quotation.category!.join(', ') : "-",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.primaryText,
                   ),
                 ),
                 Text(
                   "PIC : ${quotation.pic!.toUpperCase()}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.primaryText,
                   ),
@@ -129,7 +129,7 @@ class StatusLeadUI extends StatelessWidget {
       ),
       child: Text(
         status,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
           color: AppColors.white,
         ),

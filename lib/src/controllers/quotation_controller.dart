@@ -10,7 +10,7 @@ class QuotationController extends GetxController {
   List<Quotation> dummyQuotations = [
     Quotation(
       id: 1,
-      joinedAt: DateTime.now().subtract(Duration(days: 1)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 1)),
       status: "Active",
       category: ["Web Development", "Mobile App"],
       clientSource: "Referral",
@@ -30,7 +30,7 @@ class QuotationController extends GetxController {
     ),
     Quotation(
       id: 2,
-      joinedAt: DateTime.now().subtract(Duration(days: 5)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 5)),
       status: "Inactive",
       category: ["SEO", "Marketing"],
       clientSource: "Website",
@@ -50,7 +50,7 @@ class QuotationController extends GetxController {
     ),
     Quotation(
       id: 3,
-      joinedAt: DateTime.now().subtract(Duration(days: 5)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 5)),
       status: "Inactive",
       category: ["SEO", "Marketing"],
       clientSource: "Website",
@@ -70,7 +70,7 @@ class QuotationController extends GetxController {
     ),
     Quotation(
       id: 4,
-      joinedAt: DateTime.now().subtract(Duration(days: 5)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 5)),
       status: "Inactive",
       category: ["SEO", "Marketing"],
       clientSource: "Website",
@@ -90,7 +90,7 @@ class QuotationController extends GetxController {
     ),
     Quotation(
       id: 5,
-      joinedAt: DateTime.now().subtract(Duration(days: 5)),
+      joinedAt: DateTime.now().subtract(const Duration(days: 5)),
       status: "Inactive",
       category: ["SEO", "Marketing"],
       clientSource: "Website",

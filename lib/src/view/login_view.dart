@@ -56,22 +56,22 @@ class _LoginViewState extends State<LoginView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Text Input Email
-                Text(
+                const Text(
                   "Email",
                   style: TextStyle(fontSize: 14, color: AppColors.white),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
 
                 // TextFormField
                 Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                   ),
                   child: TextFormField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent),
                       ),
@@ -87,16 +87,16 @@ class _LoginViewState extends State<LoginView> {
                   ),
                 ),
 
-                SizedBox(
+                const SizedBox(
                   height: 22,
                 ),
 
                 // Text Input Password
-                Text(
+                const Text(
                   "Password",
                   style: TextStyle(fontSize: 14, color: AppColors.white),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 5,
                 ),
 
@@ -105,12 +105,12 @@ class _LoginViewState extends State<LoginView> {
                   // padding: EdgeInsets.symmetric(
                   //   horizontal: 10,
                   // ),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.all(Radius.circular(5)),
                   ),
                   child: TextFormField(
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: Colors.transparent),
                       ),
@@ -131,19 +131,19 @@ class _LoginViewState extends State<LoginView> {
             // Button Submit
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 38, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 38, vertical: 10),
               child: ElevatedButton(
                 onPressed: () => Get.toNamed('/'),
                 style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(AppColors.white),
-                  overlayColor: WidgetStatePropertyAll(AppColors.lightBlue),
+                  backgroundColor: const WidgetStatePropertyAll(AppColors.white),
+                  overlayColor: const WidgetStatePropertyAll(AppColors.lightBlue),
                   shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-                child: Text(
+                child: const Text(
                   "Submit",
                   style: TextStyle(
                     fontSize: 14,
@@ -158,7 +158,7 @@ class _LoginViewState extends State<LoginView> {
             Container(
               width: double.infinity,
               height: 30,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                     image:
                         AssetImage('assets/images/logos/logo_name_cmlabs.png'),

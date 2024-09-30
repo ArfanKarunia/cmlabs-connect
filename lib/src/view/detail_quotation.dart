@@ -35,7 +35,7 @@ class DetailQuotation extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('Quotation Detail'),
+        title: const Text('Quotation Detail'),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 25),
@@ -44,7 +44,7 @@ class DetailQuotation extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
@@ -59,7 +59,7 @@ class DetailQuotation extends StatelessWidget {
                       children: [
                         Text(
                           quotation.companyName!,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: AppColors.white,
@@ -67,7 +67,7 @@ class DetailQuotation extends StatelessWidget {
                         ),
                         Text(
                           '#${quotation.id.toString()}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                             color: AppColors.white,
@@ -75,14 +75,14 @@ class DetailQuotation extends StatelessWidget {
                         )
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    Divider(
+                    const Divider(
                       color: AppColors.white,
                       thickness: 2,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
@@ -92,7 +92,7 @@ class DetailQuotation extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Status Quotation
-                              Text(
+                              const Text(
                                 "Status",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -100,20 +100,20 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${quotation.status}",
-                                style: TextStyle(
+                                quotation.status,
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // Joined at
-                              Text(
+                              const Text(
                                 "Joined at",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -122,19 +122,19 @@ class DetailQuotation extends StatelessWidget {
                               ),
                               Text(
                                 "${quotation.joinedAt}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // name
-                              Text(
+                              const Text(
                                 "Name",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -142,20 +142,20 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${quotation.name ?? '-'}",
-                                style: TextStyle(
+                                quotation.name ?? '-',
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // email
-                              Text(
+                              const Text(
                                 "Email",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -163,20 +163,20 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${quotation.email ?? '-'}",
-                                style: TextStyle(
+                                quotation.email ?? '-',
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // Whatsapp Number
-                              Text(
+                              const Text(
                                 "Whatsapp Number",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -189,7 +189,7 @@ class DetailQuotation extends StatelessWidget {
                                 children: [
                                   Text(
                                     "${quotation.whatsappNumber}",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                       color: AppColors.white,
@@ -199,7 +199,7 @@ class DetailQuotation extends StatelessWidget {
                                     onPressed: () {
                                       urlController.launchUrl(webUrl);
                                     },
-                                    icon: Icon(
+                                    icon: const Icon(
                                       Ionicons.logo_whatsapp,
                                       size: 15,
                                       color: AppColors.white,
@@ -208,7 +208,7 @@ class DetailQuotation extends StatelessWidget {
                                 ],
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                             ],
@@ -216,9 +216,9 @@ class DetailQuotation extends StatelessWidget {
                         ),
 
                         // Vertical Divider
-                        Container(
+                        SizedBox(
                           height: 150,
-                          child: VerticalDivider(
+                          child: const VerticalDivider(
                             color: Colors.white54,
                             thickness: 2,
                           ),
@@ -229,7 +229,7 @@ class DetailQuotation extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Status Quotation
-                              Text(
+                              const Text(
                                 "Company Website",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -238,26 +238,26 @@ class DetailQuotation extends StatelessWidget {
                               ),
                               Text(
                                 "${quotation.companyWebsite}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // Joined at
-                              Text(
+                              const Text(
                                 "Registration Status",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.white,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 "-",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -266,19 +266,19 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // name
-                              Text(
+                              const Text(
                                 "Company Profile/Proposal",
                                 style: TextStyle(
                                   fontSize: 12,
                                   color: AppColors.white,
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 "-",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -287,12 +287,12 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // email
-                              Text(
+                              const Text(
                                 "Region",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -301,19 +301,19 @@ class DetailQuotation extends StatelessWidget {
                               ),
                               Text(
                                 "${quotation.region}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
 
                               // Whatsapp Number
-                              Text(
+                              const Text(
                                 "Client Source",
                                 style: TextStyle(
                                   fontSize: 12,
@@ -322,14 +322,14 @@ class DetailQuotation extends StatelessWidget {
                               ),
                               Text(
                                 "${quotation.clientSource}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.white,
                                 ),
                               ),
 
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                             ],
@@ -337,12 +337,12 @@ class DetailQuotation extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
 
                     // email
-                    Text(
+                    const Text(
                       "Page Source",
                       style: TextStyle(
                         fontSize: 12,
@@ -351,20 +351,20 @@ class DetailQuotation extends StatelessWidget {
                     ),
                     Text(
                       "${quotation.pageSource}",
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: AppColors.white,
                       ),
                     ),
 
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
 
                     Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10),
                           color: AppColors.lightBlue),
@@ -372,7 +372,7 @@ class DetailQuotation extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // email
-                          Text(
+                          const Text(
                             "Pitching Duration",
                             style: TextStyle(
                               fontSize: 12,
@@ -380,7 +380,7 @@ class DetailQuotation extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "${pitchingDuration} days",
+                            "$pitchingDuration days",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -395,10 +395,10 @@ class DetailQuotation extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
-              Text(
+              const Text(
                 "Category",
                 style: TextStyle(
                   fontSize: 20,
@@ -406,7 +406,7 @@ class DetailQuotation extends StatelessWidget {
                   color: AppColors.primaryText,
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
               SizedBox(
@@ -419,9 +419,9 @@ class DetailQuotation extends StatelessWidget {
                     final category = quotation.category![index];
 
                     return Container(
-                      margin: EdgeInsets.only(right: 10),
+                      margin: const EdgeInsets.only(right: 10),
                       alignment: Alignment.center,
-                      padding: EdgeInsets.symmetric(
+                      padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 8,
                       ),
@@ -430,8 +430,8 @@ class DetailQuotation extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        "$category",
-                        style: TextStyle(
+                        category,
+                        style: const TextStyle(
                             color: AppColors.white,
                             fontSize: 14,
                             fontWeight: FontWeight.bold),
@@ -440,38 +440,38 @@ class DetailQuotation extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 decoration: BoxDecoration(
                     color: AppColors.primary,
                     borderRadius: BorderRadius.circular(10)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       "PIC",
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.white,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Container(
                       // padding: EdgeInsets.symmetric(
                       //   horizontal: 10,
                       // ),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.white,
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),
                       child: TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
@@ -485,7 +485,7 @@ class DetailQuotation extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Row(
@@ -494,27 +494,27 @@ class DetailQuotation extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Priority",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: AppColors.white,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Container(
                                 // padding: EdgeInsets.symmetric(
                                 //   horizontal: 10,
                                 // ),
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: AppColors.white,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5)),
                                 ),
                                 child: TextFormField(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     focusedBorder: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.transparent),
@@ -533,34 +533,34 @@ class DetailQuotation extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Status",
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: AppColors.white,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 5,
                               ),
                               Container(
                                 // padding: EdgeInsets.symmetric(
                                 //   horizontal: 10,
                                 // ),
-                                decoration: BoxDecoration(
+                                decoration: const BoxDecoration(
                                   color: AppColors.white,
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(5)),
                                 ),
                                 child: TextFormField(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     focusedBorder: OutlineInputBorder(
                                       borderSide:
                                           BorderSide(color: Colors.transparent),
@@ -581,29 +581,29 @@ class DetailQuotation extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    Text(
+                    const Text(
                       "Tyoe",
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.white,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 5,
                     ),
                     Container(
                       // padding: EdgeInsets.symmetric(
                       //   horizontal: 10,
                       // ),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.white,
                         borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),
                       child: TextFormField(
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.transparent),
                           ),
@@ -617,7 +617,7 @@ class DetailQuotation extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Container(
@@ -632,12 +632,12 @@ class DetailQuotation extends StatelessWidget {
                             ),
                           ),
                           backgroundColor:
-                              WidgetStatePropertyAll(AppColors.white),
+                              const WidgetStatePropertyAll(AppColors.white),
                           foregroundColor:
-                              WidgetStatePropertyAll(AppColors.primary),
+                              const WidgetStatePropertyAll(AppColors.primary),
                         ),
                         onPressed: () {},
-                        child: Text('Save'),
+                        child: const Text('Save'),
                       ),
                     ),
                   ],

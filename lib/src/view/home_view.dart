@@ -20,25 +20,25 @@ class HomeView extends StatelessWidget {
     return SingleChildScrollView(
       child: Container(
         color: AppColors.white,
-        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 35),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 35),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             
-            DashboardQuotation(),
+            const DashboardQuotation(),
 
-            SizedBox(
+            const SizedBox(
               height: 24,
             ),
 
             // Quotation Section
 
-            Container(
+            SizedBox(
               width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     "Quotations",
                     style: TextStyle(
                       fontSize: 20,
@@ -46,7 +46,7 @@ class HomeView extends StatelessWidget {
                       color: AppColors.primaryText,
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 7,
                   ),
                   Row(
@@ -56,13 +56,13 @@ class HomeView extends StatelessWidget {
                         children: [
                           Text(
                             "${quotationController.quotationList.length}",
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: AppColors.primary,
                             ),
                           ),
-                          Text(
+                          const Text(
                             " Leads",
                             style: TextStyle(
                               fontSize: 12,
@@ -74,7 +74,7 @@ class HomeView extends StatelessWidget {
                       ),
                       GestureDetector(
                         onTap: () {},
-                        child: Text(
+                        child: const Text(
                           "View All",
                           style: TextStyle(
                             decoration: TextDecoration.underline,
@@ -86,13 +86,13 @@ class HomeView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 8,
                   ),
 
                   SelectStatus(controller: quotationController,),
                   
-                  SizedBox(
+                  const SizedBox(
                     height: 15,
                   ),
                   Obx(
@@ -100,15 +100,15 @@ class HomeView extends StatelessWidget {
                       List quotationList = quotationController.filteredQuotations;
 
                       if (quotationList.isEmpty) {
-                        return Center(child: Text('No quotations available.'));
+                        return const Center(child: Text('No quotations available.'));
                       }
 
                       return SizedBox(
                         width: double.infinity,
                         height: 420,
                         child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          padding: EdgeInsets.symmetric(vertical: 0),
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(vertical: 0),
                           itemCount: min(quotationList.length, 5),
                           itemBuilder: (context, index) {
                             return QuotationListTile(

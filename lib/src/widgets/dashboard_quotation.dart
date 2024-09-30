@@ -23,7 +23,7 @@ class DashboardQuotation extends StatelessWidget {
           width: double.infinity,
           height: 100,
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               colors: [
                 Color(0xFF2C74AE),
                 Color(0xFF3FA3F4),
@@ -37,7 +37,7 @@ class DashboardQuotation extends StatelessWidget {
         Column(
           children: [
             Container(
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -47,13 +47,13 @@ class DashboardQuotation extends StatelessWidget {
                       Container(
                         width: 50,
                         height: 50,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle, color: AppColors.white),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 15,
                       ),
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -77,7 +77,7 @@ class DashboardQuotation extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {},
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.notifications_outlined,
                       color: AppColors.white,
                       size: 35,
@@ -87,27 +87,27 @@ class DashboardQuotation extends StatelessWidget {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               width: double.infinity,
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10)),
-              child: Container(
+              child: SizedBox(
                 width: double.infinity,
                 height: 200,
                 child: GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 20,
                     mainAxisSpacing: 10,
                     childAspectRatio: 20 / 9,
                   ),
-                  padding: EdgeInsets.all(8.0), // padding around the grid
+                  padding: const EdgeInsets.all(8.0), // padding around the grid
                   itemCount: 4, // total number of items
                   itemBuilder: (context, index) {
                     return Container(
                       padding:
-                          EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+                          const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: AppColors.white, // color of grid items
@@ -116,9 +116,9 @@ class DashboardQuotation extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
+                          SizedBox(
                             height: 40,
-                            child: Stack(
+                            child: const Stack(
                               alignment: Alignment.bottomLeft,
                               children: [
                                 Positioned(
@@ -145,7 +145,7 @@ class DashboardQuotation extends StatelessWidget {
                           Container(
                             width: 35,
                             height: 35,
-                            decoration: BoxDecoration(
+                            decoration: const BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage(AppIcons.briefCase_outline),
                               ),

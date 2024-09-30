@@ -26,14 +26,14 @@ class FilterContainer extends StatelessWidget {
                     child: AnimatedOpacity(
                       opacity: filterController.filterVisible.value ? 0.5 : 0.0,
                       curve: Curves.ease,
-                      duration: Duration(seconds: 2),
+                      duration: const Duration(seconds: 2),
                       child: Container(
                         color: Colors.black38,
                       ),
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(25),
+                    padding: const EdgeInsets.all(25),
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: AppColors.white,
@@ -41,7 +41,7 @@ class FilterContainer extends StatelessWidget {
                         color: AppColors.primary,
                         width: 1,
                       ),
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
                       ),
@@ -50,24 +50,24 @@ class FilterContainer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
+                        const Text(
                           "Filter",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
-                        Text(
+                        const Text(
                           "Data range",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
                         SizedBox(
@@ -76,7 +76,7 @@ class FilterContainer extends StatelessWidget {
                             children: [
                               Expanded(
                                 child: TextFormField(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                   ),
                                   onTap: () async {
@@ -95,17 +95,17 @@ class FilterContainer extends StatelessWidget {
                                   },
                                 ),
                               ),
-                              SizedBox(width: 10), // Spasi antar form
-                              Text(
+                              const SizedBox(width: 10), // Spasi antar form
+                              const Text(
                                 "to",
                                 style: TextStyle(
                                   fontSize: 12,
                                 ),
                               ),
-                              SizedBox(width: 10), // Spasi antar form
+                              const SizedBox(width: 10), // Spasi antar form
                               Expanded(
                                 child: TextFormField(
-                                  decoration: InputDecoration(
+                                  decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                   ),
                                   onTap: () async {
@@ -127,7 +127,7 @@ class FilterContainer extends StatelessWidget {
                             ],
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         Row(
@@ -137,20 +137,20 @@ class FilterContainer extends StatelessWidget {
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     "Status",
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
                                   SizedBox(
                                     height: 40,
                                     child: TextFormField(
-                                      decoration: InputDecoration(
+                                      decoration: const InputDecoration(
                                         border: OutlineInputBorder(),
                                       ),
                                     ),
@@ -158,7 +158,7 @@ class FilterContainer extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
                             Expanded(
@@ -166,20 +166,20 @@ class FilterContainer extends StatelessWidget {
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     "Client Source",
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
                                   SizedBox(
                                     height: 40,
                                     child: TextFormField(
-                                      decoration: InputDecoration(
+                                      decoration: const InputDecoration(
                                         border: OutlineInputBorder(),
                                       ),
                                     ),
@@ -189,51 +189,51 @@ class FilterContainer extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
-                        Text(
+                        const Text(
                           "Category",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
                         SizedBox(
                           height: 40,
                           width: double.infinity,
                           child: TextFormField(
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
-                        Text(
+                        const Text(
                           "PIC",
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 5,
                         ),
                         SizedBox(
                           height: 40,
                           width: double.infinity,
                           child: TextFormField(
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               border: OutlineInputBorder(),
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 50,
                         ),
                         Row(
@@ -244,18 +244,18 @@ class FilterContainer extends StatelessWidget {
                               width: 200,
                               child: ElevatedButton(
                                 style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-                                  foregroundColor: WidgetStatePropertyAll(AppColors.white),
-                                  overlayColor: WidgetStatePropertyAll(Colors.white30),
+                                  backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
+                                  foregroundColor: const WidgetStatePropertyAll(AppColors.white),
+                                  overlayColor: const WidgetStatePropertyAll(Colors.white30),
                                   shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),),
                                 ),
                                 onPressed: () {},
-                                child: Text("Submit"),
+                                child: const Text("Submit"),
                               ),
                             ),
                           ],
                         ),
-                        SizedBox(height: 20,)
+                        const SizedBox(height: 20,)
                       ],
                     ),
                   ),

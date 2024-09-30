@@ -24,7 +24,7 @@ class SelectStatus extends StatelessWidget {
             child: GestureDetector(
               onTap: () => controller.setFilter(null),
               child: Container(
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 2,
                 ),
@@ -45,11 +45,11 @@ class SelectStatus extends StatelessWidget {
                   child: Text(
                     'All',
                     style: (controller.filter.value == null)
-                        ? TextStyle(
+                        ? const TextStyle(
                             fontSize: 10,
                             color: AppColors.white,
                           )
-                        : TextStyle(
+                        : const TextStyle(
                             fontSize: 10,
                             color: AppColors.primaryText,
                           ),
@@ -58,7 +58,7 @@ class SelectStatus extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             width: 5,
           ),
           Flexible(
@@ -88,12 +88,12 @@ class SelectStatus extends StatelessWidget {
                   }
 
                   return Container(
-                    padding: EdgeInsets.only(right: 5),
+                    padding: const EdgeInsets.only(right: 5),
                     child: GestureDetector(
                       onTap: () =>
                           controller.setFilter(StatusLead.values[index]),
                       child: Container(
-                        padding: EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 2,
                         ),
@@ -116,11 +116,11 @@ class SelectStatus extends StatelessWidget {
                             label,
                             style: (controller.filter.value ==
                                     StatusLead.values[index])
-                                ? TextStyle(
+                                ? const TextStyle(
                                     fontSize: 10,
                                     color: AppColors.white,
                                   )
-                                : TextStyle(
+                                : const TextStyle(
                                     fontSize: 10,
                                     color: AppColors.primaryText,
                                   ),
