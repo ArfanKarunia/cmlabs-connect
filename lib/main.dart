@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:quotation_app/src/app.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 Future<void> main() async {
+
+  // initialization HIVE
+  await Hive.initFlutter();
+
+  // membuka box (tempat penyimpanan) untuk Quotation
+  await Hive.openBox('quotations');
+
+
   await SentryFlutter.init(
     (options){
       // add the sentry proeject link
