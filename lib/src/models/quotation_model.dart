@@ -1,27 +1,63 @@
+import 'package:hive/hive.dart';
 import 'package:quotation_app/src/constant/const.dart';
 
-class Quotation {
+part 'quotation_model.g.dart';
+
+@HiveType(typeId: 0)
+class Quotation extends HiveObject {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final DateTime joinedAt;
+
+  @HiveField(2)
   final String status;
+
+  @HiveField(3)
   final List<String>? category;
+
+  @HiveField(4)
   final String? clientSource;
+
+  @HiveField(5)
   final String? name;
+
+  @HiveField(6)
   final String? email;
+
+  @HiveField(7)
   final String? whatsappNumber;
+
+  @HiveField(8)
   final String? companyWebsite;
+
+  @HiveField(9)
   final String? companyName;
+
+  @HiveField(10)
   final String? companyProfile;
+
+  @HiveField(11)
   final String? pageSource;
+
+  @HiveField(12)
   final List<String>? service;
+
+  @HiveField(13)
   final String? package;
+
+  @HiveField(14)
   final String? language;
+
+  @HiveField(15)
   final String? region;
 
+  @HiveField(16)
   final String? pic;
+
+  @HiveField(17)
   final StatusLead statusLead;
-
-
 
   Quotation({
     required this.id,
@@ -94,7 +130,9 @@ class Quotation {
       id: json['id'],
       joinedAt: DateTime.parse(json['joinedAt']),
       status: json['status'],
-      category: (json['category'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      category: (json['category'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
       clientSource: json['clientSource'],
       name: json['name'],
       email: json['email'],
@@ -103,7 +141,8 @@ class Quotation {
       companyName: json['companyName'],
       companyProfile: json['companyProfile'],
       pageSource: json['pageSource'],
-      service: (json['service'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      service:
+          (json['service'] as List<dynamic>?)?.map((e) => e as String).toList(),
       package: json['package'],
       language: json['language'],
       region: json['region'],
@@ -135,6 +174,4 @@ class Quotation {
       'statusLead': statusLead,
     };
   }
-
-
 }
