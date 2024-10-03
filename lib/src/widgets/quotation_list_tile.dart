@@ -15,7 +15,10 @@ class QuotationListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Get.toNamed('/detailQuotation', arguments: {'quotation': quotation},),
+      onTap: () => Get.toNamed(
+        '/detailQuotation',
+        arguments: {'quotation': quotation},
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 16,
@@ -48,35 +51,50 @@ class QuotationListTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  quotation.companyName!.isEmpty ? "Nama Perusahaan" : quotation.companyName!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.primaryText,
-                  ),
+            Expanded(
+              flex: 2,
+              child: Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      quotation.companyName!.isEmpty
+                          ? "Nama Perusahaan"
+                          : quotation.companyName!,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryText,
+                      ),
+                    ),
+                    Text(
+                      quotation.category!.isNotEmpty
+                          ? quotation.category!
+                              .map((cat) => cat.name)
+                              .join(', ')
+                          : "-",
+                      maxLines: 2,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.primaryText,
+                      ),
+                    ),
+                    Text(
+                      "PIC : ${quotation.pic!.toUpperCase()}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.primaryText,
+                      ),
+                    )
+                  ],
                 ),
-                Text(
-                  quotation.category!.isNotEmpty ? quotation.category!.join(', ') : "-",
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.primaryText,
-                  ),
-                ),
-                Text(
-                  "PIC : ${quotation.pic!.toUpperCase()}",
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.primaryText,
-                  ),
-                )
-              ],
+              ),
             ),
-            StatusLeadUI(
-              statusLead: quotation.statusLead,
+            Container(
+              padding: EdgeInsets.only(left: 10),
+              child: StatusLeadUI(
+                statusLead: quotation.statusLead,
+              ),
             ),
           ],
         ),

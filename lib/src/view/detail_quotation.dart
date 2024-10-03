@@ -430,7 +430,7 @@ class DetailQuotation extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        category,
+                        category.name,
                         style: const TextStyle(
                             color: AppColors.white,
                             fontSize: 14,

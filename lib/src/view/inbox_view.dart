@@ -37,13 +37,13 @@ class InboxView extends StatelessWidget {
             const SizedBox(
               height: 7,
             ),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
                     Text(
-                      "1.469",
+                      "${quotationController.quotationList.length}",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,

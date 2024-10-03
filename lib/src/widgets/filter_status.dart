@@ -22,13 +22,13 @@ class SelectStatus extends StatelessWidget {
           SizedBox(
             height: 25,
             child: GestureDetector(
-              onTap: () => controller.setFilter(null),
+              onTap: () => controller.setFilterStatus(null),
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 2,
                 ),
-                decoration: (controller.filter.value == null)
+                decoration: (controller.filterStatus.value == null)
                     ? BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
                         color: AppColors.primary,
@@ -44,7 +44,7 @@ class SelectStatus extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'All',
-                    style: (controller.filter.value == null)
+                    style: (controller.filterStatus.value == null)
                         ? const TextStyle(
                             fontSize: 10,
                             color: AppColors.white,
@@ -91,13 +91,13 @@ class SelectStatus extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 5),
                     child: GestureDetector(
                       onTap: () =>
-                          controller.setFilter(StatusLead.values[index]),
+                          controller.setFilterStatus(StatusLead.values[index]),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
                           vertical: 2,
                         ),
-                        decoration: (controller.filter.value ==
+                        decoration: (controller.filterStatus.value ==
                                 StatusLead.values[index])
                             ? BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
@@ -114,7 +114,7 @@ class SelectStatus extends StatelessWidget {
                         child: Center(
                           child: Text(
                             label,
-                            style: (controller.filter.value ==
+                            style: (controller.filterStatus.value ==
                                     StatusLead.values[index])
                                 ? const TextStyle(
                                     fontSize: 10,
