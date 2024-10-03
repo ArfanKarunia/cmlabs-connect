@@ -1,5 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:quotation_app/src/constant/const.dart';
+import 'package:quotation_app/src/models/category_model.dart';
+import 'package:quotation_app/src/models/client_source_model.dart';
 
 part 'quotation_model.g.dart';
 
@@ -15,10 +17,10 @@ class Quotation extends HiveObject {
   final String status;
 
   @HiveField(3)
-  final List<String>? category;
+  final List<Category>? category;
 
   @HiveField(4)
-  final String? clientSource;
+  final ClientSource? clientSource;
 
   @HiveField(5)
   final String? name;
@@ -86,8 +88,8 @@ class Quotation extends HiveObject {
     int? id,
     DateTime? joinedAt,
     String? status,
-    List<String>? category,
-    String? clientSource,
+    List<Category>? category,
+    ClientSource? clientSource,
     String? name,
     String? email,
     String? whatsappNumber,
@@ -130,9 +132,7 @@ class Quotation extends HiveObject {
       id: json['id'],
       joinedAt: DateTime.parse(json['joinedAt']),
       status: json['status'],
-      category: (json['category'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
+      category: json['category'],
       clientSource: json['clientSource'],
       name: json['name'],
       email: json['email'],

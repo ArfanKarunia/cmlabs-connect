@@ -1,16 +1,51 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:quotation_app/src/controllers/category_controller.dart';
+import 'package:quotation_app/src/controllers/client_source_controller.dart';
 import 'package:quotation_app/src/controllers/filter_controller.dart';
+import 'package:quotation_app/src/controllers/quotation_controller.dart';
+import 'package:quotation_app/src/models/category_model.dart';
+import 'package:quotation_app/src/models/client_source_model.dart';
 import 'package:quotation_app/src/utils/color.dart';
 
+import '../constant/const.dart';
+
 class FilterContainer extends StatelessWidget {
-  const FilterContainer({
+  FilterContainer({
     super.key,
     required this.filterController,
   });
 
   final FilterController filterController;
+
+  final QuotationController quotationController =
+      Get.put(QuotationController());
+
+  final CategoryController categoryController = Get.put(CategoryController());
+  final ClientSourceController clientSourceController =
+      Get.put(ClientSourceController());
+
+  // menyimpan nilai sementara untuk filter
+  final Rx<DateTime?> temporaryStartDate = Rx<DateTime?>(null);
+  final Rx<DateTime?> temporaryEndDate = Rx<DateTime?>(null);
+  final Rx<StatusLead?> temporaryStatusLead = Rx<StatusLead?>(null);
+  final Rx<Category?> temporaryCategory = Rx<Category?>(null);
+  final Rx<ClientSource?> temporaryClienSource = Rx<ClientSource?>(null);
+
+  final TextEditingController startDateController = TextEditingController();
+  final TextEditingController endDateController = TextEditingController();
+
+  void clearFilter() {
+    temporaryStartDate.value = null;
+    temporaryEndDate.value = null;
+    temporaryStatusLead.value = null;
+    temporaryCategory.value = null;
+    temporaryClienSource.value = null;
+
+    startDateController.clear();
+    endDateController.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +56,7 @@ class FilterContainer extends StatelessWidget {
                 alignment: Alignment.bottomCenter,
                 children: [
                   GestureDetector(
-                    onTap: () =>
-                        filterController.toggleFilterVisibility(),
+                    onTap: () => filterController.toggleFilterVisibility(),
                     child: AnimatedOpacity(
                       opacity: filterController.filterVisible.value ? 0.5 : 0.0,
                       curve: Curves.ease,
@@ -50,12 +84,34 @@ class FilterContainer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Text(
-                          "Filter",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Filter",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                quotationController.clearFilter();
+                                clearFilter();
+
+                                filterController.toggleFilterVisibility();
+                              },
+                              child: const Text(
+                                "Clear",
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(
                           height: 15,
@@ -71,26 +127,32 @@ class FilterContainer extends StatelessWidget {
                           height: 5,
                         ),
                         SizedBox(
-                          height: 40,
                           child: Row(
                             children: [
                               Expanded(
                                 child: TextFormField(
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                   ),
+                                  readOnly: true,
+                                  controller: startDateController,
                                   onTap: () async {
-                                    DateTime? pickedDate =
-                                        await showDatePicker(
+                                    DateTime? pickedDate = await showDatePicker(
                                       context: context,
-                                      initialDate: DateTime.now(),
+                                      initialDate: quotationController
+                                              .filterStartDate.value ??
+                                          DateTime.now(),
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2100),
                                     );
                                     if (pickedDate != null) {
-                                      // Format atau atur tanggal di sini
-                                      print(
-                                          pickedDate); // Lakukan sesuatu dengan tanggal yang dipilih
+                                      temporaryStartDate.value = pickedDate;
+                                      startDateController.text =
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(pickedDate);
                                     }
                                   },
                                 ),
@@ -105,21 +167,28 @@ class FilterContainer extends StatelessWidget {
                               const SizedBox(width: 10), // Spasi antar form
                               Expanded(
                                 child: TextFormField(
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  ),
                                   decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
                                   ),
+                                  readOnly: true,
+                                  controller: endDateController,
                                   onTap: () async {
-                                    DateTime? pickedDate =
-                                        await showDatePicker(
+                                    DateTime? pickedDate = await showDatePicker(
                                       context: context,
-                                      initialDate: DateTime.now(),
+                                      initialDate: quotationController
+                                              .filterEndDate.value ??
+                                          DateTime.now(),
                                       firstDate: DateTime(2000),
                                       lastDate: DateTime(2100),
                                     );
                                     if (pickedDate != null) {
-                                      // Format atau atur tanggal di sini
-                                      print(
-                                          pickedDate); // Lakukan sesuatu dengan tanggal yang dipilih
+                                      temporaryEndDate.value = pickedDate;
+                                      endDateController.text =
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(pickedDate);
                                     }
                                   },
                                 ),
@@ -134,8 +203,7 @@ class FilterContainer extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
                                     "Status",
@@ -147,12 +215,49 @@ class FilterContainer extends StatelessWidget {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  SizedBox(
+                                  Container(
                                     height: 40,
-                                    child: TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                      ),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.primaryText),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: DropdownButton<StatusLead>(
+                                      isExpanded: true,
+                                      focusColor: AppColors.primary,
+                                      borderRadius: BorderRadius.circular(10),
+                                      dropdownColor: AppColors.white,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.primaryText),
+                                      value: temporaryStatusLead.value,
+                                      items: StatusLead.values.map((value) {
+                                        String label;
+
+                                        switch (value) {
+                                          case StatusLead.newLead:
+                                            label = 'New';
+                                            break;
+                                          case StatusLead.followedUp:
+                                            label = 'Followed Up';
+                                            break;
+                                          case StatusLead.accepted:
+                                            label = 'Accepted';
+                                            break;
+                                          case StatusLead.rejected:
+                                            label = 'Rejected';
+                                            break;
+                                        }
+                                        return DropdownMenuItem<StatusLead>(
+                                          child: Text(label),
+                                          value: value,
+                                        );
+                                      }).toList(),
+                                      onChanged: (StatusLead? value) {
+                                        temporaryStatusLead.value = value;
+                                      },
                                     ),
                                   ),
                                 ],
@@ -163,8 +268,7 @@ class FilterContainer extends StatelessWidget {
                             ),
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text(
                                     "Client Source",
@@ -176,12 +280,37 @@ class FilterContainer extends StatelessWidget {
                                   const SizedBox(
                                     height: 5,
                                   ),
-                                  SizedBox(
+                                  Container(
                                     height: 40,
-                                    child: TextFormField(
-                                      decoration: const InputDecoration(
-                                        border: OutlineInputBorder(),
-                                      ),
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: AppColors.primaryText),
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: DropdownButton<ClientSource>(
+                                      isExpanded: true,
+                                      focusColor: AppColors.primary,
+                                      borderRadius: BorderRadius.circular(10),
+                                      dropdownColor: AppColors.white,
+                                      style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColors.primaryText),
+                                      value: temporaryClienSource.value,
+                                      items: clientSourceController
+                                          .getListClientSource
+                                          .map((source) {
+                                        return DropdownMenuItem<ClientSource>(
+                                          child: Text(source.name),
+                                          value: source,
+                                        );
+                                      }).toList(),
+                                      onChanged:
+                                          (ClientSource? selectedClientSource) {
+                                        temporaryClienSource.value =
+                                            selectedClientSource;
+                                      },
                                     ),
                                   ),
                                 ],
@@ -202,13 +331,31 @@ class FilterContainer extends StatelessWidget {
                         const SizedBox(
                           height: 5,
                         ),
-                        SizedBox(
+                        Container(
                           height: 40,
+                          padding: EdgeInsets.symmetric(horizontal: 10),
                           width: double.infinity,
-                          child: TextFormField(
-                            decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                            ),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.primaryText),
+                              borderRadius: BorderRadius.circular(5)),
+                          child: DropdownButton<Category>(
+                            isExpanded: true,
+                            focusColor: AppColors.primary,
+                            borderRadius: BorderRadius.circular(10),
+                            dropdownColor: AppColors.white,
+                            style: TextStyle(
+                                fontSize: 14, color: AppColors.primaryText),
+                            value: temporaryCategory.value,
+                            items: categoryController.getListCategory
+                                .map((category) {
+                              return DropdownMenuItem<Category>(
+                                child: Text(category.name),
+                                value: category,
+                              );
+                            }).toList(),
+                            onChanged: (Category? selectedCategory) {
+                              temporaryCategory.value = selectedCategory;
+                            },
                           ),
                         ),
                         const SizedBox(
@@ -244,18 +391,48 @@ class FilterContainer extends StatelessWidget {
                               width: 200,
                               child: ElevatedButton(
                                 style: ButtonStyle(
-                                  backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
-                                  foregroundColor: const WidgetStatePropertyAll(AppColors.white),
-                                  overlayColor: const WidgetStatePropertyAll(Colors.white30),
-                                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),),
+                                  backgroundColor: const WidgetStatePropertyAll(
+                                      AppColors.primary),
+                                  foregroundColor: const WidgetStatePropertyAll(
+                                      AppColors.white),
+                                  overlayColor: const WidgetStatePropertyAll(
+                                      Colors.white30),
+                                  shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  // filter Category
+                                  quotationController.setFilterCategory(
+                                      temporaryCategory.value);
+
+                                  // filter Client Source
+                                  quotationController.setFilterClientSource(
+                                      temporaryClienSource.value);
+
+                                  // filter Status Lead
+                                  quotationController.setFilterStatus(
+                                      temporaryStatusLead.value);
+
+                                  // filter Date Range
+                                  quotationController.filterStartDate.value =
+                                      temporaryStartDate.value;
+                                  quotationController.filterEndDate.value =
+                                      temporaryEndDate.value;
+
+                                  // close Filter Container
+                                  filterController.toggleFilterVisibility();
+                                },
                                 child: const Text("Submit"),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 20,)
+                        const SizedBox(
+                          height: 20,
+                        )
                       ],
                     ),
                   ),

@@ -2,117 +2,147 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:quotation_app/src/constant/const.dart';
+import 'package:quotation_app/src/models/category_model.dart';
+import 'package:quotation_app/src/models/client_source_model.dart';
 import 'package:quotation_app/src/models/quotation_model.dart';
 
 class QuotationController extends GetxController {
   var quotationList = <Quotation>[].obs;
-  var filter = Rx<StatusLead?>(null);
+
+  var filterStatus = Rx<StatusLead?>(null);
+  var filterCategory = Rx<Category?>(null);
+  var filterClientSource = Rx<ClientSource?>(null);
+
+  var filterStartDate = Rx<DateTime?>(null);
+  var filterEndDate = Rx<DateTime?>(null);
+
   var search = Rx<String?>(null);
 
   Box<Quotation>? quotationBox;
 
   List<Quotation> dummyQuotations = [
-      Quotation(
-        id: 1,
-        joinedAt: DateTime.now().subtract(const Duration(days: 1)),
-        status: "Active",
-        category: ["Web Development", "Mobile App"],
-        clientSource: "Referral",
-        name: "John Doe",
-        email: "johndoe@example.com",
-        whatsappNumber: "1234567890",
-        companyWebsite: "https://example.com",
-        companyName: "Example Inc.",
-        companyProfile: "Software development company",
-        pageSource: "Google",
-        service: ["Design", "Development"],
-        package: "Premium",
-        language: "English",
-        region: "USA",
-        pic: "Jane Smith",
-        statusLead: StatusLead.newLead,
-      ),
-      Quotation(
-        id: 2,
-        joinedAt: DateTime.now().subtract(const Duration(days: 5)),
-        status: "Inactive",
-        category: ["SEO", "Marketing"],
-        clientSource: "Website",
-        name: "Alice Johnson",
-        email: "alicej@example.com",
-        whatsappNumber: "0987654321",
-        companyWebsite: "https://alicecompany.com",
-        companyName: "Alice Co.",
-        companyProfile: "Digital marketing agency",
-        pageSource: "LinkedIn",
-        service: ["SEO", "Social Media"],
-        package: "Basic",
-        language: "Spanish",
-        region: "Mexico",
-        pic: "John Smith",
-        statusLead: StatusLead.followedUp,
-      ),
-      Quotation(
-        id: 3,
-        joinedAt: DateTime.now().subtract(const Duration(days: 5)),
-        status: "Inactive",
-        category: ["SEO", "Marketing"],
-        clientSource: "Website",
-        name: "Alice Johnson",
-        email: "alicej@example.com",
-        whatsappNumber: "0987654321",
-        companyWebsite: "https://alicecompany.com",
-        companyName: "Alice Co.",
-        companyProfile: "Digital marketing agency",
-        pageSource: "LinkedIn",
-        service: ["SEO", "Social Media"],
-        package: "Basic",
-        language: "Spanish",
-        region: "Mexico",
-        pic: "John Smith",
-        statusLead: StatusLead.accepted,
-      ),
-      Quotation(
-        id: 4,
-        joinedAt: DateTime.now().subtract(const Duration(days: 5)),
-        status: "Inactive",
-        category: ["SEO", "Marketing"],
-        clientSource: "Website",
-        name: "Alice Johnson",
-        email: "alicej@example.com",
-        whatsappNumber: "0987654321",
-        companyWebsite: "https://alicecompany.com",
-        companyName: "Alice Co.",
-        companyProfile: "Digital marketing agency",
-        pageSource: "LinkedIn",
-        service: ["SEO", "Social Media"],
-        package: "Basic",
-        language: "Spanish",
-        region: "Mexico",
-        pic: "John Smith",
-        statusLead: StatusLead.rejected,
-      ),
-      Quotation(
-        id: 5,
-        joinedAt: DateTime.now().subtract(const Duration(days: 5)),
-        status: "Inactive",
-        category: ["SEO", "Marketing"],
-        clientSource: "Website",
-        name: "Alice Johnson",
-        email: "alicej@example.com",
-        whatsappNumber: "0987654321",
-        companyWebsite: "https://alicecompany.com",
-        companyName: "Alice Co.",
-        companyProfile: "Digital marketing agency",
-        pageSource: "LinkedIn",
-        service: ["SEO", "Social Media"],
-        package: "Basic",
-        language: "Spanish",
-        region: "Mexico",
-        pic: "John Smith",
-        statusLead: StatusLead.newLead,
-      ),
-    ];
+    Quotation(
+      id: 1,
+      joinedAt: DateTime.now().subtract(const Duration(days: 1)),
+      status: "Active",
+      category: [
+        Category(id: 1, slug: 'seoContentWriting', name: 'SEO Content Writing'),
+        Category(id: 2, slug: 'seoServices', name: 'SEO Services'),
+      ],
+      clientSource: ClientSource(id: 1, name: 'Direct Email'),
+      name: "John Doe",
+      email: "johndoe@example.com",
+      whatsappNumber: "1234567890",
+      companyWebsite: "https://example.com",
+      companyName: "Example Inc.",
+      companyProfile: "Software development company",
+      pageSource: "Google",
+      service: ["Design", "Development"],
+      package: "Premium",
+      language: "English",
+      region: "USA",
+      pic: "Jane Smith",
+      statusLead: StatusLead.newLead,
+    ),
+    Quotation(
+      id: 2,
+      joinedAt: DateTime.now().subtract(const Duration(days: 5)),
+      status: "Inactive",
+      category: [
+        Category(id: 4, slug: 'digitalMarketing', name: 'Digital Marketing'),
+        Category(id: 1, slug: 'seoContentWriting', name: 'SEO Content Writing'),
+      ],
+      clientSource: ClientSource(id: 2, name: 'Web WhatsApp'),
+      name: "Alice Johnson",
+      email: "alicej@example.com",
+      whatsappNumber: "0987654321",
+      companyWebsite: "https://alicecompany.com",
+      companyName: "Alice Co.",
+      companyProfile: "Digital marketing agency",
+      pageSource: "LinkedIn",
+      service: ["SEO", "Social Media"],
+      package: "Basic",
+      language: "Spanish",
+      region: "Mexico",
+      pic: "John Smith",
+      statusLead: StatusLead.followedUp,
+    ),
+    Quotation(
+      id: 3,
+      joinedAt: DateTime.now().subtract(const Duration(days: 10)),
+      status: "Inactive",
+      category: [
+        Category(id: 5, slug: 'digitalAgency', name: 'Digital Agency'),
+        Category(
+            id: 3,
+            slug: 'sosialMediaManagement',
+            name: 'Sosial Media Management'),
+      ],
+      clientSource: ClientSource(id: 4, name: 'Direct Call'),
+      name: "Alice Johnson",
+      email: "alicej@example.com",
+      whatsappNumber: "0987654321",
+      companyWebsite: "https://alicecompany.com",
+      companyName: "Alice Co.",
+      companyProfile: "Digital marketing agency",
+      pageSource: "LinkedIn",
+      service: ["SEO", "Social Media"],
+      package: "Basic",
+      language: "Spanish",
+      region: "Mexico",
+      pic: "John Smith",
+      statusLead: StatusLead.accepted,
+    ),
+    Quotation(
+      id: 4,
+      joinedAt: DateTime.now().subtract(const Duration(days: 15)),
+      status: "Inactive",
+      category: [
+        Category(
+            id: 3,
+            slug: 'sosialMediaManagement',
+            name: 'Sosial Media Management'),
+        Category(id: 2, slug: 'seoServices', name: 'SEO Services'),
+      ],
+      clientSource: ClientSource(id: 3, name: 'Direct Linkedin'),
+      name: "Alice Johnson",
+      email: "alicej@example.com",
+      whatsappNumber: "0987654321",
+      companyWebsite: "https://alicecompany.com",
+      companyName: "Alice Co.",
+      companyProfile: "Digital marketing agency",
+      pageSource: "LinkedIn",
+      service: ["SEO", "Social Media"],
+      package: "Basic",
+      language: "Spanish",
+      region: "Mexico",
+      pic: "John Smith",
+      statusLead: StatusLead.rejected,
+    ),
+    Quotation(
+      id: 5,
+      joinedAt: DateTime.now().subtract(const Duration(days: 20)),
+      status: "Inactive",
+      category: [
+        Category(id: 5, slug: 'digitalAgency', name: 'Digital Agency'),
+        Category(id: 1, slug: 'seoContentWriting', name: 'SEO Content Writing'),
+      ],
+      clientSource: ClientSource(id: 5, name: 'Referral'),
+      name: "Alice Johnson",
+      email: "alicej@example.com",
+      whatsappNumber: "0987654321",
+      companyWebsite: "https://alicecompany.com",
+      companyName: "Alice Co.",
+      companyProfile: "Digital marketing agency",
+      pageSource: "LinkedIn",
+      service: ["SEO", "Social Media"],
+      package: "Basic",
+      language: "Spanish",
+      region: "Mexico",
+      pic: "John Smith",
+      statusLead: StatusLead.newLead,
+    ),
+  ];
 
   /*
 
@@ -127,7 +157,6 @@ class QuotationController extends GetxController {
     quotationBox = await Hive.openBox<Quotation>('quotationBox');
     checkConnectionAndLoadData();
   }
-
 
   /*
   
@@ -175,12 +204,12 @@ class QuotationController extends GetxController {
   void loadDataFromHive() {
     if (quotationBox!.isNotEmpty) {
       quotationList.assignAll(quotationBox!.values.toList());
-    }else{
+    } else {
       quotationList.assignAll(dummyQuotations);
     }
   }
 
-   /*
+  /*
   
     FUNGSI Load Data from API
 
@@ -189,14 +218,12 @@ class QuotationController extends GetxController {
 
   */
   void loadDataFromAPI() {
-    
-
     // menyimpan data ke dalam quotationBox
     saveDataToHive(dummyQuotations);
     quotationList.assignAll(dummyQuotations);
   }
 
-   /*
+  /*
   
     FUNGSI Save Data to Hive
 
@@ -210,18 +237,40 @@ class QuotationController extends GetxController {
     }
   }
 
-   /*
+  /*
   
-    FUNGSI Set Filter
+    FUNGSI Set Filter Status
 
-    Fungsi ini digunakan untuk menyimpan data inputan filter
+    Fungsi ini digunakan untuk menyimpan data inputan filter Status
 
   */
-  void setFilter(StatusLead? newFilter) {
-    filter.value = newFilter;
+  void setFilterStatus(StatusLead? newFilter) {
+    filterStatus.value = newFilter;
   }
 
-   /*
+  /*
+  
+    FUNGSI Set Filter Category
+
+    Fungsi ini digunakan untuk menyimpan data inputan filter Category
+
+  */
+  void setFilterCategory(Category? newFilter) {
+    filterCategory.value = newFilter;
+  }
+
+  /*
+  
+    FUNGSI Set Filter Client Source
+
+    Fungsi ini digunakan untuk menyimpan data inputan filter Client Source
+
+  */
+  void setFilterClientSource(ClientSource? newFilter) {
+    filterClientSource.value = newFilter;
+  }
+
+  /*
   
     FUNGSI Set Search
 
@@ -230,6 +279,23 @@ class QuotationController extends GetxController {
   */
   void setSearch(String? query) {
     search.value = query;
+  }
+
+  /*
+  
+    FUNGSI Set Search
+
+    Fungsi ini digunakan untuk menyimpan data inputan search
+
+  */
+  void clearFilter() {
+    search.value = null;
+    filterStatus.value = null;
+    filterCategory.value = null;
+    filterClientSource.value = null;
+
+    filterStartDate.value = null;
+    filterEndDate.value = null;
   }
 
   /*
@@ -243,10 +309,34 @@ class QuotationController extends GetxController {
     List<Quotation> result = quotationList;
 
     // Jika filter status lead tidak null, lakukan filter berdasarkan status lead
-    if (filter.value != null) {
+    if (filterStatus.value != null) {
       result = result
-          .where((quotation) => quotation.statusLead == filter.value)
+          .where((quotation) => quotation.statusLead == filterStatus.value)
           .toList();
+    }
+
+    // Jika filter category tidak null, lakukan filter berdasarkan category
+    if (filterCategory.value != null) {
+      result = result.where((quotation) {
+        // Mengecek jika quotation memiliki kategori yang dipilih
+        return quotation.category!
+            .any((cat) => cat.slug == filterCategory.value!.slug);
+      }).toList();
+    }
+
+    // Jika filter client source tidak null, lakukan filter berdasarkan client source
+    if (filterClientSource.value != null) {
+      result = result
+          .where((quotation) =>
+              quotation.clientSource!.id == filterClientSource.value!.id)
+          .toList();
+    }
+
+    DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
+    if (filterStartDate.value != null) {
+      result = result.where((quotation) =>
+          quotation.joinedAt.isAfter(filterStartDate.value!) &&
+          quotation.joinedAt.isBefore(effectiveEndDate)).toList();
     }
 
     // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
