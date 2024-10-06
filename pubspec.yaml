@@ -106,16 +106,23 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
 flutter_native_splash:
-  color: "#18A0FB"
-  color_dark: "#1B1F2B"
-  # image_mode: contain
-  image: assets\images\logos\logo_cmlabs.png
-  image_dark: assets\images\logos\logo_cmlabs.png
+  color: "#F1F1F1"
 
+  # Menggunakan opsi `image_mode: contain` agar gambar tidak dipotong atau di-stretch
+  image_mode: contain
+
+  image: assets/images/logos/logo_primary.png  # Perhatikan tanda slash "/" di sini agar sesuai dengan path yang benar
+  fullscreen: true
+
+  # Atur scaling pada Android agar gambar tidak distorsi
+  android_gravity: center  # Menggunakan `center` agar gambar tetap pada posisi tengah tanpa scaling yang besar
+
+  # Atur iOS untuk menggunakan content mode `scaleAspectFit` agar gambar dipertahankan proporsinya
+  ios_content_mode: scaleAspectFit
+
+  # Khusus Android 12, gambar dan warna latar tetap
   android_12:
-    color: "#18A0FB"
-    color_dark: "#1B1F2B"
-    image: assets\images\logos\logo_cmlabs.png
-    image_dark: assets\images\logos\logo_cmlabs.png
+    color: "#F1F1F1"
+    image: assets/images/logos/logo_primary.png
 
   web: false
