@@ -6,6 +6,7 @@ import 'package:quotation_app/src/controllers/filter_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/view/home_view.dart';
 import 'package:quotation_app/src/view/inbox_view.dart';
+import 'package:quotation_app/src/view/setting_view.dart';
 import 'package:quotation_app/src/widgets/filter_container.dart';
 
 class BottomNavigation extends StatelessWidget {
@@ -16,7 +17,7 @@ class BottomNavigation extends StatelessWidget {
   final List<Widget> _pages = [
     HomeView(), // Halaman pertama
     InboxView(), // Halaman kedua
-    Container(color: Colors.blue), // Halaman ketiga
+    SettingView() // Halaman ketiga
   ];
 
   final List<Widget> _tabList = [
