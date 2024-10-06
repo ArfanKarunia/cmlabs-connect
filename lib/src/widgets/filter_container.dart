@@ -11,7 +11,7 @@ import 'package:quotation_app/src/utils/color.dart';
 
 import '../constant/const.dart';
 
-class FilterContainer extends StatelessWidget {
+class FilterContainer extends StatefulWidget {
   FilterContainer({
     super.key,
     required this.filterController,
@@ -19,21 +19,32 @@ class FilterContainer extends StatelessWidget {
 
   final FilterController filterController;
 
+  @override
+  State<FilterContainer> createState() => _FilterContainerState();
+}
+
+class _FilterContainerState extends State<FilterContainer> {
   final QuotationController quotationController =
       Get.put(QuotationController());
 
   final CategoryController categoryController = Get.put(CategoryController());
+
   final ClientSourceController clientSourceController =
       Get.put(ClientSourceController());
 
   // menyimpan nilai sementara untuk filter
   final Rx<DateTime?> temporaryStartDate = Rx<DateTime?>(null);
+
   final Rx<DateTime?> temporaryEndDate = Rx<DateTime?>(null);
+
   final Rx<StatusLead?> temporaryStatusLead = Rx<StatusLead?>(null);
+
   final Rx<Category?> temporaryCategory = Rx<Category?>(null);
+
   final Rx<ClientSource?> temporaryClienSource = Rx<ClientSource?>(null);
 
   final TextEditingController startDateController = TextEditingController();
+
   final TextEditingController endDateController = TextEditingController();
 
   void clearFilter() {
@@ -51,21 +62,23 @@ class FilterContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       () {
-        return (filterController.filterVisible.value)
+        return (widget.filterController.filterVisible.value)
             ? Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
                   GestureDetector(
-                    onTap: () => filterController.toggleFilterVisibility(),
-                    child: AnimatedOpacity(
-                      opacity: filterController.filterVisible.value ? 0.5 : 0.0,
-                      curve: Curves.ease,
-                      duration: const Duration(seconds: 2),
-                      child: Container(
-                        color: Colors.black38,
-                      ),
-                    ),
-                  ),
+                      onTap: () =>
+                          widget.filterController.toggleFilterVisibility(),
+                      child: AnimatedOpacity(
+                        opacity: widget.filterController.opacityVisible.value
+                            ? 1
+                            : 0.0,
+                        curve: Curves.linear,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(
+                          color: Colors.black38,
+                        ),
+                      )),
                   Container(
                     padding: const EdgeInsets.all(25),
                     width: double.infinity,
@@ -99,7 +112,8 @@ class FilterContainer extends StatelessWidget {
                                 quotationController.clearFilter();
                                 clearFilter();
 
-                                filterController.toggleFilterVisibility();
+                                widget.filterController
+                                    .toggleFilterVisibility();
                               },
                               child: const Text(
                                 "Clear",
@@ -423,7 +437,8 @@ class FilterContainer extends StatelessWidget {
                                       temporaryEndDate.value;
 
                                   // close Filter Container
-                                  filterController.toggleFilterVisibility();
+                                  widget.filterController
+                                      .toggleFilterVisibility();
                                 },
                                 child: const Text("Submit"),
                               ),
