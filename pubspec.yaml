@@ -38,7 +38,6 @@ dependencies:
   get: ^4.6.6
   sentry_flutter: ^8.9.0
   dio: ^5.7.0
-  flutter_native_splash: ^2.4.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   ionicons: ^0.2.2
@@ -46,6 +45,7 @@ dependencies:
   url_launcher: ^6.3.0
   connectivity_plus: ^6.0.5
   intl: ^0.19.0
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -105,24 +105,3 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 
-flutter_native_splash:
-  color: "#F1F1F1"
-
-  # Menggunakan opsi `image_mode: contain` agar gambar tidak dipotong atau di-stretch
-  image_mode: contain
-
-  image: assets/images/logos/logo_primary.png  # Perhatikan tanda slash "/" di sini agar sesuai dengan path yang benar
-  fullscreen: true
-
-  # Atur scaling pada Android agar gambar tidak distorsi
-  android_gravity: center  # Menggunakan `center` agar gambar tetap pada posisi tengah tanpa scaling yang besar
-
-  # Atur iOS untuk menggunakan content mode `scaleAspectFit` agar gambar dipertahankan proporsinya
-  ios_content_mode: scaleAspectFit
-
-  # Khusus Android 12, gambar dan warna latar tetap
-  android_12:
-    color: "#F1F1F1"
-    image: assets/images/logos/logo_primary.png
-
-  web: false

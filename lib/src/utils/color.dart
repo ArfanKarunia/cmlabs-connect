@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color primary = Color(0xFF3FA3F4);
+  static const Color primary = Color(0xFF1F95F5);
 
+  static const Color white_1 = Color(0xFFFFFFFF);
+  static const Color white_2 = Color(0xFFF9FAFB);
+
+  static const Color text_1 = Color(0xFF3B3F4C);
+  static const Color text_2 = Color(0xFF686868);
+  static const Color text_3 = Color(0xFF666A74);
+  static const Color text_4 = Color(0xFF959595);
+
+  static const Color textLight = Color(0xFF959595);
+
+  static const Color danger = Color(0xFFDE5758);
+
+  
 
   static const Color activeBottomNav = Color(0xFF1E222D);
   static const Color inactiveBottomNav = Color(0xFF252A38);
