@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:quotation_app/src/constant/const.dart';
 import 'package:quotation_app/src/models/quotation_model.dart';
 import 'package:quotation_app/src/utils/color.dart';
@@ -113,44 +114,51 @@ class StatusLeadUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color bgColor;
     Color color;
     String status;
 
     switch (statusLead) {
       case StatusLead.newLead:
+        bgColor = AppColors.bgPrimary;
         color = AppColors.primary;
         status = "New";
         break;
       case StatusLead.followedUp:
-        color = AppColors.yellow;
+        bgColor = AppColors.bgInfo;
+        color = AppColors.info;
         status = "Followed Up";
         break;
       case StatusLead.accepted:
-        color = AppColors.green;
+        bgColor = AppColors.bgSuccess;
+        color = AppColors.success;
         status = "Accepted";
         break;
       case StatusLead.rejected:
-        color = AppColors.red;
+        bgColor = AppColors.bgDanger;
+        color = AppColors.danger;
         status = "Rejected";
         break;
       default:
+        bgColor = AppColors.bgPrimary;
         color = AppColors.primary;
         status = "New";
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color,
+        color: bgColor,
         borderRadius: BorderRadius.circular(5),
       ),
       child: Text(
         status,
-        style: const TextStyle(
-          fontSize: 12,
-          color: AppColors.white,
-        ),
+        style: GoogleFonts.plusJakartaSans(
+          color: color,
+          fontSize: 10,
+          fontWeight: FontWeight.w400
+        )
       ),
     );
   }

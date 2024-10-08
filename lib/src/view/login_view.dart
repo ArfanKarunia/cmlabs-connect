@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/app.dart';
 import 'package:quotation_app/src/utils/color.dart';
 
 class LoginView extends StatefulWidget {
@@ -154,7 +154,13 @@ class _LoginViewState extends State<LoginView> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            _submitForm();
+                            if (_formKey.currentState!.validate()) {
+                              // Panggil metode untuk submit form jika validasi berhasil
+                              _submitForm();
+
+                              // Navigasi ke halaman /home
+                              Get.toNamed('/home');
+                            }
                           },
                           style: ButtonStyle(
                             fixedSize: WidgetStatePropertyAll(
@@ -278,9 +284,10 @@ class _FormInputWidgetState extends State<FormInputWidget> {
                     fontWeight: FontWeight.w400,
                     color: AppColors.text_4),
                 hintText: "Enter your ${widget.title.toLowerCase()}",
-
-                errorStyle: GoogleFonts.plusJakartaSans(color: AppColors.danger, fontSize: 12, fontWeight: FontWeight.w400),
-
+                errorStyle: GoogleFonts.plusJakartaSans(
+                    color: AppColors.danger,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400),
                 suffixIcon: (widget.isPassword)
                     ? IconButton(
                         icon: Icon(
