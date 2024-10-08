@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const Color primary = Color(0xFF1F95F5);
+  static const Color bgPrimary = Color(0xFFEBF5FE);
+
+  static const Color bgNavActive = Color.fromARGB(40, 188, 223, 252);
+
+  static const Color dashboardContainer = Color.fromARGB(20, 31, 149, 245);
 
   static const Color white_1 = Color(0xFFFFFFFF);
   static const Color white_2 = Color(0xFFF9FAFB);
@@ -14,8 +19,17 @@ class AppColors {
   static const Color textLight = Color(0xFF959595);
 
   static const Color danger = Color(0xFFDE5758);
+  static const Color bgDanger = Color(0xFFFEF1F1);
 
+  static const Color purple = Color(0xFFA159ED);
+  static const Color bgPurple = Color(0xFFA159ED);
   
+  static const Color info = Color(0xFFFFC553);
+  static const Color bgInfo = Color(0xFFFFF9EE);
+  
+  static const Color success = Color(0xFF50A06D);
+  static const Color bgSuccess = Color(0xFFEFF7F2);
+
 
   static const Color activeBottomNav = Color(0xFF1E222D);
   static const Color inactiveBottomNav = Color(0xFF252A38);
