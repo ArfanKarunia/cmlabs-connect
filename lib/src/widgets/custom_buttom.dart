@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quotation_app/src/utils/color.dart';
 
 class CustomButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -6,6 +7,7 @@ class CustomButton extends StatelessWidget {
   final Color backgroundColor;
   final Color overlayColor;
   final BorderRadius borderRadius;
+  final BorderSide? side;
 
   const CustomButton({
     Key? key,
@@ -14,6 +16,7 @@ class CustomButton extends StatelessWidget {
     this.backgroundColor = Colors.blue,
     this.overlayColor = Colors.white24,
     this.borderRadius = const BorderRadius.all(Radius.circular(5)),
+    this.side
   }) : super(key: key);
 
   @override
@@ -22,15 +25,13 @@ class CustomButton extends StatelessWidget {
       color: backgroundColor, // Background color of the button
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius, // Button shape
+        side: side ?? BorderSide.none,
       ),
       child: InkWell(
         onTap: onPressed,
         borderRadius: borderRadius, // Ripple effect follows button shape
         splashColor: overlayColor, // Ripple color
-        child: Container(
-          alignment: Alignment.center,
-          child: child
-        ),
+        child: Container(alignment: Alignment.center, child: child),
       ),
     );
   }
