@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:quotation_app/src/constant/const.dart';
 import 'package:quotation_app/src/models/quotation_model.dart';
 import 'package:quotation_app/src/utils/color.dart';
+import 'package:quotation_app/src/widgets/custom_buttom.dart';
 
 class QuotationListTile extends StatelessWidget {
   const QuotationListTile({
@@ -27,25 +29,16 @@ class QuotationListTile extends StatelessWidget {
         ),
         margin: const EdgeInsets.only(
           bottom: 10,
-          left: 5,
-          right: 5,
         ),
         decoration: BoxDecoration(
           boxShadow: const [
             BoxShadow(
-              color: AppColors.secondaryText,
+              color: Color.fromARGB(20, 0, 0, 0),
               offset: Offset(2, 2),
-              blurRadius: 2,
+              blurRadius: 10,
             ),
           ],
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              AppColors.lightBlue,
-              AppColors.white,
-            ],
-          ),
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -59,43 +52,90 @@ class QuotationListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      quotation.companyName!.isEmpty
-                          ? "Nama Perusahaan"
-                          : quotation.companyName!,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.primaryText,
-                      ),
+                        quotation.companyName!.isEmpty
+                            ? "Nama Perusahaan"
+                            : quotation.companyName!,
+                        style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.text_1,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold)),
+                    SizedBox(
+                      height: 6,
                     ),
                     Text(
-                      quotation.category!.isNotEmpty
-                          ? quotation.category!
-                              .map((cat) => cat.name)
-                              .join(', ')
-                          : "-",
-                      maxLines: 2,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.primaryText,
-                      ),
-                    ),
-                    Text(
-                      "PIC : ${quotation.pic!.toUpperCase()}",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.primaryText,
-                      ),
-                    )
+                        quotation.category!.isNotEmpty
+                            ? quotation.category!
+                                .map((cat) => cat.name)
+                                .join(', ')
+                            : "-",
+                        maxLines: 2,
+                        style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.text_2,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400)),
+                    Text("PIC : ${quotation.pic!.toUpperCase()}",
+                        style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.text_4,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400))
                   ],
                 ),
               ),
             ),
-            Container(
-              padding: EdgeInsets.only(left: 10),
-              child: StatusLeadUI(
-                statusLead: quotation.statusLead,
-              ),
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.only(left: 10),
+                  child: StatusLeadUI(
+                    statusLead: quotation.statusLead,
+                  ),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CustomButton(
+                    onPressed: () {},
+                    child: Icon(
+                      Ionicons.logo_whatsapp,
+                      color: AppColors.white_1,
+                      size: 13,
+                    ), // Icon as child
+                    backgroundColor:
+                        AppColors.success, // Button background color
+                    overlayColor: Colors.white24, // Ripple effect color
+                    borderRadius: BorderRadius.circular(
+                      5,
+                    ), // Button shape
+                  ),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: CustomButton(
+                    onPressed: () {
+                      print("Button pressed");
+                    },
+                    child: Icon(
+                      Ionicons.trash_outline,
+                      color: AppColors.danger,
+                      size: 16,
+                    ), // Icon as child
+                    backgroundColor:
+                        AppColors.bgDanger, // Button background color
+                    overlayColor: const Color.fromARGB(
+                        70, 222, 87, 87), // Ripple effect color
+                    borderRadius: BorderRadius.circular(
+                      5,
+                    ), // Button shape
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -152,14 +192,9 @@ class StatusLeadUI extends StatelessWidget {
         color: bgColor,
         borderRadius: BorderRadius.circular(5),
       ),
-      child: Text(
-        status,
-        style: GoogleFonts.plusJakartaSans(
-          color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.w400
-        )
-      ),
+      child: Text(status,
+          style: GoogleFonts.plusJakartaSans(
+              color: color, fontSize: 10, fontWeight: FontWeight.w400)),
     );
   }
 }

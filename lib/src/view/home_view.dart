@@ -145,7 +145,7 @@ class _HomeViewState extends State<HomeView> {
                               MetricCard(
                                 count: 0,
                                 nameMetric: "Accepted",
-                                color: AppColors.primary,
+                                color: AppColors.success,
                               ),
                               SizedBox(
                                 width: 10,
@@ -466,131 +466,7 @@ class _HomeViewState extends State<HomeView> {
                       itemBuilder: (context, index) {
                         final quotation = quotationList[index];
                     
-                        return GestureDetector(
-                          onTap: () => Get.toNamed(
-                            '/detailQuotation',
-                            arguments: {'quotation': quotation},
-                          ),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            margin: const EdgeInsets.only(
-                              bottom: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Color.fromARGB(20, 0, 0, 0),
-                                  offset: Offset(2, 2),
-                                  blurRadius: 10,
-                                ),
-                              ],
-                              color: AppColors.white,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Expanded(
-                                  flex: 2,
-                                  child: Container(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                            quotation.companyName!.isEmpty
-                                                ? "Nama Perusahaan"
-                                                : quotation.companyName!,
-                                            style: GoogleFonts.plusJakartaSans(
-                                                color: AppColors.text_1,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.bold)),
-                                        SizedBox(
-                                          height: 6,
-                                        ),
-                                        Text(
-                                            quotation.category!.isNotEmpty
-                                                ? quotation.category!
-                                                    .map((cat) => cat.name)
-                                                    .join(', ')
-                                                : "-",
-                                            maxLines: 2,
-                                            style: GoogleFonts.plusJakartaSans(
-                                                color: AppColors.text_2,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400)),
-                                        Text(
-                                            "PIC : ${quotation.pic!.toUpperCase()}",
-                                            style: GoogleFonts.plusJakartaSans(
-                                                color: AppColors.text_4,
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w400))
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.only(left: 10),
-                                      child: StatusLeadUI(
-                                        statusLead: quotation.statusLead,
-                                      ),
-                                    ),
-                    
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                    
-                                    SizedBox(
-                                      height: 18,
-                                      width: 18,
-                                      child: CustomButton(
-                                        onPressed: () {
-                                          
-                                        },
-                                        child: Icon(Ionicons
-                                            .logo_whatsapp, color: AppColors.white_1, size: 13,), // Icon as child
-                                        backgroundColor: AppColors
-                                            .success, // Button background color
-                                        overlayColor:
-                                            Colors.white24, // Ripple effect color
-                                        borderRadius: BorderRadius.circular(
-                                            5,), // Button shape
-                                      ),
-                                    ),
-                    
-                                    SizedBox(
-                                      width: 8,
-                                    ),
-                    
-                                    SizedBox(
-                                      height: 18,
-                                      width: 18,
-                                      child: CustomButton(
-                                        onPressed: () {
-                                          print("Button pressed");
-                                        },
-                                        child: Icon(Ionicons
-                                            .trash_outline, color: AppColors.danger, size: 13,), // Icon as child
-                                        backgroundColor: AppColors
-                                            .bgDanger, // Button background color
-                                        overlayColor:
-                                            const Color.fromARGB(70, 222, 87, 87), // Ripple effect color
-                                        borderRadius: BorderRadius.circular(
-                                            5,), // Button shape
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                        return QuotationListTile(quotation: quotation);
                       },
                     ),
                   );
@@ -599,42 +475,6 @@ class _HomeViewState extends State<HomeView> {
             ),
             SizedBox(height: 10,)
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class CustomButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final Widget child;
-  final Color backgroundColor;
-  final Color overlayColor;
-  final BorderRadius borderRadius;
-
-  const CustomButton({
-    Key? key,
-    required this.onPressed,
-    required this.child,
-    this.backgroundColor = Colors.blue,
-    this.overlayColor = Colors.white24,
-    this.borderRadius = const BorderRadius.all(Radius.circular(5)),
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: backgroundColor, // Background color of the button
-      shape: RoundedRectangleBorder(
-        borderRadius: borderRadius, // Button shape
-      ),
-      child: InkWell(
-        onTap: onPressed,
-        borderRadius: borderRadius, // Ripple effect follows button shape
-        splashColor: overlayColor, // Ripple color
-        child: Container(
-          alignment: Alignment.center,
-          child: child
         ),
       ),
     );
