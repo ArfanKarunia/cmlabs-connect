@@ -14,8 +14,8 @@ import 'package:quotation_app/src/utils/color.dart';
 
 import '../constant/const.dart';
 
-class FilterContainer extends StatefulWidget {
-  FilterContainer({
+class FilterOverlay extends StatefulWidget {
+  FilterOverlay({
     super.key,
     required this.controller,
   });
@@ -23,10 +23,10 @@ class FilterContainer extends StatefulWidget {
   final BottomNavController controller;
 
   @override
-  State<FilterContainer> createState() => _FilterContainerState();
+  State<FilterOverlay> createState() => _FilterOverlayState();
 }
 
-class _FilterContainerState extends State<FilterContainer> {
+class _FilterOverlayState extends State<FilterOverlay> {
   final QuotationController quotationController =
       Get.put(QuotationController());
 
@@ -69,42 +69,39 @@ class _FilterContainerState extends State<FilterContainer> {
             ? Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
+
+                  // Background Blur
                   GestureDetector(
                     onTap: () => widget.controller.toggleFilterVisibility(),
                     child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 100),
                       curve: Curves.linear,
-                      color: Colors.black.withOpacity(widget.controller.opacityValue.value / 100),
                       child: BackdropFilter(
                         filter: ImageFilter.blur(
                           sigmaX: widget.controller.blurValue.value,
                           sigmaY: widget.controller.blurValue.value,
-                        ), // Tidak ada blur
+                        ),
                         child: Container(
-                          width: double.infinity, // Atau sesuai kebutuhan
-                          height: double.infinity, // Atau sesuai kebutuhan
+                          color: Colors.black38,
+                          width: double.infinity,
+                          height: double.infinity,
                         ),
                       ),
                     ),
                   ),
-                  // GestureDetector(
-                  //   onTap: () => widget.controller.toggleFilterVisibility(),
-                  //   child: AnimatedContainer(
-                  //     duration: const Duration(milliseconds: 200),
-                  //     curve: Curves.linear,
-                  //     child: BackdropFilter(
-                  //       filter: ImageFilter.blur(
-                  //         sigmaX: widget.controller.blurValue.value,
-                  //         sigmaY: widget.controller.blurValue.value,
-                  //       ),
-                  //       child: Container(
-                  //         color: Colors.black38,
-                  //         width: double.infinity,
-                  //         height: double.infinity,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+
+                  // Filter Overlay
+
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: AppColors.white_1,
+                    ),
+                    child: Text("Filter"),
+                  )
+
+
+
                   // Container(
                   //   padding: const EdgeInsets.all(25),
                   //   width: double.infinity,

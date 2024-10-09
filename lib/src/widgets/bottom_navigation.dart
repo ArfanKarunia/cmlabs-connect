@@ -8,7 +8,7 @@ import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/view/home_view.dart';
 import 'package:quotation_app/src/view/inbox_view.dart';
 import 'package:quotation_app/src/view/setting_view.dart';
-import 'package:quotation_app/src/widgets/filter_container.dart';
+import 'package:quotation_app/src/widgets/filter_overlay.dart';
 
 class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
@@ -31,7 +31,7 @@ class BottomNavigation extends StatelessWidget {
           child: Stack(
             children: [
               _pages[navController.currentIndex.value],
-              FilterContainer(controller: navController),
+              FilterOverlay(controller: navController),
             ],
           ),
         ),
