@@ -69,7 +69,6 @@ class _FilterOverlayState extends State<FilterOverlay> {
             ? Stack(
                 alignment: Alignment.bottomCenter,
                 children: [
-
                   // Background Blur
                   GestureDetector(
                     onTap: () => widget.controller.toggleFilterVisibility(),
@@ -94,13 +93,17 @@ class _FilterOverlayState extends State<FilterOverlay> {
 
                   Container(
                     width: double.infinity,
+                    height: 200,
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: AppColors.white_1,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                      ),
                     ),
-                    child: Text("Filter"),
+                    child: Text("Ini Filter"),
                   )
-
-
 
                   // Container(
                   //   padding: const EdgeInsets.all(25),

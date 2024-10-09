@@ -10,7 +10,7 @@ import 'package:quotation_app/src/constant/const.dart';
 import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
 import 'package:quotation_app/src/controllers/quotation_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
-import 'package:quotation_app/src/widgets/filter_status.dart';
+import 'package:quotation_app/src/widgets/select_status.dart';
 import 'package:quotation_app/src/widgets/metric_card.dart';
 import 'package:quotation_app/src/widgets/quotation_list_tile.dart';
 
@@ -221,217 +221,12 @@ class _HomeViewState extends State<HomeView> {
                     // Selection status, filter button, & view all button
                     Container(
                       width: double.infinity,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Obx(
-                              () => Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                    height: 25,
-                                    child: GestureDetector(
-                                      onTap: () => widget.quotationController
-                                          .setFilterStatus(null),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 7,
-                                          vertical: 3,
-                                        ),
-                                        decoration: (widget.quotationController
-                                                    .filterStatus.value ==
-                                                null)
-                                            ? BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: AppColors.primary,
-                                              )
-                                            : BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color: Colors.transparent,
-                                                border: Border.all(
-                                                  color: AppColors.text_4,
-                                                  width: 1,
-                                                ),
-                                              ),
-                                        child: Center(
-                                          child: Text('Recently',
-                                              style: (widget.quotationController
-                                                          .filterStatus.value ==
-                                                      null)
-                                                  ? GoogleFonts.plusJakartaSans(
-                                                      color: AppColors.white,
-                                                      fontSize: 11,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    )
-                                                  : GoogleFonts.plusJakartaSans(
-                                                      color: AppColors.text_4,
-                                                      fontSize: 11,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    )),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 8,
-                                  ),
-                                  Flexible(
-                                    child: SizedBox(
-                                      height: 25,
-                                      child: ListView.builder(
-                                        scrollDirection: Axis.horizontal,
-                                        itemCount: StatusLead.values.length,
-                                        itemBuilder: (context, index) {
-                                          final status =
-                                              StatusLead.values[index];
-
-                                          String label;
-
-                                          switch (status) {
-                                            case StatusLead.newLead:
-                                              label = 'New';
-                                              break;
-                                            case StatusLead.followedUp:
-                                              label = 'Followed Up';
-                                              break;
-                                            case StatusLead.accepted:
-                                              label = 'Accepted';
-                                              break;
-                                            case StatusLead.rejected:
-                                              label = 'Rejected';
-                                              break;
-                                          }
-
-                                          return (status ==
-                                                      StatusLead.accepted ||
-                                                  status == StatusLead.rejected)
-                                              ? Container()
-                                              : Container(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          right: 8),
-                                                  child: GestureDetector(
-                                                    onTap: () => widget
-                                                        .quotationController
-                                                        .setFilterStatus(
-                                                            StatusLead
-                                                                .values[index]),
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                        horizontal: 7,
-                                                        vertical: 3,
-                                                      ),
-                                                      decoration: (widget
-                                                                  .quotationController
-                                                                  .filterStatus
-                                                                  .value ==
-                                                              StatusLead.values[
-                                                                  index])
-                                                          ? BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
-                                                              color: AppColors
-                                                                  .primary,
-                                                            )
-                                                          : BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5),
-                                                              color: Colors
-                                                                  .transparent,
-                                                              border:
-                                                                  Border.all(
-                                                                color: AppColors
-                                                                    .text_4,
-                                                                width: 1,
-                                                              ),
-                                                            ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          label,
-                                                          style: (widget
-                                                                      .quotationController
-                                                                      .filterStatus
-                                                                      .value ==
-                                                                  StatusLead
-                                                                          .values[
-                                                                      index])
-                                                              ? GoogleFonts
-                                                                  .plusJakartaSans(
-                                                                  color:
-                                                                      AppColors
-                                                                          .white,
-                                                                  fontSize: 11,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                )
-                                                              : GoogleFonts
-                                                                  .plusJakartaSans(
-                                                                  color: AppColors
-                                                                      .text_4,
-                                                                  fontSize: 11,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  widget.navController.toggleFilterVisibility();
-                                },
-                                icon: Icon(
-                                  Ionicons.options_outline,
-                                  color: AppColors.text_1,
-                                ),
-                                style: ButtonStyle(
-                                  overlayColor: WidgetStatePropertyAll(
-                                      const Color.fromARGB(33, 31, 149, 245)),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {},
-                                child: Text(
-                                  "View all",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    decoration: TextDecoration.underline,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                      child: SelectStatus(
+                        controller: widget.quotationController,
+                        isAccepted: false,
+                        isRejected: false,
+                        isFilterButton: true,
+                        isViewAllButton: true,
                       ),
                     )
                   ],
@@ -465,7 +260,7 @@ class _HomeViewState extends State<HomeView> {
                       itemCount: min(quotationList.length, 5),
                       itemBuilder: (context, index) {
                         final quotation = quotationList[index];
-                    
+
                         return QuotationListTile(quotation: quotation);
                       },
                     ),
@@ -473,7 +268,9 @@ class _HomeViewState extends State<HomeView> {
                 },
               ),
             ),
-            SizedBox(height: 10,)
+            SizedBox(
+              height: 10,
+            )
           ],
         ),
       ),

@@ -6,7 +6,7 @@ import 'package:quotation_app/src/controllers/quotation_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/utils/icons.dart';
 import 'package:quotation_app/src/widgets/dashboard_quotation.dart';
-import 'package:quotation_app/src/widgets/filter_status.dart';
+import 'package:quotation_app/src/widgets/select_status.dart';
 import 'package:quotation_app/src/widgets/quotation_list_tile.dart';
 
 class HomeView extends StatelessWidget {
