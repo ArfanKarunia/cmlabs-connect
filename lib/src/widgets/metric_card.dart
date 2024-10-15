@@ -17,6 +17,24 @@ class MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var label = "$count";
+
+    if (nameMetric == "New Leads" && count > 10) {
+      label = "10+";
+    }
+
+    if (nameMetric == "Followed Up" && count > 50) {
+      label = "50+";
+    }
+
+    if (nameMetric == "Accepted" && count > 100) {
+      label = "100+";
+    }
+
+    if (nameMetric == "Last 30 Day" && count > 100) {
+      label = "100+";
+    }
+
     return Expanded(
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -34,7 +52,7 @@ class MetricCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$count',
+                  '${label}',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 20,
                     color: color,

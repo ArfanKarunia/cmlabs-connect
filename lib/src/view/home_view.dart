@@ -1,14 +1,13 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/constant/const.dart';
 import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
+import 'package:quotation_app/src/controllers/dashboard_controller.dart';
 import 'package:quotation_app/src/controllers/quotation_controller.dart';
+import 'package:quotation_app/src/controllers/user_controller.dart';
+import 'package:quotation_app/src/models/user_model.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/widgets/select_status.dart';
 import 'package:quotation_app/src/widgets/metric_card.dart';
@@ -22,13 +21,33 @@ class HomeView extends StatefulWidget {
 
   final BottomNavController navController = Get.put(BottomNavController());
 
+  final UserController userController = Get.put(UserController());
+
+  final DashboardController dashboardController = Get.put(DashboardController());
+
+  var acceptedData = 0;
+
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
   @override
+  void initState() {
+    super.initState();
+    widget.dashboardController.saveDashboardData();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    User? user = widget.userController.user.value;
+
+    print("link gambar: ${user!.picUrl}");
+    print("jumlah new: ${widget.dashboardController.amount_newLeads.value}");
+    print("jumlah accepted: ${widget.dashboardController.amount_acceptedLeads.value}");
+    print("jumlah followed up: ${widget.dashboardController.amount_followedUpLeads.value}");
+    print("jumlah last 30 day: ${widget.dashboardController.amount_last30Day.value}");
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       body: SingleChildScrollView(
@@ -53,16 +72,20 @@ class _HomeViewState extends State<HomeView> {
                             Container(
                               width: 50,
                               height: 50,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: AppColors.white,
+                                image: DecorationImage(
+                                  image: (user.picUrl != null &&
+                                          user.picUrl!.isNotEmpty)
+                                      ? NetworkImage(user.picUrl!)
+                                      : const AssetImage(
+                                          "assets/icons/cmlabs_icon.png",
+                                        ) as ImageProvider,
+                                  fit: BoxFit.cover,
+                                ),
+                                
                               ),
-                              // child: ClipOval(
-                              //   child: Image.network(
-                              //     'https://images.unsplash.com/photo-1508341591423-4347099e1f19?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                              //     fit: BoxFit.contain,
-                              //   ),
-                              // ),
                             ),
                             const SizedBox(
                               width: 15,
@@ -71,7 +94,7 @@ class _HomeViewState extends State<HomeView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "John Doe",
+                                  "${user.name}",
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -79,7 +102,7 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ),
                                 Text(
-                                  "Admin",
+                                  "${user.roleName}",
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     color: AppColors.text_2,
@@ -123,7 +146,7 @@ class _HomeViewState extends State<HomeView> {
                           Row(
                             children: [
                               MetricCard(
-                                count: 0,
+                                count: widget.dashboardController.amount_newLeads.value,
                                 nameMetric: "New Leads",
                                 color: AppColors.primary,
                               ),
@@ -131,7 +154,7 @@ class _HomeViewState extends State<HomeView> {
                                 width: 10,
                               ),
                               MetricCard(
-                                count: 0,
+                                count: widget.dashboardController.amount_last30Day.value,
                                 nameMetric: "Last 30 Day",
                                 color: AppColors.purple,
                               ),
@@ -143,7 +166,8 @@ class _HomeViewState extends State<HomeView> {
                           Row(
                             children: [
                               MetricCard(
-                                count: 0,
+                                count: widget.dashboardController
+                                    .amount_acceptedLeads.value,
                                 nameMetric: "Accepted",
                                 color: AppColors.success,
                               ),
@@ -151,7 +175,7 @@ class _HomeViewState extends State<HomeView> {
                                 width: 10,
                               ),
                               MetricCard(
-                                count: 0,
+                                count: widget.dashboardController.amount_followedUpLeads.value,
                                 nameMetric: "Followed Up",
                                 color: AppColors.info,
                               ),

@@ -19,88 +19,91 @@ class UserAdapter extends TypeAdapter<User> {
     return User(
       id: fields[0] as int,
       adminRoleId: fields[1] as int,
-      rememberToken: fields[2] as String?,
-      username: fields[6] as String,
-      name: fields[3] as String,
-      email: fields[4] as String,
-      password: fields[5] as String,
-      pic: fields[7] as String?,
-      phone: fields[8] as String?,
-      jobPosition: fields[9] as String?,
-      about: fields[10] as String?,
-      aboutEn: fields[11] as String?,
-      facebook: fields[12] as String?,
-      twitter: fields[13] as String?,
-      linkedin: fields[14] as String?,
-      instagram: fields[15] as String?,
-      medium: fields[16] as String?,
-      tiktok: fields[17] as String?,
-      quora: fields[18] as String?,
-      additionalInformation: fields[19] as String?,
-      adminProjectId: fields[20] as int?,
-      link: fields[21] as String?,
-      adminPositionId: fields[22] as int?,
-      picUrl: fields[23] as String?,
-      createdAt: fields[24] as DateTime?,
-      updatedAt: fields[25] as DateTime?,
+      roleName: fields[2] as String,
+      rememberToken: fields[3] as String?,
+      username: fields[7] as String,
+      name: fields[4] as String,
+      email: fields[5] as String,
+      password: fields[6] as String,
+      pic: fields[8] as String?,
+      phone: fields[9] as String?,
+      jobPosition: fields[10] as String?,
+      about: fields[11] as String?,
+      aboutEn: fields[12] as String?,
+      facebook: fields[13] as String?,
+      twitter: fields[14] as String?,
+      linkedin: fields[15] as String?,
+      instagram: fields[16] as String?,
+      medium: fields[17] as String?,
+      tiktok: fields[18] as String?,
+      quora: fields[19] as String?,
+      additionalInformation: fields[20] as String?,
+      adminProjectId: fields[21] as int?,
+      link: fields[22] as String?,
+      adminPositionId: fields[23] as int?,
+      picUrl: fields[24] as String?,
+      createdAt: fields[25] as DateTime?,
+      updatedAt: fields[26] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, User obj) {
     writer
-      ..writeByte(26)
+      ..writeByte(27)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.adminRoleId)
       ..writeByte(2)
-      ..write(obj.rememberToken)
+      ..write(obj.roleName)
       ..writeByte(3)
-      ..write(obj.name)
+      ..write(obj.rememberToken)
       ..writeByte(4)
-      ..write(obj.email)
+      ..write(obj.name)
       ..writeByte(5)
-      ..write(obj.password)
+      ..write(obj.email)
       ..writeByte(6)
-      ..write(obj.username)
+      ..write(obj.password)
       ..writeByte(7)
-      ..write(obj.pic)
+      ..write(obj.username)
       ..writeByte(8)
-      ..write(obj.phone)
+      ..write(obj.pic)
       ..writeByte(9)
-      ..write(obj.jobPosition)
+      ..write(obj.phone)
       ..writeByte(10)
-      ..write(obj.about)
+      ..write(obj.jobPosition)
       ..writeByte(11)
-      ..write(obj.aboutEn)
+      ..write(obj.about)
       ..writeByte(12)
-      ..write(obj.facebook)
+      ..write(obj.aboutEn)
       ..writeByte(13)
-      ..write(obj.twitter)
+      ..write(obj.facebook)
       ..writeByte(14)
-      ..write(obj.linkedin)
+      ..write(obj.twitter)
       ..writeByte(15)
-      ..write(obj.instagram)
+      ..write(obj.linkedin)
       ..writeByte(16)
-      ..write(obj.medium)
+      ..write(obj.instagram)
       ..writeByte(17)
-      ..write(obj.tiktok)
+      ..write(obj.medium)
       ..writeByte(18)
-      ..write(obj.quora)
+      ..write(obj.tiktok)
       ..writeByte(19)
-      ..write(obj.additionalInformation)
+      ..write(obj.quora)
       ..writeByte(20)
-      ..write(obj.adminProjectId)
+      ..write(obj.additionalInformation)
       ..writeByte(21)
-      ..write(obj.link)
+      ..write(obj.adminProjectId)
       ..writeByte(22)
-      ..write(obj.adminPositionId)
+      ..write(obj.link)
       ..writeByte(23)
-      ..write(obj.picUrl)
+      ..write(obj.adminPositionId)
       ..writeByte(24)
-      ..write(obj.createdAt)
+      ..write(obj.picUrl)
       ..writeByte(25)
+      ..write(obj.createdAt)
+      ..writeByte(26)
       ..write(obj.updatedAt);
   }
 
