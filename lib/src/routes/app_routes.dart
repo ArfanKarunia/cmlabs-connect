@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:quotation_app/src/view/detail_quotation.dart';
+import 'package:quotation_app/src/view/filter_view.dart';
 import 'package:quotation_app/src/view/login_view.dart';
 import 'package:quotation_app/src/view/profile_view.dart';
 import 'package:quotation_app/src/widgets/bottom_navigation.dart';
@@ -10,6 +11,8 @@ class AppRoutes {
   static const String loginForm = '/login';
   static const String detailQuotation = '/detailQuotation';
   static const String profile = '/profile';
+
+  static const String filter = '/filter';
 
   // List of Route
   static List<GetPage> routes = [
@@ -28,6 +31,9 @@ class AppRoutes {
         return DetailQuotation(quotation: args['quotation']);
       },
     ),
+    
+    GetPage(name: filter, page: () => FilterView()),
+
     GetPage(name: profile, page: () => ProfileView()),
   ];
 }

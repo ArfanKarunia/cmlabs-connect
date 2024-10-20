@@ -156,86 +156,86 @@ class _FilterOverlayState extends State<FilterOverlay> {
                   //       const SizedBox(
                   //         height: 15,
                   //       ),
-                  //       const Text(
-                  //         "Data range",
-                  //         style: TextStyle(
-                  //           fontSize: 12,
-                  //           fontWeight: FontWeight.w600,
-                  //         ),
-                  //       ),
-                  //       const SizedBox(
-                  //         height: 5,
-                  //       ),
-                  //       SizedBox(
-                  //         child: Row(
-                  //           children: [
-                  //             Expanded(
-                  //               child: TextFormField(
-                  //                 style: TextStyle(
-                  //                   fontSize: 14,
-                  //                 ),
-                  //                 decoration: const InputDecoration(
-                  //                   border: OutlineInputBorder(),
-                  //                 ),
-                  //                 readOnly: true,
-                  //                 controller: startDateController,
-                  //                 onTap: () async {
-                  //                   DateTime? pickedDate = await showDatePicker(
-                  //                     context: context,
-                  //                     initialDate: quotationController
-                  //                             .filterStartDate.value ??
-                  //                         DateTime.now(),
-                  //                     firstDate: DateTime(2000),
-                  //                     lastDate: DateTime(2100),
-                  //                   );
-                  //                   if (pickedDate != null) {
-                  //                     temporaryStartDate.value = pickedDate;
-                  //                     startDateController.text =
-                  //                         DateFormat('yyyy-MM-dd')
-                  //                             .format(pickedDate);
-                  //                   }
-                  //                 },
-                  //               ),
-                  //             ),
-                  //             const SizedBox(width: 10), // Spasi antar form
-                  //             const Text(
-                  //               "to",
-                  //               style: TextStyle(
-                  //                 fontSize: 12,
-                  //               ),
-                  //             ),
-                  //             const SizedBox(width: 10), // Spasi antar form
-                  //             Expanded(
-                  //               child: TextFormField(
-                  //                 style: TextStyle(
-                  //                   fontSize: 14,
-                  //                 ),
-                  //                 decoration: const InputDecoration(
-                  //                   border: OutlineInputBorder(),
-                  //                 ),
-                  //                 readOnly: true,
-                  //                 controller: endDateController,
-                  //                 onTap: () async {
-                  //                   DateTime? pickedDate = await showDatePicker(
-                  //                     context: context,
-                  //                     initialDate: quotationController
-                  //                             .filterEndDate.value ??
-                  //                         DateTime.now(),
-                  //                     firstDate: DateTime(2000),
-                  //                     lastDate: DateTime(2100),
-                  //                   );
-                  //                   if (pickedDate != null) {
-                  //                     temporaryEndDate.value = pickedDate;
-                  //                     endDateController.text =
-                  //                         DateFormat('yyyy-MM-dd')
-                  //                             .format(pickedDate);
-                  //                   }
-                  //                 },
-                  //               ),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //       ),
+                        // const Text(
+                        //   "Data range",
+                        //   style: TextStyle(
+                        //     fontSize: 12,
+                        //     fontWeight: FontWeight.w600,
+                        //   ),
+                        // ),
+                        // const SizedBox(
+                        //   height: 5,
+                        // ),
+                        // SizedBox(
+                        //   child: Row(
+                        //     children: [
+                        //       Expanded(
+                        //         child: TextFormField(
+                        //           style: TextStyle(
+                        //             fontSize: 14,
+                        //           ),
+                        //           decoration: const InputDecoration(
+                        //             border: OutlineInputBorder(),
+                        //           ),
+                        //           readOnly: true,
+                        //           controller: startDateController,
+                        //           onTap: () async {
+                        //             DateTime? pickedDate = await showDatePicker(
+                        //               context: context,
+                        //               initialDate: quotationController
+                        //                       .filterStartDate.value ??
+                        //                   DateTime.now(),
+                        //               firstDate: DateTime(2000),
+                        //               lastDate: DateTime(2100),
+                        //             );
+                        //             if (pickedDate != null) {
+                        //               temporaryStartDate.value = pickedDate;
+                        //               startDateController.text =
+                        //                   DateFormat('yyyy-MM-dd')
+                        //                       .format(pickedDate);
+                        //             }
+                        //           },
+                        //         ),
+                        //       ),
+                        //       const SizedBox(width: 10), // Spasi antar form
+                        //       const Text(
+                        //         "to",
+                        //         style: TextStyle(
+                        //           fontSize: 12,
+                        //         ),
+                        //       ),
+                        //       const SizedBox(width: 10), // Spasi antar form
+                        //       Expanded(
+                        //         child: TextFormField(
+                        //           style: TextStyle(
+                        //             fontSize: 14,
+                        //           ),
+                        //           decoration: const InputDecoration(
+                        //             border: OutlineInputBorder(),
+                        //           ),
+                        //           readOnly: true,
+                        //           controller: endDateController,
+                        //           onTap: () async {
+                                    // DateTime? pickedDate = await showDatePicker(
+                                    //   context: context,
+                                    //   initialDate: quotationController
+                                    //           .filterEndDate.value ??
+                                    //       DateTime.now(),
+                                    //   firstDate: DateTime(2000),
+                                    //   lastDate: DateTime(2100),
+                                    // );
+                                    // if (pickedDate != null) {
+                                    //   temporaryEndDate.value = pickedDate;
+                                    //   endDateController.text =
+                                    //       DateFormat('yyyy-MM-dd')
+                                    //           .format(pickedDate);
+                                    // }
+                        //           },
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                   //       const SizedBox(
                   //         height: 15,
                   //       ),

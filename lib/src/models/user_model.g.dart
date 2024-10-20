@@ -8,7 +8,7 @@ part of 'user_model.dart';
 
 class UserAdapter extends TypeAdapter<User> {
   @override
-  final int typeId = 4;
+  final int typeId = 3;
 
   @override
   User read(BinaryReader reader) {
@@ -19,7 +19,7 @@ class UserAdapter extends TypeAdapter<User> {
     return User(
       id: fields[0] as int,
       adminRoleId: fields[1] as int,
-      roleName: fields[2] as String,
+      roleName: fields[2] as String?,
       rememberToken: fields[3] as String?,
       username: fields[7] as String,
       name: fields[4] as String,

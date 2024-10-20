@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:quotation_app/src/app.dart';
-import 'package:quotation_app/src/models/category_model.dart';
-import 'package:quotation_app/src/models/client_source_model.dart';
+import 'package:quotation_app/src/models/client_pic_model.dart';
 import 'package:quotation_app/src/models/dashboard_data_model.dart';
 import 'package:quotation_app/src/models/quotation_model.dart';
 import 'package:quotation_app/src/models/user_model.dart';
@@ -20,16 +19,18 @@ Future<void> main() async {
   Hive.registerAdapter(QuotationAdapter());
   Hive.registerAdapter(DashboardDataAdapter());
   
-  Hive.registerAdapter(CategoryAdapter());
-  Hive.registerAdapter(ClientSourceAdapter());
+  // Hive.registerAdapter(CategoryAdapter());
+  // Hive.registerAdapter(ClientSourceAdapter());
 
   // membuka box (tempat penyimpanan) untuk Quotation
-  await Hive.openBox<Quotation>('quotations');
+  await Hive.openBox<Quotation>('quotationBox');
+  await Hive.openBox<ClientPic>('picBox');
   await Hive.openBox<User>('userBox');
-  await Hive.openBox<DashboardData>('dasboardBox');
+  await Hive.openBox<DashboardData>('dashboardBox');
 
   
   HttpOverrides.global = CustomHttpOverrides();
+  // await dotenv.load(fileName: ".env");
 
   await SentryFlutter.init((options) {
     // add the sentry proeject link

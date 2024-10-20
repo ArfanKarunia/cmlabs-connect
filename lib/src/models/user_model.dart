@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'user_model.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: 3)
 class User extends HiveObject {
   @HiveField(0)
   final int id;
@@ -11,7 +11,7 @@ class User extends HiveObject {
   final int adminRoleId;
 
   @HiveField(2)
-  final String roleName;
+  final String? roleName;
 
   @HiveField(3)
   final String? rememberToken;
@@ -88,7 +88,7 @@ class User extends HiveObject {
   User({
     required this.id,
     required this.adminRoleId,
-    required this.roleName,
+    this.roleName = "User",
     this.rememberToken,
     required this.username,
     required this.name,

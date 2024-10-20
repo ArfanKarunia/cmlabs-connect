@@ -169,29 +169,29 @@ class InboxView extends StatelessWidget {
               height: 15,
             ),
 
-            Obx(
-              () {
-                if (quotationController.filteredQuotations.isEmpty) {
-                  return const Center(child: Text('No quotations available.'));
-                }
+            // Obx(
+            //   () {
+            //     if (quotationController.filteredQuotations.isEmpty) {
+            //       return const Center(child: Text('No quotations available.'));
+            //     }
             
-                return SizedBox(
-                  width: double.infinity,
-                  height: 500,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
-                    itemCount: quotationController.filteredQuotations.length,
-                    itemBuilder: (context, index) {
-                      var quotation =
-                          quotationController.filteredQuotations[index];
-                      return QuotationListTile(
-                        quotation: quotation,
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
+            //     return SizedBox(
+            //       width: double.infinity,
+            //       height: 500,
+            //       child: ListView.builder(
+            //         padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+            //         itemCount: quotationController.filteredQuotations.length,
+            //         itemBuilder: (context, index) {
+            //           var quotation =
+            //               quotationController.filteredQuotations[index];
+            //           return QuotationListTile(
+            //             quotation: quotation,
+            //           );
+            //         },
+            //       ),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),

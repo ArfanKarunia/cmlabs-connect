@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'dashboard_data_model.g.dart';
 
-@HiveType(typeId: 5)
+@HiveType(typeId: 4)
 class DashboardData extends HiveObject {
   @HiveField(0)
   final int amountNewLeads;

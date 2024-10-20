@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:quotation_app/src/constant/config.dart';
 import 'package:quotation_app/src/controllers/authentication_controller.dart';
 import 'package:quotation_app/src/models/dashboard_data_model.dart';
 
@@ -18,7 +20,7 @@ class DashboardController extends GetxController {
   Box<DashboardData>? dashboardBox;
 
   final dio = Dio();
-  final baseUrl = 'https://api-connect.cmlabs.dev';
+  final baseUrl = Config.baseURL;
 
   @override
   Future<void> onInit() async {

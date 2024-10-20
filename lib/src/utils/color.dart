@@ -32,7 +32,7 @@ class AppColors {
 
 
   static const Color activeBottomNav = Color(0xFF1E222D);
-  static const Color inactiveBottomNav = Color(0xFF252A38);
+  static const Color inactiveOption = Color(0xFFF0F0F0);
 
 
 

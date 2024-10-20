@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
+import 'package:quotation_app/src/constant/config.dart';
 import 'package:quotation_app/src/controllers/user_controller.dart';
 import 'package:quotation_app/src/models/user_model.dart';
 import 'package:quotation_app/src/utils/toast.dart';
@@ -14,16 +15,18 @@ class AuthenticationController extends GetxController {
   var isRememberMe = false.obs;
 
   final Dio dio = Dio();
-  final String apiLogin = 'https://api-connect.cmlabs.dev/auth/login';
+  final baseUrl = Config.baseURL;
 
   Box<User>? userBox;
   UserController userController = Get.put(UserController());
 
   Future<Map<String, String>?> login(String email, String password) async {
     // isLoading.value = true;
+
+    final apiUrl = baseUrl + "/auth/login";
     try {
       var response = await dio.post(
-        apiLogin,
+        apiUrl,
         data: {'email': email, 'password': password},
       );
 
