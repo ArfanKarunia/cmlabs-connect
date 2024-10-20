@@ -6,26 +6,30 @@ import 'package:quotation_app/src/constant/const.dart';
 import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
 import 'package:quotation_app/src/controllers/quotation_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
+import 'package:quotation_app/src/view/filter_view.dart';
+import 'package:quotation_app/src/widgets/custom_buttom.dart';
 
 class SelectStatus extends StatelessWidget {
   SelectStatus({
     super.key,
     required this.controller,
     this.isFilterButton = false,
-    this.isViewAllButton = false,
+    this.isHistorycalLeadButton = false,
     this.isNewLead = true,
     this.isFollowedUp = true,
     this.isAccepted = true,
     this.isRejected = true,
+    this.isOnHold = false,
   });
 
   QuotationController controller;
   final bool isFilterButton;
-  final bool isViewAllButton;
+  final bool isHistorycalLeadButton;
   final bool isNewLead;
   final bool isFollowedUp;
   final bool isAccepted;
   final bool isRejected;
+  final bool isOnHold;
 
   final BottomNavController navController = Get.put(BottomNavController());
 
@@ -59,11 +63,7 @@ class SelectStatus extends StatelessWidget {
                               )
                             : BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
-                                color: Colors.transparent,
-                                border: Border.all(
-                                  color: AppColors.text_4,
-                                  width: 1,
-                                ),
+                                color: AppColors.inactiveOption,
                               ),
                         child: Center(
                           child: Text('Recently',
@@ -74,7 +74,7 @@ class SelectStatus extends StatelessWidget {
                                       fontWeight: FontWeight.w400,
                                     )
                                   : GoogleFonts.plusJakartaSans(
-                                      color: AppColors.text_4,
+                                      color: AppColors.text_3,
                                       fontSize: 11,
                                       fontWeight: FontWeight.w400,
                                     )),
@@ -115,6 +115,10 @@ class SelectStatus extends StatelessWidget {
                               label = 'Rejected';
                               shouldShow = isRejected;
                               break;
+                            case StatusLead.onHold:
+                              label = 'On Hold';
+                              shouldShow = isOnHold;
+                              break;
                           }
 
                           return (!shouldShow)
@@ -129,23 +133,19 @@ class SelectStatus extends StatelessWidget {
                                         horizontal: 7,
                                         vertical: 3,
                                       ),
-                                      decoration:
-                                          (controller.filterStatus.value ==
-                                                  StatusLead.values[index])
-                                              ? BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  color: AppColors.primary,
-                                                )
-                                              : BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(5),
-                                                  color: Colors.transparent,
-                                                  border: Border.all(
-                                                    color: AppColors.text_4,
-                                                    width: 1,
-                                                  ),
-                                                ),
+                                      decoration: (controller
+                                                  .filterStatus.value ==
+                                              StatusLead.values[index])
+                                          ? BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: AppColors.primary,
+                                            )
+                                          : BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                              color: AppColors.inactiveOption,
+                                            ),
                                       child: Center(
                                         child: Text(
                                           label,
@@ -158,7 +158,7 @@ class SelectStatus extends StatelessWidget {
                                                   fontWeight: FontWeight.w400,
                                                 )
                                               : GoogleFonts.plusJakartaSans(
-                                                  color: AppColors.text_4,
+                                                  color: AppColors.text_3,
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w400,
                                                 ),
@@ -176,50 +176,47 @@ class SelectStatus extends StatelessWidget {
             ),
           ),
 
-          //
-          (isFilterButton && isViewAllButton)
-              ? Row(
-                  children: [
-                    //
-                    (isFilterButton)
-                        ? IconButton(
-                            onPressed: () {
-                              navController.toggleFilterVisibility();
+          // Filter Section button & Historical Lead Button
+          Row(
+            children: [
+              (isFilterButton)
+                  ? CustomButton(
+                      onPressed: () {
+                        // Get.toNamed('/filter');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return FilterView();
                             },
-                            icon: Icon(
-                              Ionicons.options_outline,
-                              color: AppColors.text_1,
-                            ),
-                            style: ButtonStyle(
-                              overlayColor: WidgetStatePropertyAll(
-                                  const Color.fromARGB(33, 31, 149, 245)),
-                              shape: WidgetStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(),
-
-                    //
-                    (isViewAllButton)
-                        ? GestureDetector(
-                            onTap: () {},
-                            child: Text(
-                              "View all",
-                              style: GoogleFonts.plusJakartaSans(
-                                decoration: TextDecoration.underline,
-                                fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          )
-                        : Container(),
-                  ],
-                )
-              : Container()
+                          ),
+                        );
+                      },
+                      backgroundColor: Colors.transparent,
+                      overlayColor: Color.fromARGB(33, 31, 149, 245),
+                      child: Icon(
+                        Ionicons.options_outline,
+                        color: AppColors.text_1,
+                      ),
+                    )
+                  : Container(),
+              SizedBox(
+                width: 14,
+              ),
+              (isHistorycalLeadButton)
+                  ? CustomButton(
+                      onPressed: () {
+                        navController.toggleFilterVisibility();
+                      },
+                      backgroundColor: Colors.transparent,
+                      overlayColor: Color.fromARGB(33, 31, 149, 245),
+                      child: Icon(
+                        Icons.history,
+                        color: AppColors.text_1,
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
         ],
       ),
     );

@@ -8,7 +8,7 @@ part of 'client_source_model.dart';
 
 class ClientSourceAdapter extends TypeAdapter<ClientSource> {
   @override
-  final int typeId = 3;
+  final int typeId = 5;
 
   @override
   ClientSource read(BinaryReader reader) {

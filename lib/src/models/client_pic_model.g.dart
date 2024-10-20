@@ -1,38 +1,35 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'category_model.dart';
+part of 'client_pic_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CategoryAdapter extends TypeAdapter<Category> {
+class ClientPicAdapter extends TypeAdapter<ClientPic> {
   @override
-  final int typeId = 6;
+  final int typeId = 4;
 
   @override
-  Category read(BinaryReader reader) {
+  ClientPic read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Category(
-      id: fields[0] as int,
-      slug: fields[1] as String,
-      name: fields[2] as String,
+    return ClientPic(
+      name: fields[0] as String?,
+      position: fields[1] as String?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Category obj) {
+  void write(BinaryWriter writer, ClientPic obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.id)
-      ..writeByte(1)
-      ..write(obj.slug)
       ..writeByte(2)
-      ..write(obj.name);
+      ..writeByte(0)
+      ..write(obj.name)
+      ..writeByte(1)
+      ..write(obj.position);
   }
 
   @override
@@ -41,7 +38,7 @@ class CategoryAdapter extends TypeAdapter<Category> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CategoryAdapter &&
+      other is ClientPicAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'user_model.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: 3)
 class User extends HiveObject {
   @HiveField(0)
   final int id;
@@ -11,80 +11,84 @@ class User extends HiveObject {
   final int adminRoleId;
 
   @HiveField(2)
-  final String? rememberToken;
+  final String? roleName;
 
   @HiveField(3)
-  final String name;
+  final String? rememberToken;
 
   @HiveField(4)
-  final String email;
+  final String name;
 
   @HiveField(5)
-  final String password;
+  final String email;
 
   @HiveField(6)
-  final String username;
+  final String password;
 
   @HiveField(7)
-  final String? pic;
+  final String username;
 
   @HiveField(8)
-  final String? phone;
+  final String? pic;
 
   @HiveField(9)
-  final String? jobPosition;
+  final String? phone;
 
   @HiveField(10)
-  final String? about;
+  final String? jobPosition;
 
   @HiveField(11)
-  final String? aboutEn;
+  final String? about;
 
   @HiveField(12)
-  final String? facebook;
+  final String? aboutEn;
 
   @HiveField(13)
-  final String? twitter;
+  final String? facebook;
 
   @HiveField(14)
-  final String? linkedin;
+  final String? twitter;
 
   @HiveField(15)
-  final String? instagram;
+  final String? linkedin;
 
   @HiveField(16)
-  final String? medium;
+  final String? instagram;
 
   @HiveField(17)
-  final String? tiktok;
+  final String? medium;
 
   @HiveField(18)
-  final String? quora;
+  final String? tiktok;
 
   @HiveField(19)
-  final String? additionalInformation;
+  final String? quora;
 
   @HiveField(20)
-  final int? adminProjectId;
+  final String? additionalInformation;
 
   @HiveField(21)
-  final String? link;
+  final int? adminProjectId;
 
   @HiveField(22)
-  final int? adminPositionId;
+  final String? link;
 
   @HiveField(23)
-  final String? picUrl;
+  final int? adminPositionId;
 
   @HiveField(24)
-  final DateTime? createdAt;
+  final String? picUrl;
 
   @HiveField(25)
+  final DateTime? createdAt;
+
+  @HiveField(26)
   final DateTime? updatedAt;
 
   User({
     required this.id,
     required this.adminRoleId,
+    this.roleName = "User",
     this.rememberToken,
     required this.username,
     required this.name,
@@ -116,6 +120,7 @@ class User extends HiveObject {
     return User(
       id: map['id'],
       adminRoleId: map['admin_role_id'],
+      roleName: map['role_name'],
       rememberToken: map['remember_token'],
       username: map['username'],
       name: map['name'],
@@ -150,6 +155,7 @@ class User extends HiveObject {
     return {
       'id': id,
       'adminRoleId': adminRoleId,
+      'roleName': roleName,
       'rememberToken': rememberToken,
       'username': username,
       'name': name,

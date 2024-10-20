@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
 import 'package:quotation_app/src/controllers/filter_controller.dart';
+import 'package:quotation_app/src/controllers/pic_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/view/home_view.dart';
 import 'package:quotation_app/src/view/inbox_view.dart';
@@ -23,11 +24,18 @@ class BottomNavigation extends StatelessWidget {
 
   final FilterController filterController = Get.put(FilterController());
 
+  final PicController picController = Get.put(PicController());
+
   @override
   Widget build(BuildContext context) {
+    // Memanggil fetch data client pic hanya sekali saat halaman pertama kali dibuka
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      picController.fetchNewPICData();
+    });
+
     return Obx(
       () => Scaffold(
-        body: Container(
+        body: SizedBox.expand(
           child: Stack(
             children: [
               _pages[navController.currentIndex.value],

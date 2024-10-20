@@ -7,9 +7,9 @@ void showSuccessToast(String message) {
     msg: message,
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.BOTTOM,
-    backgroundColor: AppColors.success,
-    textColor: AppColors.white_1,
-    fontSize: 16,
+    backgroundColor: AppColors.bgSuccess,
+    textColor: AppColors.success,
+    fontSize: 12,
   );
 }
 
@@ -18,8 +18,8 @@ void showErrorToast(String message) {
     msg: message,
     toastLength: Toast.LENGTH_SHORT,
     gravity: ToastGravity.BOTTOM,
-    backgroundColor: AppColors.danger,
-    textColor: AppColors.white_1,
-    fontSize: 16,
+    backgroundColor: AppColors.bgDanger,
+    textColor: AppColors.danger,
+    fontSize: 12,
   );
 }

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:quotation_app/src/controllers/authentication_controller.dart';
+import 'package:quotation_app/src/controllers/client_source_controller.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/utils/toast.dart';
 
@@ -19,6 +20,8 @@ class _LoginViewState extends State<LoginView> {
 
   final AuthenticationController authController =
       Get.put(AuthenticationController());
+
+  // final ClientSourceController clientSourceController = Get.put(ClientSourceController());
 
   bool isCheckedRememberme = false;
 
@@ -106,10 +109,13 @@ class _LoginViewState extends State<LoginView> {
 
     return null; // Return null jika tidak ada error
   }
+  
 
   @override
   void initState() {
     super.initState();
+
+    // clientSourceController.fetchClientSourceData();
     // Tambahkan listener ke controller
     emailController.addListener(() {
       if (_messageError != null) {

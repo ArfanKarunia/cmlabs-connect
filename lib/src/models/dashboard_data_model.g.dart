@@ -1,38 +1,41 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'category_model.dart';
+part of 'dashboard_data_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class CategoryAdapter extends TypeAdapter<Category> {
+class DashboardDataAdapter extends TypeAdapter<DashboardData> {
   @override
-  final int typeId = 6;
+  final int typeId = 4;
 
   @override
-  Category read(BinaryReader reader) {
+  DashboardData read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Category(
-      id: fields[0] as int,
-      slug: fields[1] as String,
-      name: fields[2] as String,
+    return DashboardData(
+      amountNewLeads: fields[0] as int,
+      amountAcceptedLeads: fields[2] as int,
+      amountFollowedupLeads: fields[3] as int,
+      amountLast30Days: fields[1] as int,
     );
   }
 
   @override
-  void write(BinaryWriter writer, Category obj) {
+  void write(BinaryWriter writer, DashboardData obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.amountNewLeads)
       ..writeByte(1)
-      ..write(obj.slug)
+      ..write(obj.amountLast30Days)
       ..writeByte(2)
-      ..write(obj.name);
+      ..write(obj.amountAcceptedLeads)
+      ..writeByte(3)
+      ..write(obj.amountFollowedupLeads);
   }
 
   @override
@@ -41,7 +44,7 @@ class CategoryAdapter extends TypeAdapter<Category> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is CategoryAdapter &&
+      other is DashboardDataAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

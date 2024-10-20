@@ -1,14 +1,15 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/constant/const.dart';
 import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
+import 'package:quotation_app/src/controllers/dashboard_controller.dart';
+import 'package:quotation_app/src/controllers/pic_controller.dart';
 import 'package:quotation_app/src/controllers/quotation_controller.dart';
+import 'package:quotation_app/src/controllers/user_controller.dart';
+import 'package:quotation_app/src/models/user_model.dart';
 import 'package:quotation_app/src/utils/color.dart';
 import 'package:quotation_app/src/widgets/select_status.dart';
 import 'package:quotation_app/src/widgets/metric_card.dart';
@@ -21,6 +22,15 @@ class HomeView extends StatefulWidget {
       Get.put(QuotationController());
 
   final BottomNavController navController = Get.put(BottomNavController());
+  
+  final UserController userController = Get.put(UserController());
+  
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
+  
+  final PicController picController = Get.put(PicController());
+
+  var acceptedData = 0;
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -28,7 +38,26 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   @override
+  void initState() {
+    super.initState();
+    // widget.picController.fetchNewPICData();
+    // widget.dashboardController.saveDashboardData();
+    // widget.quotationController.fetchQuotationData();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    User? user = widget.userController.user.value;
+
+    print("link gambar: ${user!.picUrl}");
+    print("jumlah new: ${widget.dashboardController.amount_newLeads.value}");
+    print(
+        "jumlah accepted: ${widget.dashboardController.amount_acceptedLeads.value}");
+    print(
+        "jumlah followed up: ${widget.dashboardController.amount_followedUpLeads.value}");
+    print(
+        "jumlah last 30 day: ${widget.dashboardController.amount_last30Day.value}");
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       body: SingleChildScrollView(
@@ -53,16 +82,19 @@ class _HomeViewState extends State<HomeView> {
                             Container(
                               width: 50,
                               height: 50,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: AppColors.white,
+                                image: DecorationImage(
+                                  image: (user.picUrl != null &&
+                                          user.picUrl!.isNotEmpty)
+                                      ? NetworkImage(user.picUrl!)
+                                      : const AssetImage(
+                                          "assets/icons/cmlabs_icon.png",
+                                        ) as ImageProvider,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                              // child: ClipOval(
-                              //   child: Image.network(
-                              //     'https://images.unsplash.com/photo-1508341591423-4347099e1f19?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                              //     fit: BoxFit.contain,
-                              //   ),
-                              // ),
                             ),
                             const SizedBox(
                               width: 15,
@@ -71,7 +103,7 @@ class _HomeViewState extends State<HomeView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "John Doe",
+                                  "${user.name}",
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -79,7 +111,7 @@ class _HomeViewState extends State<HomeView> {
                                   ),
                                 ),
                                 Text(
-                                  "Admin",
+                                  "${user.roleName}",
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 12,
                                     color: AppColors.text_2,
@@ -116,50 +148,58 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       ],
                     ),
-                    Container(
-                      padding: EdgeInsets.only(top: 20),
-                      child: Column(
-                        children: [
-                          Row(
+                    Obx(
+                      () {
+                        return Container(
+                          padding: EdgeInsets.only(top: 20),
+                          child: Column(
                             children: [
-                              MetricCard(
-                                count: 0,
-                                nameMetric: "New Leads",
-                                color: AppColors.primary,
+                              Row(
+                                children: [
+                                  MetricCard(
+                                    count: widget.dashboardController
+                                        .amount_newLeads.value,
+                                    nameMetric: "New Leads",
+                                    color: AppColors.primary,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  MetricCard(
+                                    count: widget.dashboardController
+                                        .amount_last30Day.value,
+                                    nameMetric: "Last 30 Day",
+                                    color: AppColors.purple,
+                                  ),
+                                ],
                               ),
                               SizedBox(
-                                width: 10,
+                                height: 10,
                               ),
-                              MetricCard(
-                                count: 0,
-                                nameMetric: "Last 30 Day",
-                                color: AppColors.purple,
+                              Row(
+                                children: [
+                                  MetricCard(
+                                    count: widget.dashboardController
+                                        .amount_acceptedLeads.value,
+                                    nameMetric: "Accepted",
+                                    color: AppColors.success,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  MetricCard(
+                                    count: widget.dashboardController
+                                        .amount_followedUpLeads.value,
+                                    nameMetric: "Followed Up",
+                                    color: AppColors.info,
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            children: [
-                              MetricCard(
-                                count: 0,
-                                nameMetric: "Accepted",
-                                color: AppColors.success,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              MetricCard(
-                                count: 0,
-                                nameMetric: "Followed Up",
-                                color: AppColors.info,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                        );
+                      },
+                    )
                   ],
                 ),
               ),
@@ -171,18 +211,18 @@ class _HomeViewState extends State<HomeView> {
 
             // Body (Qoutation List)
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SizedBox(
-                width: double.infinity,
-                height: 95,
-                child: Stack(
-                  alignment: Alignment.bottomLeft,
-                  children: [
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: Column(
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              width: double.infinity,
+              child: Column(
+                children: [
+                  // Title and button View All
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
@@ -194,16 +234,20 @@ class _HomeViewState extends State<HomeView> {
                             ),
                           ),
                           SizedBox(
-                            height: 7,
+                            height: 5,
                           ),
                           Row(
                             children: [
-                              Text(
-                                "${widget.quotationController.quotationList.length}",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.primary,
-                                ),
+                              Obx(
+                                () {
+                                  return Text(
+                                    "${widget.quotationController.quotationList.length}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primary,
+                                    ),
+                                  );
+                                },
                               ),
                               const Text(
                                 " Leads",
@@ -216,25 +260,40 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         ],
                       ),
-                    ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: Text(
+                          "View all",
+                          style: GoogleFonts.plusJakartaSans(
+                            decoration: TextDecoration.underline,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 7,
+                  ),
 
-                    // Selection status, filter button, & view all button
-                    Container(
-                      width: double.infinity,
-                      child: SelectStatus(
-                        controller: widget.quotationController,
-                        isAccepted: false,
-                        isRejected: false,
-                        isFilterButton: true,
-                        isViewAllButton: true,
-                      ),
-                    )
-                  ],
-                ),
+                  // Select Status, Filter Section, & Historical Lead History
+                  Container(
+                    child: SelectStatus(
+                      controller: widget.quotationController,
+                      isAccepted: false,
+                      isRejected: false,
+                      isFilterButton: true,
+                      isHistorycalLeadButton: true,
+                    ),
+                  )
+                ],
               ),
             ),
+
             SizedBox(
-              height: 5,
+              height: 14,
             ),
 
             // QOUTATION LIST
@@ -243,21 +302,41 @@ class _HomeViewState extends State<HomeView> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Obx(
                 () {
-                  List quotationList =
-                      widget.quotationController.filteredQuotations;
+                  List quotationList = widget.quotationController.filteredQuotations;
 
                   if (quotationList.isEmpty) {
-                    return const Center(
-                        child: Text('No quotations available.'));
+                    return Container(
+                      width: double.infinity,
+                      height: 300,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Ionicons.briefcase_outline,
+                              color: AppColors.text_4,
+                              size: 40,
+                            ),
+                            Text(
+                              'No available data',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.text_4,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   }
 
                   return Container(
                     width: double.infinity,
                     height: 500,
                     child: ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      itemCount: min(quotationList.length, 5),
+                      itemCount: min(quotationList.length, 10),
                       itemBuilder: (context, index) {
                         final quotation = quotationList[index];
 

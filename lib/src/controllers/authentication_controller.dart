@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:hive/hive.dart';
+import 'package:quotation_app/src/constant/config.dart';
 import 'package:quotation_app/src/controllers/user_controller.dart';
 import 'package:quotation_app/src/models/user_model.dart';
 import 'package:quotation_app/src/utils/toast.dart';
@@ -14,16 +15,18 @@ class AuthenticationController extends GetxController {
   var isRememberMe = false.obs;
 
   final Dio dio = Dio();
-  final String apiLogin = 'https://api-connect.cmlabs.dev/auth/login';
+  final baseUrl = Config.baseURL;
 
   Box<User>? userBox;
   UserController userController = Get.put(UserController());
 
   Future<Map<String, String>?> login(String email, String password) async {
     // isLoading.value = true;
+
+    final apiUrl = baseUrl + "/auth/login";
     try {
       var response = await dio.post(
-        apiLogin,
+        apiUrl,
         data: {'email': email, 'password': password},
       );
 
@@ -83,61 +86,6 @@ class AuthenticationController extends GetxController {
       isLoading(false); // Pastikan untuk menonaktifkan loading
     }
   }
-
-  // try {
-  //   var response = await dio
-  //       .post(apiLogin, data: {'email': email, 'password': password});
-
-  //   if (response.statusCode == 200) {
-  //     var data = response.data;
-
-  //     // Parsing response data ke model UserModel
-  //     String message = data['message'];
-  //     User user_data = User.fromMap(data['data_user']);
-
-  //     userController.user.value = user_data;
-
-  //     accesToken.value = data['access_token'];
-  //     tokenType.value = data['token_type'];
-
-  //     print(accesToken);
-
-  //     // Simpan user ke Hive jika remember me aktif
-  //     // if (isRememberMe.value) {
-  //     //   await userBox!.put('user', user);
-  //     // }
-
-  //     // Update state GetX
-  //     Get.snackbar('Success', message);
-
-  //     Get.toNamed('/home');
-  //   } else if (response.statusCode == 401) {
-  //     Get.snackbar('Error', 'Invalid email or password');
-  //   } else {
-  //     Get.snackbar('Error', 'Invalid email or password');
-  //   }
-  // } on DioException catch (e) {
-  //   // Tangani error dari DIO
-  //   if (e.response != null) {
-  //     if (e.response!.statusCode == 401) {
-  //       // Jika unauthorized dari API
-  //       Get.snackbar('Error', 'Invalid email or password');
-  //     } else {
-  //       // Error umum dari response API
-  //       Get.snackbar('Error', 'Error: ${e.response!.statusMessage}');
-  //       print(e);
-  //     }
-  //   } else {
-  //     // Jika error tidak berasal dari response (misalnya koneksi terputus)
-  //     Get.snackbar('Error', 'Connection failed. Please try again.');
-  //   }
-  // } catch (e) {
-  //   // Penanganan error umum
-  //   Get.snackbar('Error', 'An unexpected error occurred: $e');
-  //   print(e);
-  // } finally {
-  //   isLoading(false); // Nonaktifkan indikator loading
-  // }
 
   void toggleRememberMe(bool value) {
     isRememberMe(value);

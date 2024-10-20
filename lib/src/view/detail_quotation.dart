@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:quotation_app/src/constant/const.dart';
 import 'package:quotation_app/src/controllers/url_controller.dart';
 import 'package:quotation_app/src/models/quotation_model.dart';
 import 'package:quotation_app/src/utils/color.dart';
@@ -23,13 +24,39 @@ class DetailQuotation extends StatelessWidget {
     DateTime now = DateTime.now();
 
     // Mendapatkan waktu `joinedAt` dari quotation
-    DateTime joinedAt = quotation.joinedAt;
+    DateTime joinedAt = quotation.createdAt;
 
     // Menghitung selisih antara waktu sekarang dan `joinedAt`
     Duration difference = now.difference(joinedAt);
 
     // Mendapatkan jumlah hari dari selisih
     int pitchingDuration = difference.inDays;
+
+    StatusLead status;
+    String statusLabel = "";
+
+    switch(quotation.status){
+      case 0:
+        status = StatusLead.newLead;
+        statusLabel = "New";
+        break;
+      case 1:
+        status = StatusLead.followedUp;
+        statusLabel = "Followed Up";
+        break;
+      case 2:
+        status = StatusLead.accepted;
+        statusLabel = "Accepted";
+        break;
+      case 3:
+        status = StatusLead.rejected;
+        statusLabel = "Rejected";
+        break;
+      case 4:
+        status = StatusLead.onHold;
+        statusLabel = "On Hold";
+        break;
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -58,7 +85,7 @@ class DetailQuotation extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          quotation.companyName!,
+                          quotation.data.company!,
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -100,7 +127,7 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                quotation.status,
+                                statusLabel,
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -121,7 +148,7 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${quotation.joinedAt}",
+                                "${quotation.createdAt}",
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -142,7 +169,7 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                quotation.name ?? '-',
+                                quotation.data.name ?? '-',
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -188,7 +215,7 @@ class DetailQuotation extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "${quotation.whatsappNumber}",
+                                    "${quotation.data.phoneNumber}",
                                     style: const TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
@@ -237,7 +264,7 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${quotation.companyWebsite}",
+                                "${quotation.url}",
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -300,7 +327,7 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${quotation.region}",
+                                "${quotation.data.region}",
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -321,7 +348,7 @@ class DetailQuotation extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                "${quotation.clientSource}",
+                                "${quotation.agent.device}",
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -350,7 +377,7 @@ class DetailQuotation extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "${quotation.pageSource}",
+                      "${quotation.url}",
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -414,9 +441,9 @@ class DetailQuotation extends StatelessWidget {
                 width: double.infinity,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: quotation.category!.length,
+                  itemCount: quotation.data.category.length,
                   itemBuilder: (context, index) {
-                    final category = quotation.category![index];
+                    final category = quotation.data.category[index];
 
                     return Container(
                       margin: const EdgeInsets.only(right: 10),
@@ -430,7 +457,7 @@ class DetailQuotation extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text(
-                        category.name,
+                        category,
                         style: const TextStyle(
                             color: AppColors.white,
                             fontSize: 14,

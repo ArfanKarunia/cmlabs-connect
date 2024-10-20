@@ -1,13 +1,18 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:quotation_app/src/constant/config.dart';
 import 'package:quotation_app/src/constant/const.dart';
+import 'package:quotation_app/src/controllers/authentication_controller.dart';
 import 'package:quotation_app/src/models/category_model.dart';
 import 'package:quotation_app/src/models/client_source_model.dart';
 import 'package:quotation_app/src/models/quotation_model.dart';
 
 class QuotationController extends GetxController {
   var quotationList = <Quotation>[].obs;
+  var isLoadingMore = false.obs;
+  var start = 0.obs;
+  final limit = 10;
 
   var filterStatus = Rx<StatusLead?>(null);
   var filterCategory = Rx<Category?>(null);
@@ -18,131 +23,12 @@ class QuotationController extends GetxController {
 
   var search = Rx<String?>(null);
 
-  Box<Quotation>? quotationBox;
+  final AuthenticationController authenticationController =
+      Get.put(AuthenticationController());
+  final Dio dio = Dio();
+  final baseUrl = Config.baseURL;
 
-  List<Quotation> dummyQuotations = [
-    Quotation(
-      id: 1,
-      joinedAt: DateTime.now().subtract(const Duration(days: 1)),
-      status: "Active",
-      category: [
-        Category(id: 1, slug: 'seoContentWriting', name: 'SEO Content Writing'),
-        Category(id: 2, slug: 'seoServices', name: 'SEO Services'),
-      ],
-      clientSource: ClientSource(id: 1, name: 'Direct Email'),
-      name: "John Doe",
-      email: "johndoe@example.com",
-      whatsappNumber: "1234567890",
-      companyWebsite: "https://example.com",
-      companyName: "Example Inc.",
-      companyProfile: "Software development company",
-      pageSource: "Google",
-      service: ["Design", "Development"],
-      package: "Premium",
-      language: "English",
-      region: "USA",
-      pic: "Jane Smith",
-      statusLead: StatusLead.newLead,
-    ),
-    Quotation(
-      id: 2,
-      joinedAt: DateTime.now().subtract(const Duration(days: 5)),
-      status: "Inactive",
-      category: [
-        Category(id: 4, slug: 'digitalMarketing', name: 'Digital Marketing'),
-        Category(id: 1, slug: 'seoContentWriting', name: 'SEO Content Writing'),
-      ],
-      clientSource: ClientSource(id: 2, name: 'Web WhatsApp'),
-      name: "Alice Johnson",
-      email: "alicej@example.com",
-      whatsappNumber: "0987654321",
-      companyWebsite: "https://alicecompany.com",
-      companyName: "Alice Co.",
-      companyProfile: "Digital marketing agency",
-      pageSource: "LinkedIn",
-      service: ["SEO", "Social Media"],
-      package: "Basic",
-      language: "Spanish",
-      region: "Mexico",
-      pic: "John Smith",
-      statusLead: StatusLead.followedUp,
-    ),
-    Quotation(
-      id: 3,
-      joinedAt: DateTime.now().subtract(const Duration(days: 10)),
-      status: "Inactive",
-      category: [
-        Category(id: 5, slug: 'digitalAgency', name: 'Digital Agency'),
-        Category(
-            id: 3,
-            slug: 'sosialMediaManagement',
-            name: 'Sosial Media Management'),
-      ],
-      clientSource: ClientSource(id: 4, name: 'Direct Call'),
-      name: "Alice Johnson",
-      email: "alicej@example.com",
-      whatsappNumber: "0987654321",
-      companyWebsite: "https://alicecompany.com",
-      companyName: "Alice Co.",
-      companyProfile: "Digital marketing agency",
-      pageSource: "LinkedIn",
-      service: ["SEO", "Social Media"],
-      package: "Basic",
-      language: "Spanish",
-      region: "Mexico",
-      pic: "John Smith",
-      statusLead: StatusLead.accepted,
-    ),
-    Quotation(
-      id: 4,
-      joinedAt: DateTime.now().subtract(const Duration(days: 15)),
-      status: "Inactive",
-      category: [
-        Category(
-            id: 3,
-            slug: 'sosialMediaManagement',
-            name: 'Sosial Media Management'),
-        Category(id: 2, slug: 'seoServices', name: 'SEO Services'),
-      ],
-      clientSource: ClientSource(id: 3, name: 'Direct Linkedin'),
-      name: "Alice Johnson",
-      email: "alicej@example.com",
-      whatsappNumber: "0987654321",
-      companyWebsite: "https://alicecompany.com",
-      companyName: "Alice Co.",
-      companyProfile: "Digital marketing agency",
-      pageSource: "LinkedIn",
-      service: ["SEO", "Social Media"],
-      package: "Basic",
-      language: "Spanish",
-      region: "Mexico",
-      pic: "John Smith",
-      statusLead: StatusLead.rejected,
-    ),
-    Quotation(
-      id: 5,
-      joinedAt: DateTime.now().subtract(const Duration(days: 20)),
-      status: "Inactive",
-      category: [
-        Category(id: 5, slug: 'digitalAgency', name: 'Digital Agency'),
-        Category(id: 1, slug: 'seoContentWriting', name: 'SEO Content Writing'),
-      ],
-      clientSource: ClientSource(id: 5, name: 'Referral'),
-      name: "Alice Johnson",
-      email: "alicej@example.com",
-      whatsappNumber: "0987654321",
-      companyWebsite: "https://alicecompany.com",
-      companyName: "Alice Co.",
-      companyProfile: "Digital marketing agency",
-      pageSource: "LinkedIn",
-      service: ["SEO", "Social Media"],
-      package: "Basic",
-      language: "Spanish",
-      region: "Mexico",
-      pic: "John Smith",
-      statusLead: StatusLead.newLead,
-    ),
-  ];
+  Box<Quotation>? quotationBox;
 
   /*
 
@@ -155,7 +41,7 @@ class QuotationController extends GetxController {
   void onInit() async {
     super.onInit();
     quotationBox = await Hive.openBox<Quotation>('quotationBox');
-    checkConnectionAndLoadData();
+    fetchQuotationData();
   }
 
   /*
@@ -169,7 +55,6 @@ class QuotationController extends GetxController {
   @override
   void dispose() {
     quotationBox?.close();
-
     super.dispose();
   }
 
@@ -183,44 +68,63 @@ class QuotationController extends GetxController {
     - jika TIDAK terhubung maka langsung load data pada quotationBox 
 
   */
-  Future<void> checkConnectionAndLoadData() async {
-    var connection = await (Connectivity().checkConnectivity());
-    print(connection);
 
-    if (connection == ConnectivityResult.none) {
-      loadDataFromHive();
-    } else {
-      loadDataFromAPI();
+  Future<void> fetchQuotationData({bool isLoadMore = false}) async {
+    try {
+      if (isLoadMore) {
+        isLoadingMore.value = true;
+      }
+
+      // Cek apakah data sudah ada di Hive (local storage)
+      if (quotationBox!.isNotEmpty) {
+        // Jika data ada di local storage, ambil data dari Hive
+        var localData =
+            quotationBox!.values.skip(start.value).take(limit).toList();
+        quotationList.addAll(localData);
+        print("Data diambil dari local storage.");
+      } else {
+        // Jika data belum ada di local storage, fetch data dari API
+        String? accessToken = authenticationController.accesToken.value;
+
+        final response = await dio.get(
+          '$baseUrl/dashboard/data_recent_quotation?start=${start.value}&limit=$limit',
+          options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        );
+
+        print(response.data);
+
+        if (response.statusCode == 200 && response.data != null) {
+          final rawData = response.data['data'];
+
+          if (rawData != null && rawData is List) {
+            List<Quotation> quotations = rawData.map<Quotation>((item) {
+              return Quotation.fromJson(item);
+            }).toList();
+
+            // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
+            if (isLoadMore) {
+              quotationList.addAll(quotations); // Menambah data baru
+            } else {
+              quotationList.value =
+                  quotations; // Mengganti list dengan data baru
+            }
+
+            // Simpan data baru ke Hive
+            // saveDataToHive(quotations);
+            print("Data diambil dari API dan disimpan ke local storage.");
+          }
+        }
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+      if (!isLoadMore) {
+        // Jika terjadi error, load dari Hive jika ada data
+        var box = Hive.box<Quotation>('quotationBox');
+        quotationList.value = box.values.toList();
+      }
+    } finally {
+      isLoadingMore.value = false;
     }
-  }
-
-  /*
-  
-    FUNGSI Load Data from HIVE
-
-    Fungsi ini digunakan untuk mengambil data dari locak storage HIVE (quotationBox)
-
-  */
-  void loadDataFromHive() {
-    if (quotationBox!.isNotEmpty) {
-      quotationList.assignAll(quotationBox!.values.toList());
-    } else {
-      quotationList.assignAll(dummyQuotations);
-    }
-  }
-
-  /*
-  
-    FUNGSI Load Data from API
-
-    Fungsi ini digunakan untuk mengambil data dari API 
-    untuk SEMENTARA data dummy
-
-  */
-  void loadDataFromAPI() {
-    // menyimpan data ke dalam quotationBox
-    saveDataToHive(dummyQuotations);
-    quotationList.assignAll(dummyQuotations);
   }
 
   /*
@@ -232,9 +136,24 @@ class QuotationController extends GetxController {
   */
   void saveDataToHive(List<Quotation> data) async {
     await quotationBox!.clear();
-    for (var quotation in data) {
-      await quotationBox!.put(quotation.id, quotation);
-    }
+    await quotationBox!.addAll(data);
+  }
+
+  /*
+  
+    FUNGSI Lod more Data to Hive
+
+    Fungsi ini digunakan untuk menyimpan data ke dalam local Storage HIVE (quotationBox)
+
+  */
+  Future<void> loadMoreQuotations() async {
+    start.value += limit;
+    await fetchQuotationData(isLoadMore: true);
+  }
+
+  void resetQuotatioinData() {
+    start.value = 0;
+    fetchQuotationData();
   }
 
   /*
@@ -310,45 +229,50 @@ class QuotationController extends GetxController {
 
     // Jika filter status lead tidak null, lakukan filter berdasarkan status lead
     if (filterStatus.value != null) {
+      
+      int filterStatusIndex = filterStatus.value!.index;
+
       result = result
-          .where((quotation) => quotation.statusLead == filterStatus.value)
+          .where((quotation) => quotation.status == filterStatusIndex)
           .toList();
     }
 
-    // Jika filter category tidak null, lakukan filter berdasarkan category
-    if (filterCategory.value != null) {
-      result = result.where((quotation) {
-        // Mengecek jika quotation memiliki kategori yang dipilih
-        return quotation.category!
-            .any((cat) => cat.slug == filterCategory.value!.slug);
-      }).toList();
-    }
+    // // Jika filter category tidak null, lakukan filter berdasarkan category
+    // if (filterCategory.value != null) {
+    //   result = result.where((quotation) {
+    //     // Mengecek jika quotation memiliki kategori yang dipilih
+    //     return quotation.category!
+    //         .any((cat) => cat.slug == filterCategory.value!.slug);
+    //   }).toList();
+    // }
 
-    // Jika filter client source tidak null, lakukan filter berdasarkan client source
-    if (filterClientSource.value != null) {
-      result = result
-          .where((quotation) =>
-              quotation.clientSource!.id == filterClientSource.value!.id)
-          .toList();
-    }
+    // // Jika filter client source tidak null, lakukan filter berdasarkan client source
+    // if (filterClientSource.value != null) {
+    //   result = result
+    //       .where((quotation) =>
+    //           quotation.clientSource!.id == filterClientSource.value!.id)
+    //       .toList();
+    // }
 
-    DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
-    if (filterStartDate.value != null) {
-      result = result.where((quotation) =>
-          quotation.joinedAt.isAfter(filterStartDate.value!) &&
-          quotation.joinedAt.isBefore(effectiveEndDate)).toList();
-    }
+    // DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
+    // if (filterStartDate.value != null) {
+    //   result = result
+    //       .where((quotation) =>
+    //           quotation.joinedAt.isAfter(filterStartDate.value!) &&
+    //           quotation.joinedAt.isBefore(effectiveEndDate))
+    //       .toList();
+    // }
 
     // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
-    if (search.value != null && search.value!.isNotEmpty) {
-      result = result.where((quotation) {
-        final query = search.value!.toLowerCase();
-        return quotation.name!.toLowerCase().contains(query) ||
-            quotation.email!.toLowerCase().contains(query) ||
-            quotation.companyName!.toLowerCase().contains(query) ||
-            quotation.pic!.toLowerCase().contains(query);
-      }).toList();
-    }
+    // if (search.value != null && search.value!.isNotEmpty) {
+    //   result = result.where((quotation) {
+    //     final query = search.value!.toLowerCase();
+    //     return quotation.name!.toLowerCase().contains(query) ||
+    //         quotation.email!.toLowerCase().contains(query) ||
+    //         quotation.companyName!.toLowerCase().contains(query) ||
+    //         quotation.pic!.toLowerCase().contains(query);
+    //   }).toList();
+    // }
 
     return result;
   }
