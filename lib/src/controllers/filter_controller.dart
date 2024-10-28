@@ -1,0 +1,313 @@
+import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:get/get.dart';
+import 'package:dio/dio.dart';
+
+import '../constant/config.dart';
+import '../constant/const.dart';
+
+class FilterController extends GetxController {
+  // Menyimpan list status
+  var statusList = <Map<String, String>>[].obs;
+  var clientSourceList = <Map<String, String>>[].obs;
+  var picList = <Map<String, String>>[].obs;
+
+  // Menyim[an Filter Status
+  var filterStatusList = <Map<String, String>>[].obs;
+  var filterClientSourceList = <Map<String, String>>[].obs;
+  var filterPicList = <Map<String, String>>[].obs;
+
+  var search = Rx<String?>(null);
+
+  // Inisialisasi Dio dan AuthenticationController
+  final Dio dio = Dio();
+  final AuthenticationController authenticationController = Get.find();
+  final QuotationController quotationController =
+      Get.put(QuotationController());
+
+  final String baseUrl = Config.baseURL;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // fetchList();
+  }
+
+  // Fetch data status dari API
+  Future<void> fetchList(String filter) async {
+
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      // untuk Filter Status
+      if (filter.toLowerCase() == "status") {
+        final response = await dio.get(
+          '$baseUrl/filter/status',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+        );
+
+        if (response.statusCode == 200 && response.data != null) {
+          var responseData = response.data['data'];
+
+          var mappedData = responseData.map<Map<String, String>>((status) {
+            return {
+              'value': status['value']?.toString() ?? '',
+              'label': status['label']?.toString() ?? '',
+            };
+          }).toList();
+
+          statusList.assignAll(mappedData);
+        }
+
+        // Untuk Filter Client Source
+      } else if (filter.toLowerCase() == 'client source') {
+        final response = await dio.get(
+          '$baseUrl/filter/client_source',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+        );
+
+        if (response.statusCode == 200 && response.data != null) {
+          var responseData = response.data['data'];
+
+          var mappedData =
+              responseData.map<Map<String, String>>((clientSource) {
+            return {
+              'value': clientSource['value']?.toString() ?? '',
+              'label': clientSource['label']?.toString() ?? '',
+            };
+          }).toList();
+
+          clientSourceList.assignAll(mappedData);
+        }
+      } else if (filter.toLowerCase() == 'pic') {
+        final response = await dio.get(
+          '$baseUrl/filter/pic',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+        );
+
+        if (response.statusCode == 200 && response.data != null) {
+          var responseData = response.data['data'];
+
+          print("respon API: ${responseData}");
+
+          var mappedData = responseData.map<Map<String, String>>((pic) {
+            return {
+              'value': pic['value']?.toString() ?? '',
+              'label': pic['label']?.toString() ?? '',
+            };
+          }).toList();
+
+          picList.assignAll(mappedData);
+        }
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  void addFilterStatus(Map<String, String> status) {
+    // Cek jika status yang dipilih adalah "all"
+    if (status['value'] == "all") {
+      // Kosongkan filter status jika ada status lain
+      clearFilterStatus();
+      filterStatusList.add(status);
+    } else {
+      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
+      if (filterStatusList.any((element) => element['value'] == "all")) {
+        filterStatusList.removeWhere((element) => element['value'] == "all");
+      }
+
+      // Tambahkan status baru jika belum ada di dalam list
+      if (!filterStatusList.contains(status)) {
+        filterStatusList.add(status);
+      }
+    }
+  }
+
+  void deleteFilterStatus(Map<String, String> status) {
+    filterStatusList.remove(status);
+  }
+
+  void clearFilterStatus() {
+    filterStatusList.clear();
+  }
+
+  void clearFilterClientSource() {
+    filterClientSourceList.clear();
+  }
+
+  // ADD, DELETE, CLEAR CLIENT SOURCE
+
+  void addFilterClientSource(Map<String, String> clientSource) {
+    // Cek jika status yang dipilih adalah "all"
+    if (clientSource['value'] == "all") {
+      // Kosongkan filter status jika ada status lain
+      clearFilterClientSource();
+      filterClientSourceList.add(clientSource);
+    } else {
+      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
+      if (filterClientSourceList.any((element) => element['value'] == "all")) {
+        filterClientSourceList
+            .removeWhere((element) => element['value'] == "all");
+      }
+
+      // Tambahkan status baru jika belum ada di dalam list
+      if (!filterClientSourceList.contains(clientSource)) {
+        filterClientSourceList.add(clientSource);
+      }
+    }
+  }
+
+  void deleteFilterClientSource(Map<String, String> clientSource) {
+    filterClientSourceList.remove(clientSource);
+  }
+
+  void addFilterPic(Map<String, String> pic) {
+    // Cek jika status yang dipilih adalah "all"
+    if (pic['value'] == "all") {
+      // Kosongkan filter status jika ada status lain
+      clearFilterPic();
+      filterPicList.add(pic);
+    } else {
+      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
+      if (filterPicList.any((element) => element['value'] == "all")) {
+        filterPicList.removeWhere((element) => element['value'] == "all");
+      }
+
+      // Tambahkan status baru jika belum ada di dalam list
+      if (!filterPicList.contains(pic)) {
+        filterPicList.add(pic);
+      }
+    }
+  }
+
+  void deleteFilterPic(Map<String, String> status) {
+    filterPicList.remove(status);
+  }
+
+  void clearFilterPic() {
+    filterPicList.clear();
+  }
+
+  void searchFilter(String filter) {
+    print(filter);
+
+    // Filter Status
+    if (filter.toLowerCase() == "status") {
+      quotationController.clearFilterStatus();
+      for (var data in filterStatusList) {
+        switch (data['value']) {
+          case 'all':
+            quotationController.clearFilterStatus();
+            break;
+          case 'new':
+            quotationController.addFilterStatus(StatusLead.newLead);
+            break;
+          case 'followed-up':
+            quotationController.addFilterStatus(StatusLead.followedUp);
+            break;
+          case 'accepted':
+            quotationController.addFilterStatus(StatusLead.accepted);
+            break;
+          case 'rejected':
+            quotationController.addFilterStatus(StatusLead.rejected);
+            break;
+        }
+      }
+
+      filterStatusList.clear();
+
+    // Filter Client Source
+    } else if (filter.toLowerCase() == 'client source') {
+      quotationController.clearFilterClientSource();
+      for (var data in filterClientSourceList) {
+        // Convert both values to lowercase to ensure case-insensitive comparison
+        String clientSourceValue = data['value'].toString().toLowerCase();
+
+        quotationController.addFilterClientSource(clientSourceValue);
+      }
+
+      filterClientSourceList.clear();
+
+    // Filter CLient Source
+    } else if (filter.toLowerCase() == 'pic') {
+      quotationController.clearFilterPic();
+
+      for (var data in filterPicList) {
+        // Convert both values to lowercase to ensure case-insensitive comparison
+        String picValue = data['value'].toString().toLowerCase();
+
+        quotationController.addFilterPic(picValue);
+      }
+
+      filterPicList.clear();
+    }
+
+    Get.until((route) => Get.currentRoute == '/home');
+  }
+
+  void setSearch(String? query) {
+    search.value = query;
+  }
+
+  List<dynamic> searchData(String filter) {
+    List result = [];
+    // fetchList();
+
+    // Debugging
+    print("Current Filter: ${filter}");
+    print("Current Search Query: ${search.value}");
+
+    if (filter.toLowerCase() == 'status') {
+      result = statusList;
+
+      // Debugging
+      // print("Status List: $statusList");
+
+      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
+      if (search.value != null && search.value!.isNotEmpty) {
+        final query = search.value!.toLowerCase();
+        result = result.where((status) {
+          // print("Checking status: ${status['value']} - ${status['label']}");
+          return status['value'].toLowerCase().contains(query) ||
+              status['label'].toLowerCase().contains(query);
+        }).toList();
+      }
+    } else if (filter.toLowerCase() == 'client source') {
+      result = clientSourceList;
+
+      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
+      if (search.value != null && search.value!.isNotEmpty) {
+        final query = search.value!.toLowerCase();
+        result = result.where((clientSource) {
+          print(
+              "Checking client source: ${clientSource['value']} - ${clientSource['label']}");
+          return clientSource['value'].toLowerCase().contains(query) ||
+              clientSource['label'].toLowerCase().contains(query);
+        }).toList();
+      }
+
+    // Filter PIC
+    } else if (filter.toLowerCase() == 'pic') {
+      result = picList;
+
+      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
+      if (search.value != null && search.value!.isNotEmpty) {
+        final query = search.value!.toLowerCase();
+        result = result.where((pic) {
+          print("Checking client source: ${pic['value']} - ${pic['label']}");
+          return pic['value'].toLowerCase().contains(query) ||
+              pic['label'].toLowerCase().contains(query);
+        }).toList();
+      }
+    }
+
+    return result;
+  }
+}
