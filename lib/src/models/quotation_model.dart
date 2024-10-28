@@ -1,5 +1,6 @@
+import 'package:cmlabs_connect/src/models/client_pic_model.dart';
+import 'package:cmlabs_connect/src/models/client_source_model.dart';
 import 'package:hive/hive.dart';
-import 'package:quotation_app/src/models/client_pic_model.dart';
 
 part 'quotation_model.g.dart';
 
@@ -15,7 +16,7 @@ class Quotation extends HiveObject {
   final String feature;
 
   @HiveField(3)
-  final String? url;
+  final String url;
 
   @HiveField(4)
   final String email;
@@ -24,13 +25,13 @@ class Quotation extends HiveObject {
   final QuotationData data;
 
   @HiveField(6)
-  final AgentData agent;
+  final AgentData? agent;
 
   @HiveField(7)
   final DateTime createdAt;
 
   @HiveField(8)
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   @HiveField(9)
   final String? section;
@@ -47,11 +48,11 @@ class Quotation extends HiveObject {
   Quotation({
     required this.id,
     this.userId,
-    required this.feature,
-    this.url,
-    required this.email,
+    this.feature = "-",
+    this.url = "-",
+    this.email = "-",
     required this.data,
-    required this.agent,
+    this.agent,
     required this.createdAt,
     required this.updatedAt,
     this.section,
@@ -61,6 +62,7 @@ class Quotation extends HiveObject {
   });
 
   factory Quotation.fromJson(Map<String, dynamic> json) {
+    print("+++ ID : ${json['id']}");
     return Quotation(
       id: json['id'],
       userId: json['user_id'] != null
@@ -68,11 +70,13 @@ class Quotation extends HiveObject {
           : null,
       feature: json['feature'],
       url: json['url'],
-      email: json['email'],
+      email: json['email'] ?? "-",
       data: QuotationData.fromJson(json['data']),
-      agent: AgentData.fromJson(json['agent']),
+      agent: json['agent'] != null ? AgentData.fromJson(json['agent']) : null,
       createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
+      updatedAt: json['updated_at'] != null
+          ? DateTime.parse(json['updated_at'])
+          : null,
       section: json['section'],
       priority: json['priority'],
       status: json['status'],
@@ -90,9 +94,9 @@ class Quotation extends HiveObject {
       'url': url,
       'email': email,
       'data': data.toJson(),
-      'agent': agent.toJson(),
+      'agent': agent?.toJson(), // Cek jika agent null
       'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'updated_at': updatedAt?.toIso8601String(),
       'section': section,
       'priority': priority,
       'status': status,
@@ -121,6 +125,9 @@ class QuotationData {
   @HiveField(5)
   final String? companyIndustry;
 
+  @HiveField(10)
+  final List<String?> category;
+
   @HiveField(6)
   final dynamic registrationStatus;
 
@@ -131,16 +138,13 @@ class QuotationData {
   final String? region;
 
   @HiveField(9)
-  final String? type;
-
-  @HiveField(10)
-  final List<String> category;
-
-  @HiveField(11)
-  final List<ClientPic> clientPIC; // Menggunakan List<ClientPic>
+  final List<String?> type;
 
   @HiveField(12)
   final String? pic;
+
+  @HiveField(11)
+  final List<ClientPic?> clientPIC; // Menggunakan List<ClientPic>
 
   @HiveField(13)
   final String? remarks;
@@ -163,6 +167,14 @@ class QuotationData {
   @HiveField(19)
   final String? meeting;
 
+  @HiveField(20)
+  final DateTime? meetingAppointment;
+
+  @HiveField(21)
+  final String? message;
+
+  final ClientSource? clientSource;
+
   QuotationData({
     this.language,
     this.name,
@@ -173,7 +185,7 @@ class QuotationData {
     this.registrationStatus,
     this.website,
     this.region,
-    this.type,
+    required this.type,
     required this.category,
     required this.clientPIC, // List<ClientPic>
     this.pic,
@@ -184,6 +196,9 @@ class QuotationData {
     required this.meetingStatus,
     required this.meetingNote,
     this.meeting,
+    this.meetingAppointment,
+    this.message,
+    this.clientSource,
   });
 
   factory QuotationData.fromJson(Map<String, dynamic> json) {
@@ -217,6 +232,16 @@ class QuotationData {
               .toList() ??
           [];
 
+      // Handle 'type' yang mungkin null, String, atau List
+      List<String> types = [];
+      if (json['type'] != null) {
+        if (json['type'] is String) {
+          types = [json['type']];
+        } else if (json['type'] is List) {
+          types = List<String>.from(json['type']);
+        }
+      }
+
       // Handle category yang mungkin berupa String atau List
       List<String> categories = [];
       if (json['category'] != null) {
@@ -237,7 +262,7 @@ class QuotationData {
         registrationStatus: json['registration-status'],
         website: json['website'],
         region: json['region'],
-        type: json['type'],
+        type: types,
         category: categories,
         clientPIC: clientPics, // Menggunakan List<ClientPic>
         pic: json['pic'],
@@ -248,33 +273,39 @@ class QuotationData {
         meetingStatus: meetingStatuses,
         meetingNote: meetingNotes,
         meeting: json['meeting'],
+        clientSource: ClientSource.fromJson(
+          {
+            'client_source': json['client_source'],
+            ...?json['client_source_detail']
+          },
+        ),
       );
     } catch (e, stacktrace) {
       // Cetak error dan stack trace untuk melacak lebih jelas
       print("Error in QuotationData.fromJson: $e");
       print("Stacktrace: $stacktrace");
       return QuotationData(
-        language: '',
-        name: '',
-        phoneCode: '',
-        phoneNumber: '',
-        company: '',
-        companyIndustry: '',
-        registrationStatus: '',
-        website: '',
-        region: '',
-        type: '',
-        category: [], // default kosong
-        clientPIC: [], // default kosong
-        pic: '',
-        remarks: '',
-        notes: '',
-        meetingTopic: [],
-        meetingSchedule: [],
-        meetingStatus: [],
-        meetingNote: [],
-        meeting: '',
-      ); // Fallback ke data kosong
+          language: '',
+          name: '',
+          phoneCode: '',
+          phoneNumber: '',
+          company: '',
+          companyIndustry: '',
+          registrationStatus: '',
+          website: '',
+          region: '',
+          type: [],
+          category: [], // default kosong
+          clientPIC: [], // default kosong
+          pic: '',
+          remarks: '',
+          notes: '',
+          meetingTopic: [],
+          meetingSchedule: [],
+          meetingStatus: [],
+          meetingNote: [],
+          meeting: '',
+          clientSource: null); // Fallback ke data kosong
     }
   }
 
@@ -291,21 +322,17 @@ class QuotationData {
       'region': region,
       'type': type,
       'category': category,
-      'client_pic': clientPIC
-          .map((pic) => {
-                'name': pic.name,
-                'position': pic.position,
-              })
-          .toList(), // Ubah ini sesuai struktur ClientPic
+      'client_pic': clientPIC, // Ubah ini sesuai struktur ClientPic
       'remarks': remarks,
       'notes': notes,
       'meeting_topic': meetingTopic,
       'meeting_schedule': meetingSchedule
-          ?.map((schedule) => schedule?.toIso8601String())
+          .map((schedule) => schedule?.toIso8601String())
           .toList(),
       'meeting_status': meetingStatus,
       'meeting_note': meetingNote,
       'meeting': meeting,
+      'client_source': clientSource?.toJson()
     };
   }
 }
@@ -313,54 +340,51 @@ class QuotationData {
 @HiveType(typeId: 2)
 class AgentData {
   @HiveField(0)
-  final String browser;
+  final String? browser;
   @HiveField(1)
-  final String device;
+  final String? device;
   @HiveField(2)
-  final String ip;
+  final String? ip;
   @HiveField(3)
-  final List<String> language;
+  final List<String?> language;
   @HiveField(4)
-  final String platform;
+  final String? platform;
   @HiveField(5)
-  final String devices; // Periksa apakah ini seharusnya list atau string.
+  final String? devices;
 
   AgentData({
-    required this.browser,
-    required this.device,
-    required this.ip,
+    this.browser,
+    this.device,
+    this.ip,
     required this.language,
-    required this.platform,
-    required this.devices,
+    this.platform,
+    this.devices,
   });
 
   factory AgentData.fromJson(Map<String, dynamic> json) {
     print("Agent Data: $json");
     try {
       return AgentData(
-        browser: json['browser'],
-        device: json['device'],
+        browser: json['browser'] is String ? json['browser'] : null,
+        device: json['device'] is String ? json['device'] : null,
         ip: json['ip'],
         language: json['language'] is String
-            ? [
-                json['language']
-              ] // Jika String, ubah menjadi list dengan satu elemen
-            : List<String>.from(json['language']), // Jika sudah berupa list
-        platform: json['platform'],
-        devices: json['devices'],
+            ? [json['language']]
+            : List<String>.from(json['language'] ?? []),
+        platform: json['platform'] is String ? json['platform'] : null,
+        devices: json['devices'] is String ? json['devices'] : null,
       );
     } catch (e, stacktrace) {
-      // Cetak error dan stack trace untuk melacak lebih jelas
       print("Error in AgentData.fromJson: $e");
       print("Stacktrace: $stacktrace");
       return AgentData(
-        browser: '',
-        device: '',
-        ip: '',
+        browser: null,
+        device: null,
+        ip: null,
         language: [],
-        platform: '',
-        devices: '',
-      ); // Default fallback
+        platform: null,
+        devices: null,
+      );
     }
   }
 
@@ -375,3 +399,4 @@ class AgentData {
     };
   }
 }
+

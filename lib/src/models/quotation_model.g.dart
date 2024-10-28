@@ -20,12 +20,12 @@ class QuotationAdapter extends TypeAdapter<Quotation> {
       id: fields[0] as int,
       userId: fields[1] as int?,
       feature: fields[2] as String,
-      url: fields[3] as String?,
+      url: fields[3] as String,
       email: fields[4] as String,
       data: fields[5] as QuotationData,
-      agent: fields[6] as AgentData,
+      agent: fields[6] as AgentData?,
       createdAt: fields[7] as DateTime,
-      updatedAt: fields[8] as DateTime,
+      updatedAt: fields[8] as DateTime?,
       section: fields[9] as String?,
       priority: fields[10] as int,
       status: fields[11] as int,
@@ -96,9 +96,9 @@ class QuotationDataAdapter extends TypeAdapter<QuotationData> {
       registrationStatus: fields[6] as dynamic,
       website: fields[7] as String?,
       region: fields[8] as String?,
-      type: fields[9] as String?,
-      category: (fields[10] as List).cast<String>(),
-      clientPIC: (fields[11] as List).cast<ClientPic>(),
+      type: (fields[9] as List).cast<String?>(),
+      category: (fields[10] as List).cast<String?>(),
+      clientPIC: (fields[11] as List).cast<ClientPic?>(),
       pic: fields[12] as String?,
       remarks: fields[13] as String?,
       notes: fields[14] as String?,
@@ -107,13 +107,15 @@ class QuotationDataAdapter extends TypeAdapter<QuotationData> {
       meetingStatus: (fields[17] as List).cast<String?>(),
       meetingNote: (fields[18] as List).cast<String?>(),
       meeting: fields[19] as String?,
+      meetingAppointment: fields[20] as DateTime?,
+      message: fields[21] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, QuotationData obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(22)
       ..writeByte(0)
       ..write(obj.language)
       ..writeByte(1)
@@ -126,6 +128,8 @@ class QuotationDataAdapter extends TypeAdapter<QuotationData> {
       ..write(obj.company)
       ..writeByte(5)
       ..write(obj.companyIndustry)
+      ..writeByte(10)
+      ..write(obj.category)
       ..writeByte(6)
       ..write(obj.registrationStatus)
       ..writeByte(7)
@@ -134,12 +138,10 @@ class QuotationDataAdapter extends TypeAdapter<QuotationData> {
       ..write(obj.region)
       ..writeByte(9)
       ..write(obj.type)
-      ..writeByte(10)
-      ..write(obj.category)
-      ..writeByte(11)
-      ..write(obj.clientPIC)
       ..writeByte(12)
       ..write(obj.pic)
+      ..writeByte(11)
+      ..write(obj.clientPIC)
       ..writeByte(13)
       ..write(obj.remarks)
       ..writeByte(14)
@@ -153,7 +155,11 @@ class QuotationDataAdapter extends TypeAdapter<QuotationData> {
       ..writeByte(18)
       ..write(obj.meetingNote)
       ..writeByte(19)
-      ..write(obj.meeting);
+      ..write(obj.meeting)
+      ..writeByte(20)
+      ..write(obj.meetingAppointment)
+      ..writeByte(21)
+      ..write(obj.message);
   }
 
   @override
@@ -178,12 +184,12 @@ class AgentDataAdapter extends TypeAdapter<AgentData> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return AgentData(
-      browser: fields[0] as String,
-      device: fields[1] as String,
-      ip: fields[2] as String,
-      language: (fields[3] as List).cast<String>(),
-      platform: fields[4] as String,
-      devices: fields[5] as String,
+      browser: fields[0] as String?,
+      device: fields[1] as String?,
+      ip: fields[2] as String?,
+      language: (fields[3] as List).cast<String?>(),
+      platform: fields[4] as String?,
+      devices: fields[5] as String?,
     );
   }
 

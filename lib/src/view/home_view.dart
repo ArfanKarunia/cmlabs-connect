@@ -1,34 +1,36 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
-import 'package:quotation_app/src/controllers/dashboard_controller.dart';
-import 'package:quotation_app/src/controllers/pic_controller.dart';
-import 'package:quotation_app/src/controllers/quotation_controller.dart';
-import 'package:quotation_app/src/controllers/user_controller.dart';
-import 'package:quotation_app/src/models/user_model.dart';
-import 'package:quotation_app/src/utils/color.dart';
-import 'package:quotation_app/src/widgets/select_status.dart';
-import 'package:quotation_app/src/widgets/metric_card.dart';
-import 'package:quotation_app/src/widgets/quotation_list_tile.dart';
+
+import '../controllers/bottom_nav_controller.dart';
+import '../controllers/dashboard_controller.dart';
+import '../controllers/filter_controller.dart';
+import '../controllers/quotation_controller.dart';
+import '../controllers/user_controller.dart';
+import '../models/user_model.dart';
+import '../utils/color.dart';
+import '../widgets/metric_card.dart';
+import '../widgets/quotation_list_tile.dart';
+import '../widgets/select_status.dart';
 
 class HomeView extends StatefulWidget {
   HomeView({super.key});
 
+  // final ClientSourceController clientSourceController = Get.put(ClientSourceController());
+  
   final QuotationController quotationController =
       Get.put(QuotationController());
 
   final BottomNavController navController = Get.put(BottomNavController());
-  
+
   final UserController userController = Get.put(UserController());
-  
-  final DashboardController dashboardController =
-      Get.put(DashboardController());
-  
-  final PicController picController = Get.put(PicController());
+
+  final DashboardController dashboardController = Get.put(DashboardController());
+
+
+  final FilterController filterController = Get.put(FilterController());
+
 
   var acceptedData = 0;
 
@@ -282,8 +284,6 @@ class _HomeViewState extends State<HomeView> {
                   Container(
                     child: SelectStatus(
                       controller: widget.quotationController,
-                      isAccepted: false,
-                      isRejected: false,
                       isFilterButton: true,
                       isHistorycalLeadButton: true,
                     ),
@@ -297,17 +297,18 @@ class _HomeViewState extends State<HomeView> {
             ),
 
             // QOUTATION LIST
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Obx(
                 () {
-                  List quotationList = widget.quotationController.filteredQuotations;
+
+                  List quotationList =
+                      widget.quotationController.filteredQuotations;
 
                   if (quotationList.isEmpty) {
                     return Container(
-                      width: double.infinity,
                       height: 300,
+                      width: double.infinity,
                       child: Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -333,14 +334,60 @@ class _HomeViewState extends State<HomeView> {
 
                   return Container(
                     width: double.infinity,
-                    height: 500,
+                    height: 630,
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      itemCount: min(quotationList.length, 10),
+                      itemCount:
+                          widget.quotationController.filteredQuotations.length,
                       itemBuilder: (context, index) {
                         final quotation = quotationList[index];
 
-                        return QuotationListTile(quotation: quotation);
+                        return Column(
+                          children: [
+                            QuotationListTile(quotation: quotation),
+                            (index ==
+                                    widget.quotationController
+                                            .filteredQuotations.length -
+                                        1)
+                                ? Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        widget.quotationController
+                                            .loadMoreQuotations();
+                                      },
+                                      style: ButtonStyle(
+                                        backgroundColor: WidgetStatePropertyAll(
+                                          AppColors.white_1,
+                                        ),
+                                        foregroundColor: WidgetStatePropertyAll(
+                                          AppColors.text_2,
+                                        ),
+                                        shadowColor: WidgetStatePropertyAll(
+                                          AppColors.text_4,
+                                        ),
+                                        overlayColor: WidgetStatePropertyAll(
+                                          AppColors.bgPrimary,
+                                        ),
+                                        shape: WidgetStatePropertyAll(
+                                          RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        "Load more",
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.text_3,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : Container(),
+                          ],
+                        );
                       },
                     ),
                   );

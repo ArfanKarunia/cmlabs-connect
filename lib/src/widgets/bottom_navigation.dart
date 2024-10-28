@@ -2,14 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/controllers/bottom_nav_controller.dart';
-import 'package:quotation_app/src/controllers/filter_controller.dart';
-import 'package:quotation_app/src/controllers/pic_controller.dart';
-import 'package:quotation_app/src/utils/color.dart';
-import 'package:quotation_app/src/view/home_view.dart';
-import 'package:quotation_app/src/view/inbox_view.dart';
-import 'package:quotation_app/src/view/setting_view.dart';
-import 'package:quotation_app/src/widgets/filter_overlay.dart';
+
+import '../controllers/bottom_nav_controller.dart';
+import '../utils/color.dart';
+import '../view/home_view.dart';
 
 class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
@@ -18,20 +14,16 @@ class BottomNavigation extends StatelessWidget {
 
   final List<Widget> _pages = [
     HomeView(), // Halaman pertama
-    InboxView(), // Halaman kedua
-    const SettingView() // Halaman ketiga
+    Container(color: AppColors.bgDanger,),
+    Container(color: AppColors.bgInfo,),
+    // InboxView(), // Halaman kedua
+    // const SettingView() // Halaman ketiga
   ];
 
-  final FilterController filterController = Get.put(FilterController());
-
-  final PicController picController = Get.put(PicController());
 
   @override
   Widget build(BuildContext context) {
-    // Memanggil fetch data client pic hanya sekali saat halaman pertama kali dibuka
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      picController.fetchNewPICData();
-    });
+
 
     return Obx(
       () => Scaffold(
@@ -39,7 +31,6 @@ class BottomNavigation extends StatelessWidget {
           child: Stack(
             children: [
               _pages[navController.currentIndex.value],
-              FilterOverlay(controller: navController),
             ],
           ),
         ),

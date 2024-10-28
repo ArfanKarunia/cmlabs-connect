@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/constant/const.dart';
-import 'package:quotation_app/src/controllers/quotation_controller.dart';
-import 'package:quotation_app/src/utils/color.dart';
+
+import '../controllers/filter_controller.dart';
+import '../controllers/quotation_controller.dart';
+import '../utils/color.dart';
+import '../widgets/custom_buttom.dart';
+import '../widgets/tag_button.dart';
 
 class FilterView extends StatelessWidget {
   FilterView({super.key});
@@ -13,16 +16,18 @@ class FilterView extends StatelessWidget {
   final QuotationController quotationController =
       Get.put(QuotationController());
 
+  final FilterController filterController = Get.put(FilterController());
+
   final Rx<DateTime?> temporaryStartDate = Rx<DateTime?>(null);
   final Rx<DateTime?> temporaryEndDate = Rx<DateTime?>(null);
-
-  final Rx<StatusLead?> temporaryStatusLead = Rx<StatusLead?>(null);
 
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    // filterController.filter.value = '';
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -167,8 +172,47 @@ class FilterView extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.primaryText),
-                  borderRadius: BorderRadius.circular(5)),
+                border: Border.all(color: AppColors.primaryText),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.bgPrimary,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Row(
+                        children: [
+                          CustomButton(
+                            onPressed: () {},
+                            backgroundColor: Colors.transparent,
+                            child: Icon(
+                              Ionicons.close_outline,
+                              size: 18,
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "New",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
             SizedBox(
               height: 20,
@@ -189,8 +233,59 @@ class FilterView extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.primaryText),
-                  borderRadius: BorderRadius.circular(5)),
+                border: Border.all(color: AppColors.primaryText),
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Obx(
+                    () {
+                      if (filterController.filterPicList.isEmpty) {
+                        return Container(
+                          padding: EdgeInsets.only(left: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "All",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              color: AppColors.text_3,
+                            ),
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filterController.filterPicList.length,
+                        itemBuilder: (context, index) {
+                          final pic =
+                              filterController.filterPicList[index];
+                          return TagButton(
+                            statusLabel: pic['label'] ?? '-',
+                            onPressed: () {
+                              filterController.deleteFilterPic(pic);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Container(
+                    height: 45,
+                    width: 45,
+                    child: CustomButton(
+                      backgroundColor: Colors.transparent,
+                      onPressed: () {
+                        Get.toNamed("/filterSelect", arguments: "pic");
+                      },
+                      child: Icon(
+                        Ionicons.chevron_down_outline,
+                        color: AppColors.text_1,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
             SizedBox(
               height: 20,
@@ -214,6 +309,56 @@ class FilterView extends StatelessWidget {
                 border: Border.all(color: AppColors.primaryText),
                 borderRadius: BorderRadius.circular(5),
               ),
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Obx(
+                    () {
+                      if (filterController.filterStatusList.isEmpty) {
+                        return Container(
+                          padding: EdgeInsets.only(left: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "All",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              color: AppColors.text_3,
+                            ),
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filterController.filterStatusList.length,
+                        itemBuilder: (context, index) {
+                          final status =
+                              filterController.filterStatusList[index];
+                          return TagButton(
+                            statusLabel: status['label'] ?? '-',
+                            onPressed: () {
+                              filterController.deleteFilterStatus(status);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Container(
+                    height: 45,
+                    width: 45,
+                    child: CustomButton(
+                      backgroundColor: Colors.transparent,
+                      onPressed: () {
+                        Get.toNamed("/filterSelect", arguments: "Status");
+                      },
+                      child: Icon(
+                        Ionicons.chevron_down_outline,
+                        color: AppColors.text_1,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
             SizedBox(
               height: 20,
@@ -229,6 +374,8 @@ class FilterView extends StatelessWidget {
             SizedBox(
               height: 15,
             ),
+
+            // Field Client Source
             Container(
               height: 51,
               padding: EdgeInsets.symmetric(horizontal: 10),
@@ -236,6 +383,58 @@ class FilterView extends StatelessWidget {
               decoration: BoxDecoration(
                 border: Border.all(color: AppColors.primaryText),
                 borderRadius: BorderRadius.circular(5),
+              ),
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Obx(
+                    () {
+                      if (filterController.filterClientSourceList.isEmpty) {
+                        return Container(
+                          padding: EdgeInsets.only(left: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "All",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              color: AppColors.text_3,
+                            ),
+                          ),
+                        );
+                      }
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount:
+                            filterController.filterClientSourceList.length,
+                        itemBuilder: (context, index) {
+                          final data =
+                              filterController.filterClientSourceList[index];
+                          return TagButton(
+                            statusLabel: data['label'] ?? '-',
+                            onPressed: () {
+                              filterController.deleteFilterClientSource(data);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Container(
+                    height: 45,
+                    width: 45,
+                    child: CustomButton(
+                      backgroundColor: Colors.transparent,
+                      onPressed: () {
+                        Get.toNamed("/filterSelect",
+                            arguments: "Client Source");
+                      },
+                      child: Icon(
+                        Ionicons.chevron_down_outline,
+                        color: AppColors.text_1,
+                      ),
+                    ),
+                  )
+                ],
               ),
             ),
 

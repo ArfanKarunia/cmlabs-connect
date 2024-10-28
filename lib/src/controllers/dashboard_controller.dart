@@ -1,10 +1,10 @@
+import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:quotation_app/src/constant/config.dart';
-import 'package:quotation_app/src/controllers/authentication_controller.dart';
-import 'package:quotation_app/src/models/dashboard_data_model.dart';
+
+import '../constant/config.dart';
+import '../models/dashboard_data_model.dart';
 
 class DashboardController extends GetxController {
   var dashboardData = Rx<DashboardData?>(null);

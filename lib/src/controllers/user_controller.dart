@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:quotation_app/src/models/user_model.dart';
+
+import '../models/user_model.dart';
 
 class UserController extends GetxController {
   var user = Rx<User?>(null);

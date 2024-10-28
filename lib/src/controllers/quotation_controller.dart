@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:quotation_app/src/constant/config.dart';
-import 'package:quotation_app/src/constant/const.dart';
-import 'package:quotation_app/src/controllers/authentication_controller.dart';
-import 'package:quotation_app/src/models/category_model.dart';
-import 'package:quotation_app/src/models/client_source_model.dart';
-import 'package:quotation_app/src/models/quotation_model.dart';
+
+import '../constant/config.dart';
+import '../constant/const.dart';
+import '../models/category_model.dart';
+import '../models/quotation_model.dart';
+import 'authentication_controller.dart';
 
 class QuotationController extends GetxController {
   var quotationList = <Quotation>[].obs;
@@ -14,9 +14,10 @@ class QuotationController extends GetxController {
   var start = 0.obs;
   final limit = 10;
 
-  var filterStatus = Rx<StatusLead?>(null);
-  var filterCategory = Rx<Category?>(null);
-  var filterClientSource = Rx<ClientSource?>(null);
+  var filterCategory = <Category>[].obs;
+  var filterStatus = <StatusLead>[].obs;
+  var filterClientSource = <String>[].obs;
+  var filterPic = <String>[].obs;
 
   var filterStartDate = Rx<DateTime?>(null);
   var filterEndDate = Rx<DateTime?>(null);
@@ -91,8 +92,6 @@ class QuotationController extends GetxController {
           options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
         );
 
-        print(response.data);
-
         if (response.statusCode == 200 && response.data != null) {
           final rawData = response.data['data'];
 
@@ -104,6 +103,8 @@ class QuotationController extends GetxController {
             // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
             if (isLoadMore) {
               quotationList.addAll(quotations); // Menambah data baru
+
+              print("Jumlah quotation list sekarang: ${quotationList.length}");
             } else {
               quotationList.value =
                   quotations; // Mengganti list dengan data baru
@@ -148,6 +149,7 @@ class QuotationController extends GetxController {
   */
   Future<void> loadMoreQuotations() async {
     start.value += limit;
+    print(start.value);
     await fetchQuotationData(isLoadMore: true);
   }
 
@@ -163,8 +165,24 @@ class QuotationController extends GetxController {
     Fungsi ini digunakan untuk menyimpan data inputan filter Status
 
   */
-  void setFilterStatus(StatusLead? newFilter) {
-    filterStatus.value = newFilter;
+  void addFilterStatus(StatusLead status) {
+    filterStatus.add(status);
+  }
+
+  void deleteFilterStatus(StatusLead status) {
+    filterStatus.remove(status);
+  }
+
+  void clearFilterStatus() {
+    filterStatus.clear();
+  }
+
+  void clearFilterClientSource() {
+    filterClientSource.clear();
+  }
+
+  void clearFilterPic() {
+    filterPic.clear();
   }
 
   /*
@@ -174,8 +192,12 @@ class QuotationController extends GetxController {
     Fungsi ini digunakan untuk menyimpan data inputan filter Category
 
   */
-  void setFilterCategory(Category? newFilter) {
-    filterCategory.value = newFilter;
+  void addFilterCategory(Category category) {
+    filterCategory.add(category);
+  }
+
+  void removeFilterCategory(Category category) {
+    filterCategory.remove(category);
   }
 
   /*
@@ -185,8 +207,27 @@ class QuotationController extends GetxController {
     Fungsi ini digunakan untuk menyimpan data inputan filter Client Source
 
   */
-  void setFilterClientSource(ClientSource? newFilter) {
-    filterClientSource.value = newFilter;
+  void addFilterClientSource(String clientSource) {
+    filterClientSource.add(clientSource);
+  }
+
+  void removeClientSource(String clientSource) {
+    filterClientSource.remove(clientSource);
+  }
+
+  /*
+  
+    FUNGSI Set Filter PIC
+
+    Fungsi ini digunakan untuk menyimpan data inputan filter PIC
+
+  */
+  void addFilterPic(String pic) {
+    filterPic.add(pic);
+  }
+
+  void removeFilterPic(String pic) {
+    filterPic.remove(pic);
   }
 
   /*
@@ -209,9 +250,9 @@ class QuotationController extends GetxController {
   */
   void clearFilter() {
     search.value = null;
-    filterStatus.value = null;
-    filterCategory.value = null;
-    filterClientSource.value = null;
+    filterStatus.clear();
+    filterCategory.clear();
+    filterClientSource.clear();
 
     filterStartDate.value = null;
     filterEndDate.value = null;
@@ -227,14 +268,48 @@ class QuotationController extends GetxController {
   List<Quotation> get filteredQuotations {
     List<Quotation> result = quotationList;
 
-    // Jika filter status lead tidak null, lakukan filter berdasarkan status lead
-    if (filterStatus.value != null) {
-      
-      int filterStatusIndex = filterStatus.value!.index;
+    if (filterStatus.isEmpty || filterClientSource.isEmpty) {
+      result = quotationList;
+    }
+
+    // Jika filterStatus tidak kosong, lakukan filter berdasarkan status lead
+    if (filterStatus.isNotEmpty) {
+      List<int> filterStatusIndexes =
+          filterStatus.map((status) => status.index).toList();
 
       result = result
-          .where((quotation) => quotation.status == filterStatusIndex)
+          .where((quotation) => filterStatusIndexes.contains(quotation.status))
           .toList();
+    }
+
+
+    // Jika filterClientSource tidak kosong, lakukan filter berdasarkan client source
+    if (filterClientSource.isNotEmpty) {
+      if (filterClientSource.contains('all')) {
+        filterClientSource.clear();
+        result = quotationList;
+      } else {
+        result = result.where((quotation) {
+          // Pastikan clientSource memiliki nilai dan cocok dengan salah satu dari filterClientSource
+          final clientSourceValue =
+              quotation.data.clientSource?.value?.toLowerCase() ?? '';
+          return filterClientSource.contains(clientSourceValue);
+        }).toList();
+      }
+    }
+
+    if (filterPic.isNotEmpty) {
+      if (filterPic.contains('all')) {
+        filterPic.clear();
+        result = quotationList;
+      } else {
+        result = result.where((quotation) {
+          // Pastikan clientSource memiliki nilai dan cocok dengan salah satu dari filterClientSource
+          final picValue =
+              quotation.data.pic?.toLowerCase() ?? '';
+          return filterPic.contains(picValue);
+        }).toList();
+      }
     }
 
     // // Jika filter category tidak null, lakukan filter berdasarkan category
@@ -244,14 +319,6 @@ class QuotationController extends GetxController {
     //     return quotation.category!
     //         .any((cat) => cat.slug == filterCategory.value!.slug);
     //   }).toList();
-    // }
-
-    // // Jika filter client source tidak null, lakukan filter berdasarkan client source
-    // if (filterClientSource.value != null) {
-    //   result = result
-    //       .where((quotation) =>
-    //           quotation.clientSource!.id == filterClientSource.value!.id)
-    //       .toList();
     // }
 
     // DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();

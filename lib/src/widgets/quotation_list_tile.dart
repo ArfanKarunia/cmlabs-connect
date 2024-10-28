@@ -3,10 +3,10 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/constant/const.dart';
-import 'package:quotation_app/src/models/quotation_model.dart';
-import 'package:quotation_app/src/utils/color.dart';
-import 'package:quotation_app/src/widgets/custom_buttom.dart';
+
+import '../constant/const.dart';
+import '../models/quotation_model.dart';
+import '../utils/color.dart';
 
 class QuotationListTile extends StatelessWidget {
   const QuotationListTile({
@@ -19,28 +19,22 @@ class QuotationListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     StatusLead status = StatusLead.newLead;
-    String statusLabel = "";
 
     switch (quotation.status) {
       case 0:
         status = StatusLead.newLead;
-        statusLabel = "New";
         break;
       case 1:
         status = StatusLead.followedUp;
-        statusLabel = "Followed Up";
         break;
       case 2:
         status = StatusLead.accepted;
-        statusLabel = "Accepted";
         break;
       case 3:
         status = StatusLead.rejected;
-        statusLabel = "Rejected";
         break;
       case 4:
         status = StatusLead.onHold;
-        statusLabel = "On Hold";
         break;
     }
 
@@ -188,7 +182,7 @@ class QuotationListTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            quotation.data.company!.isEmpty
+                            (quotation.data.company?.isEmpty ?? true)
                                 ? "Nama Perusahaan"
                                 : quotation.data.company!,
                             maxLines: 1,
@@ -200,9 +194,9 @@ class QuotationListTile extends StatelessWidget {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            quotation.data.category.isNotEmpty
-                                ? quotation.data.category.first
-                                : "-",
+                            (quotation.data.category.isNotEmpty
+                                ? quotation.data.category.first ?? "-"
+                                : "-"),
                             maxLines: 1, // Membatasi hanya 1 baris
                             overflow: TextOverflow
                                 .ellipsis, // Menambahkan ellipsis (...) jika terlalu panjang

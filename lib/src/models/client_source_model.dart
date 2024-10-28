@@ -3,43 +3,57 @@ import 'package:hive/hive.dart';
 part 'client_source_model.g.dart';
 
 @HiveType(typeId: 5)
-class ClientSource extends HiveObject{
+class ClientSource extends HiveObject {
   @HiveField(0)
-  final int id;
+  final String? value;
 
   @HiveField(1)
-  final String name;
+  final String? vendor;
+
+  @HiveField(2)
+  final String? name;
+
+  @HiveField(3)
+  final String? contact;
 
   ClientSource({
-    required this.id,
-    required this.name,
+    this.value,
+    this.vendor,
+    this.name,
+    this.contact,
   });
 
   ClientSource copyWith({
-    int? id,
-    String? slug,
+    String? value,
+    String? vendor,
     String? name,
+    String? contact,
   }) {
     return ClientSource(
-      id: id ?? this.id,
+      value: value ?? this.value,
+      vendor: vendor ?? this.vendor,
       name: name ?? this.name,
+      contact: contact ?? this.contact,
     );
   }
 
   // Serialisasi dari JSON
   factory ClientSource.fromJson(Map<String, dynamic> json) {
     return ClientSource(
-      id: json['id'],
-      name: json['name'],
+      value: json['client_source'],
+      vendor: json['client_source_detail']?['vendor'],
+      name: json['client_source_detail']?['name'],
+      contact: json['client_source_detail']?['contact'],
     );
   }
 
   // Serialisasi ke JSON
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
+      'value': value,
+      'vendor': vendor,
       'name': name,
+      'contact': contact,
     };
   }
-
 }

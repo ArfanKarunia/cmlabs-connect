@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:quotation_app/src/constant/config.dart';
-import 'package:quotation_app/src/controllers/user_controller.dart';
-import 'package:quotation_app/src/models/user_model.dart';
-import 'package:quotation_app/src/utils/toast.dart';
+
+import '../constant/config.dart';
+import '../models/user_model.dart';
+import '../utils/toast.dart';
 
 class AuthenticationController extends GetxController {
   var accesToken = ''.obs;
@@ -85,6 +85,7 @@ class AuthenticationController extends GetxController {
     } finally {
       isLoading(false); // Pastikan untuk menonaktifkan loading
     }
+    return null;
   }
 
   void toggleRememberMe(bool value) {

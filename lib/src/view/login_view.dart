@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:quotation_app/src/controllers/authentication_controller.dart';
-import 'package:quotation_app/src/controllers/client_source_controller.dart';
-import 'package:quotation_app/src/utils/color.dart';
-import 'package:quotation_app/src/utils/toast.dart';
+
+import '../controllers/authentication_controller.dart';
+import '../utils/color.dart';
+import '../utils/toast.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});

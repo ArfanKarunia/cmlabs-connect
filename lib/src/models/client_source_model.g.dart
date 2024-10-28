@@ -17,19 +17,25 @@ class ClientSourceAdapter extends TypeAdapter<ClientSource> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ClientSource(
-      id: fields[0] as int,
-      name: fields[1] as String,
+      value: fields[0] as String?,
+      vendor: fields[1] as String?,
+      name: fields[2] as String?,
+      contact: fields[3] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ClientSource obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.id)
+      ..write(obj.value)
       ..writeByte(1)
-      ..write(obj.name);
+      ..write(obj.vendor)
+      ..writeByte(2)
+      ..write(obj.name)
+      ..writeByte(3)
+      ..write(obj.contact);
   }
 
   @override

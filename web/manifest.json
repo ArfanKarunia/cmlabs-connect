@@ -1,6 +1,6 @@
 {
-    "name": "quotation_app",
-    "short_name": "quotation_app",
+    "name": "cmlabs_connect",
+    "short_name": "cmlabs_connect",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

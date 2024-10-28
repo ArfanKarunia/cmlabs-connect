@@ -1,6 +1,6 @@
+import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quotation_app/src/routes/app_routes.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: "Your Application with GetX",
+      title: "CMLABS CONNECT",
       theme: ThemeData(
         primaryColor: Colors.blueGrey,
         primarySwatch: Colors.blueGrey,
