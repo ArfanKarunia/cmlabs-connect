@@ -17,10 +17,8 @@ import '../widgets/select_status.dart';
 class HomeView extends StatefulWidget {
   HomeView({super.key});
 
-  // final ClientSourceController clientSourceController = Get.put(ClientSourceController());
   
-  final QuotationController quotationController =
-      Get.put(QuotationController());
+  final QuotationController quotationController = Get.put(QuotationController());
 
   final BottomNavController navController = Get.put(BottomNavController());
 

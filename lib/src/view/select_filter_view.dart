@@ -19,7 +19,6 @@ class SelectFilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     filterController.fetchList(filterData);
 
     return Scaffold(
@@ -27,6 +26,7 @@ class SelectFilterView extends StatelessWidget {
       appBar: AppBar(
         toolbarHeight: 100,
         backgroundColor: Color(0xFFF9F9F9),
+        surfaceTintColor: Color(0xFFF9F9F9),
         title: Text(
           "Filter $filterData",
           style: GoogleFonts.plusJakartaSans(
@@ -157,6 +157,30 @@ class SelectFilterView extends StatelessWidget {
                         ),
                       );
                     }
+                  } else if (filterData.toLowerCase() == 'category') {
+                    if (filterController.filterCategoryList.isNotEmpty) {
+                      return Container(
+                        width: double.infinity,
+                        height: 50,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: filterController.filterCategoryList.length,
+                          itemBuilder: (context, index) {
+                            final category =
+                                filterController.filterCategoryList[index];
+                            var label = category['label'];
+
+                            return TagButton(
+                              statusLabel: label!,
+                              onPressed: () {
+                                filterController.deleteFilterCategory(category);
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    }
                   }
 
                   return Container();
@@ -246,7 +270,7 @@ class SelectFilterView extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final clientSource = filterController
                               .searchData(filterData.toLowerCase())[index];
-                              print("data client Source : ${clientSource}");
+                          print("data client Source : ${clientSource}");
 
                           return GestureDetector(
                             onTap: () {
@@ -306,18 +330,15 @@ class SelectFilterView extends StatelessWidget {
                             onTap: () {
                               if (filterController.filterPicList
                                   .contains(pic)) {
-                                filterController
-                                    .deleteFilterPic(pic);
+                                filterController.deleteFilterPic(pic);
                               } else {
-                                filterController
-                                    .addFilterPic(pic);
+                                filterController.addFilterPic(pic);
                               }
                             },
                             child: Obx(
                               () {
                                 return Container(
-                                  color: (filterController
-                                          .filterPicList
+                                  color: (filterController.filterPicList
                                           .contains(pic)
                                       ? AppColors.bgPrimary
                                       : AppColors.white_1),
@@ -326,6 +347,59 @@ class SelectFilterView extends StatelessWidget {
                                   margin: EdgeInsets.only(bottom: 14),
                                   child: Text(
                                     pic['label'] ?? "-",
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 13,
+                                      color: AppColors.text_1,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  } else if (filterData.toLowerCase() == 'category') {
+                    // print("Cari Data: ${filterController.searchData}");
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 50),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.white_1,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        itemCount: filterController
+                            .searchData(filterData.toLowerCase())
+                            .length,
+                        itemBuilder: (context, index) {
+                          final category = filterController
+                              .searchData(filterData.toLowerCase())[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              if (filterController.filterPicList
+                                  .contains(category)) {
+                                filterController.deleteFilterCategory(category);
+                              } else {
+                                filterController.addFilterCategory(category);
+                              }
+                            },
+                            child: Obx(
+                              () {
+                                return Container(
+                                  color: (filterController.filterCategoryList
+                                          .contains(category)
+                                      ? AppColors.bgPrimary
+                                      : AppColors.white_1),
+                                  padding: EdgeInsetsDirectional.symmetric(
+                                      horizontal: 14, vertical: 4),
+                                  margin: EdgeInsets.only(bottom: 14),
+                                  child: Text(
+                                    category['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_1,
@@ -351,6 +425,7 @@ class SelectFilterView extends StatelessWidget {
               ),
               Container(
                 width: double.infinity,
+                margin: EdgeInsets.only(bottom: 100),
                 height: 51,
                 child: ElevatedButton(
                     onPressed: () {

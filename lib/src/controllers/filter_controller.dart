@@ -11,11 +11,13 @@ class FilterController extends GetxController {
   var statusList = <Map<String, String>>[].obs;
   var clientSourceList = <Map<String, String>>[].obs;
   var picList = <Map<String, String>>[].obs;
+  var categoryList = <Map<String, String>>[].obs;
 
   // Menyim[an Filter Status
   var filterStatusList = <Map<String, String>>[].obs;
   var filterClientSourceList = <Map<String, String>>[].obs;
   var filterPicList = <Map<String, String>>[].obs;
+  var filterCategoryList = <Map<String, String>>[].obs;
 
   var search = Rx<String?>(null);
 
@@ -35,7 +37,6 @@ class FilterController extends GetxController {
 
   // Fetch data status dari API
   Future<void> fetchList(String filter) async {
-
     try {
       String? accessToken = authenticationController.accesToken.value;
 
@@ -105,12 +106,36 @@ class FilterController extends GetxController {
 
           picList.assignAll(mappedData);
         }
+      } else if (filter.toLowerCase() == 'category') {
+        final response = await dio.get(
+          '$baseUrl/filter/data_services',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+        );
+
+        if (response.statusCode == 200 && response.data != null) {
+          var responseData = response.data['data'];
+
+          print("respon API: ${responseData}");
+
+          var mappedData = responseData.map<Map<String, String>>((category) {
+            return {
+              'value': category['id']?.toString() ?? '',
+              'label': category['text']?.toString() ?? '',
+            };
+          }).toList();
+
+          categoryList.assignAll(mappedData);
+        }
       }
     } catch (e) {
       print('Error fetching status data: $e');
     }
   }
 
+
+  // ADD, DELETE, CLEAR Filter Status
   void addFilterStatus(Map<String, String> status) {
     // Cek jika status yang dipilih adalah "all"
     if (status['value'] == "all") {
@@ -142,8 +167,8 @@ class FilterController extends GetxController {
     filterClientSourceList.clear();
   }
 
-  // ADD, DELETE, CLEAR CLIENT SOURCE
 
+  // ADD, DELETE, CLEAR CLIENT SOURCE
   void addFilterClientSource(Map<String, String> clientSource) {
     // Cek jika status yang dipilih adalah "all"
     if (clientSource['value'] == "all") {
@@ -195,6 +220,34 @@ class FilterController extends GetxController {
     filterPicList.clear();
   }
 
+  // ADD, DELETE, CLEAR Filter Category
+  void addFilterCategory(Map<String, String> category) {
+    // Cek jika status yang dipilih adalah "all"
+    if (category['value'] == "all") {
+      // Kosongkan filter status jika ada status lain
+      clearFilterPic();
+      filterCategoryList.add(category);
+    } else {
+      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
+      if (filterCategoryList.any((element) => element['value'] == "all")) {
+        filterCategoryList.removeWhere((element) => element['value'] == "all");
+      }
+
+      // Tambahkan status baru jika belum ada di dalam list
+      if (!filterCategoryList.contains(category)) {
+        filterCategoryList.add(category);
+      }
+    }
+  }
+
+  void deleteFilterCategory(Map<String, String> category) {
+    filterCategoryList.remove(category);
+  }
+
+  void clearFilterCategory() {
+    filterCategoryList.clear();
+  }
+
   void searchFilter(String filter) {
     print(filter);
 
@@ -223,7 +276,7 @@ class FilterController extends GetxController {
 
       filterStatusList.clear();
 
-    // Filter Client Source
+      // Filter Client Source
     } else if (filter.toLowerCase() == 'client source') {
       quotationController.clearFilterClientSource();
       for (var data in filterClientSourceList) {
@@ -235,7 +288,7 @@ class FilterController extends GetxController {
 
       filterClientSourceList.clear();
 
-    // Filter CLient Source
+      // Filter PIC
     } else if (filter.toLowerCase() == 'pic') {
       quotationController.clearFilterPic();
 
@@ -247,6 +300,19 @@ class FilterController extends GetxController {
       }
 
       filterPicList.clear();
+
+      // Filter category
+    } else if (filter.toLowerCase() == 'category') {
+      quotationController.clearFilterCategory();
+
+      for (var data in filterCategoryList) {
+        // Convert both values to lowercase to ensure case-insensitive comparison
+        String categoryValue = data['value'].toString().toLowerCase();
+
+        quotationController.addFilterCategory(categoryValue);
+      }
+
+      filterCategoryList.clear();
     }
 
     Get.until((route) => Get.currentRoute == '/home');
@@ -293,7 +359,7 @@ class FilterController extends GetxController {
         }).toList();
       }
 
-    // Filter PIC
+      // Filter PIC
     } else if (filter.toLowerCase() == 'pic') {
       result = picList;
 
@@ -301,9 +367,23 @@ class FilterController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((pic) {
-          print("Checking client source: ${pic['value']} - ${pic['label']}");
+          print("Checking PIC: ${pic['value']} - ${pic['label']}");
           return pic['value'].toLowerCase().contains(query) ||
               pic['label'].toLowerCase().contains(query);
+        }).toList();
+      }
+
+      // Filter Category
+    } else if (filter.toLowerCase() == 'category') {
+      result = categoryList;
+
+      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
+      if (search.value != null && search.value!.isNotEmpty) {
+        final query = search.value!.toLowerCase();
+        result = result.where((category) {
+          print("Checking Category: ${category['value']} - ${category['label']}");
+          return category['value'].toLowerCase().contains(query) ||
+              category['label'].toLowerCase().contains(query);
         }).toList();
       }
     }
