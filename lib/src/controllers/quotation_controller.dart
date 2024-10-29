@@ -4,7 +4,6 @@ import 'package:hive/hive.dart';
 
 import '../constant/config.dart';
 import '../constant/const.dart';
-import '../models/category_model.dart';
 import '../models/quotation_model.dart';
 import 'authentication_controller.dart';
 
@@ -14,7 +13,7 @@ class QuotationController extends GetxController {
   var start = 0.obs;
   final limit = 10;
 
-  var filterCategory = <Category>[].obs;
+  var filterCategory = <String>[].obs;
   var filterStatus = <StatusLead>[].obs;
   var filterClientSource = <String>[].obs;
   var filterPic = <String>[].obs;
@@ -185,6 +184,10 @@ class QuotationController extends GetxController {
     filterPic.clear();
   }
 
+  void clearFilterCategory() {
+    filterPic.clear();
+  }
+
   /*
   
     FUNGSI Set Filter Category
@@ -192,11 +195,11 @@ class QuotationController extends GetxController {
     Fungsi ini digunakan untuk menyimpan data inputan filter Category
 
   */
-  void addFilterCategory(Category category) {
+  void addFilterCategory(String category) {
     filterCategory.add(category);
   }
 
-  void removeFilterCategory(Category category) {
+  void removeFilterCategory(String category) {
     filterCategory.remove(category);
   }
 
@@ -282,7 +285,6 @@ class QuotationController extends GetxController {
           .toList();
     }
 
-
     // Jika filterClientSource tidak kosong, lakukan filter berdasarkan client source
     if (filterClientSource.isNotEmpty) {
       if (filterClientSource.contains('all')) {
@@ -305,21 +307,25 @@ class QuotationController extends GetxController {
       } else {
         result = result.where((quotation) {
           // Pastikan clientSource memiliki nilai dan cocok dengan salah satu dari filterClientSource
-          final picValue =
-              quotation.data.pic?.toLowerCase() ?? '';
+          final picValue = quotation.data.pic?.toLowerCase() ?? '';
           return filterPic.contains(picValue);
         }).toList();
       }
     }
 
-    // // Jika filter category tidak null, lakukan filter berdasarkan category
-    // if (filterCategory.value != null) {
-    //   result = result.where((quotation) {
-    //     // Mengecek jika quotation memiliki kategori yang dipilih
-    //     return quotation.category!
-    //         .any((cat) => cat.slug == filterCategory.value!.slug);
-    //   }).toList();
-    // }
+    // Jika filter category tidak null, lakukan filter berdasarkan category
+    if (filterCategory.isNotEmpty) {
+      if (filterCategory.contains('all')) {
+        filterCategory.clear();
+        result = quotationList;
+      } else {
+        result = result.where((quotation) {
+          // Mengecek apakah ada nilai category dalam quotation yang sesuai dengan filterCategory
+          final categories = quotation.data.category.map((cat) => cat?.toLowerCase()) ;
+          return categories.any((cat) => filterCategory.contains(cat));
+        }).toList();
+      }
+    }
 
     // DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
     // if (filterStartDate.value != null) {

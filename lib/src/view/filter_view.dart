@@ -175,43 +175,55 @@ class FilterView extends StatelessWidget {
                 border: Border.all(color: AppColors.primaryText),
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.bgPrimary,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        children: [
-                          CustomButton(
-                            onPressed: () {},
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Ionicons.close_outline,
-                              size: 18,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "New",
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Obx(
+                    () {
+                      if (filterController.filterCategoryList.isEmpty) {
+                        return Container(
+                          padding: EdgeInsets.only(left: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "All",
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
+                              fontSize: 14,
+                              color: AppColors.text_3,
                             ),
                           ),
-                        ],
+                        );
+                      }
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filterController.filterCategoryList.length,
+                        itemBuilder: (context, index) {
+                          final category =
+                              filterController.filterCategoryList[index];
+                          return TagButton(
+                            statusLabel: category['label'] ?? '-',
+                            onPressed: () {
+                              filterController.deleteFilterCategory(category);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Container(
+                    height: 45,
+                    width: 45,
+                    child: CustomButton(
+                      backgroundColor: Colors.transparent,
+                      onPressed: () {
+                        Get.toNamed("/filterSelect", arguments: "category");
+                      },
+                      child: Icon(
+                        Ionicons.chevron_down_outline,
+                        color: AppColors.text_1,
                       ),
                     ),
-                  );
-                },
+                  )
+                ],
               ),
             ),
             SizedBox(
