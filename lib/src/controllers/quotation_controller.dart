@@ -188,6 +188,11 @@ class QuotationController extends GetxController {
     filterPic.clear();
   }
 
+  void clearDataRange() {
+    filterStartDate.value = null;
+    filterEndDate.value = null;
+  }
+
   /*
   
     FUNGSI Set Filter Category
@@ -321,20 +326,23 @@ class QuotationController extends GetxController {
       } else {
         result = result.where((quotation) {
           // Mengecek apakah ada nilai category dalam quotation yang sesuai dengan filterCategory
-          final categories = quotation.data.category.map((cat) => cat?.toLowerCase()) ;
+          final categories =
+              quotation.data.category.map((cat) => cat?.toLowerCase());
           return categories.any((cat) => filterCategory.contains(cat));
         }).toList();
       }
     }
 
-    // DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
-    // if (filterStartDate.value != null) {
-    //   result = result
-    //       .where((quotation) =>
-    //           quotation.joinedAt.isAfter(filterStartDate.value!) &&
-    //           quotation.joinedAt.isBefore(effectiveEndDate))
-    //       .toList();
-    // }
+    // Filter berdasarkan rentang tanggal
+    DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
+    if (filterStartDate.value != null) {
+      result = result
+          .where((quotation) =>
+              quotation.createdAt.isAfter(filterStartDate.value!) &&
+              quotation.createdAt
+                  .isBefore(effectiveEndDate.add(Duration(days: 1))))
+          .toList();
+    }
 
     // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
     // if (search.value != null && search.value!.isNotEmpty) {
