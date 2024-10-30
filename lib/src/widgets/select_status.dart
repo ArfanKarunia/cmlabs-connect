@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:cmlabs_connect/src/widgets/custom_buttom.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -218,7 +219,13 @@ class SelectStatus extends StatelessWidget {
                 (isHistorycalLeadButton)
                     ? CustomButton(
                         onPressed: () {
-                          navController.toggleFilterVisibility();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return HistoricalLeadView();
+                              },
+                            ),
+                          );
                         },
                         backgroundColor: Colors.transparent,
                         overlayColor: Color.fromARGB(33, 31, 149, 245),

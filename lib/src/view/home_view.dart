@@ -17,18 +17,17 @@ import '../widgets/select_status.dart';
 class HomeView extends StatefulWidget {
   HomeView({super.key});
 
-  
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController =
+      Get.put(QuotationController());
 
   final BottomNavController navController = Get.put(BottomNavController());
 
   final UserController userController = Get.put(UserController());
 
-  final DashboardController dashboardController = Get.put(DashboardController());
-
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
 
   final FilterController filterController = Get.put(FilterController());
-
 
   var acceptedData = 0;
 
@@ -299,7 +298,6 @@ class _HomeViewState extends State<HomeView> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Obx(
                 () {
-
                   List quotationList =
                       widget.quotationController.filteredQuotations;
 
@@ -342,7 +340,18 @@ class _HomeViewState extends State<HomeView> {
 
                         return Column(
                           children: [
-                            QuotationListTile(quotation: quotation),
+                            QuotationListTile(
+                              quotation: quotation,
+                              onDelete: () {
+                                print(quotation.id);
+                                // widget.quotationController.deleteDataQuotation(quotation.id);
+                              },
+                              onChatWA: () {
+                                // print(quotation);
+                                widget.quotationController
+                                    .redirectToWhatsapp(quotation);
+                              },
+                            ),
                             (index ==
                                     widget.quotationController
                                             .filteredQuotations.length -
