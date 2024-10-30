@@ -377,11 +377,7 @@ class QuotationController extends GetxController {
     print(url);
 
     await launchUrl(url, mode: LaunchMode.externalApplication);
-    // Buka URL jika bisa
-    // if (await canLaunchUrl(url)) {
-    // } else {
-    //   showErrorToast("Tidak dapat membuka WhatsApp");
-    // }
+
   }
 
   /*
