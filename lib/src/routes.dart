@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:get/get.dart';
 
 import 'view/filter_view.dart';
@@ -14,6 +15,8 @@ class AppRoutes {
 
   static const String filter = '/filter';
   static const String filterSelect = '/filterSelect';
+
+  static const String historicalLead = '/historicalLead';
 
   // List of Route
   static List<GetPage> routes = [
@@ -32,6 +35,9 @@ class AppRoutes {
         final args = Get.arguments as String;
         return SelectFilterView(filterData: args);
       },
+    ),
+    GetPage(name: historicalLead, page: () => HistoricalLeadView()),
+
       //   GetPage(
       //     name: detailQuotation,
       //     page: () {
@@ -40,6 +46,5 @@ class AppRoutes {
       //     },
       //   ),
       //   GetPage(name: profile, page: () => ProfileView()),
-    ),
   ];
 }

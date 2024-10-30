@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import '../constant/config.dart';
 import '../constant/const.dart';
 import '../models/quotation_model.dart';
+import '../utils/toast.dart';
 import 'authentication_controller.dart';
 
 class QuotationController extends GetxController {
@@ -356,5 +359,63 @@ class QuotationController extends GetxController {
     // }
 
     return result;
+  }
+
+  void redirectToWhatsapp(Quotation quotation) async {
+    final phoneCode = quotation.data.phoneCode;
+    final phoneNumber = quotation.data.phoneNumber;
+
+    if (phoneCode == null ||
+        phoneNumber == null ||
+        phoneCode.isEmpty ||
+        phoneNumber.isEmpty) {
+      showErrorToast('Nomor telepon tidak tersedia');
+      return;
+    }
+
+    final url = Uri.parse("https://wa.me/$phoneNumber");
+    print(url);
+
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+    // Buka URL jika bisa
+    // if (await canLaunchUrl(url)) {
+    // } else {
+    //   showErrorToast("Tidak dapat membuka WhatsApp");
+    // }
+  }
+
+  /*
+  
+    FUNGSI Delete Data Quotation
+
+    Fungsi ini digunakan untuk menyimpan data ke dalam local Storage HIVE (quotationBox)
+
+  */
+  void deleteDataQuotation(int id) async {
+    try {
+      // Ambil access token dari AuthenticationController
+      String? accessToken = authenticationController.accesToken.value;
+
+      // Ambil data dari API
+      final response = await dio.delete(
+        '$baseUrl/quotation/delete/$id',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        showSuccessToast('Berhasil menghapus Quotation');
+      } else {
+        showErrorToast('Gagal menghapus Quotation');
+
+        print(
+            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 }
