@@ -1,3 +1,5 @@
+import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/view/inbox_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,10 +13,11 @@ class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
 
   final BottomNavController navController = Get.put(BottomNavController());
+  final QuotationController quotationController = Get.put(QuotationController());
 
   final List<Widget> _pages = [
     HomeView(), // Halaman pertama
-    Container(color: AppColors.bgDanger,),
+    InboxView(),
     Container(color: AppColors.bgInfo,),
     // InboxView(), // Halaman kedua
     // const SettingView() // Halaman ketiga
@@ -88,6 +91,7 @@ class BottomNavigation extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: () {
+        quotationController.resetQuotatioinData();
         controller.changePage(index);
       },
       child: Container(

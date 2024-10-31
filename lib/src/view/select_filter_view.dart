@@ -232,13 +232,15 @@ class SelectFilterView extends StatelessWidget {
                             child: Obx(() {
                               // Bungkus hanya bagian warna dan teks yang perlu dipantau
                               return Container(
-                                color: (filterController.filterStatusList
-                                        .contains(status)
-                                    ? AppColors.bgPrimary
-                                    : AppColors.white_1),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: (filterController.filterStatusList
+                                          .contains(status)
+                                      ? AppColors.bgPrimary
+                                      : AppColors.white_1),
+                                ),
                                 padding: EdgeInsetsDirectional.symmetric(
-                                    horizontal: 14, vertical: 4),
-                                margin: EdgeInsets.only(bottom: 14),
+                                    horizontal: 14, vertical: 12),
                                 child: Text(
                                   status['label'] ?? "-",
                                   style: GoogleFonts.plusJakartaSans(
@@ -286,14 +288,15 @@ class SelectFilterView extends StatelessWidget {
                             child: Obx(
                               () {
                                 return Container(
-                                  color: (filterController
-                                          .filterClientSourceList
+                                  decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: (filterController.filterClientSourceList
                                           .contains(clientSource)
                                       ? AppColors.bgPrimary
                                       : AppColors.white_1),
+                                ),
                                   padding: EdgeInsetsDirectional.symmetric(
-                                      horizontal: 14, vertical: 4),
-                                  margin: EdgeInsets.only(bottom: 14),
+                                    horizontal: 14, vertical: 12),
                                   child: Text(
                                     clientSource['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
@@ -338,13 +341,15 @@ class SelectFilterView extends StatelessWidget {
                             child: Obx(
                               () {
                                 return Container(
+                                  decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
                                   color: (filterController.filterPicList
                                           .contains(pic)
                                       ? AppColors.bgPrimary
                                       : AppColors.white_1),
+                                ),
                                   padding: EdgeInsetsDirectional.symmetric(
-                                      horizontal: 14, vertical: 4),
-                                  margin: EdgeInsets.only(bottom: 14),
+                                    horizontal: 14, vertical: 12),
                                   child: Text(
                                     pic['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
@@ -391,13 +396,15 @@ class SelectFilterView extends StatelessWidget {
                             child: Obx(
                               () {
                                 return Container(
+                                  decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
                                   color: (filterController.filterCategoryList
                                           .contains(category)
                                       ? AppColors.bgPrimary
                                       : AppColors.white_1),
+                                ),
                                   padding: EdgeInsetsDirectional.symmetric(
-                                      horizontal: 14, vertical: 4),
-                                  margin: EdgeInsets.only(bottom: 14),
+                                    horizontal: 14, vertical: 12),
                                   child: Text(
                                     category['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(

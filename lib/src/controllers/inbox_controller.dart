@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../constant/config.dart';
@@ -9,7 +8,7 @@ import '../models/quotation_model.dart';
 import '../utils/toast.dart';
 import 'authentication_controller.dart';
 
-class QuotationController extends GetxController {
+class InboxController extends GetxController {
   var quotationList = <Quotation>[].obs;
   var isLoadingMore = false.obs;
   var start = 0.obs;
@@ -30,8 +29,6 @@ class QuotationController extends GetxController {
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
-  Box<Quotation>? quotationBox;
-
   /*
 
     Ketika aplikasi mulai berjalan (controller ini pertama kali di inisialisasi)
@@ -42,22 +39,7 @@ class QuotationController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    quotationBox = await Hive.openBox<Quotation>('quotationBox');
     fetchQuotationData();
-  }
-
-  /*
-  
-    Ketika controller ini tidak lagi diperlukan
-
-    akan menutup koneksi ke local storage. hal ini dapat mencegah 
-    kebocoran memori sehingga performa aplikasi tetap terjaga. 
-
-  */
-  @override
-  void dispose() {
-    quotationBox?.close();
-    super.dispose();
   }
 
   /*
@@ -73,70 +55,39 @@ class QuotationController extends GetxController {
 
   Future<void> fetchQuotationData({bool isLoadMore = false}) async {
     try {
-      if (isLoadMore) {
-        isLoadingMore.value = true;
-      }
+      // Jika data belum ada di local storage, fetch data dari API
+      String? accessToken = authenticationController.accesToken.value;
 
-      // Cek apakah data sudah ada di Hive (local storage)
-      if (quotationBox!.isNotEmpty) {
-        // Jika data ada di local storage, ambil data dari Hive
-        var localData =
-            quotationBox!.values.skip(start.value).take(limit).toList();
-        quotationList.addAll(localData);
-        print("Data diambil dari local storage.");
-      } else {
-        // Jika data belum ada di local storage, fetch data dari API
-        String? accessToken = authenticationController.accesToken.value;
+      final response = await dio.get(
+        '$baseUrl/dashboard/data_recent_quotation?start=${start.value}&limit=$limit',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
 
-        final response = await dio.get(
-          '$baseUrl/dashboard/data_recent_quotation?start=${start.value}&limit=$limit',
-          options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-        );
+      if (response.statusCode == 200 && response.data != null) {
+        final rawData = response.data['data'];
 
-        if (response.statusCode == 200 && response.data != null) {
-          final rawData = response.data['data'];
+        if (rawData != null && rawData is List) {
+          List<Quotation> quotations = rawData.map<Quotation>((item) {
+            return Quotation.fromJson(item);
+          }).toList();
 
-          if (rawData != null && rawData is List) {
-            List<Quotation> quotations = rawData.map<Quotation>((item) {
-              return Quotation.fromJson(item);
-            }).toList();
+          // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
+          if (isLoadMore) {
+            quotationList.addAll(quotations); // Menambah data baru
 
-            // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
-            if (isLoadMore) {
-              quotationList.addAll(quotations); // Menambah data baru
-            } else {
-              quotationList.value =
-                  quotations; // Mengganti list dengan data baru
-            }
-
-            // Simpan data baru ke Hive
-            // saveDataToHive(quotations);
-            print("Data diambil dari API dan disimpan ke local storage.");
+            print("Jumlah quotation list sekarang: ${quotationList.length}");
+          } else {
+            quotationList.value = quotations; // Mengganti list dengan data baru
           }
+
+          // Simpan data baru ke Hive
+          // saveDataToHive(quotations);
+          print("Data diambil dari API dan disimpan ke local storage.");
         }
       }
     } catch (e) {
       print('Error fetching data: $e');
-      if (!isLoadMore) {
-        // Jika terjadi error, load dari Hive jika ada data
-        var box = Hive.box<Quotation>('quotationBox');
-        quotationList.value = box.values.toList();
-      }
-    } finally {
-      isLoadingMore.value = false;
     }
-  }
-
-  /*
-  
-    FUNGSI Save Data to Hive
-
-    Fungsi ini digunakan untuk menyimpan data ke dalam local Storage HIVE (quotationBox)
-
-  */
-  void saveDataToHive(List<Quotation> data) async {
-    await quotationBox!.clear();
-    await quotationBox!.addAll(data);
   }
 
   /*
@@ -154,11 +105,7 @@ class QuotationController extends GetxController {
 
   void resetQuotatioinData() {
     start.value = 0;
-    quotationList.clear();
-
-    clearFilter();
     fetchQuotationData();
-    print("Jumlah Quotation saat ini: ${quotationList.length}");
   }
 
   /*
@@ -349,26 +296,15 @@ class QuotationController extends GetxController {
     }
 
     // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
-    // Filter berdasarkan pencarian (search) jika search tidak kosong
-    if (search.value != null && search.value!.isNotEmpty) {
-      final query = search.value!.toLowerCase();
-
-
-
-      result = result.where((quotation) {
-        // Memastikan setiap properti non-null sebelum digunakan
-        return (quotation.email.toLowerCase().contains(query)) ||
-            (quotation.section?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.company?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.name?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.category
-                .any((cat) => cat!.toLowerCase().contains(query))) ||
-            (quotation.data.clientSource?.value
-                    ?.toLowerCase()
-                    .contains(query) ??
-                false);
-      }).toList();
-    }
+    // if (search.value != null && search.value!.isNotEmpty) {
+    //   result = result.where((quotation) {
+    //     final query = search.value!.toLowerCase();
+    //     return quotation.name!.toLowerCase().contains(query) ||
+    //         quotation.email!.toLowerCase().contains(query) ||
+    //         quotation.companyName!.toLowerCase().contains(query) ||
+    //         quotation.pic!.toLowerCase().contains(query);
+    //   }).toList();
+    // }
 
     return result;
   }
