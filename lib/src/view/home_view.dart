@@ -260,7 +260,9 @@ class _HomeViewState extends State<HomeView> {
                         ],
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          widget.navController.changePage(1);
+                        },
                         child: Text(
                           "View all",
                           style: GoogleFonts.plusJakartaSans(
