@@ -108,7 +108,6 @@ class _LoginViewState extends State<LoginView> {
 
     return null; // Return null jika tidak ada error
   }
-  
 
   @override
   void initState() {
@@ -167,152 +166,158 @@ class _LoginViewState extends State<LoginView> {
               ),
             ),
           ),
-          Container(
-            // color: Colors.red,
-            width: double.infinity,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 200,
-                  height: 50,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/logos/logo_primary.png"),
+          ListView(
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 150),
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 200,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(
+                              "assets/images/logos/logo_primary.png"),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: 45,
-                ),
-                Form(
-                  key: _formKey,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 13),
-                    width: 328,
-                    decoration: BoxDecoration(
-                        color: AppColors.white_2,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Column(
-                      children: [
-                        Text(
-                          "Login",
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.text_1,
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Text(
-                          "Log in first, so you don't get the wrong server",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.text_3,
-                            fontSize: 13,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 26,
-                        ),
-                        FormInputWidget(
-                          controller: emailController,
-                          title: "Email",
-                          isPassword: false,
-                          validator: (value) {
-                            return _validateEmail(value);
-                          },
-                        ),
-                        SizedBox(
-                          height: 22,
-                        ),
-                        FormInputWidget(
-                          controller: passwordController,
-                          title: "Password",
-                          isPassword: true,
-                          validator: (value) {
-                            return _validatePassword(value);
-                          },
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                        Row(
+                    SizedBox(
+                      height: 45,
+                    ),
+                    Form(
+                      key: _formKey,
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 18, vertical: 13),
+                        width: 328,
+                        decoration: BoxDecoration(
+                            color: AppColors.white_2,
+                            borderRadius: BorderRadius.circular(15)),
+                        child: Column(
                           children: [
-                            Obx(
-                              () {
-                                return Checkbox(
-                                  splashRadius: 0,
-                                  activeColor: AppColors.primary,
-                                  side: BorderSide(
-                                      width: 1, color: AppColors.text_2),
-                                  value: authController.isRememberMe.value,
-                                  onChanged: (value) {
-                                    authController.toggleRememberMe(value!);
-                                  },
-                                );
-                              },
-                            ),
                             Text(
-                              "Remember me",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_2,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 26,
-                        ),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 51,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                // Panggil metode untuk submit form jika validasi berhasil
-                                authController.isLoading.value
-                                    ? null
-                                    : _submitForm();
-
-                                // Navigasi ke halaman /home
-                              }
-                            },
-                            style: ButtonStyle(
-                              shape: WidgetStatePropertyAll(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                              ),
-                              backgroundColor:
-                                  WidgetStatePropertyAll(AppColors.primary),
-                              foregroundColor:
-                                  WidgetStatePropertyAll(AppColors.white),
-                              overlayColor:
-                                  WidgetStatePropertyAll(Colors.white12),
-                            ),
-                            child: Text(
                               "Login",
                               style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
+                                color: AppColors.text_1,
+                                fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text(
+                              "Log in first, so you don't get the wrong server",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.text_3,
+                                fontSize: 13,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 26,
+                            ),
+                            FormInputWidget(
+                              controller: emailController,
+                              title: "Email",
+                              isPassword: false,
+                              validator: (value) {
+                                return _validateEmail(value);
+                              },
+                            ),
+                            SizedBox(
+                              height: 22,
+                            ),
+                            FormInputWidget(
+                              controller: passwordController,
+                              title: "Password",
+                              isPassword: true,
+                              validator: (value) {
+                                return _validatePassword(value);
+                              },
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              children: [
+                                Obx(
+                                  () {
+                                    return Checkbox(
+                                      splashRadius: 0,
+                                      activeColor: AppColors.primary,
+                                      side: BorderSide(
+                                          width: 1, color: AppColors.text_2),
+                                      value: authController.isRememberMe.value,
+                                      onChanged: (value) {
+                                        authController.toggleRememberMe(value!);
+                                      },
+                                    );
+                                  },
+                                ),
+                                Text(
+                                  "Remember me",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.text_2,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 26,
+                            ),
+                            SizedBox(
+                              width: double.infinity,
+                              height: 51,
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    // Panggil metode untuk submit form jika validasi berhasil
+                                    authController.isLoading.value
+                                        ? null
+                                        : _submitForm();
+                    
+                                    // Navigasi ke halaman /home
+                                  }
+                                },
+                                style: ButtonStyle(
+                                  shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      WidgetStatePropertyAll(AppColors.primary),
+                                  foregroundColor:
+                                      WidgetStatePropertyAll(AppColors.white),
+                                  overlayColor:
+                                      WidgetStatePropertyAll(Colors.white12),
+                                ),
+                                child: Text(
+                                  "Login",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 12,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          height: 12,
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

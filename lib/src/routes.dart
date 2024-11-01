@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/view/detail_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:get/get.dart';
 
@@ -38,13 +39,13 @@ class AppRoutes {
     ),
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
 
-      //   GetPage(
-      //     name: detailQuotation,
-      //     page: () {
-      //       final args = Get.arguments as Map<String, dynamic>;
-      //       return DetailQuotation(quotation: args['quotation']);
-      //     },
-      //   ),
-      //   GetPage(name: profile, page: () => ProfileView()),
+    GetPage(
+      name: detailQuotation,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return DetailQuotationView(quotation: args['quotation']);
+      },
+    ),
+    //   GetPage(name: profile, page: () => ProfileView()),
   ];
 }
