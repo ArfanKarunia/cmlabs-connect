@@ -1,4 +1,8 @@
+import 'package:cmlabs_connect/src/view/add_contact_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation_view.dart';
+import 'package:cmlabs_connect/src/view/edit_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
+import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
 import 'view/filter_view.dart';
@@ -11,10 +15,13 @@ class AppRoutes {
   static const String home = '/';
   static const String loginForm = '/login';
   static const String detailQuotation = '/detailQuotation';
-  static const String profile = '/profile';
+  static const String editQuotation = '/editQuotation';
+  static const String addContactClientPIC = '/addContactClientPIC';
+  // static const String profile = '/profile';
 
   static const String filter = '/filter';
   static const String filterSelect = '/filterSelect';
+  static const String editSelect = '/editSelect';
 
   static const String historicalLead = '/historicalLead';
 
@@ -36,15 +43,40 @@ class AppRoutes {
         return SelectFilterView(filterData: args);
       },
     ),
+    GetPage(
+      name: editSelect,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String selectData = args['selectData'];
+        final dynamic controller = args['controller'];
+        return SelectEditView(selectData: selectData, controller: controller,);
+      },
+    ),
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
+    GetPage(
+      name: detailQuotation,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return DetailQuotationView(quotation: args['quotation']);
+      },
+    ),
 
-      //   GetPage(
-      //     name: detailQuotation,
-      //     page: () {
-      //       final args = Get.arguments as Map<String, dynamic>;
-      //       return DetailQuotation(quotation: args['quotation']);
-      //     },
-      //   ),
-      //   GetPage(name: profile, page: () => ProfileView()),
+    GetPage(
+      name: addContactClientPIC,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return AddContactView(clientPIC: args['clientPic']);
+      },
+    ),
+
+    GetPage(
+      name: editQuotation,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return EditQuotationView(quotation: args['quotation']);
+      },
+    ),
+
+    //   GetPage(name: profile, page: () => ProfileView()),
   ];
 }

@@ -11,7 +11,9 @@ import '../utils/color.dart';
 class QuotationListTile extends StatelessWidget {
   const QuotationListTile({
     super.key,
-    required this.quotation, required this.onDelete, required this.onChatWA,
+    required this.quotation,
+    required this.onDelete,
+    required this.onChatWA,
   });
 
   final Quotation quotation;
@@ -62,12 +64,10 @@ class QuotationListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: SizedBox(
-          height: 80,
+          height: 120,
           child: Stack(
-            alignment: Alignment.center,
             children: [
               Row(
-                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   //  Berfungsi agar slidable bisa mepet kanan
                   Expanded(
@@ -154,7 +154,8 @@ class QuotationListTile extends StatelessWidget {
                                                     height: 5,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius.circular(10),
+                                                          BorderRadius.circular(
+                                                              10),
                                                       color: AppColors.text_4,
                                                     ),
                                                   ),
@@ -163,10 +164,11 @@ class QuotationListTile extends StatelessWidget {
                                                   ),
                                                   Text(
                                                     "Delete",
-                                                    style:
-                                                        GoogleFonts.plusJakartaSans(
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
                                                       color: AppColors.text_1,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       fontSize: 24,
                                                     ),
                                                   ),
@@ -175,10 +177,11 @@ class QuotationListTile extends StatelessWidget {
                                                   ),
                                                   Text(
                                                     "Are you sure wanna delete this Cardbox?",
-                                                    style:
-                                                        GoogleFonts.plusJakartaSans(
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
                                                       color: AppColors.text_1,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       fontSize: 14,
                                                     ),
                                                   ),
@@ -192,12 +195,15 @@ class QuotationListTile extends StatelessWidget {
                                                       style: ButtonStyle(
                                                         backgroundColor:
                                                             WidgetStatePropertyAll(
-                                                                AppColors.primary),
-                                                        shape: WidgetStatePropertyAll(
+                                                                AppColors
+                                                                    .primary),
+                                                        shape:
+                                                            WidgetStatePropertyAll(
                                                           RoundedRectangleBorder(
                                                             borderRadius:
-                                                                BorderRadius.circular(
-                                                                    5),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5),
                                                           ),
                                                         ),
                                                       ),
@@ -205,8 +211,10 @@ class QuotationListTile extends StatelessWidget {
                                                         "Yes, delete it",
                                                         style: GoogleFonts
                                                             .plusJakartaSans(
-                                                          color: AppColors.white_1,
-                                                          fontWeight: FontWeight.bold,
+                                                          color:
+                                                              AppColors.white_1,
+                                                          fontWeight:
+                                                              FontWeight.bold,
                                                           fontSize: 14,
                                                         ),
                                                       ),
@@ -217,11 +225,12 @@ class QuotationListTile extends StatelessWidget {
                                                   ),
                                                   Text(
                                                     "Swipe down or Tap the screen to close",
-                                                    style:
-                                                        GoogleFonts.plusJakartaSans(
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
                                                       color: AppColors.text_2,
                                                       fontSize: 10,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                     ),
                                                   ),
                                                 ],
@@ -308,9 +317,27 @@ class QuotationListTile extends StatelessWidget {
                           ),
                           Text(
                             quotation.data.pic ?? "-",
+                            maxLines: 1,
                             style: GoogleFonts.plusJakartaSans(
                               color: AppColors.text_4,
                               fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            quotation.data.phoneNumber ?? "-",
+                            maxLines: 1,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.text_4,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            quotation.email,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.text_4,
+                              fontSize: 10,
                               fontWeight: FontWeight.w400,
                             ),
                           ),

@@ -40,6 +40,18 @@ class ClientPic {
       'contacts': contacts.map((contact) => contact?.toJson()).toList(),
     };
   }
+
+  ClientPic copyWith({
+    String? name,
+    String? position,
+    List<ContactClientPic?>? contacts,
+  }) {
+    return ClientPic(
+      name: name ?? this.name,
+      position: position ?? this.position,
+      contacts: contacts ?? this.contacts,
+    );
+  }
 }
 
 

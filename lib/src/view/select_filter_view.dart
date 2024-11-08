@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../controllers/authentication_controller.dart';
 import '../controllers/filter_controller.dart';
 import '../utils/color.dart';
 import '../widgets/tag_button.dart';
@@ -11,9 +10,6 @@ import '../widgets/tag_button.dart';
 class SelectFilterView extends StatelessWidget {
   SelectFilterView({super.key, required this.filterData});
   final String filterData;
-
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
 
   final FilterController filterController = Get.put(FilterController());
 
@@ -289,14 +285,15 @@ class SelectFilterView extends StatelessWidget {
                               () {
                                 return Container(
                                   decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: (filterController.filterClientSourceList
-                                          .contains(clientSource)
-                                      ? AppColors.bgPrimary
-                                      : AppColors.white_1),
-                                ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: (filterController
+                                            .filterClientSourceList
+                                            .contains(clientSource)
+                                        ? AppColors.bgPrimary
+                                        : AppColors.white_1),
+                                  ),
                                   padding: EdgeInsetsDirectional.symmetric(
-                                    horizontal: 14, vertical: 12),
+                                      horizontal: 14, vertical: 12),
                                   child: Text(
                                     clientSource['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
@@ -342,14 +339,14 @@ class SelectFilterView extends StatelessWidget {
                               () {
                                 return Container(
                                   decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: (filterController.filterPicList
-                                          .contains(pic)
-                                      ? AppColors.bgPrimary
-                                      : AppColors.white_1),
-                                ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: (filterController.filterPicList
+                                            .contains(pic)
+                                        ? AppColors.bgPrimary
+                                        : AppColors.white_1),
+                                  ),
                                   padding: EdgeInsetsDirectional.symmetric(
-                                    horizontal: 14, vertical: 12),
+                                      horizontal: 14, vertical: 12),
                                   child: Text(
                                     pic['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
@@ -397,14 +394,14 @@ class SelectFilterView extends StatelessWidget {
                               () {
                                 return Container(
                                   decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: (filterController.filterCategoryList
-                                          .contains(category)
-                                      ? AppColors.bgPrimary
-                                      : AppColors.white_1),
-                                ),
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: (filterController.filterCategoryList
+                                            .contains(category)
+                                        ? AppColors.bgPrimary
+                                        : AppColors.white_1),
+                                  ),
                                   padding: EdgeInsetsDirectional.symmetric(
-                                    horizontal: 14, vertical: 12),
+                                      horizontal: 14, vertical: 12),
                                   child: Text(
                                     category['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
@@ -420,7 +417,62 @@ class SelectFilterView extends StatelessWidget {
                         },
                       ),
                     );
-                  } else {
+                  } else if (filterData.toLowerCase() == 'type_contact') {
+                    // print("Cari Data: ${filterController.searchData}");
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 50),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.white_1,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        itemCount: filterController
+                            .searchData(filterData.toLowerCase())
+                            .length,
+                        itemBuilder: (context, index) {
+                          final category = filterController
+                              .searchData(filterData.toLowerCase())[index];
+
+                          return GestureDetector(
+                            onTap: () {
+                              if (filterController.filterPicList
+                                  .contains(category)) {
+                                filterController.deleteFilterCategory(category);
+                              } else {
+                                filterController.addFilterCategory(category);
+                              }
+                            },
+                            child: Obx(
+                              () {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: (filterController.filterCategoryList
+                                            .contains(category)
+                                        ? AppColors.bgPrimary
+                                        : AppColors.white_1),
+                                  ),
+                                  padding: EdgeInsetsDirectional.symmetric(
+                                      horizontal: 14, vertical: 12),
+                                  child: Text(
+                                    category['label'] ?? "-",
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 13,
+                                      color: AppColors.text_1,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  }else {
                     return Container(
                       child: Text("YOLO"),
                     );
