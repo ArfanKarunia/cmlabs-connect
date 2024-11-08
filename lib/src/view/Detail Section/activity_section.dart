@@ -200,7 +200,7 @@ class ActivitySection extends StatelessWidget {
                                     .refresh();
                               },
                             );
-                            ;
+                            
                             // activityController.selectedStatusActivity.trigger(null);
                           },
                         ),

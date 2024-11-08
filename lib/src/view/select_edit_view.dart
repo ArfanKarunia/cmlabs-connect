@@ -1,4 +1,3 @@
-import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -257,6 +256,9 @@ class SelectEditView extends StatelessWidget {
                         Get.back(result: temporaryData.value);
                       } else if (selectData == "type_activity") {
                         Get.back(result: temporaryTypeActivity);
+                      } else if (selectData == "validity_url_tracking") {
+                        controller.addValidity(temporaryData.value);
+                        Get.back();
                       }
                       print("$selectData");
                     }
