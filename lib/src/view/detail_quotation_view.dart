@@ -17,7 +17,9 @@ class DetailQuotationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dataQuotation = detailQuotationController.detailData(quotation);
+    final dataQuotation = detailQuotationController.detailData(quotation);
+
+    // detailQuotationController.clearSelectedData();
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -81,7 +83,7 @@ class DetailQuotationView extends StatelessWidget {
                               height: 6,
                             ),
                             Text(
-                              value ?? "-" ,
+                              value ?? "-",
                               style: GoogleFonts.plusJakartaSans(
                                 color: AppColors.text_1,
                                 fontSize: 12,
@@ -122,24 +124,33 @@ class DetailQuotationView extends StatelessWidget {
                         children: [
                           (!detailQuotationController.getShowAllValue)
                               ? Text("Show more")
-                              : Text("Show all"),
+                              : Text("Show less"),
                           SizedBox(
                             width: 10,
                           ),
-                          Icon(Ionicons.chevron_down_outline),
+                          Icon(
+                            (!detailQuotationController.getShowAllValue)
+                                ? Ionicons.chevron_down_outline
+                                : Ionicons.chevron_up_outline,
+                          ),
                         ],
                       ),
                     ),
                   );
                 },
               ),
-              SizedBox(height: 14,),
+              SizedBox(
+                height: 14,
+              ),
               Container(
                 height: 51,
                 width: double.infinity,
                 margin: EdgeInsets.symmetric(horizontal: 42),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed("/editQuotation",
+                        arguments: {'quotation': quotation});
+                  },
                   style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll(AppColors.primary),
                     foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
@@ -159,8 +170,9 @@ class DetailQuotationView extends StatelessWidget {
                   ),
                 ),
               ),
-              SizedBox(height: 80,),
-
+              SizedBox(
+                height: 80,
+              ),
             ],
           ),
         ),

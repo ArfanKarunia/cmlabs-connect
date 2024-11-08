@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/view/filter_view.dart';
@@ -18,11 +19,16 @@ class InboxView extends StatefulWidget {
 
   final QuotationController quotationController =
       Get.put(QuotationController());
+
+  final DetailQuotationController detailQuotationController =
+      Get.put(DetailQuotationController());
 }
 
 class _InboxViewState extends State<InboxView> {
   @override
   Widget build(BuildContext context) {
+    widget.detailQuotationController.clearSelectedData();
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       body: SafeArea(
@@ -200,8 +206,8 @@ class _InboxViewState extends State<InboxView> {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           padding: const EdgeInsets.symmetric(vertical: 0),
-                          itemCount:
-                              widget.quotationController.filteredQuotations.length,
+                          itemCount: widget
+                              .quotationController.filteredQuotations.length,
                           itemBuilder: (context, index) {
                             final quotation = quotationList[index];
 
