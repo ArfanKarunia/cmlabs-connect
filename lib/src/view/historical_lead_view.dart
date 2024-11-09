@@ -1,9 +1,8 @@
-import 'package:cmlabs_connect/src/controllers/filter_controller.dart';
+import 'package:cmlabs_connect/src/controllers/historical_lead_controller.dart';
+import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../utils/color.dart';
@@ -12,27 +11,8 @@ import '../widgets/custom_buttom.dart';
 class HistoricalLeadView extends StatelessWidget {
   HistoricalLeadView({super.key});
 
-  final FilterController filterController = Get.put(FilterController());
-
-  // Range Date 1
-  DateTime? temporaryStartDate1;
-  DateTime? temporaryEndDate1;
-
-  final TextEditingController startDateController1 = TextEditingController();
-  final TextEditingController endDateController1 = TextEditingController();
-
-  RxString startDateError1 = ''.obs;
-  RxString endDateError1 = ''.obs;
-
-  // Range Date 1
-  DateTime? temporaryStartDate2;
-  DateTime? temporaryEndDate2;
-
-  final TextEditingController startDateController2 = TextEditingController();
-  final TextEditingController endDateController2 = TextEditingController();
-
-  RxString startDateError2 = ''.obs;
-  RxString endDateError2 = ''.obs;
+  final HistoricalLeadController historicalLeadController =
+      Get.put(HistoricalLeadController());
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +20,7 @@ class HistoricalLeadView extends StatelessWidget {
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
         toolbarHeight: 100,
+        surfaceTintColor: Color(0xFFF9F9F9),
         backgroundColor: Color(0xFFF9F9F9),
         title: Text(
           "Leads Historical Data New",
@@ -50,371 +31,598 @@ class HistoricalLeadView extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Select Filter",
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.text_2,
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+
+              Obx(
+                () {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SelectField(
+                              name: "Year",
+                              child: Container(
+                                  child: (historicalLeadController
+                                              .year1.value ==
+                                          null)
+                                      ? Text(
+                                          "Select year",
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: AppColors.text_3,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        )
+                                      : Text(
+                                          historicalLeadController.year1.value!,
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: AppColors.text_1,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        )),
+                              onPressed: () {
+                                Get.toNamed(
+                                  "/filterSelect",
+                                  arguments: {
+                                    'selectData': "year",
+                                    'controller': historicalLeadController,
+                                    'canSearch': false,
+                                  },
+                                )?.then(
+                                  (value) {
+                                    historicalLeadController.year1.value =
+                                        value;
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SelectField(
+                              name: "Month",
+                              child: Container(
+                                  child: (historicalLeadController
+                                              .month1.value ==
+                                          null)
+                                      ? Text(
+                                          "Select month",
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: AppColors.text_3,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        )
+                                      : Text(
+                                          historicalLeadController
+                                              .month1.value!,
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: AppColors.text_1,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        )),
+                              onPressed: () {
+                                Get.toNamed(
+                                  "/filterSelect",
+                                  arguments: {
+                                    'selectData': "month",
+                                    'controller': historicalLeadController,
+                                    'canSearch': false,
+                                  },
+                                )?.then(
+                                  (value) {
+                                    historicalLeadController.month1.value =
+                                        value;
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+
+              SizedBox(
+                height: 20,
+              ),
+
+              Obx(
+                () {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SelectField(
+                              name: "Year",
+                              child: Container(
+                                child: (historicalLeadController.year2.value ==
+                                        null)
+                                    ? Text(
+                                        "Select year",
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.text_3,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      )
+                                    : Text(
+                                        historicalLeadController.year2.value!,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.text_1,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                              ),
+                              onPressed: () {
+                                Get.toNamed(
+                                  "/filterSelect",
+                                  arguments: {
+                                    'selectData': "year",
+                                    'controller': historicalLeadController,
+                                    'canSearch': false,
+                                  },
+                                )?.then(
+                                  (value) {
+                                    historicalLeadController.year2.value =
+                                        value;
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SelectField(
+                              name: "Month",
+                              child: Container(
+                                child: (historicalLeadController.month2.value ==
+                                        null)
+                                    ? Text(
+                                        "Select month",
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.text_3,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      )
+                                    : Text(
+                                        historicalLeadController.month2.value!,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.text_1,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                              ),
+                              onPressed: () {
+                                Get.toNamed(
+                                  "/filterSelect",
+                                  arguments: {
+                                    'selectData': "month",
+                                    'controller': historicalLeadController,
+                                    'canSearch': false,
+                                  },
+                                )?.then(
+                                  (value) {
+                                    historicalLeadController.month2.value =
+                                        value;
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+
+              SizedBox(
+                height: 20,
+              ),
+
+              // Button Search
+
+              SizedBox(
+                width: double.infinity,
+                height: 51,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (historicalLeadController.isDatePairFilled()) {
+                      historicalLeadController.submit();
+                    } else {
+                      showErrorToast(
+                        "one of the month and year combinations must be filled in",
+                      );
+                    }
+                  },
+                  style: ButtonStyle(
+                    shape: WidgetStatePropertyAll(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    backgroundColor: WidgetStatePropertyAll(AppColors.primary),
+                    foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
+                    overlayColor: WidgetStatePropertyAll(Colors.white24),
+                  ),
+                  child: Text(
+                    "Search",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(
+                height: 30,
+              ),
+
+              Container(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Result",
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.text_1,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 14,
+                    ),
+                    Obx(
+                      () {
+                        return Row(
+                          children: [
+                            (historicalLeadController.historicalData1.value !=
+                                    null)
+                                ? ResultDataHistoricalWidget(
+                                    index: 1,
+                                    year: historicalLeadController.year1.value!,
+                                    month:
+                                        historicalLeadController.month1.value!,
+                                  )
+                                : Container(),
+                            (historicalLeadController.historicalData2.value !=
+                                    null)
+                                ? ResultDataHistoricalWidget(
+                                    index: 2,
+                                    year: historicalLeadController.year2.value!,
+                                    month:
+                                        historicalLeadController.month2.value!,
+                                  )
+                                : Container(),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ResultDataHistoricalWidget extends StatelessWidget {
+  ResultDataHistoricalWidget({
+    super.key,
+    required this.index,
+    required this.year,
+    required this.month,
+  });
+
+  final int index;
+  final String year;
+  final String month;
+
+  final HistoricalLeadController historicalLeadController =
+      Get.put(HistoricalLeadController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Container(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Select Filter",
+              "Data Range $index",
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
                 color: AppColors.text_1,
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(
-              height: 20,
+              height: 12,
             ),
             Text(
-              "Data range",
+              "$month $year",
               style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text_1,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13),
-                      decoration: InputDecoration(
-                        focusColor: AppColors.primary,
-                        suffixIcon: Icon(
-                          Ionicons.calendar_outline,
-                          color: AppColors.text_1,
-                        ),
-                        hintText: "Select date",
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.primaryText, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: AppColors.primary, width: 2),
-                        ),
-                        // errorText: startDateError.value.isNotEmpty
-                        //     ? startDateError.value
-                        //     : null,
-                      ),
-                      readOnly: true,
-                      controller: startDateController1,
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: filterController.startDate.value ??
-                              DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          temporaryStartDate1 = pickedDate;
-                          startDateController1.text =
-                              DateFormat('dd MMM yyyy').format(pickedDate);
-                          // validateDateFields();
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10), // Spasi antar form
-                  Text(
-                    "to",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(width: 10), // Spasi antar form
-                  Expanded(child: Obx(
-                    () {
-                      return TextFormField(
-                        style: GoogleFonts.plusJakartaSans(fontSize: 13),
-                        decoration: InputDecoration(
-                          focusColor: AppColors.primary,
-                          suffixIcon: Icon(
-                            Ionicons.calendar_outline,
-                            color: AppColors.text_1,
-                          ),
-                          hintText: "Select date",
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.primaryText, width: 1),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppColors.primary, width: 2),
-                          ),
-                          errorText: endDateError1.value.isNotEmpty
-                              ? endDateError1.value
-                              : null,
-                        ),
-                        readOnly: true,
-                        controller: endDateController1,
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            temporaryEndDate1 = pickedDate;
-                            endDateController1.text =
-                                DateFormat('dd MMM yyyy').format(pickedDate);
-                            // validateDateFields();
-                          }
-                        },
-                      );
-                    },
-                  )),
-                ],
+                color: AppColors.text_3,
+                fontSize: 13,
               ),
             ),
             SizedBox(
-              height: 20,
-            ),
-
-            Text(
-              "Data range",
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text_1,
-              ),
-            ),
-            const SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13),
-                      decoration: InputDecoration(
-                        focusColor: AppColors.primary,
-                        suffixIcon: Icon(
-                          Ionicons.calendar_outline,
-                          color: AppColors.text_1,
-                        ),
-                        hintText: "Select date",
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: AppColors.primaryText, width: 1),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: AppColors.primary, width: 2),
-                        ),
-                        // errorText: startDateError.value.isNotEmpty
-                        //     ? startDateError.value
-                        //     : null,
-                      ),
-                      readOnly: true,
-                      controller: startDateController2,
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: filterController.startDate.value ??
-                              DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          temporaryStartDate2 = pickedDate;
-                          startDateController2.text =
-                              DateFormat('dd MMM yyyy').format(pickedDate);
-                          // validateDateFields();
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 10), // Spasi antar form
-                  Text(
-                    "to",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                    ),
-                  ),
-                  const SizedBox(width: 10), // Spasi antar form
-                  Expanded(child: Obx(
-                    () {
-                      return TextFormField(
-                        style: GoogleFonts.plusJakartaSans(fontSize: 13),
-                        decoration: InputDecoration(
-                          focusColor: AppColors.primary,
-                          suffixIcon: Icon(
-                            Ionicons.calendar_outline,
-                            color: AppColors.text_1,
-                          ),
-                          hintText: "Select date",
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: AppColors.primaryText, width: 1),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppColors.primary, width: 2),
-                          ),
-                          errorText: endDateError2.value.isNotEmpty
-                              ? endDateError2.value
-                              : null,
-                        ),
-                        readOnly: true,
-                        controller: endDateController2,
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) {
-                            temporaryEndDate2 = pickedDate;
-                            endDateController2.text =
-                                DateFormat('dd MMM yyyy').format(pickedDate);
-                            // validateDateFields();
-                          }
-                        },
-                      );
-                    },
-                  )),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-
-            Text(
-              "Filter Data",
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text_1,
-              ),
-            ),
-            SizedBox(
-              height: 15,
+              height: 8,
             ),
             Container(
-              height: 51,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              width: double.infinity,
+              padding: (index == 1)
+                  ? EdgeInsets.only(top: 10, left: 5, bottom: 10)
+                  : EdgeInsets.only(top: 10, right: 5, bottom: 10),
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.primaryText),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Stack(
-                alignment: Alignment.centerRight,
-                children: [
-                  // Obx(
-                  //   () {
-                  //     if (filterController.filterCategoryList.isEmpty) {
-                  //       return Container(
-                  //         padding: EdgeInsets.only(left: 10),
-                  //         alignment: Alignment.centerLeft,
-                  //         child: Text(
-                  //           "All",
-                  //           style: GoogleFonts.plusJakartaSans(
-                  //             fontSize: 14,
-                  //             color: AppColors.text_3,
-                  //           ),
-                  //         ),
-                  //       );
-                  //     }
-                  //     return ListView.builder(
-                  //       scrollDirection: Axis.horizontal,
-                  //       itemCount: filterController.filterCategoryList.length,
-                  //       itemBuilder: (context, index) {
-                  //         final category =
-                  //             filterController.filterCategoryList[index];
-                  //         return TagButton(
-                  //           statusLabel: category['label'] ?? '-',
-                  //           onPressed: () {
-                  //             filterController.deleteFilterCategory(category);
-                  //           },
-                  //         );
-                  //       },
-                  //     );
-                  //   },
-                  // ),
-                  Container(
-                    height: 45,
-                    width: 45,
-                    child: CustomButton(
-                      backgroundColor: Colors.transparent,
-                      onPressed: () {
-                        Get.toNamed("/filterSelect", arguments: "category");
-                      },
-                      child: Icon(
-                        Ionicons.chevron_down_outline,
-                        color: AppColors.text_1,
-                      ),
-                    ),
+                color: AppColors.white_1,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color.fromARGB(15, 0, 0, 0),
+                    offset: Offset(4, 4),
+                    blurRadius: 5,
                   )
                 ],
               ),
-            ),
-
-            SizedBox(
-              height: 15,
-            ),
-
-            // Button Search
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  fixedSize: WidgetStatePropertyAll(
-                    Size(double.infinity, 50),
-                  ),
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-                  foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                  overlayColor: WidgetStatePropertyAll(Colors.white24),
-                ),
-                child: Text(
-                  "Search",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-
-            SizedBox(
-              height: 30,
-            ),
-
-            Container(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Result",
+                    "All Data",
                     style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.text_1,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold),
-                  )
+                      color: AppColors.text_1,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    (index == 1)
+                        ? historicalLeadController.historicalData1.value!.total
+                            .toString()
+                        : historicalLeadController.historicalData2.value!.total
+                            .toString(),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_3,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Divider(),
+                  Text(
+                    "Isi Form User",
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_1,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    (index == 1)
+                        ? historicalLeadController
+                            .historicalData1.value!.formUser
+                            .toString()
+                        : historicalLeadController
+                            .historicalData2.value!.formUser
+                            .toString(),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_3,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Divider(),
+                  Text(
+                    "Google Ads",
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_1,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    (index == 1)
+                        ? historicalLeadController
+                            .historicalData1.value!.googleAds
+                            .toString()
+                        : historicalLeadController
+                            .historicalData2.value!.googleAds
+                            .toString(),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_3,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Divider(),
+                  Text(
+                    "Meta Ads",
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_1,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    (index == 1)
+                        ? historicalLeadController
+                            .historicalData1.value!.metaAds
+                            .toString()
+                        : historicalLeadController
+                            .historicalData2.value!.metaAds
+                            .toString(),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_3,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Divider(),
+                  Text(
+                    "Isi Mkt Sendiri",
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_1,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    (index == 1)
+                        ? historicalLeadController
+                            .historicalData1.value!.marketing
+                            .toString()
+                        : historicalLeadController
+                            .historicalData2.value!.marketing
+                            .toString(),
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.text_3,
+                      fontSize: 13,
+                    ),
+                  ),
+                  Divider(),
                 ],
               ),
-            )
+            ),
+            SizedBox(
+              height: 50,
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class SelectField extends StatelessWidget {
+  SelectField({
+    super.key,
+    required this.name,
+    required this.child,
+    required this.onPressed,
+    this.isMandatory = false,
+  });
+
+  String name;
+  bool isMandatory;
+  VoidCallback onPressed;
+  Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            Text(
+              name,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppColors.text_3,
+              ),
+            ),
+            (isMandatory)
+                ? Text(
+                    "*",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.danger,
+                    ),
+                  )
+                : Container(),
+          ],
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Container(
+          height: 51,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.primaryText),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Stack(
+            alignment: Alignment.centerRight,
+            children: [
+              Container(
+                child: child,
+                width: double.infinity,
+              ),
+              Container(
+                height: 45,
+                width: 45,
+                child: CustomButton(
+                  backgroundColor: AppColors.white_1,
+                  onPressed: onPressed,
+                  child: const Icon(
+                    Ionicons.chevron_down_outline,
+                    color: AppColors.text_1,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -39,8 +39,11 @@ class AppRoutes {
     GetPage(
       name: filterSelect,
       page: () {
-        final args = Get.arguments as String;
-        return SelectFilterView(filterData: args);
+        final args = Get.arguments as Map<String, dynamic>;
+        final String filter = args['selectData'];
+        final dynamic controller = args['controller'];
+        final bool canSearch = args['canSearch'] ?? true;
+        return SelectFilterView(filter: filter, controller: controller, canSearch: canSearch);
       },
     ),
     GetPage(

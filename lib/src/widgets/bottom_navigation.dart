@@ -18,16 +18,15 @@ class BottomNavigation extends StatelessWidget {
   final List<Widget> _pages = [
     HomeView(), // Halaman pertama
     InboxView(),
-    Container(color: AppColors.bgInfo,),
+    Container(
+      color: AppColors.bgInfo,
+    ),
     // InboxView(), // Halaman kedua
     // const SettingView() // Halaman ketiga
   ];
 
-
   @override
   Widget build(BuildContext context) {
-
-
     return Obx(
       () => Scaffold(
         body: SizedBox.expand(

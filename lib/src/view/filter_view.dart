@@ -266,7 +266,13 @@ class FilterView extends StatelessWidget {
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       onPressed: () {
-                        Get.toNamed("/filterSelect", arguments: "category");
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "category",
+                            'controller': filterController,
+                          },
+                        );
                       },
                       child: Icon(
                         Ionicons.chevron_down_outline,
@@ -338,7 +344,13 @@ class FilterView extends StatelessWidget {
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       onPressed: () {
-                        Get.toNamed("/filterSelect", arguments: "pic");
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "pic",
+                            'controller': filterController,
+                          },
+                        );
                       },
                       child: Icon(
                         Ionicons.chevron_down_outline,
@@ -411,7 +423,13 @@ class FilterView extends StatelessWidget {
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       onPressed: () {
-                        Get.toNamed("/filterSelect", arguments: "Status");
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "status",
+                            'controller': filterController,
+                          },
+                        );
                       },
                       child: Icon(
                         Ionicons.chevron_down_outline,
@@ -487,8 +505,13 @@ class FilterView extends StatelessWidget {
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       onPressed: () {
-                        Get.toNamed("/filterSelect",
-                            arguments: "Client Source");
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "client_source",
+                            'controller': filterController,
+                          },
+                        );
                       },
                       child: Icon(
                         Ionicons.chevron_down_outline,
@@ -510,8 +533,7 @@ class FilterView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  filterController.setDateRange(
-                      temporaryStartDate, temporaryEndDate);
+                  filterController.setDateRange(temporaryStartDate, temporaryEndDate);
                   filterController.searchFilter('all');
                 },
                 style: ButtonStyle(
