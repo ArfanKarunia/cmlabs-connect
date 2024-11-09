@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/controllers/historical_lead_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,16 +21,21 @@ class HomeView extends StatefulWidget {
   final QuotationController quotationController =
       Get.put(QuotationController());
 
-  final BottomNavController navController = Get.put(BottomNavController());
-
-  final UserController userController = Get.put(UserController());
-
-  final DashboardController dashboardController =
-      Get.put(DashboardController());
-
-  final FilterController filterController = Get.put(FilterController());
-
-  var acceptedData = 0;
+  final BottomNavController navController = Get.put(
+    BottomNavController(),
+  );
+  final UserController userController = Get.put(
+    UserController(),
+  );
+  final DashboardController dashboardController = Get.put(
+    DashboardController(),
+  );
+  final FilterController filterController = Get.put(
+    FilterController(),
+  );
+  final HistoricalLeadController historicalLeadController = Get.put(
+    HistoricalLeadController(),
+  );
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -39,6 +45,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+    widget.historicalLeadController.clear();
     // widget.picController.fetchNewPICData();
     // widget.dashboardController.saveDashboardData();
     // widget.quotationController.fetchQuotationData();
@@ -47,15 +54,16 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     User? user = widget.userController.user.value;
+    user!.picUrl;
 
-    print("link gambar: ${user!.picUrl}");
-    print("jumlah new: ${widget.dashboardController.amount_newLeads.value}");
-    print(
-        "jumlah accepted: ${widget.dashboardController.amount_acceptedLeads.value}");
-    print(
-        "jumlah followed up: ${widget.dashboardController.amount_followedUpLeads.value}");
-    print(
-        "jumlah last 30 day: ${widget.dashboardController.amount_last30Day.value}");
+    // print("link gambar: ${user!.picUrl}");
+    // print("jumlah new: ${widget.dashboardController.amount_newLeads.value}");
+    // print(
+    //     "jumlah accepted: ${widget.dashboardController.amount_acceptedLeads.value}");
+    // print(
+    //     "jumlah followed up: ${widget.dashboardController.amount_followedUpLeads.value}");
+    // print(
+    //     "jumlah last 30 day: ${widget.dashboardController.amount_last30Day.value}");
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),

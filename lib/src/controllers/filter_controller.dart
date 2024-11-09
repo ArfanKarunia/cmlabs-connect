@@ -7,13 +7,15 @@ import '../constant/config.dart';
 import '../constant/const.dart';
 
 class FilterController extends GetxController {
+  var search = Rx<String?>(null);
+  
   // Menyimpan list status
   var statusList = <Map<String, String>>[].obs;
   var clientSourceList = <Map<String, String>>[].obs;
   var picList = <Map<String, String>>[].obs;
   var categoryList = <Map<String, String>>[].obs;
 
-  // Menyim[an Filter
+  // Menyimpan Filter
   var filterStatusList = <Map<String, String>>[].obs;
   var filterClientSourceList = <Map<String, String>>[].obs;
   var filterPicList = <Map<String, String>>[].obs;
@@ -23,13 +25,11 @@ class FilterController extends GetxController {
   var startDate = Rx<DateTime?>(null);
   var endDate = Rx<DateTime?>(null);
 
-  var search = Rx<String?>(null);
 
   // Inisialisasi Dio dan AuthenticationController
   final Dio dio = Dio();
   final AuthenticationController authenticationController = Get.find();
-  final QuotationController quotationController =
-      Get.put(QuotationController());
+  final QuotationController quotationController = Get.put(QuotationController());
 
   final String baseUrl = Config.baseURL;
 
@@ -67,7 +67,7 @@ class FilterController extends GetxController {
         }
 
         // Untuk Filter Client Source
-      } else if (filter.toLowerCase() == 'client source') {
+      } else if (filter.toLowerCase() == 'client_source') {
         final response = await dio.get(
           '$baseUrl/filter/client_source',
           options: Options(
@@ -108,7 +108,11 @@ class FilterController extends GetxController {
             };
           }).toList();
 
-          picList.assignAll(mappedData);
+          picList.clear();
+
+          picList.add({'value': 'all', 'label': 'All'});
+          picList.addAll(mappedData);
+
         }
       } else if (filter.toLowerCase() == 'category') {
         final response = await dio.get(
@@ -130,7 +134,10 @@ class FilterController extends GetxController {
             };
           }).toList();
 
-          categoryList.assignAll(mappedData);
+          categoryList.clear();
+
+          categoryList.add({'value': 'all', 'label': 'All'});
+          categoryList.addAll(mappedData);
         }
       }
     } catch (e) {
@@ -277,7 +284,7 @@ class FilterController extends GetxController {
               status['label'].toLowerCase().contains(query);
         }).toList();
       }
-    } else if (filter.toLowerCase() == 'client source') {
+    } else if (filter.toLowerCase() == 'client_source') {
       result = clientSourceList;
 
       // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
