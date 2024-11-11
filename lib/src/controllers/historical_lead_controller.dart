@@ -43,19 +43,20 @@ class HistoricalLeadController extends GetxController {
       // Ambil access token dari AuthenticationController
       String? accessToken = authenticationController.accesToken.value;
 
+      var data = requestData(index);
+
       // Ambil data dari API
-      final response = await dio.get(
-        '$baseUrl/dashboard/historical_data_new',
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $accessToken',
-          },
-        ),
-      );
+      final response = await dio.get('$baseUrl/dashboard/historical_data_new',
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $accessToken',
+            },
+          ),
+          data: data);
 
       if (response.statusCode == 200 && response.data != null) {
         var responseData = response.data;
-        var historicalData = HistoricalLeadModel.fromJson(responseData);
+        var historicalData = HistoricalLeadModel.fromJson(responseData['data']);
 
         if (index == 1) {
           historicalData1.value = historicalData;
@@ -68,6 +69,12 @@ class HistoricalLeadController extends GetxController {
       }
     } catch (e) {
       print('Error fetching data: $e');
+    }
+  }
+
+  Future<void> fetchList(String filter) async {
+    try {} catch (e) {
+      print('Error fetching status data: $e');
     }
   }
 
@@ -108,10 +115,31 @@ class HistoricalLeadController extends GetxController {
   }
 
   void clear() {
+    historicalData1.value = null;
+    historicalData2.value = null;
     year1.value = null;
     year2.value = null;
     month1.value = null;
     month2.value = null;
+  }
+
+  Map<String, dynamic> requestData(int index) {
+    String monthString = index == 1 ? month1.value ?? '' : month2.value ?? '';
+
+    int monthInt = convertMonthToInt(monthString);
+    
+    Map<String, dynamic> requestData = {
+      "year": index == 1 ? year1.value : year2.value,
+      "month": monthInt,
+    };
+
+    return requestData;
+  }
+
+  int convertMonthToInt(String month) {
+    int index = monthList.indexOf(month);
+
+    return index != -1 ? index + 1 : 0;
   }
 
   final yearList = [

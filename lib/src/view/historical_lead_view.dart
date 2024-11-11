@@ -16,6 +16,8 @@ class HistoricalLeadView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    historicalLeadController.clear();
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -321,7 +323,11 @@ class HistoricalLeadView extends StatelessWidget {
                         return Row(
                           children: [
                             (historicalLeadController.historicalData1.value !=
-                                    null)
+                                        null &&
+                                    historicalLeadController.year1.value !=
+                                        null &&
+                                    historicalLeadController.month1.value !=
+                                        null)
                                 ? ResultDataHistoricalWidget(
                                     index: 1,
                                     year: historicalLeadController.year1.value!,
@@ -330,7 +336,11 @@ class HistoricalLeadView extends StatelessWidget {
                                   )
                                 : Container(),
                             (historicalLeadController.historicalData2.value !=
-                                    null)
+                                    null &&
+                                    historicalLeadController.year2.value !=
+                                        null &&
+                                    historicalLeadController.month2.value !=
+                                        null)
                                 ? ResultDataHistoricalWidget(
                                     index: 2,
                                     year: historicalLeadController.year2.value!,

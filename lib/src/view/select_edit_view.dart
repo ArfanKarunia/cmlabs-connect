@@ -228,17 +228,22 @@ class SelectEditView extends StatelessWidget {
                         Get.back();
                       } else if (selectData == "status") {
                         controller.addStatus(temporaryData.value!);
-                        // Get.toNamed("/editSelect", arguments: "type");
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return SelectEditView(
-                                selectData: "type",
-                                controller: controller,
-                              );
-                            },
-                          ),
-                        );
+                        if (temporaryData.value!["value"] == 0.toString() ||
+                            temporaryData.value!["value"] == 4.toString()) {
+                          Get.back();
+                        } else {
+                          Get.toNamed("/editSelect", arguments: "type");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return SelectEditView(
+                                  selectData: "type",
+                                  controller: controller,
+                                );
+                              },
+                            ),
+                          );
+                        }
                       } else if (selectData == "type") {
                         controller.addType(temporaryData.value!);
                         Get.until((route) =>

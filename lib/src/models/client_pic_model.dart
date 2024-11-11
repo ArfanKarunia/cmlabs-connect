@@ -37,7 +37,10 @@ class ClientPic {
     return {
       'name': name,
       'position': position,
-      'contacts': contacts.map((contact) => contact?.toJson()).toList(),
+      'contacts': contacts
+          .where((contact) => contact?.toJson() != null)
+          .map((contact) => contact?.toJson())
+          .toList(),
     };
   }
 
@@ -53,7 +56,6 @@ class ClientPic {
     );
   }
 }
-
 
 @HiveType(typeId: 7)
 class ContactClientPic {
@@ -90,7 +92,15 @@ class ContactClientPic {
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic>? toJson() {
+    if (type == null &&
+        info == "" &&
+        status == null &&
+        detail == null &&
+        note == "") {
+      return null;
+    }
+
     return {
       'type': type,
       'info': info,

@@ -30,132 +30,34 @@ class EditQuotationView extends StatefulWidget {
 
   final TextEditingController noteActivity = TextEditingController();
 
-  var isChanged = false.obs;
-
-  void showChangeConfirmationBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.white_1,
-      isScrollControlled: true,
-      builder: (context) {
-        return Wrap(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(
-                left: 15,
-                right: 15,
-                bottom: 50,
-                top: 25,
-              ),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 140,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColors.text_4,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    "Delete",
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_1,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Are you sure wanna delete this Cardbox?",
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_1,
-                      fontWeight: FontWeight.w400,
-                      fontSize: 14,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppColors.primary),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                      child: Text(
-                        "Yes, delete it",
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.white_1,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Swipe down or Tap the screen to close",
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_2,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   State<EditQuotationView> createState() => _EditQuotationViewState();
 }
 
 class _EditQuotationViewState extends State<EditQuotationView> {
   @override
+  void initState() {
+    super.initState();
+    // Menjalankan aksi pertama kali saat halaman dibuka
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.detailQuotationController.editSelectedData(widget.quotation);
+      widget.detailQuotationController.isChanged.value = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    // Menjalankan aksi yang diperlukan saat view ditutup
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.detailQuotationController.clearSelectedData();
+      widget.detailQuotationController.isChanged.value = false;
+    });
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    widget.detailQuotationController.clearSelectedData();
     widget.detailQuotationController.editSelectedData(widget.quotation);
-
-    print("Data Client PIC pada quotation");
-    // print(
-    //     "banyak client pic : ${widget.detailQuotationController.selectedPICClient.length}");
-    // print(
-    //     "banyak contact client pic 1 : ${widget.detailQuotationController.selectedPICClient[0].contacts.length}");
-    // print(
-    //     "tyoe contact client pic 1 : ${widget.detailQuotationController.selectedPICClient[0].contacts[0]!.type ?? 'type kosong'}");
-    // print(
-    //     "info contact client pic 1 : ${widget.detailQuotationController.selectedPICClient[0].contacts[0]!.info ?? 'info kosong'}");
-    // print(
-    //     "status contact client pic 1 : ${widget.detailQuotationController.selectedPICClient[0].contacts[0]!.status ?? 'status kosong'}");
-    // print(
-    //     "detail Status contact client pic 1 : ${widget.detailQuotationController.selectedPICClient[0].contacts[0]!.detail ?? 'detail kosong'}");
-    // print(
-    //     "note contact client pic 1 : ${widget.detailQuotationController.selectedPICClient[0].contacts[0]!.note ?? 'note kosong'}");
-
-    // print("pic : ${widget.quotation.data.pic}");
-    // print("priority : ${widget.quotation.priority}");
-    // print("status : ${widget.quotation.status}");
-
-    // print("Data pada Selected");
-    // print("pic : ${widget.detailQuotationController.selectPic}");
-    // print("priority : ${widget.detailQuotationController.selectPriority}");
-    // print("status : ${widget.detailQuotationController.selectStatus}");
-
-    // print("typeList : ${widget.detailQuotationController.typeList}");
-    // print("type : ${widget.detailQuotationController.selectedType}");
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -172,266 +74,382 @@ class _EditQuotationViewState extends State<EditQuotationView> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18),
-          child: Obx(
-            () {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SelectField(
-                    name: "PIC",
-                    isMandatory: true,
-                    child: Container(
-                        child:
-                            (widget.detailQuotationController.selectPic.value ==
-                                    null)
-                                ? Text(
-                                    "Select PIC",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      color: AppColors.text_3,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )
-                                : Text(
-                                    widget.detailQuotationController.selectPic
-                                            .value?['label'] ??
-                                        "-",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      color: AppColors.text_1,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  )),
-                    onPressed: () {
-                      Get.toNamed(
-                        "/editSelect",
-                        arguments: {
-                          'selectData': "pic",
-                          'controller': widget.detailQuotationController,
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  SelectField(
-                    name: "Priority",
-                    child: Container(
-                      child: (widget.detailQuotationController.selectPriority
-                                  .value ==
-                              null)
-                          ? Text(
-                              "Select priority",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_3,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            )
-                          : Text(
-                              widget.detailQuotationController.selectPriority
-                                      .value?['label'] ??
-                                  "-",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                    ),
-                    onPressed: () {
-                      Get.toNamed(
-                        "/editSelect",
-                        arguments: {
-                          'selectData': "priority",
-                          'controller': widget.detailQuotationController,
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  SelectField(
-                    name: "Status",
-                    child: Obx(
-                      () {
-                        return Container(
-                          child: (widget.detailQuotationController.selectStatus
-                                      .value ==
-                                  null)
-                              ? Text(
-                                  "Select status",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_3,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                )
-                              : Text(
-                                  widget.detailQuotationController.selectStatus
-                                          .value?['label'] ??
-                                      "-",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_1,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                        );
-                      },
-                    ),
-                    onPressed: () {
-                      Get.toNamed(
-                        "/editSelect",
-                        arguments: {
-                          'selectData': "status",
-                          'controller': widget.detailQuotationController,
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 16,
-                  ),
-                  SelectField(
-                    name: "Type",
-                    child: Obx(
-                      () {
-                        return Container(
-                          child: (widget.detailQuotationController.selectedType
-                                      .value ==
-                                  null)
-                              ? Text(
-                                  "Select type",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_3,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                )
-                              : Text(
-                                  widget.detailQuotationController.selectedType
-                                          .value?['label'] ??
-                                      "-",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_1,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                        );
-                      },
-                    ),
-                    onPressed: () {
-                      Get.toNamed(
-                        "/editSelect",
-                        arguments: {
-                          'selectData': "type",
-                          'controller': widget.detailQuotationController,
-                        },
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ClientSidePICSection(
-                    controller: widget.detailQuotationController,
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  ActivitySection(),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      body: Obx(
+        () {
+          return Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SelectField(
+                        name: "PIC",
+                        isMandatory: true,
+                        child: Container(
+                          child: (widget.detailQuotationController.selectPic
+                                      .value ==
+                                  null)
+                              ? Text(
+                                  "Select PIC",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.text_3,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                )
+                              : Text(
+                                  widget.detailQuotationController.selectPic
+                                          .value?['label'] ??
+                                      "-",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.text_1,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                        ),
+                        onPressed: () {
+                          Get.toNamed(
+                            "/editSelect",
+                            arguments: {
+                              'selectData': "pic",
+                              'controller': widget.detailQuotationController,
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      SelectField(
+                        name: "Priority",
+                        child: Container(
+                          child: (widget.detailQuotationController
+                                      .selectPriority.value ==
+                                  null)
+                              ? Text(
+                                  "Select priority",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.text_3,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                )
+                              : Text(
+                                  widget.detailQuotationController
+                                          .selectPriority.value?['label'] ??
+                                      "-",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.text_1,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                        ),
+                        onPressed: () {
+                          Get.toNamed(
+                            "/editSelect",
+                            arguments: {
+                              'selectData': "priority",
+                              'controller': widget.detailQuotationController,
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      SelectField(
+                        name: "Status",
+                        child: Obx(
+                          () {
+                            return Container(
+                              child: (widget.detailQuotationController
+                                          .selectStatus.value ==
+                                      null)
+                                  ? Text(
+                                      "Select status",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: AppColors.text_3,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    )
+                                  : Text(
+                                      widget.detailQuotationController
+                                              .selectStatus.value?['label'] ??
+                                          "-",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: AppColors.text_1,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                            );
+                          },
+                        ),
+                        onPressed: () {
+                          Get.toNamed(
+                            "/editSelect",
+                            arguments: {
+                              'selectData': "status",
+                              'controller': widget.detailQuotationController,
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      SelectField(
+                        name: "Type",
+                        child: Obx(
+                          () {
+                            return Container(
+                              child: (widget.detailQuotationController
+                                          .selectedType.value ==
+                                      null)
+                                  ? Text(
+                                      "Select type",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: AppColors.text_3,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    )
+                                  : Text(
+                                      widget.detailQuotationController
+                                              .selectedType.value?['label'] ??
+                                          "-",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: AppColors.text_1,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
+                            );
+                          },
+                        ),
+                        onPressed: () {
+                          Get.toNamed(
+                            "/editSelect",
+                            arguments: {
+                              'selectData': "type",
+                              'controller': widget.detailQuotationController,
+                            },
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 25),
+                      ClientSidePICSection(
+                          controller: widget.detailQuotationController),
+                      const SizedBox(height: 25),
+                      ActivitySection(),
+                      const SizedBox(height: 25),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "URL Tracking",
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.text_1,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Obx(
+                            () {
+                              return SizedBox(
+                                height: 35,
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: Switch(
+                                    thumbColor: WidgetStatePropertyAll(
+                                        AppColors.white_1),
+                                    trackOutlineWidth:
+                                        WidgetStatePropertyAll(0),
+                                    trackOutlineColor: WidgetStatePropertyAll(
+                                        Colors.transparent),
+                                    trackColor: (!widget.urlTrackingController
+                                            .isTracking.value)
+                                        ? WidgetStatePropertyAll(
+                                            Color(0xFFD8DAE5))
+                                        : WidgetStatePropertyAll(
+                                            AppColors.primary),
+                                    value: widget
+                                        .urlTrackingController.isTracking.value,
+                                    onChanged: (bool value) {
+                                      widget.urlTrackingController
+                                          .changeStatusTracking(
+                                              widget.quotation.id, value);
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                      (widget.urlTrackingController.isTracking.value)
+                          ? URLTrackingSection()
+                          : SizedBox.shrink(),
+                      const SizedBox(height: 25),
                       Text(
-                        "URL Tracking",
+                        "History",
                         style: GoogleFonts.plusJakartaSans(
                           color: AppColors.text_1,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Obx(
-                        () {
-                          return SizedBox(
-                            height: 35,
-                            child: FittedBox(
-                              fit: BoxFit.fill,
-                              child: Switch(
-                                thumbColor:
-                                    WidgetStatePropertyAll(AppColors.white_1),
-                                trackOutlineWidth: WidgetStatePropertyAll(0),
-                                trackOutlineColor:
-                                    WidgetStatePropertyAll(Colors.transparent),
-                                trackColor: (!widget
-                                        .urlTrackingController.isTracking.value)
-                                    ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
-                                    : WidgetStatePropertyAll(AppColors.primary),
-                                value: widget
-                                    .urlTrackingController.isTracking.value,
-                                onChanged: (bool value) {
-                                  widget.urlTrackingController.changeStatusTracking(widget.quotation.id, value);
-                                },
-                              ),
-                            ),
-                          );
-                        },
+                      const SizedBox(height: 10),
+                      Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: 2,
+                              itemBuilder: (context, index) {
+                                return HistorySection(
+                                  detailQuotationController:
+                                      widget.detailQuotationController,
+                                );
+                              },
+                            )
+                          ],
+                        ),
                       ),
+                      const SizedBox(height: 180),
                     ],
                   ),
-                  (widget.urlTrackingController.isTracking.value)
-                      ? URLTrackingSection()
-                      : SizedBox.shrink(),
-                  const SizedBox(
-                    height: 25,
+                ),
+              ),
+              Obx(
+                () {
+                  bool isVisible =
+                      widget.detailQuotationController.isChanged.value;
+                  bool isKeyboardShow =
+                      MediaQuery.of(context).viewInsets.bottom != 0;
+
+                  return TweenAnimationBuilder<double>(
+                    tween: Tween(
+                      begin: isVisible ? -200 : 0,
+                      end: isVisible ? 0 : -200,
+                    ),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    builder: (context, value, child) {
+                      return Positioned(
+                        bottom: value,
+                        left: 0,
+                        right: 0,
+                        child: (isKeyboardShow)
+                            ? SizedBox.shrink()
+                            : BottomSheetSaveChanges(
+                                quotation: widget.quotation,
+                              ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class BottomSheetSaveChanges extends StatefulWidget {
+  BottomSheetSaveChanges({super.key, required this.quotation});
+
+  Quotation quotation;
+
+  @override
+  State<BottomSheetSaveChanges> createState() => _BottomSheetSaveChangesState();
+}
+
+class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
+  DetailQuotationController detailQuotationController =
+      Get.put(DetailQuotationController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            color: AppColors.white_1,
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(30, 0, 0, 0),
+                offset: const Offset(0, -4),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.only(
+            left: 15,
+            right: 15,
+            bottom: 20,
+            top: 25,
+          ),
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 140,
+                height: 5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.text_4,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: () {
+                    detailQuotationController.updateQuotation(widget.quotation);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.primary),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
                   ),
-                  Text(
-                    "History",
+                  child: Text(
+                    "Save",
                     style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_1,
-                      fontSize: 16,
+                      color: AppColors.white_1,
                       fontWeight: FontWeight.bold,
+                      fontSize: 18,
                     ),
                   ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: 2,
-                          itemBuilder: (context, index) {
-                            return HistorySection(
-                                detailQuotationController:
-                                    widget.detailQuotationController);
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 150,
-                  ),
-                ],
-              );
-            },
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Click to save all changes",
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.text_2,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -660,7 +678,6 @@ class HistorySection extends StatelessWidget {
     );
   }
 }
-
 
 class SelectField extends StatelessWidget {
   SelectField({
