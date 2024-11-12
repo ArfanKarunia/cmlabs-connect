@@ -1,3 +1,5 @@
+import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
 import 'package:cmlabs_connect/src/view/add_contact_view.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/edit_quotation_view.dart';
@@ -25,6 +27,10 @@ class AppRoutes {
 
   static const String historicalLead = '/historicalLead';
 
+  // account menu
+  static const String summaryView = '/summaryView';
+  static const String formSummaryView = '/summaryView/add';
+
   // List of Route
   static List<GetPage> routes = [
     GetPage(
@@ -43,7 +49,8 @@ class AppRoutes {
         final String filter = args['selectData'];
         final dynamic controller = args['controller'];
         final bool canSearch = args['canSearch'] ?? true;
-        return SelectFilterView(filter: filter, controller: controller, canSearch: canSearch);
+        return SelectFilterView(
+            filter: filter, controller: controller, canSearch: canSearch);
       },
     ),
     GetPage(
@@ -52,7 +59,10 @@ class AppRoutes {
         final args = Get.arguments as Map<String, dynamic>;
         final String selectData = args['selectData'];
         final dynamic controller = args['controller'];
-        return SelectEditView(selectData: selectData, controller: controller,);
+        return SelectEditView(
+          selectData: selectData,
+          controller: controller,
+        );
       },
     ),
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
@@ -80,6 +90,18 @@ class AppRoutes {
       },
     ),
 
-    //   GetPage(name: profile, page: () => ProfileView()),
+    // Account menu route
+    GetPage(
+      name: summaryView,
+      page: () => SummaryView(),
+    ),
+
+    GetPage(
+      name: formSummaryView,
+      page: () {
+        final args = Get.arguments as String;
+        return FormSummaryView(status: args);
+      },
+    ),
   ];
 }

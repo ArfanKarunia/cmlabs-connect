@@ -1,6 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/view/inbox_view.dart';
-import 'package:cmlabs_connect/src/view/setting_view.dart';
+import 'package:cmlabs_connect/src/view/account_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,7 +19,7 @@ class BottomNavigation extends StatelessWidget {
   final List<Widget> _pages = [
     HomeView(),
     InboxView(),
-    SettingView(),
+    AccountView(),
   ];
 
   @override

@@ -1,4 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/widgets/custom_buttom.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,8 @@ import 'package:ionicons/ionicons.dart';
 
 import '../models/user_model.dart';
 
-class SettingView extends StatelessWidget {
-  SettingView({super.key});
+class AccountView extends StatelessWidget {
+  AccountView({super.key});
 
   final UserController userController = Get.put(
     UserController(),
@@ -86,7 +87,7 @@ class SettingView extends StatelessWidget {
                                 height: 2,
                               ),
                               Text(
-                                "Marketing",
+                                userController.user.value?.roleName ?? 'User',
                                 style: GoogleFonts.plusJakartaSans(
                                   color: AppColors.text_3,
                                   fontSize: 13,
@@ -157,7 +158,9 @@ class SettingView extends StatelessWidget {
               ListTile(
                 splashColor: Colors.black12,
                 tileColor: AppColors.white_1,
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(AppRoutes.summaryView);
+                },
                 leading: Image(
                   image: AssetImage("assets/icons/icons_interface.png"),
                 ),
