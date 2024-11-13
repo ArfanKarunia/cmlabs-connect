@@ -8,9 +8,11 @@ import '../../../utils/color.dart';
 import '../select_field.dart';
 
 class FormEducationView extends StatelessWidget {
-  FormEducationView({super.key, required this.status});
+  FormEducationView({super.key, required this.status, this.id});
 
   final String status;
+
+  final int? id;
 
   final AccountController accountController = Get.put(AccountController());
 
@@ -22,7 +24,6 @@ class FormEducationView extends StatelessWidget {
   final TextEditingController toDateController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   var isCurrentlyStudyHere = false.obs;
-
 
   final _formKey = GlobalKey<FormState>();
 
@@ -36,12 +37,45 @@ class FormEducationView extends StatelessWidget {
     );
     if (pickedDate != null) {
       controller.text =
-          "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+          "${pickedDate.year}-${pickedDate.month}-${pickedDate.day}";
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (status == 'edit') {
+      try {
+        var education = accountController.educationList.value.firstWhere(
+          (exp) => exp!.id == id, // Search for the experience where id matches
+          orElse: () => null, // If no match is found, return null
+        );
+
+        isCurrentlyStudyHere.value = education?.finishTime == null;
+
+        if (education != null) {
+          // Update the controllers with the experience data
+          var formDate =
+              "${education.startTime.year}-${education.startTime.month}-${education.startTime.day}";
+          var toDate = education.finishTime == null
+              ? ""
+              : "${education.finishTime!.year}-${education.finishTime!.month.toString().padLeft(2, '0')}-${education.finishTime!.day.toString().padLeft(2, '0')}";
+
+          instituteController.text = education.name;
+          departmentController.text = education.department;
+          majorController.text = education.major;
+          descriptionController.text = education.description;
+          fromDateController.text = formDate;
+          toDateController.text = toDate;
+
+        } else {
+          // Handle case where experience is not found
+          print('Experience not found!');
+        }
+      } catch (e) {
+        // Handle any errors that occur while fetching experience
+        print('Error fetching experience: $e');
+      }
+    }
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -105,6 +139,10 @@ class FormEducationView extends StatelessWidget {
                     TextFormField(
                       controller: instituteController,
                       cursorColor: AppColors.primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -131,11 +169,11 @@ class FormEducationView extends StatelessWidget {
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "The 'Institution Name' field is required";
+                          return "The 'Institute Name' field is required";
                         }
 
                         if (value.length > 64) {
-                          return "The maximum character of 'Institution Name' is 64 characters";
+                          return "The maximum character of 'Institute Name' is 64 characters";
                         }
 
                         return null;
@@ -146,7 +184,6 @@ class FormEducationView extends StatelessWidget {
                 SizedBox(
                   height: 12,
                 ),
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -176,6 +213,10 @@ class FormEducationView extends StatelessWidget {
                     TextFormField(
                       controller: departmentController,
                       cursorColor: AppColors.primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -217,7 +258,6 @@ class FormEducationView extends StatelessWidget {
                 SizedBox(
                   height: 12,
                 ),
-
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -247,6 +287,10 @@ class FormEducationView extends StatelessWidget {
                     TextFormField(
                       controller: majorController,
                       cursorColor: AppColors.primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -292,16 +336,16 @@ class FormEducationView extends StatelessWidget {
                   () {
                     return SelectField(
                       name: "Degree",
-                      child: (accountController.experienceProject.value != null)
+                      child: (accountController.educationDegree.value != null)
                           ? Text(
-                              accountController.experienceProject.value!,
+                              accountController.educationDegree.value!,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
-                                color: AppColors.text_2,
+                                color: AppColors.text_1,
                               ),
                             )
                           : Text(
-                              "Select Degree",
+                              "-",
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
                                 color: AppColors.text_4,
@@ -309,20 +353,20 @@ class FormEducationView extends StatelessWidget {
                             ),
                       onPressed: () {
                         Get.toNamed(
-                          AppRoutes.selectDataExperience,
-                          arguments: "Project",
+                          AppRoutes.selectDataEducation,
+                          arguments: "degree",
                         )?.then(
                           (value) {
-                            accountController.experienceProject.value =
+                            accountController.educationDegree.value =
                                 value['name'];
-                            print(accountController.experienceProject.value);
-                            accountController.experienceProject.refresh();
+                            print(accountController.educationDegree.value);
+                            accountController.educationDegree.refresh();
                           },
                         );
                       },
                       isMandatory: true,
                       validator: (value) {
-                        if (accountController.experienceProject.value == null) {
+                        if (accountController.educationDegree.value == null) {
                           return "The 'Degree' field is required";
                         }
                         return null;
@@ -367,6 +411,10 @@ class FormEducationView extends StatelessWidget {
                             controller: fromDateController,
                             readOnly: true,
                             cursorColor: AppColors.primary,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              color: AppColors.text_1,
+                            ),
                             decoration: InputDecoration(
                               hintText: "Select date",
                               hintStyle: GoogleFonts.plusJakartaSans(
@@ -441,6 +489,10 @@ class FormEducationView extends StatelessWidget {
                                 readOnly: true,
                                 cursorColor: AppColors.primary,
                                 enabled: !isToDateDisabled,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  color: AppColors.text_1,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: "Select date",
                                   hintStyle: GoogleFonts.plusJakartaSans(
@@ -511,7 +563,7 @@ class FormEducationView extends StatelessWidget {
                             },
                           )),
                       Text(
-                        "I currently work here",
+                        "I currently study here",
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           color: AppColors.text_2,
@@ -542,6 +594,10 @@ class FormEducationView extends StatelessWidget {
                       cursorColor: AppColors.primary,
                       maxLines: 3,
                       minLines: 1,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -578,19 +634,27 @@ class FormEducationView extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        // // Save the form
-                        // accountController.experienceJobTitle.value =
-                        //     instituteController.text;
-                        // accountController.experienceDescription.value =
-                        //     descriptionController.text;
-                        // accountController.experienceFromDate.value =
-                        //     fromDateController.text;
-                        // accountController.experienceToDate.value =
-                        //     toDateController.text;
-                        // accountController.experienceIsCurrentlyWorkHere.value =
-                        //     isCurrentlyStudyHere.value;
+                        // Save the form
+                        accountController.educationInstitute.value =
+                            instituteController.text;
+                        accountController.educationDepartment.value =
+                            departmentController.text;
+                        accountController.educationMajor.value =
+                            majorController.text;
+                        accountController.educationFromDate.value =
+                            fromDateController.text;
+                        accountController.educationToDate.value =
+                            toDateController.text;
+                        accountController.isStillStudy.value =
+                            isCurrentlyStudyHere.value;
+                        accountController.educationDescription.value =
+                            descriptionController.text;
 
-                        // accountController.addExperience();
+                        if (status == "add") {
+                          accountController.addEducation();
+                        } else if (status == "edit") {
+                          accountController.updateEducation(id!);
+                        }
                       }
                     },
                     style: ButtonStyle(
@@ -611,7 +675,10 @@ class FormEducationView extends StatelessWidget {
                           fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
-                )
+                ),
+                SizedBox(
+                  height: 150,
+                ),
               ],
             ),
           ),

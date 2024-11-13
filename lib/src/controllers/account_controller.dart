@@ -4,6 +4,7 @@ import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:cmlabs_connect/src/models/certification_model.dart';
+import 'package:cmlabs_connect/src/models/education_model.dart';
 import 'package:cmlabs_connect/src/models/experience_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:get/get.dart' hide FormData;
@@ -383,23 +384,192 @@ class AccountController extends GetxController {
     }
   }
 
-  List<dynamic> getData(String data) {
-    List result = [];
+  /* 
+     ++ EDUCATION ++
 
-    // Debugging
-    print("select: ${data}");
+  */
 
-    if (data == "project") {
-      result = projectList.value;
-    } else if (data == "level") {
-      result = [
-        {"id": "1", "name": "Fulltime"},
-        {"id": "2", "name": "Parttime"},
-        {"id": "3", "name": "Freelance"},
-        {"id": "4", "name": "Internship"},
-      ];
+  final degreeList = Rx<List<Map<String, dynamic>>>([]);
+
+  var educationList = Rx<List<EducationModel?>>([]);
+
+  var educationInstitute = Rx<String?>(null);
+  var educationDepartment = Rx<String?>(null);
+  var educationMajor = Rx<String?>(null);
+  var educationDegree = Rx<String?>(null);
+  var educationFromDate = Rx<String?>(null);
+  var educationToDate = Rx<String?>(null);
+  var isStillStudy = false.obs;
+  var educationDescription = Rx<String?>(null);
+
+  Future<void> fetchEducation() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile/get-education?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        print("data: $responseData");
+
+        // Map each JSON item to an ExperienceModel using fromJson
+        educationList.value = responseData
+            .map<EducationModel?>((item) => EducationModel.fromJson(item))
+            .toList();
+
+        // Update the Rx variable
+        educationList.refresh();
+
+        print(educationList.value);
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
     }
-    return result;
+  }
+
+  Future<void> addEducation() async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "education_name": educationInstitute.value,
+      "education_department": educationDepartment.value,
+      "education_major": educationMajor.value,
+      "education_degree": educationDegree.value,
+      "education_from": educationFromDate.value,
+      "education_to": educationToDate.value,
+      "education_currently_working": isStillStudy.value,
+      "education_description": educationDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/add-education'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Education added");
+        fetchEducation();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Education";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> updateEducation(int idEducation) async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "education_id": idEducation,
+      "education_name": educationInstitute.value,
+      "education_department": educationDepartment.value,
+      "education_major": educationMajor.value,
+      "education_degree": educationDegree.value,
+      "education_from": educationFromDate.value,
+      "education_to": educationToDate.value,
+      "education_currently_working": isStillStudy.value,
+      "education_description": educationDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/update-education'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Education added");
+        fetchEducation();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Education";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> deleteEducation(int id) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      // untuk Filter Status
+      final response = await dio.delete(
+        '$baseUrl/profile/delete-education?id=$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchEducation();
+        showSuccessToast("Success: Delete Education");
+      } else {
+        showErrorToast("Failed: Delete Education");
+      }
+
+      // Untuk Filter Client Source
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
   }
 
   /* 
@@ -584,5 +754,40 @@ class AccountController extends GetxController {
     } catch (e) {
       print('Error fetching status data: $e');
     }
+  }
+
+  /*
+
+  FOR ALL
+  
+  */
+
+  List<dynamic> getData(String data) {
+    List result = [];
+
+    // Debugging
+    print("select: ${data}");
+
+    if (data == "project") {
+      result = projectList.value;
+    } else if (data == "level") {
+      result = [
+        {"id": "1", "name": "Fulltime"},
+        {"id": "2", "name": "Parttime"},
+        {"id": "3", "name": "Freelance"},
+        {"id": "4", "name": "Internship"},
+      ];
+    } else if (data == "degree") {
+      result = [
+        {"id": "1", "name": "Elementary School"},
+        {"id": "2", "name": "Middle School"},
+        {"id": "3", "name": "High School"},
+        {"id": "4", "name": "Diploma"},
+        {"id": "4", "name": "Bachelor's"},
+        {"id": "4", "name": "Master's"},
+        {"id": "4", "name": "Doctoral"},
+      ];
+    }
+    return result;
   }
 }

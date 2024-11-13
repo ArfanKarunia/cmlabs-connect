@@ -137,6 +137,10 @@ class FormCertificationView extends StatelessWidget {
                     TextFormField(
                       controller: nameController,
                       cursorColor: AppColors.primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -207,6 +211,10 @@ class FormCertificationView extends StatelessWidget {
                     TextFormField(
                       controller: linkController,
                       cursorColor: AppColors.primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -273,6 +281,10 @@ class FormCertificationView extends StatelessWidget {
                     TextFormField(
                       controller: institutionController,
                       cursorColor: AppColors.primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -348,6 +360,10 @@ class FormCertificationView extends StatelessWidget {
                             controller: fromDateController,
                             readOnly: true,
                             cursorColor: AppColors.primary,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              color: AppColors.text_1,
+                            ),
                             decoration: InputDecoration(
                               hintText: "Select date",
                               hintStyle: GoogleFonts.plusJakartaSans(
@@ -422,6 +438,10 @@ class FormCertificationView extends StatelessWidget {
                                 readOnly: true,
                                 cursorColor: AppColors.primary,
                                 enabled: !isToDateDisabled,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  color: AppColors.text_1,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: "Select date",
                                   hintStyle: GoogleFonts.plusJakartaSans(
@@ -523,6 +543,10 @@ class FormCertificationView extends StatelessWidget {
                       cursorColor: AppColors.primary,
                       maxLines: 3,
                       minLines: 1,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(

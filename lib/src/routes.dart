@@ -1,6 +1,7 @@
 import 'package:cmlabs_connect/src/view/account_setting/certification/certification_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/certification/form_certification_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/education/education_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/education/form_education_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
@@ -162,7 +163,7 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormExperienceView(
+        return FormEducationView(
           status: status,
           id: id,
         );

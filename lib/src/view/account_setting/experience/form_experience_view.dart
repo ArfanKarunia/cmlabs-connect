@@ -140,6 +140,10 @@ class FormExperienceView extends StatelessWidget {
                     TextFormField(
                       controller: jobTitleController,
                       cursorColor: AppColors.primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
@@ -190,7 +194,7 @@ class FormExperienceView extends StatelessWidget {
                               accountController.experienceProject.value!,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
-                                color: AppColors.text_2,
+                                color: AppColors.text_1,
                               ),
                             )
                           : Text(
@@ -235,7 +239,7 @@ class FormExperienceView extends StatelessWidget {
                               accountController.experienceLevel.value!,
                               style: GoogleFonts.plusJakartaSans(
                                 fontSize: 13,
-                                color: AppColors.text_2,
+                                color: AppColors.text_1,
                               ),
                             )
                           : Text(
@@ -305,6 +309,10 @@ class FormExperienceView extends StatelessWidget {
                             controller: fromDateController,
                             readOnly: true,
                             cursorColor: AppColors.primary,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              color: AppColors.text_1,
+                            ),
                             decoration: InputDecoration(
                               hintText: "Select date",
                               hintStyle: GoogleFonts.plusJakartaSans(
@@ -379,6 +387,10 @@ class FormExperienceView extends StatelessWidget {
                                 readOnly: true,
                                 cursorColor: AppColors.primary,
                                 enabled: !isToDateDisabled,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  color: AppColors.text_1,
+                                ),
                                 decoration: InputDecoration(
                                   hintText: "Select date",
                                   hintStyle: GoogleFonts.plusJakartaSans(
@@ -480,6 +492,10 @@ class FormExperienceView extends StatelessWidget {
                       cursorColor: AppColors.primary,
                       maxLines: 3,
                       minLines: 1,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        color: AppColors.text_1,
+                      ),
                       decoration: InputDecoration(
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
