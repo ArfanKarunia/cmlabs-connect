@@ -1,3 +1,6 @@
+import 'package:cmlabs_connect/src/view/account_setting/certification/certification_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/certification/form_certification_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/education/education_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
@@ -41,6 +44,10 @@ class AppRoutes {
   static const String educationView = '/educationView';
   static const String formEducationView = '/educationView/form';
   static const String selectDataEducation = '/educationView/form/select';
+
+  static const String certificationView = '/certificationView';
+  static const String formCertificationnView = '/certificationView/form';
+  static const String selectDataCertification = '/certificationView/form/select';
 
   // List of Route
   static List<GetPage> routes = [
@@ -102,6 +109,8 @@ class AppRoutes {
     ),
 
     // Account menu route
+
+    // SUUMMARY
     GetPage(
       name: summaryView,
       page: () => SummaryView(),
@@ -115,6 +124,7 @@ class AppRoutes {
       },
     ),
 
+    // EXPERIENCE
     GetPage(
       name: experienceView,
       page: () => ExperienceView(),
@@ -140,9 +150,10 @@ class AppRoutes {
       },
     ),
 
+    // EDUCATION
     GetPage(
       name: educationView,
-      page: () => ExperienceView(),
+      page: () => EducationView(),
     ),
     GetPage(
       name: formEducationView,
@@ -159,6 +170,32 @@ class AppRoutes {
     ),
     GetPage(
       name: selectDataEducation,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
+      },
+    ),
+
+    // CERTIFICATION
+    GetPage(
+      name: certificationView,
+      page: () => CertificationView(),
+    ),
+    GetPage(
+      name: formCertificationnView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String status = args['status'];
+        final int? id = args['id'] as int?;
+
+        return FormCertificationView(
+          status: status,
+          id: id,
+        );
+      },
+    ),
+    GetPage(
+      name: selectDataCertification,
       page: () {
         final args = Get.arguments as String;
         return SelectData(data: args);

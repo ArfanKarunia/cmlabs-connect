@@ -18,7 +18,7 @@ class EducationView extends StatelessWidget {
         backgroundColor: Color(0xFFF9F9F9),
         surfaceTintColor: Color(0xFFF9F9F9),
         title: Text(
-          "Experience",
+          "Education",
           style: GoogleFonts.plusJakartaSans(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -50,7 +50,7 @@ class EducationView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Experience",
+                      "Education",
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -86,9 +86,7 @@ class EducationView extends StatelessWidget {
                     //     : null;
                   },
                   style: ButtonStyle(
-                    backgroundColor: true
-                        ? WidgetStatePropertyAll(AppColors.primary)
-                        : WidgetStatePropertyAll(Color(0xff8FCAFA)),
+                    backgroundColor: WidgetStatePropertyAll(AppColors.primary),
                     foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
                     overlayColor: WidgetStatePropertyAll(Colors.white30),
                     shape: WidgetStatePropertyAll(
@@ -105,7 +103,7 @@ class EducationView extends StatelessWidget {
                         width: 10,
                       ),
                       Text(
-                        "Add Experience",
+                        "Add Education",
                         style: GoogleFonts.plusJakartaSans(
                             fontSize: 14, fontWeight: FontWeight.bold),
                       ),

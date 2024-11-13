@@ -9,16 +9,14 @@ import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';
 
-class ExperienceView extends StatelessWidget {
-  ExperienceView({super.key});
+class CertificationView extends StatelessWidget {
+  CertificationView({super.key});
 
   final AccountController accountController = Get.put(AccountController());
 
   @override
   Widget build(BuildContext context) {
-    accountController.fetchExperience();
-
-    print("list Experience: ${accountController.experienceList.value}");
+    accountController.fetchCertification();
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -27,7 +25,7 @@ class ExperienceView extends StatelessWidget {
         backgroundColor: Color(0xFFF9F9F9),
         surfaceTintColor: Color(0xFFF9F9F9),
         title: Text(
-          "Experience",
+          "Certification",
           style: GoogleFonts.plusJakartaSans(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -43,7 +41,7 @@ class ExperienceView extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  (accountController.experienceList.value.isEmpty)
+                  (accountController.certificationList.value.isEmpty)
                       ? Container(
                           width: double.infinity,
                           padding: EdgeInsets.all(14),
@@ -62,7 +60,7 @@ class ExperienceView extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Experience",
+                                "Certification",
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -86,10 +84,10 @@ class ExperienceView extends StatelessWidget {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount:
-                              accountController.experienceList.value.length,
+                              accountController.certificationList.value.length,
                           itemBuilder: (context, index) {
-                            final experience =
-                                accountController.experienceList.value[index];
+                            final certification = accountController
+                                .certificationList.value[index];
                             return Container(
                               width: double.infinity,
                               margin: EdgeInsets.only(bottom: 16),
@@ -109,7 +107,7 @@ class ExperienceView extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    experience?.position ?? '-',
+                                    certification?.name ?? '-',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -120,7 +118,7 @@ class ExperienceView extends StatelessWidget {
                                     height: 14,
                                   ),
                                   Text(
-                                    "${experience?.company ?? "-"} | ${experience?.type ?? "-"}",
+                                    "${certification?.url ?? "-"} | ${certification?.institutionName ?? "-"}",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_2,
@@ -130,9 +128,9 @@ class ExperienceView extends StatelessWidget {
                                     height: 10,
                                   ),
                                   Text(
-                                    "${experience?.startTime != null ? DateFormat('d MMM yyyy').format(experience!.startTime) : "-"}"
+                                    "${certification?.startTime != null ? DateFormat('d MMM yyyy').format(certification!.startTime) : "-"}"
                                     " until "
-                                    "${experience?.finishTime != null ? DateFormat('d MMM yyyy').format(experience!.finishTime!) : "now"}",
+                                    "${certification?.finishTime != null ? DateFormat('d MMM yyyy').format(certification!.finishTime!) : "now"}",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_2,
@@ -153,7 +151,7 @@ class ExperienceView extends StatelessWidget {
                                     height: 5,
                                   ),
                                   Text(
-                                    "${experience?.description ?? "-"}",
+                                    "${certification?.description ?? "-"}",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_2,
@@ -174,10 +172,10 @@ class ExperienceView extends StatelessWidget {
                                                   onPressed: () {
                                                     Get.toNamed(
                                                       AppRoutes
-                                                          .formExperienceView,
+                                                          .formCertificationnView,
                                                       arguments: {
                                                         "status": "edit",
-                                                        "id": experience!.id
+                                                        "id": certification!.id
                                                       },
                                                     );
                                                   },
@@ -254,12 +252,14 @@ class ExperienceView extends StatelessWidget {
                                                 child: ElevatedButton(
                                                   onPressed: () {
                                                     var message =
-                                                        "Are you sure wanna delete this Experience?";
+                                                        "Are you sure wanna delete this Certification?";
 
                                                     DeleteBottomSheet(context,
                                                         () {
                                                       accountController
-                                                          .deleteExperience(experience!.id);
+                                                          .deleteCertification(
+                                                              certification!
+                                                                  .id);
                                                       Get.back();
                                                     }, message);
                                                   },
@@ -327,7 +327,7 @@ class ExperienceView extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         Get.toNamed(
-                          AppRoutes.formExperienceView,
+                          AppRoutes.formCertificationnView,
                           arguments: {"status": "add", "id": null},
                         );
                       },
@@ -351,7 +351,7 @@ class ExperienceView extends StatelessWidget {
                             width: 10,
                           ),
                           Text(
-                            "Add Experience",
+                            "Add Certification",
                             style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),

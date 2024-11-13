@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/models/certification_model.dart';
 import 'package:cmlabs_connect/src/models/experience_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:get/get.dart' hide FormData;
@@ -274,7 +275,6 @@ class AccountController extends GetxController {
   }
 
   Future<void> updateExperience(int idProject) async {
-
     var requestData = {
       "experience_id": idProject,
       "id": userController.user.value?.id,
@@ -400,5 +400,189 @@ class AccountController extends GetxController {
       ];
     }
     return result;
+  }
+
+  /* 
+     ++ CERTIFICATION ++
+
+  */
+
+  var certificationList = Rx<List<CertificationModel?>>([]);
+
+  var certificationName = Rx<String?>(null);
+  var certificationLink = Rx<String?>(null);
+  var certificationInstitution = Rx<String?>(null);
+  var certificationFromDate = Rx<String?>(null);
+  var certificationToDate = Rx<String?>(null);
+  var isNoExpiration = false.obs;
+  var certificationDescription = Rx<String?>(null);
+
+  Future<void> fetchCertification() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile/get-certification?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        print("data: $responseData");
+
+        // Map each JSON item to an ExperienceModel using fromJson
+        certificationList.value = responseData
+            .map<CertificationModel?>(
+                (item) => CertificationModel.fromJson(item))
+            .toList();
+
+        // Update the Rx variable
+        certificationList.refresh();
+
+        print(certificationList.value);
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addCertification() async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "certification_name": certificationName.value,
+      "certification_institution_name": certificationInstitution.value,
+      "certification_link": certificationLink.value,
+      "certification_from": certificationFromDate.value,
+      "certification_to": certificationToDate.value,
+      "certification_currently_working": isNoExpiration.value,
+      "certification_description": certificationDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/add-certification'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: New Certification added");
+        fetchCertification();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Certification";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> updateCertification(int idCertification) async {
+    var requestData = {
+      "certification_id": idCertification,
+      "id": userController.user.value?.id,
+      "certification_name": certificationName.value,
+      "certification_institution_name": certificationInstitution.value,
+      "certification_link": certificationLink.value,
+      "certification_from": certificationFromDate.value,
+      "certification_to": certificationToDate.value,
+      "certification_currently_working": isNoExpiration.value,
+      "certification_description": certificationDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/update-certification'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Certification updated");
+        fetchCertification();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Certification";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> deleteCertification(int id) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      // untuk Filter Status
+      final response = await dio.delete(
+        '$baseUrl/profile/delete-certification?id=$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchCertification();
+        showSuccessToast("Success: Delete Certification");
+      } else {
+        showErrorToast("Failed: Delete Certification");
+      }
+
+      // Untuk Filter Client Source
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
   }
 }
