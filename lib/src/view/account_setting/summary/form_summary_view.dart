@@ -14,23 +14,32 @@ class FormSummaryView extends StatelessWidget {
 
   final TextEditingController aboutController = TextEditingController();
 
-  var isChecked = [].obs;
-
   @override
   Widget build(BuildContext context) {
     print("form: ${status}");
 
-    isChecked = List<bool>.filled(
-      accountController.specializationList.length,
-      false,
-    ).obs;
-
-    if(status == "edit"){
-      aboutController.text = accountController.about.value ?? "";
-      isChecked.value = accountController.isChecked;
+    if (status == "add") {
+      accountController.isChecked.value = List<bool>.filled(
+          accountController.specializationList.value.length, false);
     }
 
-    
+    if (status == "edit") {
+      aboutController.text = accountController.about.value ?? '';
+      for (var i = 0; i < accountController.specialization.value.length; i++) {
+        var specializationName = accountController.specialization.value[i];
+
+        // Match the specialization with the specializationList
+        for (var j = 0;
+            j < accountController.specializationList.value.length;
+            j++) {
+          if (specializationName ==
+              accountController.specializationList.value[j]['name']) {
+            accountController.isChecked[j] = true; // Mark as checked if matched
+          }
+        }
+      }
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -117,7 +126,8 @@ class FormSummaryView extends StatelessWidget {
                     ),
                     ListView.builder(
                       shrinkWrap: true,
-                      itemCount: accountController.specializationList.length,
+                      itemCount:
+                          accountController.specializationList.value.length,
                       itemBuilder: (context, index) {
                         // Bungkus hanya Checkbox dengan Obx
                         return Container(
@@ -132,14 +142,26 @@ class FormSummaryView extends StatelessWidget {
                                     width: 1.5,
                                   ),
                                   activeColor: AppColors.primary,
-                                  value: isChecked[index],
+                                  value: accountController.isChecked[index],
                                   onChanged: (value) {
-                                    isChecked[index] = value!;
+                                    accountController.isChecked[index] = value!;
+                                    var specialization = accountController
+                                        .specializationList
+                                        .value[index]['name'];
+                                    if (accountController.specialization.value
+                                        .contains(specialization)) {
+                                      accountController.specialization.value
+                                          .remove(specialization);
+                                    } else {
+                                      accountController.specialization.value
+                                          .add(specialization);
+                                    }
                                   },
                                 ),
                               ),
                               Text(
-                                accountController.specializationList[index],
+                                accountController
+                                    .specializationList.value[index]['name'],
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   color: AppColors.text_1,
@@ -159,7 +181,10 @@ class FormSummaryView extends StatelessWidget {
               SizedBox(
                 height: 51,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    accountController.about.value = aboutController.text;
+                    accountController.addSumary();
+                  },
                   style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll(AppColors.primary),
                     foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
@@ -186,6 +211,40 @@ class FormSummaryView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Future<bool?> _showBackDialog(BuildContext context) {
+    return showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Are you sure?'),
+          content: const Text(
+            'Are you sure you want to leave this page?',
+          ),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Never mind'),
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Leave'),
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }

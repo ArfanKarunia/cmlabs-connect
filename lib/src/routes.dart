@@ -1,3 +1,6 @@
+import 'package:cmlabs_connect/src/view/account_setting/experience/experience_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
 import 'package:cmlabs_connect/src/view/add_contact_view.dart';
@@ -29,7 +32,15 @@ class AppRoutes {
 
   // account menu
   static const String summaryView = '/summaryView';
-  static const String formSummaryView = '/summaryView/add';
+  static const String formSummaryView = '/summaryView/form';
+
+  static const String experienceView = '/experienceView';
+  static const String formExperienceView = '/experienceView/form';
+  static const String selectDataExperience = '/experienceView/form/select';
+
+  static const String educationView = '/educationView';
+  static const String formEducationView = '/educationView/form';
+  static const String selectDataEducation = '/educationView/form/select';
 
   // List of Route
   static List<GetPage> routes = [
@@ -101,6 +112,56 @@ class AppRoutes {
       page: () {
         final args = Get.arguments as String;
         return FormSummaryView(status: args);
+      },
+    ),
+
+    GetPage(
+      name: experienceView,
+      page: () => ExperienceView(),
+    ),
+    GetPage(
+      name: formExperienceView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String status = args['status'];
+        final int? id = args['id'] as int?;
+
+        return FormExperienceView(
+          status: status,
+          id: id,
+        );
+      },
+    ),
+    GetPage(
+      name: selectDataExperience,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
+      },
+    ),
+
+    GetPage(
+      name: educationView,
+      page: () => ExperienceView(),
+    ),
+    GetPage(
+      name: formEducationView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String status = args['status'];
+        final int? id = args['id'] as int?;
+
+        return FormExperienceView(
+          status: status,
+          id: id,
+        );
+      },
+    ),
+    GetPage(
+      name: selectDataEducation,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
       },
     ),
   ];

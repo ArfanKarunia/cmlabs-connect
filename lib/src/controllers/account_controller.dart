@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/models/experience_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
+import 'package:get/get.dart' hide FormData;
 import 'package:dio/dio.dart';
-import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class AccountController extends GetxController {
   final AuthenticationController authenticationController =
@@ -17,40 +21,90 @@ class AccountController extends GetxController {
   
   */
 
-  final specializationList = [
-    "Digial Marketing",
-    "Web Developer",
-    "SEO Writing",
-    "UI/UX Designer",
-  ];
+  final specializationList = Rx<List<Map<String, dynamic>>>([]);
 
   var about = Rx<String?>(null);
   var specialization = Rx<List<String?>>([]);
-  var isChecked = List<bool>.filled(4, false).obs;
+  var isChecked = <bool>[].obs;
 
   Future<void> fetchSummary() async {
     try {
       String? accessToken = authenticationController.accesToken.value;
       int idUser = userController.user.value!.id;
 
-      // untuk Filter Status
-      final response = await dio.get(
+      final response1 = await dio.get(
         '$baseUrl/profile/get-summary?id=$idUser',
         options: Options(
           headers: {'Authorization': 'Bearer $accessToken'},
         ),
       );
 
-      if (response.statusCode == 200 && response.data != null) {
-        var responseData = response.data['data'];
+      if (response1.statusCode == 200 && response1.data != null) {
+        var responseData = response1.data['data'];
         print(responseData);
 
-        about.value = responseData['about'];
-        var specList = List<String>.from(responseData['specialization']);
-        specialization.value = specList;
-      }
+        // Check if 'about' is null before assigning
+        about.value = responseData['about'] ?? null;
 
-      // Untuk Filter Client Source
+        // Check if 'specialization' is null or not a List, then assign an empty list if needed
+        if (responseData['specialization'] != null &&
+            responseData['specialization'] is List) {
+          var specList = List<String>.from(responseData['specialization']);
+          specialization.value = specList;
+
+          // Reset the isChecked list to match the specializationList length
+          isChecked.value =
+              List<bool>.filled(specializationList.value.length, false);
+
+          // Iterate over the specialization data and match with specializationList
+          for (var i = 0; i < specialization.value.length; i++) {
+            var specializationName = specialization.value[i];
+
+            // Match the specialization with the specializationList
+            for (var j = 0; j < specializationList.value.length; j++) {
+              if (specializationName == specializationList.value[j]['name']) {
+                isChecked[j] = true; // Mark as checked if matched
+              }
+            }
+          }
+        } else {
+          specialization.value = [];
+          isChecked.value =
+              List<bool>.filled(specializationList.value.length, false);
+        }
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> fetchSpecializationList() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      final response = await dio.get(
+        '$baseUrl/profile/list-specialization',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+        print(responseData);
+
+        // Simpan data specialization
+        specializationList.value = responseData
+            .map((item) => {
+                  'id': item['id'],
+                  'name': item['name'],
+                })
+            .toList();
+
+        // Atur panjang isChecked sesuai dengan jumlah item dalam specialization
+        isChecked.value =
+            List<bool>.filled(specializationList.value.length, false);
+      }
     } catch (e) {
       print('Error fetching status data: $e');
     }
@@ -70,8 +124,12 @@ class AccountController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
+        about.value = null;
+        specialization.value.clear;
+        fetchSummary();
+
         showSuccessToast("Success: Delete Summary");
-      }else{
+      } else {
         showErrorToast("Failed: Delete Summary");
       }
 
@@ -79,5 +137,268 @@ class AccountController extends GetxController {
     } catch (e) {
       print('Error fetching status data: $e');
     }
+  }
+
+  Future<void> addSumary() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      var data = {
+        "id": idUser,
+        "about": about.value,
+        "specialization": specialization.value,
+      };
+
+      print(jsonEncode(data));
+
+      final response = await dio.post('$baseUrl/profile/update-summary',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+          data: jsonEncode(data));
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchSummary();
+        showSuccessToast("Success: add Summary");
+        Get.back();
+      } else {
+        showErrorToast("Failed: add Summary");
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  /* 
+     ++ EXPERIENCE ++
+
+  */
+  final projectList = Rx<List<Map<String, dynamic>>>([]);
+
+  var experienceList = Rx<List<ExperienceModel?>>([]);
+
+  var experienceJobTitle = Rx<String?>(null);
+  var experienceProject = Rx<String?>(null);
+  var experienceLevel = Rx<String?>(null);
+  var experienceFromDate = Rx<String?>(null);
+  var experienceToDate = Rx<String?>(null);
+  var experienceIsCurrentlyWorkHere = false.obs;
+  var experienceDescription = Rx<String?>(null);
+
+  Future<void> fetchExperience() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile/get-experience?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        print("data: $responseData");
+
+        // Map each JSON item to an ExperienceModel using fromJson
+        experienceList.value = responseData
+            .map<ExperienceModel?>((item) => ExperienceModel.fromJson(item))
+            .toList();
+
+        // Update the Rx variable
+        experienceList.refresh();
+
+        print(experienceList.value);
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addExperience() async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "experience_title": experienceJobTitle.value,
+      "experience_company": experienceProject.value,
+      "experience_level": experienceLevel.value,
+      "experience_from": experienceFromDate.value,
+      "experience_to": experienceToDate.value,
+      "experience_currently_working": experienceIsCurrentlyWorkHere.value,
+      "experience_description": experienceDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/add-experience'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Experience added");
+        fetchExperience();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Experience";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> updateExperience(int idProject) async {
+
+    var requestData = {
+      "experience_id": idProject,
+      "id": userController.user.value?.id,
+      "experience_title": experienceJobTitle.value,
+      "experience_company": experienceProject.value,
+      "experience_level": experienceLevel.value,
+      "experience_from": experienceFromDate.value,
+      "experience_to": experienceToDate.value,
+      "experience_currently_working": experienceIsCurrentlyWorkHere.value,
+      "experience_description": experienceDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/update-experience'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Experience added");
+        fetchExperience();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Experience";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> deleteExperience(int id) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      // untuk Filter Status
+      final response = await dio.delete(
+        '$baseUrl/profile/delete-experience?id=$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchExperience();
+        showSuccessToast("Success: Delete Experience");
+      } else {
+        showErrorToast("Failed: Delete Experience");
+      }
+
+      // Untuk Filter Client Source
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> fetchProjectList() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      final response = await dio.get(
+        '$baseUrl/profile/list-specialization',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+        print(responseData);
+
+        // Simpan data specialization
+        projectList.value = responseData
+            .map((item) => {
+                  'id': item['id'],
+                  'name': item['name'],
+                })
+            .toList();
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  List<dynamic> getData(String data) {
+    List result = [];
+
+    // Debugging
+    print("select: ${data}");
+
+    if (data == "project") {
+      result = projectList.value;
+    } else if (data == "level") {
+      result = [
+        {"id": "1", "name": "Fulltime"},
+        {"id": "2", "name": "Parttime"},
+        {"id": "3", "name": "Freelance"},
+        {"id": "4", "name": "Internship"},
+      ];
+    }
+    return result;
   }
 }

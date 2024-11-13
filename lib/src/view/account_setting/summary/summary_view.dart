@@ -14,10 +14,11 @@ class SummaryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    accountController.fetchSpecializationList();
     accountController.fetchSummary();
 
-    var isEmptySummary = accountController.about.value == null &&
-        accountController.specialization.value.isEmpty;
+    print("isi about: ${accountController.about.value}");
+    print("ini specialization :${accountController.about.value}");
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -43,15 +44,16 @@ class SummaryView extends StatelessWidget {
                 width: double.infinity,
                 padding: EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                    color: AppColors.white_1,
-                    borderRadius: BorderRadius.circular(5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color.fromARGB(30, 0, 0, 0),
-                        offset: Offset(3, 3),
-                        blurRadius: 5,
-                      ),
-                    ]),
+                  color: AppColors.white_1,
+                  borderRadius: BorderRadius.circular(5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(30, 0, 0, 0),
+                      offset: Offset(3, 3),
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -94,7 +96,10 @@ class SummaryView extends StatelessWidget {
                     Obx(
                       () {
                         return Text(
-                          accountController.specialization.value.join(', '),
+                          (accountController.specialization.value.isEmpty)
+                              ? "-"
+                              : accountController.specialization.value
+                                  .join(', '),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 13,
                             color: AppColors.text_2,
@@ -102,164 +107,209 @@ class SummaryView extends StatelessWidget {
                         );
                       },
                     ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                Get.toNamed(
-                                  AppRoutes.formSummaryView,
-                                  arguments: "edit",
-                                );
-                              },
-                              style: ButtonStyle(
-                                shadowColor:
-                                    WidgetStatePropertyAll(Colors.transparent),
-                                backgroundColor:
-                                    WidgetStatePropertyAll(AppColors.bgInfo),
-                                foregroundColor:
-                                    WidgetStatePropertyAll(AppColors.info),
-                                overlayColor:
-                                    WidgetStatePropertyAll(Colors.black12),
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
+                    Obx(
+                      () {
+                        if (!(accountController.about.value == null &&
+                            accountController.specialization.value.isEmpty)) {
+                          return Container(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 16,
                                 ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Icon(Icons.chat_bubble_outline),
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 4),
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 10,
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        height: 40,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Get.toNamed(
+                                              AppRoutes.formSummaryView,
+                                              arguments: "edit",
+                                            );
+                                          },
+                                          style: ButtonStyle(
+                                            shadowColor: WidgetStatePropertyAll(
+                                              Colors.transparent,
+                                            ),
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                              AppColors.bgInfo,
+                                            ),
+                                            foregroundColor:
+                                                WidgetStatePropertyAll(
+                                              AppColors.info,
+                                            ),
+                                            overlayColor:
+                                                WidgetStatePropertyAll(
+                                              Colors.black12,
+                                            ),
+                                            shape: WidgetStatePropertyAll(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  Icon(Icons
+                                                      .chat_bubble_outline),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                      bottom: 4,
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.edit,
+                                                      size: 10,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                "Edit",
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "Edit",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: Container(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                var message =
-                                    "Are you sure wanna delete this Summary?";
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            var message =
+                                                "Are you sure wanna delete this Summary?";
 
-                                DeleteBottomSheet(context, () {
-                                  accountController.deleteSummary();
-                                }, message);
-                              },
-                              style: ButtonStyle(
-                                shadowColor:
-                                    WidgetStatePropertyAll(Colors.transparent),
-                                backgroundColor:
-                                    WidgetStatePropertyAll(AppColors.bgDanger),
-                                foregroundColor:
-                                    WidgetStatePropertyAll(AppColors.danger),
-                                overlayColor:
-                                    WidgetStatePropertyAll(Colors.black12),
-                                shape: WidgetStatePropertyAll(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5),
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Ionicons.trash_outline,
-                                    size: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  Text(
-                                    "Delete",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                            DeleteBottomSheet(context, () {
+                                              accountController.deleteSummary();
+                                              accountController.specialization
+                                                  .refresh();
+                                              Get.back();
+                                            }, message);
+                                          },
+                                          style: ButtonStyle(
+                                            shadowColor: WidgetStatePropertyAll(
+                                                Colors.transparent),
+                                            backgroundColor:
+                                                WidgetStatePropertyAll(
+                                                    AppColors.bgDanger),
+                                            foregroundColor:
+                                                WidgetStatePropertyAll(
+                                                    AppColors.danger),
+                                            overlayColor:
+                                                WidgetStatePropertyAll(
+                                                    Colors.black12),
+                                            shape: WidgetStatePropertyAll(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Ionicons.trash_outline,
+                                                size: 20,
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
+                                              Text(
+                                                "Delete",
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                )
+                              ],
                             ),
-                          ),
-                        )
-                      ],
-                    )
+                          );
+                        } else {
+                          return SizedBox.shrink();
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),
               SizedBox(
                 height: 16,
               ),
-              SizedBox(
-                height: 51,
-                child: ElevatedButton(
-                  onPressed: () {
-                    (isEmptySummary)
-                        ? Get.toNamed(
-                            AppRoutes.formSummaryView,
-                            arguments: "add",
-                          )
-                        : null;
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: isEmptySummary
-                        ? WidgetStatePropertyAll(AppColors.primary)
-                        : WidgetStatePropertyAll(Color(0xff8FCAFA)),
-                    foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                    overlayColor: WidgetStatePropertyAll(Colors.white30),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+              Obx(
+                () {
+                  return SizedBox(
+                    height: 51,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        ((accountController.about.value == null &&
+                                accountController.specialization.value.isEmpty))
+                            ? Get.toNamed(
+                                AppRoutes.formSummaryView,
+                                arguments: "add",
+                              )
+                            : null;
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: (!(accountController.about.value ==
+                                    null &&
+                                accountController.specialization.value.isEmpty))
+                            ? WidgetStatePropertyAll(Color(0xff8FCAFA))
+                            : WidgetStatePropertyAll(AppColors.primary),
+                        foregroundColor:
+                            WidgetStatePropertyAll(AppColors.white_1),
+                        overlayColor: WidgetStatePropertyAll(Colors.white30),
+                        shape: WidgetStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Ionicons.add_outline),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            "Add Summary",
+                            style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14, fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Ionicons.add_outline),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Add Summary",
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              )
+                  );
+                },
+              ),
             ],
           ),
         ),
