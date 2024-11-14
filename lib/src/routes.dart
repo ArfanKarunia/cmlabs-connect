@@ -11,6 +11,8 @@ import 'package:cmlabs_connect/src/view/account_setting/organization/organizatio
 import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/volunteer/form_volunteer_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/volunteer/volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/add_contact_view.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/edit_quotation_view.dart';
@@ -61,6 +63,10 @@ class AppRoutes {
   static const String achievementView = '/achievementView';
   static const String formAchievementView = '/achievementView/form';
   static const String selectDataAchievement = '/achievementView/form/select';
+
+  static const String volunteerView = '/volunteerView';
+  static const String formVolunteerView = '/volunteerView/form';
+  static const String selectDataVolunteer = '/volunteerView/form/select';
 
   // List of Route
   static List<GetPage> routes = [
@@ -261,6 +267,32 @@ class AppRoutes {
     ),
     GetPage(
       name: selectDataAchievement,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
+      },
+    ),
+
+    // VOLUNTEER
+    GetPage(
+      name: volunteerView,
+      page: () => VolunteerView(),
+    ),
+    GetPage(
+      name: formVolunteerView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String status = args['status'];
+        final int? id = args['id'] as int?;
+
+        return FormVolunteerView(
+          status: status,
+          id: id,
+        );
+      },
+    ),
+    GetPage(
+      name: selectDataVolunteer,
       page: () {
         final args = Get.arguments as String;
         return SelectData(data: args);

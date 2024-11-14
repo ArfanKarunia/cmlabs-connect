@@ -8,6 +8,7 @@ import 'package:cmlabs_connect/src/models/certification_model.dart';
 import 'package:cmlabs_connect/src/models/education_model.dart';
 import 'package:cmlabs_connect/src/models/experience_model.dart';
 import 'package:cmlabs_connect/src/models/organization_model.dart';
+import 'package:cmlabs_connect/src/models/volunteer_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
@@ -858,7 +859,7 @@ class AccountController extends GetxController {
     }
   }
 
-  Future<void>updateOrganization(int idOrganization) async {
+  Future<void> updateOrganization(int idOrganization) async {
     var requestData = {
       "organization_id": idOrganization,
       "id": userController.user.value?.id,
@@ -1107,6 +1108,174 @@ class AccountController extends GetxController {
       }
 
       // Untuk Filter Client Source
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  /* 
+     ++ VOLUNTEER ++
+
+  */
+
+  var volunteerList = Rx<List<VolunteerModel?>>([]);
+
+  var volunteerName = Rx<String?>(null);
+  var volunteerPosition = Rx<String?>(null);
+  var volunteerDivision = Rx<String?>(null);
+  var volunteerFromDate = Rx<String?>(null);
+  var volunteerToDate = Rx<String?>(null);
+  var isStillActiveVolunteer = false.obs;
+  var volunteerDescription = Rx<String?>(null);
+
+  Future<void> fetchVolunteer() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile/get-volunteer?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        print("data: $responseData");
+
+        // Map each JSON item to an ExperienceModel using fromJson
+        volunteerList.value = responseData
+            .map<VolunteerModel?>((item) => VolunteerModel.fromJson(item))
+            .toList();
+
+        // Update the Rx variable
+        volunteerList.refresh();
+
+        print(volunteerList.value);
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addVolunteer() async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "volunteer_name": volunteerName.value,
+      "volunteer_level": volunteerPosition.value,
+      "division": volunteerDivision.value,
+      "volunteer_from": volunteerFromDate.value,
+      "volunteer_to": volunteerToDate.value,
+      "volunteer_currently_working": isStillActiveVolunteer.value,
+      "volunteer_description": volunteerDescription.value,
+    };
+
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/add-volunteer'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: New Volunteer added");
+        fetchVolunteer();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Volunteer";
+
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {}
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> updateVolunteer(int idVolunteer) async {
+    var requestData = {
+      "volunteer_id": idVolunteer,
+      "id": userController.user.value?.id,
+      "volunteer_name": volunteerName.value,
+      "volunteer_level": volunteerPosition.value,
+      "division": volunteerDivision.value,
+      "volunteer_from": volunteerFromDate.value,
+      "volunteer_to": volunteerToDate.value,
+      "volunteer_currently_working": isStillActiveVolunteer.value,
+      "volunteer_description": volunteerDescription.value,
+    };
+
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/update-volunteer'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Volunteer updated");
+        fetchVolunteer();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to updated Volunteer";
+
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {}
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> deleteVolunteer(int id) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      final response = await dio.delete(
+        '$baseUrl/profile/delete-volunteer?id=$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchVolunteer();
+        showSuccessToast("Success: Delete Volunteer");
+      } else {
+        showErrorToast("Failed: Delete Volunteer");
+      }
     } catch (e) {
       print('Error fetching status data: $e');
     }

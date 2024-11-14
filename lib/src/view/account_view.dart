@@ -230,7 +230,9 @@ class AccountView extends StatelessWidget {
               ListTile(
                 splashColor: Colors.black12,
                 tileColor: AppColors.white_1,
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(AppRoutes.volunteerView);
+                },
                 leading: Image(
                   image: AssetImage("assets/icons/icons_bag.png"),
                 ),
