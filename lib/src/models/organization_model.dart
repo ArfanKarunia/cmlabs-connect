@@ -11,39 +11,31 @@ class OrganizationModel {
   final String name;
 
   @HiveField(2)
-  final String url;
+  final String? description;
 
   @HiveField(3)
-  final String? pic;
+  final String position;
 
   @HiveField(4)
-  final String description;
-
-  @HiveField(5)
-  final String institutionName;
-
-  @HiveField(6)
   final DateTime startTime;
 
-  @HiveField(7)
+  @HiveField(5)
   final DateTime? finishTime;
 
-  @HiveField(8)
+  @HiveField(6)
   final int adminId;
 
-  @HiveField(9)
+  @HiveField(7)
   final DateTime createdAt;
 
-  @HiveField(10)
+  @HiveField(8)
   final DateTime updatedAt;
 
   OrganizationModel({
     required this.id,
     required this.name,
-    required this.url,
-    required this.institutionName,
-    this.pic,
-    required this.description,
+    required this.position,
+    this.description,
     required this.adminId,
     required this.startTime,
     this.finishTime,
@@ -55,9 +47,7 @@ class OrganizationModel {
     return OrganizationModel(
       id: json['id'] ?? 0,
       name: json['name'] ?? "",
-      url: json['url'] ?? "",
-      institutionName: json['institutionName'] ?? "",
-      pic: json['pic'] ?? "",
+      position: json['position'] ?? "",
       startTime: json['start_time'] != null
           ? DateTime.parse(json['start_time'])
           : DateTime.now(), // Default to current date if null
@@ -79,11 +69,9 @@ class OrganizationModel {
     return {
       'id': id,
       'name': name,
-      'url': url,
-      'institution_name': institutionName,
+      'position': position,
       'admin_id': adminId,
-      'pic': pic ?? "",
-      'description': description,
+      'description': description ?? "",
       'start_time': startTime.toIso8601String(),
       'finish_time': finishTime?.toIso8601String() ?? "",
       'created_at': createdAt.toIso8601String(),

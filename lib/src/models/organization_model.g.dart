@@ -19,43 +19,37 @@ class OrganizationModelAdapter extends TypeAdapter<OrganizationModel> {
     return OrganizationModel(
       id: fields[0] as int,
       name: fields[1] as String,
-      url: fields[2] as String,
-      institutionName: fields[5] as String,
-      pic: fields[3] as String?,
-      description: fields[4] as String,
-      adminId: fields[8] as int,
-      startTime: fields[6] as DateTime,
-      finishTime: fields[7] as DateTime?,
-      createdAt: fields[9] as DateTime,
-      updatedAt: fields[10] as DateTime,
+      position: fields[3] as String,
+      description: fields[2] as String?,
+      adminId: fields[6] as int,
+      startTime: fields[4] as DateTime,
+      finishTime: fields[5] as DateTime?,
+      createdAt: fields[7] as DateTime,
+      updatedAt: fields[8] as DateTime,
     );
   }
 
   @override
   void write(BinaryWriter writer, OrganizationModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.url)
-      ..writeByte(3)
-      ..write(obj.pic)
-      ..writeByte(4)
       ..write(obj.description)
-      ..writeByte(5)
-      ..write(obj.institutionName)
-      ..writeByte(6)
+      ..writeByte(3)
+      ..write(obj.position)
+      ..writeByte(4)
       ..write(obj.startTime)
-      ..writeByte(7)
+      ..writeByte(5)
       ..write(obj.finishTime)
-      ..writeByte(8)
+      ..writeByte(6)
       ..write(obj.adminId)
-      ..writeByte(9)
+      ..writeByte(7)
       ..write(obj.createdAt)
-      ..writeByte(10)
+      ..writeByte(8)
       ..write(obj.updatedAt);
   }
 

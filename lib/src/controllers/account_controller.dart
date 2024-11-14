@@ -766,12 +766,10 @@ class AccountController extends GetxController {
   var organizationList = Rx<List<OrganizationModel?>>([]);
 
   var organizationName = Rx<String?>(null);
-  var organizationUrl = Rx<String?>(null);
-  var organizationPic = Rx<String?>(null);
-  var organizationInstitute = Rx<String?>(null);
+  var organizationPosition = Rx<String?>(null);
   var organizationFromDate = Rx<String?>(null);
   var organizationToDate = Rx<String?>(null);
-  var isCurrentlyWorking = false.obs;
+  var isStillActive = false.obs;
   var organizationDescription = Rx<String?>(null);
 
   Future<void> fetchOrganization() async {
@@ -809,13 +807,12 @@ class AccountController extends GetxController {
   Future<void> addOrganization() async {
     var requestData = {
       "id": userController.user.value?.id,
-      "organization_name": certificationName.value,
-      "organization_level": certificationInstitution.value,
-      "certification_link": certificationLink.value,
-      "certification_from": certificationFromDate.value,
-      "certification_to": certificationToDate.value,
-      "certification_currently_working": isNoExpiration.value,
-      "certification_description": certificationDescription.value,
+      "organization_name": organizationName.value,
+      "organization_level": organizationPosition.value,
+      "organization_from": organizationFromDate.value,
+      "organization_to": organizationToDate.value,
+      "organization_currently_working": isStillActive.value,
+      "organization_description": organizationDescription.value,
     };
 
     // Convert the requestData to JSON format
@@ -828,7 +825,7 @@ class AccountController extends GetxController {
 
       // Perform the POST request
       var response = await http.post(
-        Uri.parse('$baseUrl/profile/add-certification'),
+        Uri.parse('$baseUrl/profile/add-organization'),
         headers: {
           'Authorization': 'Bearer $accessToken',
           'Content-Type': 'application/json',
@@ -838,11 +835,11 @@ class AccountController extends GetxController {
 
       // Handle the response
       if (response.statusCode == 200) {
-        showSuccessToast("Success: New Certification added");
-        fetchCertification();
+        showSuccessToast("Success: New Organization added");
+        fetchOrganization();
         Get.back();
       } else {
-        String errorMessage = "Failed to add Certification";
+        String errorMessage = "Failed to add Organization";
 
         // Attempt to parse the error message from the response body
         try {
@@ -857,6 +854,86 @@ class AccountController extends GetxController {
       }
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void>updateOrganization(int idOrganization) async {
+    var requestData = {
+      "organization_id": idOrganization,
+      "id": userController.user.value?.id,
+      "organization_name": organizationName.value,
+      "organization_level": organizationPosition.value,
+      "organization_from": organizationFromDate.value,
+      "organization_to": organizationToDate.value,
+      "organization_currently_working": isStillActive.value,
+      "organization_description": organizationDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/update-organization'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Organization updated");
+        fetchOrganization();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to updated Organization";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> deleteOrganization(int id) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      // untuk Filter Status
+      final response = await dio.delete(
+        '$baseUrl/profile/delete-organization?id=$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchOrganization();
+        showSuccessToast("Success: Delete Organization");
+      } else {
+        showErrorToast("Failed: Delete Organization");
+      }
+
+      // Untuk Filter Client Source
+    } catch (e) {
       print('Error fetching status data: $e');
     }
   }

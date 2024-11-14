@@ -16,6 +16,8 @@ class OrganizationVew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    accountController.fetchOrganization();
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -39,7 +41,7 @@ class OrganizationVew extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  (accountController.educationList.value.isEmpty)
+                  (accountController.organizationList.value.isEmpty)
                       ? Container(
                           width: double.infinity,
                           padding: EdgeInsets.all(14),
@@ -58,7 +60,7 @@ class OrganizationVew extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Education",
+                                "Organization",
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 15,
                                   fontWeight: FontWeight.bold,
@@ -82,10 +84,10 @@ class OrganizationVew extends StatelessWidget {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount:
-                              accountController.educationList.value.length,
+                              accountController.organizationList.value.length,
                           itemBuilder: (context, index) {
-                            final education =
-                                accountController.educationList.value[index];
+                            final organization =
+                                accountController.organizationList.value[index];
                             return Container(
                               width: double.infinity,
                               margin: EdgeInsets.only(bottom: 16),
@@ -105,7 +107,7 @@ class OrganizationVew extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    education?.name ?? '-',
+                                    organization?.name ?? '-',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -116,7 +118,7 @@ class OrganizationVew extends StatelessWidget {
                                     height: 14,
                                   ),
                                   Text(
-                                    "${education?.department ?? "-"} | ${education?.degree ?? "-"}",
+                                    organization?.position ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_2,
@@ -126,9 +128,9 @@ class OrganizationVew extends StatelessWidget {
                                     height: 10,
                                   ),
                                   Text(
-                                    "${education?.startTime != null ? DateFormat('d MMM yyyy').format(education!.startTime) : "-"}"
+                                    "${organization?.startTime != null ? DateFormat('d MMM yyyy').format(organization!.startTime) : "-"}"
                                     " until "
-                                    "${education?.finishTime != null ? DateFormat('d MMM yyyy').format(education!.finishTime!) : "now"}",
+                                    "${organization?.finishTime != null ? DateFormat('d MMM yyyy').format(organization!.finishTime!) : "now"}",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_2,
@@ -149,7 +151,7 @@ class OrganizationVew extends StatelessWidget {
                                     height: 5,
                                   ),
                                   Text(
-                                    "${education?.description ?? "-"}",
+                                    organization?.description ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_2,
@@ -170,10 +172,10 @@ class OrganizationVew extends StatelessWidget {
                                                   onPressed: () {
                                                     Get.toNamed(
                                                       AppRoutes
-                                                          .formEducationView,
+                                                          .formOrganizationView,
                                                       arguments: {
                                                         "status": "edit",
-                                                        "id": education!.id
+                                                        "id": organization!.id
                                                       },
                                                     );
                                                   },
@@ -250,13 +252,13 @@ class OrganizationVew extends StatelessWidget {
                                                 child: ElevatedButton(
                                                   onPressed: () {
                                                     var message =
-                                                        "Are you sure wanna delete this Education?";
+                                                        "Are you sure wanna delete this Organization?";
 
                                                     DeleteBottomSheet(context,
                                                         () {
                                                       accountController
-                                                          .deleteEducation(
-                                                              education!.id);
+                                                          .deleteOrganization(
+                                                              organization!.id);
                                                       Get.back();
                                                     }, message);
                                                   },
@@ -324,7 +326,7 @@ class OrganizationVew extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         Get.toNamed(
-                          AppRoutes.formEducationView,
+                          AppRoutes.formOrganizationView,
                           arguments: {"status": "add", "id": null},
                         );
                       },
@@ -348,7 +350,7 @@ class OrganizationVew extends StatelessWidget {
                             width: 10,
                           ),
                           Text(
-                            "Add Education",
+                            "Add Organization",
                             style: GoogleFonts.plusJakartaSans(
                                 fontSize: 14, fontWeight: FontWeight.bold),
                           ),
