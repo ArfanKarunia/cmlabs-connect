@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/models/achievement_model.dart';
 import 'package:cmlabs_connect/src/models/certification_model.dart';
 import 'package:cmlabs_connect/src/models/education_model.dart';
 import 'package:cmlabs_connect/src/models/experience_model.dart';
+import 'package:cmlabs_connect/src/models/organization_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
-import 'package:get/get.dart' hide FormData;
+import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 
@@ -748,6 +750,283 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Certification");
       } else {
         showErrorToast("Failed: Delete Certification");
+      }
+
+      // Untuk Filter Client Source
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  /* 
+     ++ ORGANIZATION ++
+
+  */
+
+  var organizationList = Rx<List<OrganizationModel?>>([]);
+
+  var organizationName = Rx<String?>(null);
+  var organizationUrl = Rx<String?>(null);
+  var organizationPic = Rx<String?>(null);
+  var organizationInstitute = Rx<String?>(null);
+  var organizationFromDate = Rx<String?>(null);
+  var organizationToDate = Rx<String?>(null);
+  var isCurrentlyWorking = false.obs;
+  var organizationDescription = Rx<String?>(null);
+
+  Future<void> fetchOrganization() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile/get-organization?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        print("data: $responseData");
+
+        // Map each JSON item to an ExperienceModel using fromJson
+        organizationList.value = responseData
+            .map<OrganizationModel?>((item) => OrganizationModel.fromJson(item))
+            .toList();
+
+        // Update the Rx variable
+        organizationList.refresh();
+
+        print(organizationList.value);
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addOrganization() async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "organization_name": certificationName.value,
+      "organization_level": certificationInstitution.value,
+      "certification_link": certificationLink.value,
+      "certification_from": certificationFromDate.value,
+      "certification_to": certificationToDate.value,
+      "certification_currently_working": isNoExpiration.value,
+      "certification_description": certificationDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/add-certification'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: New Certification added");
+        fetchCertification();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Certification";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  /* 
+     ++ ACHIEVEMENT ++
+
+  */
+
+  var achievementList = Rx<List<AchievementModel?>>([]);
+
+  var achievementName = Rx<String?>(null);
+  var achievementYear = Rx<String?>(null);
+  var achievementInstitute = Rx<String?>(null);
+  var achievementDescription = Rx<String?>(null);
+
+  Future<void> fetchAchievement() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile/get-achievement?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        print("data: $responseData");
+
+        // Map each JSON item to an ExperienceModel using fromJson
+        achievementList.value = responseData
+            .map<AchievementModel?>((item) => AchievementModel.fromJson(item))
+            .toList();
+
+        // Update the Rx variable
+        organizationList.refresh();
+
+        print(organizationList.value);
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addAchievement() async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "achievement_name": achievementName.value,
+      "achievement_institution_name": achievementInstitute.value,
+      "achievement_date": achievementYear.value,
+      "achievement_description": achievementDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/add-achievement'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: New Achievement added");
+        fetchAchievement();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Achievement";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> updateAchievement(int idAchievement) async {
+    var requestData = {
+      "achievement_id": idAchievement,
+      "id": userController.user.value?.id,
+      "achievement_name": achievementName.value,
+      "achievement_institution_name": achievementInstitute.value,
+      "achievement_date": achievementYear.value,
+      "achievement_description": achievementDescription.value,
+    };
+
+    // Convert the requestData to JSON format
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      // Perform the POST request
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/update-achievement'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Achievement updated");
+        fetchAchievement();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to updated Achievement";
+
+        // Attempt to parse the error message from the response body
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {
+          // Handle any parsing errors
+        }
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> deleteAchievement(int id) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      // untuk Filter Status
+      final response = await dio.delete(
+        '$baseUrl/profile/delete-achievement?id=$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchAchievement();
+        showSuccessToast("Success: Delete Achievement");
+      } else {
+        showErrorToast("Failed: Delete Achievement");
       }
 
       // Untuk Filter Client Source

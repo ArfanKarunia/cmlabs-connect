@@ -1,9 +1,13 @@
+import 'package:cmlabs_connect/src/view/account_setting/achievement/achievement_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/achievement/form_achievement_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/certification/certification_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/certification/form_certification_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/education/education_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/education/form_education_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/organization/form_organization_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/organization/organization_vew.dart';
 import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
@@ -49,6 +53,14 @@ class AppRoutes {
   static const String certificationView = '/certificationView';
   static const String formCertificationnView = '/certificationView/form';
   static const String selectDataCertification = '/certificationView/form/select';
+
+  static const String organizationView = '/organizationView';
+  static const String formOrganizationView = '/organizationView/form';
+  static const String selectDataOrganization = '/organizationView/form/select';
+
+  static const String achievementView = '/achievementView';
+  static const String formAchievementView = '/achievementView/form';
+  static const String selectDataAchievement = '/achievementView/form/select';
 
   // List of Route
   static List<GetPage> routes = [
@@ -197,6 +209,58 @@ class AppRoutes {
     ),
     GetPage(
       name: selectDataCertification,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
+      },
+    ),
+
+    // ORGANIZATION
+    GetPage(
+      name: organizationView,
+      page: () => OrganizationVew(),
+    ),
+    GetPage(
+      name: formOrganizationView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String status = args['status'];
+        final int? id = args['id'] as int?;
+
+        return FormOrganizationView(
+          status: status,
+          id: id,
+        );
+      },
+    ),
+    GetPage(
+      name: selectDataOrganization,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
+      },
+    ),
+
+    // ACHIEVEMENT
+    GetPage(
+      name: achievementView,
+      page: () => AchievementView(),
+    ),
+    GetPage(
+      name: formAchievementView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String status = args['status'];
+        final int? id = args['id'] as int?;
+
+        return FormAchievementView(
+          status: status,
+          id: id,
+        );
+      },
+    ),
+    GetPage(
+      name: selectDataAchievement,
       page: () {
         final args = Get.arguments as String;
         return SelectData(data: args);

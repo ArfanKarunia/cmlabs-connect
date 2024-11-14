@@ -212,7 +212,9 @@ class AccountView extends StatelessWidget {
               ListTile(
                 splashColor: Colors.black12,
                 tileColor: AppColors.white_1,
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(AppRoutes.organizationView);
+                },
                 leading: Image(
                   image: AssetImage("assets/icons/icons_structure.png"),
                 ),
@@ -262,7 +264,9 @@ class AccountView extends StatelessWidget {
               ListTile(
                 splashColor: Colors.black12,
                 tileColor: AppColors.white_1,
-                onTap: () {},
+                onTap: () {
+                  Get.toNamed(AppRoutes.achievementView);
+                },
                 leading: Image(
                   image: AssetImage("assets/icons/icons_file.png"),
                 ),
