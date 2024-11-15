@@ -8,6 +8,7 @@ import 'package:cmlabs_connect/src/models/certification_model.dart';
 import 'package:cmlabs_connect/src/models/education_model.dart';
 import 'package:cmlabs_connect/src/models/experience_model.dart';
 import 'package:cmlabs_connect/src/models/organization_model.dart';
+import 'package:cmlabs_connect/src/models/publication_model.dart';
 import 'package:cmlabs_connect/src/models/volunteer_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:get/get.dart';
@@ -1275,6 +1276,165 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Volunteer");
       } else {
         showErrorToast("Failed: Delete Volunteer");
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  /* 
+     ++ PUBLICATION ++
+
+  */
+
+  var publicationList = Rx<List<PublicationModel?>>([]);
+
+  var publicationTitle = Rx<String?>(null);
+  var publicationUrl = Rx<String?>(null);
+  var publicationYear = Rx<String?>(null);
+  var publicationDescription = Rx<String?>(null);
+
+  Future<void> fetchPublication() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile/get-publication?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        print("data: $responseData");
+
+        // Map each JSON item to an ExperienceModel using fromJson
+        publicationList.value = responseData
+            .map<PublicationModel?>((item) => PublicationModel.fromJson(item))
+            .toList();
+
+        // Update the Rx variable
+        publicationList.refresh();
+
+        print(publicationList.value);
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addPublication() async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "publication_title": publicationTitle.value,
+      "publication_link": publicationUrl.value,
+      "publication_date": publicationYear.value,
+      "publication_description": publicationDescription.value,
+    };
+
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/add-publication'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: New Publication added");
+        fetchPublication();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to add Publication";
+
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {}
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> updatePublication(int idPublication) async {
+    var requestData = {
+      "publication_id": idPublication,
+      "id": userController.user.value?.id,
+      "publication_title": publicationTitle.value,
+      "publication_link": publicationUrl.value,
+      "publication_date": publicationYear.value,
+      "publication_description": publicationDescription.value,
+    };
+
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      String? accessToken =
+          authenticationController.accesToken.value.toString();
+
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/update-publication'),
+        headers: {
+          'Authorization': 'Bearer $accessToken',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Publication updated");
+        fetchPublication();
+        Get.back();
+      } else {
+        String errorMessage = "Failed to updated Publication";
+
+        try {
+          var errorData = jsonDecode(response.body) as Map<String, dynamic>;
+          errorMessage = errorData["message"] ?? errorMessage;
+        } catch (e) {}
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> deletePublication(int id) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      final response = await dio.delete(
+        '$baseUrl/profile/delete-publication?id=$id',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        fetchPublication();
+        showSuccessToast("Success: Delete Publication");
+      } else {
+        showErrorToast("Failed: Delete Publication");
       }
     } catch (e) {
       print('Error fetching status data: $e');

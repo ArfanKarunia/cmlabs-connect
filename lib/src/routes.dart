@@ -8,6 +8,8 @@ import 'package:cmlabs_connect/src/view/account_setting/experience/experience_vi
 import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/organization/form_organization_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/organization/organization_vew.dart';
+import 'package:cmlabs_connect/src/view/account_setting/publication/form_publication_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/publication/publication_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
@@ -67,6 +69,10 @@ class AppRoutes {
   static const String volunteerView = '/volunteerView';
   static const String formVolunteerView = '/volunteerView/form';
   static const String selectDataVolunteer = '/volunteerView/form/select';
+
+  static const String publicationView = '/publicationView';
+  static const String formPublicationView = '/publicationView/form';
+  static const String selectDataPublication = '/publicationView/form/select';
 
   // List of Route
   static List<GetPage> routes = [
@@ -293,6 +299,32 @@ class AppRoutes {
     ),
     GetPage(
       name: selectDataVolunteer,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
+      },
+    ),
+
+    // PUBLICATION
+    GetPage(
+      name: publicationView,
+      page: () => PublicationView(),
+    ),
+    GetPage(
+      name: formPublicationView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        final String status = args['status'];
+        final int? id = args['id'] as int?;
+
+        return FormPublicationView(
+          status: status,
+          id: id,
+        );
+      },
+    ),
+    GetPage(
+      name: selectDataPublication,
       page: () {
         final args = Get.arguments as String;
         return SelectData(data: args);

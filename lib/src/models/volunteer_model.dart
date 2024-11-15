@@ -2,7 +2,7 @@ import 'package:hive/hive.dart';
 
 part 'volunteer_model.g.dart';
 
-@HiveType(typeId: 12)
+@HiveType(typeId: 13)
 class VolunteerModel {
   @HiveField(0)
   final int id;

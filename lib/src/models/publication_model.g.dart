@@ -1,58 +1,52 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'volunteer_model.dart';
+part of 'publication_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class VolunteerModelAdapter extends TypeAdapter<VolunteerModel> {
+class PublicationModelAdapter extends TypeAdapter<PublicationModel> {
   @override
-  final int typeId = 13;
+  final int typeId = 14;
 
   @override
-  VolunteerModel read(BinaryReader reader) {
+  PublicationModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return VolunteerModel(
+    return PublicationModel(
       id: fields[0] as int,
-      name: fields[1] as String,
-      position: fields[2] as String,
-      division: fields[3] as String,
-      description: fields[4] as String?,
-      startTime: fields[5] as DateTime,
-      finishTime: fields[6] as DateTime?,
-      adminId: fields[7] as int,
-      createdAt: fields[8] as DateTime,
-      updatedAt: fields[9] as DateTime,
+      title: fields[1] as String,
+      url: fields[2] as String,
+      description: fields[3] as String?,
+      year: fields[4] as DateTime?,
+      adminId: fields[5] as int,
+      createdAt: fields[6] as DateTime,
+      updatedAt: fields[7] as DateTime,
     );
   }
 
   @override
-  void write(BinaryWriter writer, VolunteerModel obj) {
+  void write(BinaryWriter writer, PublicationModel obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.name)
+      ..write(obj.title)
       ..writeByte(2)
-      ..write(obj.position)
+      ..write(obj.url)
       ..writeByte(3)
-      ..write(obj.division)
-      ..writeByte(4)
       ..write(obj.description)
+      ..writeByte(4)
+      ..write(obj.year)
       ..writeByte(5)
-      ..write(obj.startTime)
-      ..writeByte(6)
-      ..write(obj.finishTime)
-      ..writeByte(7)
       ..write(obj.adminId)
-      ..writeByte(8)
+      ..writeByte(6)
       ..write(obj.createdAt)
-      ..writeByte(9)
+      ..writeByte(7)
       ..write(obj.updatedAt);
   }
 
@@ -62,7 +56,7 @@ class VolunteerModelAdapter extends TypeAdapter<VolunteerModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is VolunteerModelAdapter &&
+      other is PublicationModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
