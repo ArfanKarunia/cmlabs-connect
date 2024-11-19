@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:cmlabs_connect/src/constant/config.dart';
+import 'package:cmlabs_connect/src/controllers/activity_controller.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/url_tracking_controller.dart';
 import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../utils/toast.dart';
+
 class DetailQuotationController extends GetxController {
   var isShowAll = false.obs;
   var search = Rx<String?>(null);
+  var isChanged = false.obs;
 
   // simpan sementara data perubahan
   var selectPic = Rx<Map<String, String>?>(null);
@@ -26,6 +33,66 @@ class DetailQuotationController extends GetxController {
   List<TextEditingController> positionControllers = [
     TextEditingController(),
   ];
+
+  @override
+  void onInit() async {
+    super.onInit();
+    await fetchList("pic");
+    await fetchList("priority");
+    await fetchList("status");
+
+    // menangkap jika terdapt perubahan
+    ever<Map<String, String>?>(selectPic, (value) {
+      print("selectPic changed: $value");
+      isChanged.value = true;
+    });
+
+    ever<Map<String, String>?>(selectPriority, (value) {
+      print("selectPriority changed: $value");
+      isChanged.value = true;
+    });
+
+    ever<Map<String, String>?>(selectStatus, (value) {
+      print("selectStatus changed: $value");
+      isChanged.value = true;
+    });
+
+    ever<Map<String, String>?>(selectedType, (value) {
+      print("selectedType changed: $value");
+      isChanged.value = true;
+    });
+
+    for (var controller in nameControllers) {
+      controller.addListener(() {
+        // Jika teks berubah, tandai isChanged menjadi true
+        if (controller.text.isNotEmpty) {
+          isChanged.value = true;
+        }
+      });
+    }
+
+    // Menambahkan listener pada positionControllers
+    for (var controller in positionControllers) {
+      controller.addListener(() {
+        // Jika teks berubah, tandai isChanged menjadi true
+        if (controller.text.isNotEmpty) {
+          isChanged.value = true;
+        }
+      });
+    }
+    // print(isChanged.value)
+  }
+
+  @override
+  void onClose() {
+    for (var controller in nameControllers) {
+      controller.dispose();
+    }
+    for (var controller in positionControllers) {
+      controller.dispose();
+    }
+    super.onClose();
+  }
 
   // Memastikan jumlah controller sesuai dengan jumlah data
   void syncClientPIC() {
@@ -91,25 +158,19 @@ class DetailQuotationController extends GetxController {
     "Pitching Duration",
   ];
 
-  @override
-  void onInit() async {
-    super.onInit();
-    await fetchList("pic");
-    await fetchList("priority");
-    await fetchList("status");
-    print("banyak client pic : ${selectedPICClient.length}");
-    print("banyak contact client pic 1 : ${selectedPICClient[0].contacts.length}");
-  }
-
   void clearSelectedData() {
     selectPic.value = null;
     selectPriority.value = null;
     selectStatus.value = null;
     selectedType.value = null;
 
-    // print("data pic: ${selectPic.value}");
-    // print("data priority: ${selectPriority.value}");
-    // print("data status: ${selectStatus.value}");
+    for (var name in nameControllers) {
+      name.text = '';
+    }
+
+    for (var position in positionControllers) {
+      position.text = '';
+    }
   }
 
   void changeShowValue() {
@@ -374,6 +435,146 @@ class DetailQuotationController extends GetxController {
     } catch (e) {
       print(e);
     }
+  }
+
+  Future<void> updateQuotation(Quotation quotation) async {
+    String? accessToken = authenticationController.accesToken.value;
+
+    var data = updateData(quotation);
+
+    print(data);
+
+    try {
+      final response = await dio.put(
+        "$baseUrl/quotation/update/${quotation.id}",
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+        data: data,
+      );
+
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        print('Data berhasil diupdate: ${response.data}');
+        showSuccessToast(
+            "Success: Update Quotation dengan id : ${quotation.id}");
+        Get.back();
+      } else {
+        print('Gagal mengupdate data. Status code: ${response.statusCode}');
+        showErrorToast(
+            "Failed: Update Quotation dengan id : ${quotation.id}, karena");
+      }
+    } catch (e) {
+      print("Error: $e");
+      showErrorToast("Failed: Update Quotation dengan id : ${quotation.id}");
+    }
+  }
+
+  String updateData(Quotation quotation) {
+    UrlTrackingController urlTrackingController =
+        Get.put(UrlTrackingController());
+
+    ActivityController activityController = Get.put(ActivityController());
+
+    var pic = selectPic.value?["value"];
+    var priority = selectPriority.value?["value"];
+    var status = selectStatus.value?["value"];
+    var type = selectedType.value?["value"];
+
+    // Mengonversi list ClientPic ke dalam format JSON
+    var clientPic;
+
+    if (selectedPICClient.length > 0 &&
+        selectedPICClient[0].name != null &&
+        selectedPICClient[0].name != "") {
+      clientPic = {
+        for (var i = 0; i < selectedPICClient.length; i++)
+          '$i': selectedPICClient[i].toJson()
+      };
+    }
+
+    var meetingTopic = [];
+    var meetingSchedule = [];
+    var meetingStatus = [];
+    var meetingType = [];
+    var meetingNote = [];
+    var meetingAvailableToUser = activityController.isAvailableToUser
+        .map((available) => available ? "1" : "0")
+        .toList();
+
+    var remarks = activityController.remarksMeeting.text;
+    var notes = activityController.addtionalNoteMeeting.text;
+
+    if (activityController.meetingTopic.value.isNotEmpty) {
+      for (var topic in activityController.meetingTopic.value) {
+        if (topic.text != "") {
+          meetingTopic.add(topic.text);
+        }
+      }
+      for (var i = 0; i < activityController.meetingTopic.value.length; i++) {}
+    }
+
+    if (activityController.meetingSchedule.value.isNotEmpty) {
+      for (var schedule in activityController.meetingSchedule.value) {
+        if (schedule.text != "") {
+          meetingSchedule.add(schedule.text);
+        }
+      }
+    }
+
+    if (activityController.selectedStatusActivity.value.isNotEmpty) {
+      for (var status in activityController.selectedStatusActivity.value) {
+        if (status?['value'] != null) {
+          meetingStatus.add(status?['value']);
+        }
+      }
+    }
+
+    if (activityController.selectedTypeActivity.value.isNotEmpty) {
+      for (var outerList in activityController.selectedTypeActivity.value) {
+        var temp = [];
+        if (outerList.isNotEmpty) {
+          for (var typeMap in outerList) {
+            if (typeMap?['value'] != null) {
+              temp.add(typeMap?['value']);
+            }
+          }
+        }
+        meetingType.add(temp);
+      }
+    }
+
+    if (activityController.meetingNote.value.isNotEmpty) {
+      for (var note in activityController.meetingNote.value) {
+        if (note.text != "") {
+          meetingNote.add(note.text);
+        }
+      }
+    }
+
+    Map<String, dynamic> requestData = {
+      "project_tracker": "true",
+      "pic": pic,
+      "priority": priority,
+      "status": status,
+      "type": type ?? [],
+      "client_pic": clientPic,
+      "meeting_topic": meetingTopic,
+      "meeting_schedule": meetingSchedule,
+      "meeting_status": meetingStatus,
+      "meeting_type": meetingType,
+      "meeting_available_to_user": meetingAvailableToUser,
+      "meeting_note": meetingNote,
+      "remarks": remarks,
+      "notes": notes,
+      "url_track_status": urlTrackingController.isTracking.value ? "on" : "off",
+      "url": urlTrackingController.urlController.text,
+      "password": urlTrackingController.passwordController.text,
+      "validity": urlTrackingController.selectedValidity.value?['value'] ?? ''
+    };
+
+    return jsonEncode(requestData);
   }
 
   String labelStatusLead(int status) {

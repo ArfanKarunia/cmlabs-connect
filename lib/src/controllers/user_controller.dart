@@ -1,3 +1,5 @@
+
+import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -5,8 +7,11 @@ import '../models/user_model.dart';
 
 class UserController extends GetxController {
   var user = Rx<User?>(null);
+  var password = Rx<String?>(null);
 
   Box<User>? userBox;
+
+  final baseUrl = Config.baseURL;
 
   @override
   Future<void> onInit() async {
@@ -47,4 +52,6 @@ class UserController extends GetxController {
     }
     return null;
   }
+
+  
 }

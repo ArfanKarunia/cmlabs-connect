@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/view/inbox_view.dart';
+import 'package:cmlabs_connect/src/view/account_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,13 +17,9 @@ class BottomNavigation extends StatelessWidget {
   final QuotationController quotationController = Get.put(QuotationController());
 
   final List<Widget> _pages = [
-    HomeView(), // Halaman pertama
+    HomeView(),
     InboxView(),
-    Container(
-      color: AppColors.bgInfo,
-    ),
-    // InboxView(), // Halaman kedua
-    // const SettingView() // Halaman ketiga
+    AccountView(),
   ];
 
   @override
