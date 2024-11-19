@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
@@ -13,7 +14,9 @@ import 'package:cmlabs_connect/src/models/volunteer_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' as dioPkg;
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
 class AccountController extends GetxController {
   final AuthenticationController authenticationController =
@@ -1441,6 +1444,160 @@ class AccountController extends GetxController {
     }
   }
 
+  /* 
+     ++ PROFILE ++
+
+  */
+  final roleList = Rx<List<Map<String, dynamic>>>([]);
+
+  var profileUsername = Rx<String?>(null);
+  var profileFullName = Rx<String?>(null);
+  var profileRole = Rx<String?>(null);
+  var profileNumber = Rx<String?>(null);
+  var profileLinkedin = Rx<String?>(null);
+  var profileWebsite = Rx<String?>(null);
+  var profileInstagram = Rx<String?>(null);
+  var profileMedium = Rx<String?>(null);
+  var profileQuora = Rx<String?>(null);
+  var profileTiktok = Rx<String?>(null);
+
+  final ImagePicker _picker = ImagePicker();
+  Rx<File?> selectedImage = Rx<File?>(null);
+
+  Future<void> fetchProfile() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      final response = await dio.get(
+        '$baseUrl/profile?id=$idUser',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'];
+
+        print("data: ${responseData['username']}");
+
+        profileUsername.value = responseData['username'];
+        profileFullName.value = responseData['name'];
+        profileRole.value = responseData['job_position'];
+        profileNumber.value = responseData['phone'];
+        profileLinkedin.value = responseData['linkedin'];
+        profileWebsite.value = responseData['link'];
+        profileInstagram.value = responseData['instagram'];
+        profileMedium.value = responseData['medium'];
+        profileQuora.value = responseData['quora'];
+        profileTiktok.value = responseData['tiktok'];
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> editProfile() async {
+    try {
+      // Create FormData for sending a file
+      dioPkg.FormData formData = dioPkg.FormData.fromMap({
+        "name": profileUsername.value,
+        "username": profileFullName.value,
+        "phone": profileNumber.value,
+        "linkedin": profileLinkedin.value,
+        "instagram": profileInstagram.value,
+        "quora": profileQuora.value,
+        "link": profileWebsite.value,
+        "medium": profileMedium.value,
+        "tiktok": profileTiktok.value,
+        "profile_avatar": selectedImage.value != null
+            ? await dioPkg.MultipartFile.fromFile(
+                selectedImage.value!.path,
+                filename: selectedImage.value!.path.split('/').last,
+              )
+            : null,
+      });
+
+      // Access token and user ID
+      String? accessToken = authenticationController.accesToken.value;
+      int idUser = userController.user.value!.id;
+
+      dio.options.headers = {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'multipart/form-data',
+      };
+
+      // Make the POST request
+      var response = await dio.post(
+        '$baseUrl/profile?id=$idUser',
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: update basic information in profile");
+        fetchProfile();
+
+        Get.back();
+      } else {
+        String errorMessage = "Failed to update basic information";
+        errorMessage = response.data["message"] ?? errorMessage;
+        showErrorToast(errorMessage);
+        print('Response body: ${response.data}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      File imageFile = File(image.path);
+      int imageSize = await imageFile.length();
+
+      // Check if the image size is greater than 2 MB
+      if (imageSize > 2 * 1024 * 1024) {
+        Get.snackbar(
+          "Error",
+          "The image size is greater than 2 MB. Please select a smaller image.",
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      } else {
+        selectedImage.value = imageFile;
+      }
+    }
+  }
+
+  Future<void> fetchRoleList() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      final response = await dio.get(
+        '$baseUrl/profile/position',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+        print(responseData);
+
+        // Simpan data specialization
+        roleList.value = responseData
+            .map((item) => {
+                  'id': item['id'],
+                  'name': item['name'],
+                })
+            .toList();
+      }
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
+
   /*
 
   FOR ALL
@@ -1472,6 +1629,8 @@ class AccountController extends GetxController {
         {"id": "4", "name": "Master's"},
         {"id": "4", "name": "Doctoral"},
       ];
+    } else if (data == "role") {
+      result = roleList.value;
     }
     return result;
   }

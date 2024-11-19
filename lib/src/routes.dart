@@ -2,12 +2,14 @@ import 'package:cmlabs_connect/src/view/account_setting/achievement/achievement_
 import 'package:cmlabs_connect/src/view/account_setting/achievement/form_achievement_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/certification/certification_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/certification/form_certification_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/change_password_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/education/education_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/education/form_education_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/organization/form_organization_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/organization/organization_vew.dart';
+import 'package:cmlabs_connect/src/view/account_setting/profile/form_profile_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/publication/form_publication_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/publication/publication_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
@@ -43,6 +45,10 @@ class AppRoutes {
   static const String historicalLead = '/historicalLead';
 
   // account menu
+  static const String editProfileView = '/editProfileView';
+  static const String selectDataProfile = '/editProfileView/form/select';
+
+
   static const String summaryView = '/summaryView';
   static const String formSummaryView = '/summaryView/form';
 
@@ -73,6 +79,9 @@ class AppRoutes {
   static const String publicationView = '/publicationView';
   static const String formPublicationView = '/publicationView/form';
   static const String selectDataPublication = '/publicationView/form/select';
+
+  static const String changePasswordView = '/changePasswordView';
+
 
   // List of Route
   static List<GetPage> routes = [
@@ -134,6 +143,25 @@ class AppRoutes {
     ),
 
     // Account menu route
+
+    // CHANGE PASSWORD
+    GetPage(
+      name: changePasswordView,
+      page: () => ChangePasswordView(),
+    ),
+
+    // EDIT PROFILE
+    GetPage(
+      name: editProfileView,
+      page: () => FormProfileView(),
+    ),
+    GetPage(
+      name: selectDataProfile,
+      page: () {
+        final args = Get.arguments as String;
+        return SelectData(data: args);
+      },
+    ),
 
     // SUUMMARY
     GetPage(

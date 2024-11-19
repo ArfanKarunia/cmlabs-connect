@@ -1,5 +1,8 @@
+import 'package:cmlabs_connect/src/controllers/account_controller.dart';
+import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
+import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/widgets/custom_buttom.dart';
 import 'package:flutter/material.dart';
@@ -16,8 +19,15 @@ class AccountView extends StatelessWidget {
     UserController(),
   );
 
+  final AuthenticationController authenticationController =
+      Get.put(AuthenticationController());
+
+  final AccountController accountController = Get.put(AccountController());
+
   @override
   Widget build(BuildContext context) {
+    accountController.fetchProfile();
+
     User? user = userController.user.value;
     user!.picUrl;
 
@@ -142,7 +152,9 @@ class AccountView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.editProfileView);
+                  },
                   child: Text(
                     "Edit Profile",
                     style: GoogleFonts.plusJakartaSans(
@@ -306,7 +318,9 @@ class AccountView extends StatelessWidget {
                 height: 51,
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Get.toNamed(AppRoutes.changePasswordView);
+                  },
                   style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll(Color(0xFFF9F9F9)),
                     foregroundColor: WidgetStatePropertyAll(AppColors.primary),
@@ -337,23 +351,42 @@ class AccountView extends StatelessWidget {
                 height: 51,
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    SignOutBottomSheet(
+                      context,
+                      () {
+                        authenticationController.logout();
+                      },
+                    );
+                  },
                   style: ButtonStyle(
                     backgroundColor: WidgetStatePropertyAll(AppColors.bgDanger),
                     foregroundColor: WidgetStatePropertyAll(AppColors.danger),
-                    overlayColor: WidgetStatePropertyAll(Colors.black12),
+                    overlayColor: WidgetStatePropertyAll(Colors.white30),
+                    shadowColor: WidgetStatePropertyAll(Colors.transparent),
                     shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
                   ),
-                  child: Text(
-                    "Change Password",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Ionicons.log_out_outline,
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        "Sign Out",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
