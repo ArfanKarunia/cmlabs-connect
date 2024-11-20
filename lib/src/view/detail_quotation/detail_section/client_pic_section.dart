@@ -3,10 +3,10 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../controllers/detail_quotation_controller.dart';
-import '../../routes.dart';
-import '../../utils/color.dart';
-import '../../widgets/custom_buttom.dart';
+import '../../../controllers/detail_quotation_controller.dart';
+import '../../../routes.dart';
+import '../../../utils/color.dart';
+import '../../../widgets/custom_buttom.dart';
 import '../edit_quotation_view.dart';
 
 class ClientSidePICSection extends StatelessWidget {

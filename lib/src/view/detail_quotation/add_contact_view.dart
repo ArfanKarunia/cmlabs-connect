@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../utils/color.dart';
-import '../widgets/custom_buttom.dart';
+import '../../utils/color.dart';
+import '../../widgets/custom_buttom.dart';
 
 class AddContactView extends StatelessWidget {
   AddContactView({super.key, required this.clientPIC});

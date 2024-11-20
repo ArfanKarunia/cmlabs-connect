@@ -19,7 +19,7 @@ class SelectEditView extends StatelessWidget {
   final dynamic controller;
 
   var temporaryData = Rx<Map<String, String>?>(null);
-  var temporaryTypeActivity = <Map<String, String>>[].obs;
+  var temporaryMultipleData = Rx<List<Map<String, String>?>>([]);
 
   String formatText(String text) {
     // Ganti tanda underscore (_) dengan spasi
@@ -99,25 +99,27 @@ class SelectEditView extends StatelessWidget {
                   ),
                 ),
               ),
-              selectData.toLowerCase() == 'type_activity'
+              selectData.toLowerCase() == 'type_activity' ||
+                      selectData.toLowerCase() == 'type_history'
                   ? Obx(
                       () {
-                        if (temporaryTypeActivity.isNotEmpty) {
+                        if (temporaryMultipleData.value.isNotEmpty) {
                           return Container(
                             width: double.infinity,
                             height: 50,
                             child: ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
-                              itemCount: temporaryTypeActivity.length,
+                              itemCount: temporaryMultipleData.value.length,
                               itemBuilder: (context, index) {
-                                final type = temporaryTypeActivity[index];
-                                var label = type['label'];
+                                final type = temporaryMultipleData.value[index];
+                                var label = type?['label'] ?? '';
 
                                 return TagButton(
-                                  statusLabel: label!,
+                                  statusLabel: label,
                                   onPressed: () {
-                                    temporaryTypeActivity.remove(type);
+                                    temporaryMultipleData.value.remove(type);
+                                    temporaryMultipleData.refresh();
                                   },
                                 );
                               },
@@ -159,12 +161,14 @@ class SelectEditView extends StatelessWidget {
                         // Hanya bungkus bagian yang perlu dipantau dengan Obx
                         return GestureDetector(
                           onTap: () {
-                            if (selectData == "type_activity") {
-                              if (temporaryTypeActivity.contains(data)) {
-                                temporaryTypeActivity.remove(data);
+                            if (selectData == "type_activity" ||
+                                selectData == "type_history") {
+                              if (temporaryMultipleData.value.contains(data)) {
+                                temporaryMultipleData.value.remove(data);
                               } else {
-                                temporaryTypeActivity.add(data);
+                                temporaryMultipleData.value.add(data);
                               }
+                              temporaryMultipleData.refresh();
                             } else {
                               if (temporaryData.value == null) {
                                 temporaryData.value = data;
@@ -174,15 +178,16 @@ class SelectEditView extends StatelessWidget {
                                 temporaryData.value = null;
                               }
                             }
-                            print("Data tmp ${temporaryData.value}");
                           },
                           child: Obx(
                             () {
                               return Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: (selectData == "type_activity")
-                                      ? (temporaryTypeActivity.contains(data)
+                                  color: (selectData == "type_activity" ||
+                                          selectData == "type_history")
+                                      ? (temporaryMultipleData.value
+                                              .contains(data)
                                           ? AppColors.bgPrimary
                                           : AppColors.white_1)
                                       : (temporaryData.value != null &&
@@ -219,7 +224,7 @@ class SelectEditView extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     if (temporaryData.value != null ||
-                        temporaryTypeActivity.isNotEmpty) {
+                        temporaryMultipleData.value.isNotEmpty) {
                       if (selectData == "pic") {
                         controller.addPIC(temporaryData.value!);
                         Get.back();
@@ -260,12 +265,19 @@ class SelectEditView extends StatelessWidget {
                       } else if (selectData == "status_activity") {
                         Get.back(result: temporaryData.value);
                       } else if (selectData == "type_activity") {
-                        Get.back(result: temporaryTypeActivity);
+                        Get.back(result: temporaryMultipleData);
+                      } else if (selectData == "type_history") {
+                        List<String?> data = [];
+
+                        for (var type in temporaryMultipleData.value) {
+                          data.add(type?['value'] ?? '');
+                        }
+
+                        Get.back(result: data);
                       } else if (selectData == "validity_url_tracking") {
                         controller.addValidity(temporaryData.value);
                         Get.back();
                       }
-                      print("$selectData");
                     }
                   },
                   style: ButtonStyle(

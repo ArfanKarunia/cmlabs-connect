@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../controllers/detail_quotation_controller.dart';
-import '../../utils/color.dart';
-import '../../widgets/tag_button.dart';
+import '../../../controllers/detail_quotation_controller.dart';
+import '../../../utils/color.dart';
+import '../../../widgets/tag_button.dart';
 import '../edit_quotation_view.dart';
 
 class ActivitySection extends StatelessWidget {
