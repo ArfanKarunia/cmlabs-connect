@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:open_filex/open_filex.dart';
 
 import '../../utils/color.dart';
 import '../../widgets/tag_button.dart';
@@ -78,7 +79,7 @@ class EditHistoryView extends StatelessWidget {
       if (result != null) {
         PlatformFile file = result.files.first;
         selectedFile.value = File(file.path!);
-        fileController.text = "${file.name}.${file.extension ?? ''}";
+        fileController.text = file.name;
       } else {
         print("File selection canceled");
       }
@@ -87,9 +88,44 @@ class EditHistoryView extends StatelessWidget {
     }
   }
 
+  void _openFile() async {
+    if (selectedFile.value != null) {
+      final result = await OpenFilex.open(selectedFile.value!.path);
+      if (result.type != ResultType.done) {
+        Get.snackbar(
+          "Error",
+          "Failed to open file.",
+          backgroundColor: Colors.white,
+          boxShadows: [
+            BoxShadow(
+                color: Colors.black12, offset: Offset(0, 2), blurRadius: 10),
+          ],
+        );
+      }
+    } else {
+      Get.snackbar("Info", "No file available to open.");
+    }
+  }
+
+  void _handleFileAction() async {
+    if (selectedFile.value == null) {
+      // Jika file belum dipilih, panggil fungsi untuk memilih file
+      await _selectFile();
+    } else {
+      // Jika file sudah ada, buka file
+      _openFile();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     historyChangesController.fetchTypeHistory(historyData.id);
+    print(historyData.id);
+
+    if (historyData.file != null) {
+      fileController.text = historyData.file!.path.split('/').last;
+      selectedFile.value = historyData.file;
+    }
 
     nameControllers.text = historyData.name;
     typeHistory.value = historyData.type;
@@ -389,7 +425,9 @@ class EditHistoryView extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   GestureDetector(
-                    onTap: () => _selectFile(),
+                    onTap: () {
+                        _selectFile();
+                    },
                     child: AbsorbPointer(
                       child: TextFormField(
                         controller: fileController,
@@ -440,15 +478,17 @@ class EditHistoryView extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-
-                    historyChangesController.nameActivity.value = nameControllers.text;
+                    historyChangesController.nameActivity.value =
+                        nameControllers.text;
                     historyChangesController.status.value = historyData.status;
                     historyChangesController.type.value = typeHistory.value;
                     historyChangesController.note.value = noteController.text;
-                    historyChangesController.availableToUser.value = isAvailableToUser.value ? "on" : "off";
-                    historyChangesController.createdAt.value = createdAtController.text;
+                    historyChangesController.availableToUser.value =
+                        isAvailableToUser.value ? 1 : 0;
+                    historyChangesController.createdAt.value =
+                        createdAtController.text;
                     historyChangesController.file.value = selectedFile.value;
-                    
+
                     historyChangesController.updateHistory(historyData.id);
                   },
                   style: ButtonStyle(

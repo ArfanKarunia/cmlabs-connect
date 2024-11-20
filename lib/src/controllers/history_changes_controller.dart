@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
@@ -7,6 +6,7 @@ import 'package:cmlabs_connect/src/models/history_changes_model.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/dio.dart' as dioPkg;
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../utils/toast.dart';
 
@@ -25,55 +25,117 @@ class HistoryChangesController extends GetxController {
   var status = Rx<int?>(null);
   var type = Rx<List<String?>>([]);
   var note = Rx<String?>(null);
-  var availableToUser = Rx<String?>(null);
+  var availableToUser = Rx<int?>(null);
   var createdAt = Rx<String?>(null);
   var file = Rx<File?>(null);
 
   Future<void> updateHistory(int idHistory) async {
-  try {
-    String? accessToken = authenticationController.accesToken.value;
+    try {
+      // Mengatur FormData
 
-    // Prepare the FormData
-    dioPkg.FormData formData = dioPkg.FormData.fromMap({
-      "id": idHistory,
-      "name": nameActivity.value ?? "",
-      "status": status.value?.toString() ?? "0",
-      "type": type.value, // Make sure this is a List<String>
-      "note": note.value ?? "",
-      "available_to_user": availableToUser.value ?? "on",
-      "created_at": createdAt.value ?? "",
-      // Handle file upload if a file is provided
-      "file": file.value != null
-          ? await dioPkg.MultipartFile.fromFile(file.value!.path)
-          : null,
-    });
+      String? formattedDate;
+      if (createdAt.value != null) {
+        try {
+          // Format input tanggal awal (jika sesuai format `19/11/2024 09:02 AM`)
+          DateFormat inputFormat = DateFormat('dd/MM/yyyy hh:mm a');
+          DateFormat outputFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
 
-    print(idHistory);
+          // Parsing input dan format ulang
+          DateTime parsedDate = inputFormat.parse(createdAt.value!);
+          formattedDate = outputFormat.format(parsedDate);
+        } catch (e) {
+          print('Error formatting date: $e');
+        }
+      }
 
-    print(formData);
+      final Map<String, dynamic> typeFields = {};
+      for (int i = 0; i < type.value.length; i++) {
+        typeFields['type[$i]'] = type.value[i];
+      }
 
-    // // Make the POST request
-    // final response = await dio.put(
-    //   '$baseUrl/quotation/update_history_byId',
-    //   options: Options(
-    //     headers: {'Authorization': 'Bearer $accessToken'},
-    //     contentType: 'multipart/form-data',
-    //   ),
-    //   data: formData,
-    // );
+      dioPkg.FormData formData = dioPkg.FormData.fromMap({
+        "id": idHistory,
+        "name": nameActivity.value ?? "",
+        "status": status.value?.toString() ?? "0", // Status sebagai String
+        "note": note.value ?? "",
+        "available_to_user": availableToUser.value ?? 0,
+        "created_at": formattedDate ?? '',
+        "file": file.value != null
+            ? await dioPkg.MultipartFile.fromFile(file.value!.path)
+            : null,
+        ...typeFields, // Tambahkan field dinamis untuk `type`
+      });
 
-    // // Handle the response
-    // if (response.statusCode == 200 && response.data != null) {
-    //   showSuccessToast("Success: update history");
-    //   Get.back();
-    // } else {
-    //   showErrorToast("Failed: update history");
-    // }
-  } catch (e) {
-    print('Error fetching status data: $e');
+      var data = {
+        "id": idHistory,
+        "name": nameActivity.value ?? "",
+        "status": status.value?.toString() ?? "0", // Status sebagai String
+        "note": note.value ?? "",
+        "available_to_user": availableToUser.value ?? 0,
+        "created_at": formattedDate ?? '',
+        "file": file.value != null
+            ? await dioPkg.MultipartFile.fromFile(file.value!.path)
+            : null,
+        ...typeFields, // Tambahkan field dinamis untuk `type`
+      };
+      print(data);
+
+      // Set headers untuk dio request
+      dio.options.headers = {
+        'Authorization': 'Bearer ${authenticationController.accesToken}',
+        'Content-Type': 'multipart/form-data',
+      };
+
+      // Kirim request PUT ke server
+      final response = await dio.post(
+        '$baseUrl/quotation/update_history_byId',
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        // Menampilkan Toast/Sukses ketika berhasil
+        print("Success: update history");
+        showSuccessToast("Success: update history");
+
+        Get.back(); // Menutup halaman sebelumnya
+      } else {
+        // Menampilkan pesan error jika gagal
+        String errorMessage = "Failed to update history";
+        if (response.data != null) {
+          errorMessage = response.data["message"] ?? errorMessage;
+        }
+        showErrorToast("Failed: update history");
+        print('Error: $errorMessage');
+      }
+    } catch (e) {
+      // Menangani exception
+      print('Error fetching status data: $e');
+    }
   }
-}
 
+  Future<void> deleteHistory(int idHistory) async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      // untuk Filter Status
+      final response =
+          await dio.delete('$baseUrl/quotation/delete_history_byId',
+              options: Options(
+                headers: {'Authorization': 'Bearer $accessToken'},
+              ),
+              data: {"id": idHistory});
+
+      if (response.statusCode == 200 && response.data != null) {
+        showSuccessToast("Success: Delete History");
+      } else {
+        showErrorToast("Failed: Delete History");
+      }
+
+      // Untuk Filter Client Source
+    } catch (e) {
+      print('Error fetching status data: $e');
+    }
+  }
 
   Future<void> fetchHistoryChanges(int idQuotation) async {
     try {

@@ -39,6 +39,32 @@ class HistorySection extends StatelessWidget {
         const SizedBox(height: 10),
         Obx(
           () {
+            if (historyChangesController.historyList.value.isEmpty) {
+              return Container(
+                height: 150,
+                width: double.infinity,
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Ionicons.briefcase_outline,
+                        color: AppColors.text_4,
+                        size: 40,
+                      ),
+                      Text(
+                        'No available data',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.text_4,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }
             return ListView.builder(
               shrinkWrap: true,
               itemCount: historyChangesController.historyList.value.length,
@@ -68,6 +94,7 @@ class HistorySection extends StatelessWidget {
                     tagStatus = StatusLead.onHold;
                     break;
                 }
+
                 return Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   margin: EdgeInsets.only(bottom: 15),
@@ -252,8 +279,13 @@ class HistorySection extends StatelessWidget {
                                 height: 51,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    DeleteBottomSheet(context, () {},
-                                        'Are you sure wanna delete this History?');
+                                    DeleteBottomSheet(context, () {
+                                      historyChangesController
+                                          .deleteHistory(data!.id);
+                                      historyChangesController.historyList
+                                          .refresh();
+                                      Get.back();
+                                    }, 'Are you sure wanna delete this History?');
                                   },
                                   style: ButtonStyle(
                                     shadowColor: WidgetStatePropertyAll(

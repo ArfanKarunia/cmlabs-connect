@@ -74,7 +74,7 @@ class HistoryChangesModel {
       createdBy: json['created_by'] ?? "",
       createdAtLabel: json['created_at_label'] ?? "",
       availableToUser: List<int?>.from(json['available_to_user'] ?? []),
-      file: json['file'],
+      file: json['file'] != null ? File(json['file']) : null,
       createdAt: json['created_at'] != null
           ? DateTime.parse(json['created_at'])
           : DateTime.now(),
