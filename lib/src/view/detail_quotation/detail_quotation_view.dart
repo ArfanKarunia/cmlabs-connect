@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../controllers/detail_quotation_controller.dart';
-import '../models/quotation_model.dart';
-import '../utils/color.dart';
+import '../../controllers/detail_quotation_controller.dart';
+import '../../models/quotation_model.dart';
+import '../../utils/color.dart';
 
 class DetailQuotationView extends StatelessWidget {
   DetailQuotationView({super.key, required this.quotation});

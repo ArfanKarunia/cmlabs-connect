@@ -17,9 +17,10 @@ import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_vie
 import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/form_volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/volunteer_view.dart';
-import 'package:cmlabs_connect/src/view/add_contact_view.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation_view.dart';
-import 'package:cmlabs_connect/src/view/edit_quotation_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/add_contact_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/detail_quotation_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/edit_history_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/edit_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
@@ -36,6 +37,7 @@ class AppRoutes {
   static const String detailQuotation = '/detailQuotation';
   static const String editQuotation = '/editQuotation';
   static const String addContactClientPIC = '/addContactClientPIC';
+  static const String editHistoryChangesData = '/editHistoryChangesData';
   // static const String profile = '/profile';
 
   static const String filter = '/filter';
@@ -131,6 +133,14 @@ class AppRoutes {
       page: () {
         final args = Get.arguments as Map<String, dynamic>;
         return AddContactView(clientPIC: args['clientPic']);
+      },
+    ),
+
+    GetPage(
+      name: editHistoryChangesData,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+        return EditHistoryView(historyData: args['history']);
       },
     ),
 

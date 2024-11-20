@@ -1,19 +1,19 @@
-import 'package:cmlabs_connect/src/constant/const.dart';
 import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/history_changes_controller.dart';
 import 'package:cmlabs_connect/src/controllers/url_tracking_controller.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 
-import 'package:cmlabs_connect/src/widgets/quotation_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../utils/color.dart';
-import '../widgets/custom_buttom.dart';
-import 'Detail Section/activity_section.dart';
-import 'Detail Section/client_pic_section.dart';
-import 'Detail Section/url_tracking_section.dart';
+import '../../utils/color.dart';
+import '../../widgets/custom_buttom.dart';
+import 'detail_section/activity_section.dart';
+import 'detail_section/client_pic_section.dart';
+import 'detail_section/history_section.dart';
+import 'detail_section/url_tracking_section.dart';
 
 class EditQuotationView extends StatefulWidget {
   EditQuotationView({super.key, required this.quotation});
@@ -25,6 +25,8 @@ class EditQuotationView extends StatefulWidget {
 
   final UrlTrackingController urlTrackingController =
       Get.put(UrlTrackingController());
+
+  final HistoryChangesController historyChangesController = Get.put(HistoryChangesController());
 
   final TextEditingController topicActivity = TextEditingController();
 
@@ -58,6 +60,7 @@ class _EditQuotationViewState extends State<EditQuotationView> {
   @override
   Widget build(BuildContext context) {
     widget.detailQuotationController.editSelectedData(widget.quotation);
+    widget.historyChangesController.fetchHistoryChanges(widget.quotation.id);
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -291,33 +294,7 @@ class _EditQuotationViewState extends State<EditQuotationView> {
                           ? URLTrackingSection()
                           : SizedBox.shrink(),
                       const SizedBox(height: 25),
-                      Text(
-                        "History",
-                        style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.text_1,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: 2,
-                              itemBuilder: (context, index) {
-                                return HistorySection(
-                                  detailQuotationController:
-                                      widget.detailQuotationController,
-                                );
-                              },
-                            )
-                          ],
-                        ),
-                      ),
+                      HistorySection(),
                       const SizedBox(height: 180),
                     ],
                   ),
@@ -454,231 +431,6 @@ class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
   }
 }
 
-class HistorySection extends StatelessWidget {
-  const HistorySection({
-    super.key,
-    required this.detailQuotationController,
-  });
-
-  final DetailQuotationController detailQuotationController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      margin: EdgeInsets.only(bottom: 15),
-      width: double.infinity,
-      color: AppColors.white_1,
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Activity",
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.text_1,
-                fontSize: 14,
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Text(
-              "Request is Created",
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.text_2,
-                fontSize: 12,
-              ),
-            ),
-            Divider(),
-            Text(
-              "Date Time",
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.text_1,
-                fontSize: 14,
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Text(
-              "1 Mei 2024, 20:30:12",
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.text_2,
-                fontSize: 12,
-              ),
-            ),
-            Divider(),
-            Text(
-              "Created by",
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.text_1,
-                fontSize: 14,
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Text(
-              "Super Admin",
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.text_2,
-                fontSize: 12,
-              ),
-            ),
-            Divider(),
-            Text(
-              "Status",
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.text_1,
-                fontSize: 14,
-              ),
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            StatusLeadUI(statusLead: StatusLead.newLead),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Text(
-                  "Available to User",
-                  style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14, color: AppColors.text_1),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Obx(
-                  () {
-                    return SizedBox(
-                      height: 35,
-                      child: FittedBox(
-                        fit: BoxFit.fill,
-                        child: Switch(
-                          thumbColor: WidgetStatePropertyAll(AppColors.white_1),
-                          trackOutlineWidth: WidgetStatePropertyAll(0),
-                          trackOutlineColor:
-                              WidgetStatePropertyAll(Colors.transparent),
-                          trackColor: (!detailQuotationController
-                                  .isAvailableToUser.value)
-                              ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
-                              : WidgetStatePropertyAll(AppColors.primary),
-                          value:
-                              detailQuotationController.isAvailableToUser.value,
-                          onChanged: (bool value) {
-                            detailQuotationController.isAvailableToUser.value =
-                                value;
-                          },
-                        ),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 51,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        shadowColor: WidgetStatePropertyAll(Colors.transparent),
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppColors.bgInfo),
-                        foregroundColor: WidgetStatePropertyAll(AppColors.info),
-                        overlayColor: WidgetStatePropertyAll(Colors.black12),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Icon(Icons.chat_bubble_outline),
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Icon(
-                                  Icons.edit,
-                                  size: 10,
-                                ),
-                              )
-                            ],
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "Edit",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: Container(
-                    height: 51,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(
-                        shadowColor: WidgetStatePropertyAll(Colors.transparent),
-                        backgroundColor:
-                            WidgetStatePropertyAll(AppColors.bgDanger),
-                        foregroundColor:
-                            WidgetStatePropertyAll(AppColors.danger),
-                        overlayColor: WidgetStatePropertyAll(Colors.black12),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Ionicons.trash_outline),
-                          SizedBox(
-                            width: 5,
-                          ),
-                          Text(
-                            "Delete",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class SelectField extends StatelessWidget {
   SelectField({
     super.key,
@@ -695,6 +447,8 @@ class SelectField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    
     return Column(
       children: [
         Row(

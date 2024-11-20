@@ -1,13 +1,13 @@
 import 'package:cmlabs_connect/src/controllers/url_tracking_controller.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
-import 'package:cmlabs_connect/src/view/edit_quotation_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/edit_quotation_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../utils/color.dart';
+import '../../../utils/color.dart';
 
 class URLTrackingSection extends StatelessWidget {
   URLTrackingSection({

@@ -80,7 +80,6 @@ class DetailQuotationController extends GetxController {
         }
       });
     }
-    // print(isChanged.value)
   }
 
   @override
@@ -256,7 +255,6 @@ class DetailQuotationController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((pic) {
-          // print("Checking status: ${status['value']} - ${status['label']}");
           return pic['value'].toLowerCase().contains(query) ||
               pic['label'].toLowerCase().contains(query);
         }).toList();
@@ -270,7 +268,6 @@ class DetailQuotationController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((priority) {
-          // print("Checking status: ${status['value']} - ${status['label']}");
           return priority['value'].toLowerCase().contains(query) ||
               priority['label'].toLowerCase().contains(query);
         }).toList();
@@ -284,7 +281,6 @@ class DetailQuotationController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((status) {
-          // print("Checking status: ${status['value']} - ${status['label']}");
           return status['value'].toLowerCase().contains(query) ||
               status['label'].toLowerCase().contains(query);
         }).toList();
@@ -298,7 +294,6 @@ class DetailQuotationController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((type) {
-          // print("Checking status: ${status['value']} - ${status['label']}");
           return type['value'].toLowerCase().contains(query) ||
               type['label'].toLowerCase().contains(query);
         }).toList();
