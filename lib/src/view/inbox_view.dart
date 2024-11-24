@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../widgets/custom_buttom.dart';
 import '../widgets/quotation_list_tile.dart';
@@ -23,6 +24,26 @@ class InboxView extends StatefulWidget {
   final DetailQuotationController detailQuotationController =
       Get.put(DetailQuotationController());
 }
+
+RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+    
+    QuotationController().fetchQuotationData();
+
+    _refreshController.loadComplete();
+  }
 
 class _InboxViewState extends State<InboxView> {
   @override
@@ -201,78 +222,98 @@ class _InboxViewState extends State<InboxView> {
                       }
 
                       return Container(
+                        height: 550,
                         width: double.infinity,
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          itemCount: widget
-                              .quotationController.filteredQuotations.length,
-                          itemBuilder: (context, index) {
-                            final quotation = quotationList[index];
+                        child: SmartRefresher(
+                          enablePullDown: true,
+                          header: ClassicHeader(
+                            refreshStyle: RefreshStyle.Follow,
+                            refreshingIcon: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: AppColors.text_4,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          ),
+                          onRefresh: _onRefresh,
+                          onLoading: _onLoading,
+                          controller: _refreshController,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: AlwaysScrollableScrollPhysics(),
+                            padding: const EdgeInsets.symmetric(vertical: 0),
+                            itemCount: widget
+                                .quotationController.filteredQuotations.length,
+                            itemBuilder: (context, index) {
+                              final quotation = quotationList[index];
 
-                            return Column(
-                              children: [
-                                QuotationListTile(
-                                  quotation: quotation,
-                                  onDelete: () {
-                                    print(quotation.id);
-                                    // widget.quotationController.deleteDataQuotation(quotation.id);
-                                  },
-                                  onChatWA: () {
-                                    // print(quotation);
-                                    widget.quotationController
-                                        .redirectToWhatsapp(quotation);
-                                  },
-                                ),
-                                (index ==
-                                        widget.quotationController
-                                                .filteredQuotations.length -
-                                            1)
-                                    ? Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 10),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            widget.quotationController
-                                                .loadMoreQuotations();
-                                          },
-                                          style: ButtonStyle(
-                                            backgroundColor:
-                                                WidgetStatePropertyAll(
-                                              AppColors.white_1,
+                              return Column(
+                                children: [
+                                  QuotationListTile(
+                                    quotation: quotation,
+                                    onDelete: () {
+                                      print(quotation.id);
+                                      // widget.quotationController.deleteDataQuotation(quotation.id);
+                                    },
+                                    onChatWA: () {
+                                      // print(quotation);
+                                      widget.quotationController
+                                          .redirectToWhatsapp(quotation);
+                                    },
+                                  ),
+                                  (index ==
+                                          widget.quotationController
+                                                  .filteredQuotations.length -
+                                              1)
+                                      ? Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 10),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              widget.quotationController
+                                                  .loadMoreQuotations();
+                                            },
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  WidgetStatePropertyAll(
+                                                AppColors.white_1,
+                                              ),
+                                              foregroundColor:
+                                                  WidgetStatePropertyAll(
+                                                AppColors.text_2,
+                                              ),
+                                              shadowColor:
+                                                  WidgetStatePropertyAll(
+                                                AppColors.text_4,
+                                              ),
+                                              overlayColor:
+                                                  WidgetStatePropertyAll(
+                                                AppColors.bgPrimary,
+                                              ),
+                                              shape: WidgetStatePropertyAll(
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(5),
+                                                ),
+                                              ),
                                             ),
-                                            foregroundColor:
-                                                WidgetStatePropertyAll(
-                                              AppColors.text_2,
-                                            ),
-                                            shadowColor: WidgetStatePropertyAll(
-                                              AppColors.text_4,
-                                            ),
-                                            overlayColor:
-                                                WidgetStatePropertyAll(
-                                              AppColors.bgPrimary,
-                                            ),
-                                            shape: WidgetStatePropertyAll(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
+                                            child: Text(
+                                              "Load more",
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                color: AppColors.text_3,
+                                                fontSize: 12,
                                               ),
                                             ),
                                           ),
-                                          child: Text(
-                                            "Load more",
-                                            style: GoogleFonts.plusJakartaSans(
-                                              color: AppColors.text_3,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                    : Container(),
-                              ],
-                            );
-                          },
+                                        )
+                                      : Container(),
+                                ],
+                              );
+                            },
+                          ),
                         ),
                       );
                     },

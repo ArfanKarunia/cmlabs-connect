@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -14,6 +16,8 @@ class QuotationController extends GetxController {
   var isLoadingMore = false.obs;
   var start = 0.obs;
   final limit = 10;
+  var newestIdQuotation = Rx<int>(0);
+  var newQuotationCount = Rx<int>(0);
 
   var filterCategory = <String>[].obs;
   var filterStatus = <StatusLead>[].obs;
@@ -44,6 +48,7 @@ class QuotationController extends GetxController {
     super.onInit();
     quotationBox = await Hive.openBox<Quotation>('quotationBox');
     fetchQuotationData();
+    checkNewQuotationsPeriodically();
   }
 
   /*
@@ -109,6 +114,9 @@ class QuotationController extends GetxController {
                   quotations; // Mengganti list dengan data baru
             }
 
+            newestIdQuotation.value = quotations.first.id;
+            newQuotationCount.value = 0;
+
             // Simpan data baru ke Hive
             // saveDataToHive(quotations);
             print("Data diambil dari API dan disimpan ke local storage.");
@@ -124,6 +132,57 @@ class QuotationController extends GetxController {
       }
     } finally {
       isLoadingMore.value = false;
+    }
+  }
+
+  /*
+  
+    FUNGSI Check new Data Quotation
+
+    fungsi ini berfungsi untuk mengecek data terbaru dari API
+
+  */
+
+  void checkNewQuotationsPeriodically() {
+    Timer.periodic(Duration(seconds: 60), (timer) async {
+      print("Check new data");
+      await fetchCheckNewData();
+    });
+  }
+
+  Future<void> fetchCheckNewData() async {
+    try {
+      // Jika data belum ada di local storage, fetch data dari API
+      String? accessToken = authenticationController.accesToken.value;
+      var start = 0;
+      var limit = 1;
+
+      final response = await dio.get(
+        '$baseUrl/dashboard/data_recent_quotation?start=${start}&limit=$limit',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final rawData = response.data['data'];
+
+        if (rawData != null && rawData is List) {
+          List<Quotation> quotations = rawData.map<Quotation>((item) {
+            return Quotation.fromJson(item);
+          }).toList();
+
+          var newQuotationId = quotations.first.id;
+
+          if (newestIdQuotation.value < newQuotationId) {
+            newQuotationCount.value = newQuotationId - newestIdQuotation.value;
+            newestIdQuotation.value = newQuotationId;
+          }
+
+          print("jumlah data baru: ${newQuotationCount.value}");
+          print("id Terbaru: ${newestIdQuotation.value}");
+        }
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
     }
   }
 
@@ -352,8 +411,6 @@ class QuotationController extends GetxController {
     // Filter berdasarkan pencarian (search) jika search tidak kosong
     if (search.value != null && search.value!.isNotEmpty) {
       final query = search.value!.toLowerCase();
-
-
 
       result = result.where((quotation) {
         // Memastikan setiap properti non-null sebelum digunakan
