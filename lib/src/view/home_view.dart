@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../controllers/bottom_nav_controller.dart';
 import '../controllers/dashboard_controller.dart';
@@ -37,6 +38,26 @@ class HomeView extends StatefulWidget {
     HistoricalLeadController(),
   );
 
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+
+    quotationController.fetchQuotationData();
+
+    _refreshController.loadComplete();
+  }
+
   @override
   State<HomeView> createState() => _HomeViewState();
 }
@@ -55,15 +76,6 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     User? user = widget.userController.user.value;
     user!.picUrl;
-
-    // print("link gambar: ${user!.picUrl}");
-    // print("jumlah new: ${widget.dashboardController.amount_newLeads.value}");
-    // print(
-    //     "jumlah accepted: ${widget.dashboardController.amount_acceptedLeads.value}");
-    // print(
-    //     "jumlah followed up: ${widget.dashboardController.amount_followedUpLeads.value}");
-    // print(
-    //     "jumlah last 30 day: ${widget.dashboardController.amount_last30Day.value}");
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -303,6 +315,54 @@ class _HomeViewState extends State<HomeView> {
               height: 14,
             ),
 
+            Obx(
+              () {
+                return widget.quotationController.newQuotationCount.value > 0
+                    ? Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: IntrinsicWidth(
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              shape: WidgetStatePropertyAll(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                              ),
+                              backgroundColor:
+                                  WidgetStatePropertyAll(AppColors.primary),
+                              foregroundColor:
+                                  WidgetStatePropertyAll(AppColors.white_1),
+                              overlayColor:
+                                  WidgetStatePropertyAll(Colors.white30),
+                            ),
+                            onPressed: () {
+                              widget.quotationController.fetchQuotationData();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Ionicons.arrow_up_outline,
+                                  size: 18,
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  "${widget.quotationController.newQuotationCount.value}+ New Leads",
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    : SizedBox.shrink();
+              },
+            ),
+
             // QOUTATION LIST
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -311,103 +371,127 @@ class _HomeViewState extends State<HomeView> {
                   List quotationList =
                       widget.quotationController.filteredQuotations;
 
-                  if (quotationList.isEmpty) {
-                    return Container(
-                      height: 300,
-                      width: double.infinity,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Ionicons.briefcase_outline,
-                              color: AppColors.text_4,
-                              size: 40,
+                  return quotationList.isEmpty
+                      ? Container(
+                          height: 300,
+                          width: double.infinity,
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Ionicons.briefcase_outline,
+                                  color: AppColors.text_4,
+                                  size: 40,
+                                ),
+                                Text(
+                                  'No available data',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.text_4,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              'No available data',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.text_4,
+                          ),
+                        )
+                      : Container(
+                          width: double.infinity,
+                          height: 630,
+                          child: SmartRefresher(
+                            enablePullDown: true,
+                            header: ClassicHeader(
+                              refreshStyle: RefreshStyle.Follow,
+                              refreshingIcon: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: AppColors.text_4,
+                                  strokeWidth: 2,
+                                ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }
+                            onRefresh: widget._onRefresh,
+                            onLoading: widget._onLoading,
+                            controller: widget._refreshController,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(vertical: 0),
+                              itemCount: widget.quotationController
+                                  .filteredQuotations.length,
+                              itemBuilder: (context, index) {
+                                final quotation = quotationList[index];
 
-                  return Container(
-                    width: double.infinity,
-                    height: 630,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      itemCount:
-                          widget.quotationController.filteredQuotations.length,
-                      itemBuilder: (context, index) {
-                        final quotation = quotationList[index];
-
-                        return Column(
-                          children: [
-                            QuotationListTile(
-                              quotation: quotation,
-                              onDelete: () {
-                                print(quotation.id);
-                                // widget.quotationController.deleteDataQuotation(quotation.id);
-                              },
-                              onChatWA: () {
-                                // print(quotation);
-                                widget.quotationController
-                                    .redirectToWhatsapp(quotation);
+                                return Column(
+                                  children: [
+                                    QuotationListTile(
+                                      quotation: quotation,
+                                      onDelete: () {
+                                        print(quotation.id);
+                                        // widget.quotationController.deleteDataQuotation(quotation.id);
+                                      },
+                                      onChatWA: () {
+                                        // print(quotation);
+                                        widget.quotationController
+                                            .redirectToWhatsapp(quotation);
+                                      },
+                                    ),
+                                    (index ==
+                                            widget.quotationController
+                                                    .filteredQuotations.length -
+                                                1)
+                                        ? Padding(
+                                            padding: const EdgeInsets.only(
+                                                bottom: 10),
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                widget.quotationController
+                                                    .loadMoreQuotations();
+                                              },
+                                              style: ButtonStyle(
+                                                backgroundColor:
+                                                    WidgetStatePropertyAll(
+                                                  AppColors.white_1,
+                                                ),
+                                                foregroundColor:
+                                                    WidgetStatePropertyAll(
+                                                  AppColors.text_2,
+                                                ),
+                                                shadowColor:
+                                                    WidgetStatePropertyAll(
+                                                  AppColors.text_4,
+                                                ),
+                                                overlayColor:
+                                                    WidgetStatePropertyAll(
+                                                  AppColors.bgPrimary,
+                                                ),
+                                                shape: WidgetStatePropertyAll(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                  ),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "Load more",
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  color: AppColors.text_3,
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : Container(),
+                                  ],
+                                );
                               },
                             ),
-                            (index ==
-                                    widget.quotationController
-                                            .filteredQuotations.length -
-                                        1)
-                                ? Padding(
-                                    padding: const EdgeInsets.only(bottom: 10),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        widget.quotationController
-                                            .loadMoreQuotations();
-                                      },
-                                      style: ButtonStyle(
-                                        backgroundColor: WidgetStatePropertyAll(
-                                          AppColors.white_1,
-                                        ),
-                                        foregroundColor: WidgetStatePropertyAll(
-                                          AppColors.text_2,
-                                        ),
-                                        shadowColor: WidgetStatePropertyAll(
-                                          AppColors.text_4,
-                                        ),
-                                        overlayColor: WidgetStatePropertyAll(
-                                          AppColors.bgPrimary,
-                                        ),
-                                        shape: WidgetStatePropertyAll(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(5),
-                                          ),
-                                        ),
-                                      ),
-                                      child: Text(
-                                        "Load more",
-                                        style: GoogleFonts.plusJakartaSans(
-                                          color: AppColors.text_3,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                : Container(),
-                          ],
+                          ),
                         );
-                      },
-                    ),
-                  );
                 },
               ),
             ),
