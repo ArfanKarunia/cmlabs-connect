@@ -18,11 +18,25 @@ class FilterView extends StatelessWidget {
 
   final FilterController filterController = Get.put(FilterController());
 
-  final Rx<DateTime?> temporaryStartDate = Rx<DateTime?>(null);
-  final Rx<DateTime?> temporaryEndDate = Rx<DateTime?>(null);
+  DateTime? temporaryStartDate;
+  DateTime? temporaryEndDate;
 
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
+
+  // Error message variables
+  RxString startDateError = ''.obs;
+  RxString endDateError = ''.obs;
+
+  // Validation function
+  void validateDateFields() {
+    startDateError.value = '';
+    endDateError.value = '';
+
+    if (startDateController.text.isEmpty && endDateController.text.isNotEmpty) {
+      startDateError.value = 'Start date must be filled';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +61,43 @@ class FilterView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Select Filter",
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text_1,
-              ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Select Filter",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.text_1,
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                  child: TextButton(
+                    style: ButtonStyle(
+                      padding: WidgetStatePropertyAll(EdgeInsets.all(0)),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      filterController.searchFilter('all');
+                    },
+                    child: Text(
+                      "Clear filter",
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 10,
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             SizedBox(
               height: 20,
@@ -75,7 +119,7 @@ class FilterView extends StatelessWidget {
                   Expanded(
                     child: TextFormField(
                       style: GoogleFonts.plusJakartaSans(fontSize: 13),
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         focusColor: AppColors.primary,
                         suffixIcon: Icon(
                           Ionicons.calendar_outline,
@@ -87,69 +131,76 @@ class FilterView extends StatelessWidget {
                           borderSide:
                               BorderSide(color: AppColors.primary, width: 2),
                         ),
+                        errorText: startDateError.value.isNotEmpty
+                            ? startDateError.value
+                            : null,
                       ),
                       readOnly: true,
                       controller: startDateController,
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialDate:
-                              quotationController.filterStartDate.value ??
-                                  DateTime.now(),
+                          initialDate: filterController.startDate.value ??
+                              DateTime.now(),
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100),
                         );
                         if (pickedDate != null) {
-                          temporaryStartDate.value = pickedDate;
+                          temporaryStartDate = pickedDate;
                           startDateController.text =
                               DateFormat('dd MMM yyyy').format(pickedDate);
+                          validateDateFields();
                         }
                       },
                     ),
                   ),
                   const SizedBox(width: 10), // Spasi antar form
-                  const Text(
+                  Text(
                     "to",
-                    style: TextStyle(
+                    style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                     ),
                   ),
                   const SizedBox(width: 10), // Spasi antar form
-                  Expanded(
-                    child: TextFormField(
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13),
-                      decoration: const InputDecoration(
-                        focusColor: AppColors.primary,
-                        suffixIcon: Icon(
-                          Ionicons.calendar_outline,
-                          color: AppColors.text_1,
+                  Expanded(child: Obx(
+                    () {
+                      return TextFormField(
+                        style: GoogleFonts.plusJakartaSans(fontSize: 13),
+                        decoration: InputDecoration(
+                          focusColor: AppColors.primary,
+                          suffixIcon: Icon(
+                            Ionicons.calendar_outline,
+                            color: AppColors.text_1,
+                          ),
+                          hintText: "Select date",
+                          border: OutlineInputBorder(),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: AppColors.primary, width: 2),
+                          ),
+                          errorText: endDateError.value.isNotEmpty
+                              ? endDateError.value
+                              : null,
                         ),
-                        hintText: "Select date",
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: AppColors.primary, width: 2),
-                        ),
-                      ),
-                      readOnly: true,
-                      controller: endDateController,
-                      onTap: () async {
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate:
-                              quotationController.filterEndDate.value ??
-                                  DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                        );
-                        if (pickedDate != null) {
-                          temporaryEndDate.value = pickedDate;
-                          endDateController.text =
-                              DateFormat('dd MMM yyyy').format(pickedDate);
-                        }
-                      },
-                    ),
-                  ),
+                        readOnly: true,
+                        controller: endDateController,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (pickedDate != null) {
+                            temporaryEndDate = pickedDate;
+                            endDateController.text =
+                                DateFormat('dd MMM yyyy').format(pickedDate);
+                            validateDateFields();
+                          }
+                        },
+                      );
+                    },
+                  )),
                 ],
               ),
             ),
@@ -175,43 +226,61 @@ class FilterView extends StatelessWidget {
                 border: Border.all(color: AppColors.primaryText),
                 borderRadius: BorderRadius.circular(5),
               ),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      decoration: BoxDecoration(
-                        color: AppColors.bgPrimary,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Row(
-                        children: [
-                          CustomButton(
-                            onPressed: () {},
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Ionicons.close_outline,
-                              size: 18,
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            "New",
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Obx(
+                    () {
+                      if (filterController.filterCategoryList.isEmpty) {
+                        return Container(
+                          padding: EdgeInsets.only(left: 10),
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "All",
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
+                              fontSize: 14,
+                              color: AppColors.text_3,
                             ),
                           ),
-                        ],
+                        );
+                      }
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: filterController.filterCategoryList.length,
+                        itemBuilder: (context, index) {
+                          final category =
+                              filterController.filterCategoryList[index];
+                          return TagButton(
+                            statusLabel: category['label'] ?? '-',
+                            onPressed: () {
+                              filterController.deleteFilterCategory(category);
+                            },
+                          );
+                        },
+                      );
+                    },
+                  ),
+                  Container(
+                    height: 45,
+                    width: 45,
+                    child: CustomButton(
+                      backgroundColor: Colors.transparent,
+                      onPressed: () {
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "category",
+                            'controller': filterController,
+                          },
+                        );
+                      },
+                      child: Icon(
+                        Ionicons.chevron_down_outline,
+                        color: AppColors.text_1,
                       ),
                     ),
-                  );
-                },
+                  )
+                ],
               ),
             ),
             SizedBox(
@@ -258,8 +327,7 @@ class FilterView extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: filterController.filterPicList.length,
                         itemBuilder: (context, index) {
-                          final pic =
-                              filterController.filterPicList[index];
+                          final pic = filterController.filterPicList[index];
                           return TagButton(
                             statusLabel: pic['label'] ?? '-',
                             onPressed: () {
@@ -276,7 +344,13 @@ class FilterView extends StatelessWidget {
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       onPressed: () {
-                        Get.toNamed("/filterSelect", arguments: "pic");
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "pic",
+                            'controller': filterController,
+                          },
+                        );
                       },
                       child: Icon(
                         Ionicons.chevron_down_outline,
@@ -349,7 +423,13 @@ class FilterView extends StatelessWidget {
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       onPressed: () {
-                        Get.toNamed("/filterSelect", arguments: "Status");
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "status",
+                            'controller': filterController,
+                          },
+                        );
                       },
                       child: Icon(
                         Ionicons.chevron_down_outline,
@@ -425,8 +505,13 @@ class FilterView extends StatelessWidget {
                     child: CustomButton(
                       backgroundColor: Colors.transparent,
                       onPressed: () {
-                        Get.toNamed("/filterSelect",
-                            arguments: "Client Source");
+                        Get.toNamed(
+                          "/filterSelect",
+                          arguments: {
+                            'selectData': "client_source",
+                            'controller': filterController,
+                          },
+                        );
                       },
                       child: Icon(
                         Ionicons.chevron_down_outline,
@@ -447,7 +532,10 @@ class FilterView extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  filterController.setDateRange(temporaryStartDate, temporaryEndDate);
+                  filterController.searchFilter('all');
+                },
                 style: ButtonStyle(
                   fixedSize: WidgetStatePropertyAll(
                     Size(double.infinity, 50),

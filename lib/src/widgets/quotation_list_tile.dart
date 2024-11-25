@@ -6,15 +6,20 @@ import 'package:ionicons/ionicons.dart';
 
 import '../constant/const.dart';
 import '../models/quotation_model.dart';
+import '../utils/bottom_sheet.dart';
 import '../utils/color.dart';
 
 class QuotationListTile extends StatelessWidget {
   const QuotationListTile({
     super.key,
     required this.quotation,
+    required this.onDelete,
+    required this.onChatWA,
   });
 
   final Quotation quotation;
+  final VoidCallback onDelete;
+  final VoidCallback onChatWA;
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +65,10 @@ class QuotationListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: SizedBox(
-          height: 80,
+          height: 120,
           child: Stack(
-            alignment: Alignment.center,
             children: [
               Row(
-                // mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   //  Berfungsi agar slidable bisa mepet kanan
                   Expanded(
@@ -90,9 +93,7 @@ class QuotationListTile extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(5),
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(5),
-                                  onTap: () {
-                                    print("WA");
-                                  },
+                                  onTap: onChatWA,
                                   splashColor: Colors.black12, // Ripple color
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -130,7 +131,9 @@ class QuotationListTile extends StatelessWidget {
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(5),
                                   onTap: () {
-                                    print("WA");
+                                    print("Delete");
+                                    var message = "Are you sure wanna delete this Cardbox?";
+                                    DeleteBottomSheet(context, onDelete, message);
                                   },
                                   splashColor: Colors.black12, // Ripple color
                                   child: Row(
@@ -208,9 +211,27 @@ class QuotationListTile extends StatelessWidget {
                           ),
                           Text(
                             quotation.data.pic ?? "-",
+                            maxLines: 1,
                             style: GoogleFonts.plusJakartaSans(
                               color: AppColors.text_4,
                               fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            quotation.data.phoneNumber ?? "-",
+                            maxLines: 1,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.text_4,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          Text(
+                            quotation.email,
+                            style: GoogleFonts.plusJakartaSans(
+                              color: AppColors.text_4,
+                              fontSize: 10,
                               fontWeight: FontWeight.w400,
                             ),
                           ),

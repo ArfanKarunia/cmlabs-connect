@@ -62,7 +62,6 @@ class Quotation extends HiveObject {
   });
 
   factory Quotation.fromJson(Map<String, dynamic> json) {
-    print("+++ ID : ${json['id']}");
     return Quotation(
       id: json['id'],
       userId: json['user_id'] != null
@@ -202,7 +201,6 @@ class QuotationData {
   });
 
   factory QuotationData.fromJson(Map<String, dynamic> json) {
-    print("Quotation Data: $json");
     try {
       // Parsing client_pic menjadi List<ClientPic>
       List<ClientPic> clientPics = (json['client_pic'] as List<dynamic>?)
@@ -257,7 +255,7 @@ class QuotationData {
         name: json['name'],
         phoneCode: json['phone_code'],
         phoneNumber: json['phone_number'],
-        company: json['company'],
+        company: json['company_name'],
         companyIndustry: json['company_industry'],
         registrationStatus: json['registration-status'],
         website: json['website'],
@@ -362,7 +360,6 @@ class AgentData {
   });
 
   factory AgentData.fromJson(Map<String, dynamic> json) {
-    print("Agent Data: $json");
     try {
       return AgentData(
         browser: json['browser'] is String ? json['browser'] : null,

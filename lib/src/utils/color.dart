@@ -18,8 +18,8 @@ class AppColors {
 
   static const Color textLight = Color(0xFF959595);
 
-  static const Color danger = Color(0xFFDE5758);
-  static const Color bgDanger = Color(0xFFFEF1F1);
+  static const Color danger = Color(0xFFF76162);
+  static const Color bgDanger = Color(0xFFFEDEDE);
 
   static const Color purple = Color(0xFFA159ED);
   static const Color bgPurple = Color(0xFFA159ED);
@@ -28,7 +28,7 @@ class AppColors {
   static const Color bgInfo = Color(0xFFFFF9EE);
   
   static const Color success = Color(0xFF50A06D);
-  static const Color bgSuccess = Color(0xFFEFF7F2);
+  static const Color bgSuccess = Color.fromRGBO(203, 227, 211, 0.7);
 
 
   static const Color activeBottomNav = Color(0xFF1E222D);

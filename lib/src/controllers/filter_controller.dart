@@ -7,23 +7,29 @@ import '../constant/config.dart';
 import '../constant/const.dart';
 
 class FilterController extends GetxController {
+  var search = Rx<String?>(null);
+  
   // Menyimpan list status
   var statusList = <Map<String, String>>[].obs;
   var clientSourceList = <Map<String, String>>[].obs;
   var picList = <Map<String, String>>[].obs;
+  var categoryList = <Map<String, String>>[].obs;
 
-  // Menyim[an Filter Status
+  // Menyimpan Filter
   var filterStatusList = <Map<String, String>>[].obs;
   var filterClientSourceList = <Map<String, String>>[].obs;
   var filterPicList = <Map<String, String>>[].obs;
+  var filterCategoryList = <Map<String, String>>[].obs;
 
-  var search = Rx<String?>(null);
+  // Menyimpan Filter Tanggal
+  var startDate = Rx<DateTime?>(null);
+  var endDate = Rx<DateTime?>(null);
+
 
   // Inisialisasi Dio dan AuthenticationController
   final Dio dio = Dio();
   final AuthenticationController authenticationController = Get.find();
-  final QuotationController quotationController =
-      Get.put(QuotationController());
+  final QuotationController quotationController = Get.put(QuotationController());
 
   final String baseUrl = Config.baseURL;
 
@@ -35,7 +41,6 @@ class FilterController extends GetxController {
 
   // Fetch data status dari API
   Future<void> fetchList(String filter) async {
-
     try {
       String? accessToken = authenticationController.accesToken.value;
 
@@ -62,7 +67,7 @@ class FilterController extends GetxController {
         }
 
         // Untuk Filter Client Source
-      } else if (filter.toLowerCase() == 'client source') {
+      } else if (filter.toLowerCase() == 'client_source') {
         final response = await dio.get(
           '$baseUrl/filter/client_source',
           options: Options(
@@ -103,7 +108,36 @@ class FilterController extends GetxController {
             };
           }).toList();
 
-          picList.assignAll(mappedData);
+          picList.clear();
+
+          picList.add({'value': 'all', 'label': 'All'});
+          picList.addAll(mappedData);
+
+        }
+      } else if (filter.toLowerCase() == 'category') {
+        final response = await dio.get(
+          '$baseUrl/filter/data_services',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+        );
+
+        if (response.statusCode == 200 && response.data != null) {
+          var responseData = response.data['data'];
+
+          print("respon API: ${responseData}");
+
+          var mappedData = responseData.map<Map<String, String>>((category) {
+            return {
+              'value': category['id']?.toString() ?? '',
+              'label': category['text']?.toString() ?? '',
+            };
+          }).toList();
+
+          categoryList.clear();
+
+          categoryList.add({'value': 'all', 'label': 'All'});
+          categoryList.addAll(mappedData);
         }
       }
     } catch (e) {
@@ -111,6 +145,7 @@ class FilterController extends GetxController {
     }
   }
 
+  // ADD, DELETE, CLEAR Filter Status
   void addFilterStatus(Map<String, String> status) {
     // Cek jika status yang dipilih adalah "all"
     if (status['value'] == "all") {
@@ -143,7 +178,6 @@ class FilterController extends GetxController {
   }
 
   // ADD, DELETE, CLEAR CLIENT SOURCE
-
   void addFilterClientSource(Map<String, String> clientSource) {
     // Cek jika status yang dipilih adalah "all"
     if (clientSource['value'] == "all") {
@@ -195,61 +229,32 @@ class FilterController extends GetxController {
     filterPicList.clear();
   }
 
-  void searchFilter(String filter) {
-    print(filter);
-
-    // Filter Status
-    if (filter.toLowerCase() == "status") {
-      quotationController.clearFilterStatus();
-      for (var data in filterStatusList) {
-        switch (data['value']) {
-          case 'all':
-            quotationController.clearFilterStatus();
-            break;
-          case 'new':
-            quotationController.addFilterStatus(StatusLead.newLead);
-            break;
-          case 'followed-up':
-            quotationController.addFilterStatus(StatusLead.followedUp);
-            break;
-          case 'accepted':
-            quotationController.addFilterStatus(StatusLead.accepted);
-            break;
-          case 'rejected':
-            quotationController.addFilterStatus(StatusLead.rejected);
-            break;
-        }
+  // ADD, DELETE, CLEAR Filter Category
+  void addFilterCategory(Map<String, String> category) {
+    // Cek jika status yang dipilih adalah "all"
+    if (category['value'] == "all") {
+      // Kosongkan filter status jika ada status lain
+      clearFilterPic();
+      filterCategoryList.add(category);
+    } else {
+      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
+      if (filterCategoryList.any((element) => element['value'] == "all")) {
+        filterCategoryList.removeWhere((element) => element['value'] == "all");
       }
 
-      filterStatusList.clear();
-
-    // Filter Client Source
-    } else if (filter.toLowerCase() == 'client source') {
-      quotationController.clearFilterClientSource();
-      for (var data in filterClientSourceList) {
-        // Convert both values to lowercase to ensure case-insensitive comparison
-        String clientSourceValue = data['value'].toString().toLowerCase();
-
-        quotationController.addFilterClientSource(clientSourceValue);
+      // Tambahkan status baru jika belum ada di dalam list
+      if (!filterCategoryList.contains(category)) {
+        filterCategoryList.add(category);
       }
-
-      filterClientSourceList.clear();
-
-    // Filter CLient Source
-    } else if (filter.toLowerCase() == 'pic') {
-      quotationController.clearFilterPic();
-
-      for (var data in filterPicList) {
-        // Convert both values to lowercase to ensure case-insensitive comparison
-        String picValue = data['value'].toString().toLowerCase();
-
-        quotationController.addFilterPic(picValue);
-      }
-
-      filterPicList.clear();
     }
+  }
 
-    Get.until((route) => Get.currentRoute == '/home');
+  void deleteFilterCategory(Map<String, String> category) {
+    filterCategoryList.remove(category);
+  }
+
+  void clearFilterCategory() {
+    filterCategoryList.clear();
   }
 
   void setSearch(String? query) {
@@ -279,7 +284,7 @@ class FilterController extends GetxController {
               status['label'].toLowerCase().contains(query);
         }).toList();
       }
-    } else if (filter.toLowerCase() == 'client source') {
+    } else if (filter.toLowerCase() == 'client_source') {
       result = clientSourceList;
 
       // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
@@ -293,7 +298,7 @@ class FilterController extends GetxController {
         }).toList();
       }
 
-    // Filter PIC
+      // Filter PIC
     } else if (filter.toLowerCase() == 'pic') {
       result = picList;
 
@@ -301,13 +306,140 @@ class FilterController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((pic) {
-          print("Checking client source: ${pic['value']} - ${pic['label']}");
+          print("Checking PIC: ${pic['value']} - ${pic['label']}");
           return pic['value'].toLowerCase().contains(query) ||
               pic['label'].toLowerCase().contains(query);
+        }).toList();
+      }
+
+      // Filter Category
+    } else if (filter.toLowerCase() == 'category') {
+      result = categoryList;
+
+      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
+      if (search.value != null && search.value!.isNotEmpty) {
+        final query = search.value!.toLowerCase();
+        result = result.where((category) {
+          print(
+              "Checking Category: ${category['value']} - ${category['label']}");
+          return category['value'].toLowerCase().contains(query) ||
+              category['label'].toLowerCase().contains(query);
         }).toList();
       }
     }
 
     return result;
+  }
+
+  void filterByStatus() {
+    quotationController.clearFilterStatus();
+    for (var data in filterStatusList) {
+      switch (data['value']) {
+        case 'all':
+          quotationController.clearFilterStatus();
+          break;
+        case 'new':
+          quotationController.addFilterStatus(StatusLead.newLead);
+          break;
+        case 'followed-up':
+          quotationController.addFilterStatus(StatusLead.followedUp);
+          break;
+        case 'accepted':
+          quotationController.addFilterStatus(StatusLead.accepted);
+          break;
+        case 'rejected':
+          quotationController.addFilterStatus(StatusLead.rejected);
+          break;
+      }
+    }
+    clearFilterStatus();
+  }
+
+  void filterByClientSource() {
+    quotationController.clearFilterClientSource();
+
+    for (var data in filterClientSourceList) {
+      // Convert both values to lowercase to ensure case-insensitive comparison
+      String clientSourceValue = data['value'].toString().toLowerCase();
+
+      quotationController.addFilterClientSource(clientSourceValue);
+    }
+
+    clearFilterClientSource();
+  }
+
+  void filterByPIC() {
+    quotationController.clearFilterPic();
+
+    for (var data in filterPicList) {
+      // Convert both values to lowercase to ensure case-insensitive comparison
+      String picValue = data['value'].toString().toLowerCase();
+
+      quotationController.addFilterPic(picValue);
+    }
+
+    clearFilterPic();
+  }
+
+  void filterByCategory() {
+    quotationController.clearFilterCategory();
+
+    for (var data in filterCategoryList) {
+      // Convert both values to lowercase to ensure case-insensitive comparison
+      String categoryValue = data['value'].toString().toLowerCase();
+
+      quotationController.addFilterCategory(categoryValue);
+    }
+
+    clearFilterCategory();
+  }
+
+  void setDateRange(DateTime? start, DateTime? end) {
+    if (start != null && end == null) {
+      end = DateTime.now();
+    }
+    startDate.value = start;
+    endDate.value = end;
+  }
+
+  void filterByDateRange() {
+    quotationController.clearDataRange();
+
+    quotationController.filterStartDate.value = startDate.value;
+    quotationController.filterEndDate.value = endDate.value;
+
+    startDate.value = null;
+    endDate.value = null;
+  }
+
+  void searchFilter(String filter) {
+    print(filter);
+
+    if (filter.toLowerCase() == "all") {
+      filterByDateRange();
+
+      filterByStatus();
+      filterByCategory();
+      filterByClientSource();
+      filterByPIC();
+
+      // Filter Status
+    } else if (filter.toLowerCase() == "status") {
+      filterByStatus();
+
+      // Filter Client Source
+    } else if (filter.toLowerCase() == 'client source') {
+      filterByClientSource();
+
+      // Filter PIC
+    } else if (filter.toLowerCase() == 'pic') {
+      filterByPIC();
+
+      // Filter category
+    } else if (filter.toLowerCase() == 'category') {
+      filterByCategory();
+    }
+
+    Get.until((route) => Get.currentRoute == '/home');
   }
 }

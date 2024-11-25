@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
+
+import 'package:http/http.dart' as http;
 
 import '../constant/config.dart';
 import '../models/user_model.dart';
@@ -40,6 +44,7 @@ class AuthenticationController extends GetxController {
         User userData = User.fromMap(data['data_user']);
 
         userController.saveUser(userData);
+        userController.password.value = password;
 
         accesToken.value = data['access_token'];
         tokenType.value = data['token_type'];
@@ -88,16 +93,77 @@ class AuthenticationController extends GetxController {
     return null;
   }
 
-  void toggleRememberMe(bool value) {
-    isRememberMe(value);
+  Future<void> logout() async {
+
+    try {
+      dio.options.headers = {
+        'Authorization': 'Bearer ${accesToken.value}',
+        'Content-Type': 'application/json',
+      };
+
+      // Make the POST request
+      var response = await dio.post(
+        '$baseUrl/auth/logout',
+      );
+
+      print("Response data: ${response.statusCode}");
+      print("Response data: ${response}");
+
+      if (response.statusCode == 200) {
+        userController.user.value = null;
+        userController.userBox = null;
+        userController.userBox = null;
+        accesToken.value = '';
+        tokenType.value = '';
+
+        showSuccessToast('Succses: Logout}');
+        Get.offAllNamed('/login');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
   }
 
-  Future<void> logout() async {
-    userController.user.value = null; // Kosongkan state user
-    accesToken.value = ''; // Reset akses token
-    tokenType.value = ''; // Reset tipe token
+  Future<void> changePassword(
+      String oldPassword, String newPassword, String confirmPassword) async {
+    var requestData = {
+      "id": userController.user.value?.id,
+      "password_old": oldPassword,
+      "password": newPassword,
+      "password_confirmation": confirmPassword,
+    };
 
-    Get.snackbar('Success', 'Logged out successfully!');
+    var body = jsonEncode(requestData);
+
+    print(body);
+    try {
+      var response = await http.post(
+        Uri.parse('$baseUrl/profile/change-password'),
+        headers: {
+          'Authorization': 'Bearer ${accesToken.value}',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        showSuccessToast("Success: Update new password");
+        Get.back();
+      } else {
+        String errorMessage = "Failed to change password";
+
+        showErrorToast(errorMessage);
+        print('Response body: ${response.body}');
+      }
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  void toggleRememberMe(bool value) {
+    isRememberMe(value);
   }
 
   User? getUser() {
