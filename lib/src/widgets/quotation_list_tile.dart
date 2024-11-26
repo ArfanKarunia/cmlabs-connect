@@ -3,6 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../constant/const.dart';
 import '../models/quotation_model.dart';
@@ -132,8 +133,10 @@ class QuotationListTile extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(5),
                                   onTap: () {
                                     print("Delete");
-                                    var message = "Are you sure wanna delete this Cardbox?";
-                                    DeleteBottomSheet(context, onDelete, message);
+                                    var message =
+                                        "Are you sure wanna delete this Cardbox?";
+                                    DeleteBottomSheet(
+                                        context, onDelete, message);
                                   },
                                   splashColor: Colors.black12, // Ripple color
                                   child: Row(
@@ -163,11 +166,29 @@ class QuotationListTile extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: StatusLeadUI(
-                          statusLead: status,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              timeago.format(quotation.createdAt),
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 10,
+                                color: AppColors.text_4,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 7,
+                            ),
+                            Container(
+                              alignment: Alignment.centerRight,
+                              child: StatusLeadUI(
+                                statusLead: status,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),

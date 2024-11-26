@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/view/filter_view.dart';
@@ -21,8 +21,8 @@ class InboxView extends StatefulWidget {
   final QuotationController quotationController =
       Get.put(QuotationController());
 
-  final DetailQuotationController detailQuotationController =
-      Get.put(DetailQuotationController());
+  final EditQuotationController detailQuotationController =
+      Get.put(EditQuotationController());
 }
 
 RefreshController _refreshController =

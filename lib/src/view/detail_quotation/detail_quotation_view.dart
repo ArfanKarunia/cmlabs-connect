@@ -1,9 +1,10 @@
+import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../controllers/detail_quotation_controller.dart';
 import '../../models/quotation_model.dart';
 import '../../utils/color.dart';
 
@@ -14,12 +15,14 @@ class DetailQuotationView extends StatelessWidget {
 
   final DetailQuotationController detailQuotationController =
       Get.put(DetailQuotationController());
+  
+  final EditQuotationController editQuotationController = Get.put(EditQuotationController());
 
   @override
   Widget build(BuildContext context) {
     final dataQuotation = detailQuotationController.detailData(quotation);
-
-    // detailQuotationController.clearSelectedData();
+    editQuotationController.clearSelectedData();
+    
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -106,8 +109,7 @@ class DetailQuotationView extends StatelessWidget {
                     width: 200,
                     child: TextButton(
                       onPressed: () {
-                        detailQuotationController.changeShowValue();
-                        print("${detailQuotationController.isShowAll.value}");
+                       detailQuotationController.changeShowValue();
                       },
                       style: ButtonStyle(
                         shape: WidgetStatePropertyAll(
@@ -122,14 +124,14 @@ class DetailQuotationView extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          (!detailQuotationController.getShowAllValue)
+                          (!detailQuotationController.isShowAll.value)
                               ? Text("Show more")
                               : Text("Show less"),
                           SizedBox(
                             width: 10,
                           ),
                           Icon(
-                            (!detailQuotationController.getShowAllValue)
+                            (!detailQuotationController.isShowAll.value)
                                 ? Ionicons.chevron_down_outline
                                 : Ionicons.chevron_up_outline,
                           ),

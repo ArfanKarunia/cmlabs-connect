@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/history_changes_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/const.dart';
-import '../../../controllers/detail_quotation_controller.dart';
+import '../../../controllers/edit_quotation/edit_quotation_controller.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/quotation_list_tile.dart';
 
@@ -17,8 +17,8 @@ class HistorySection extends StatelessWidget {
     super.key,
   });
 
-  final DetailQuotationController detailQuotationController =
-      Get.put(DetailQuotationController());
+  final EditQuotationController detailQuotationController =
+      Get.put(EditQuotationController());
   final HistoryChangesController historyChangesController =
       Get.put(HistoryChangesController());
   final UserController userController = Get.put(UserController());
@@ -67,6 +67,7 @@ class HistorySection extends StatelessWidget {
             }
             return ListView.builder(
               shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: historyChangesController.historyList.value.length,
               itemBuilder: (context, index) {
                 var data = historyChangesController.historyList.value[index];

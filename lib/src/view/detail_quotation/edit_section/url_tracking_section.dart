@@ -1,6 +1,6 @@
-import 'package:cmlabs_connect/src/controllers/url_tracking_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/url_tracking_controller.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation/edit_quotation_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/select_field_edit_quotation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -183,7 +183,7 @@ class URLTrackingSection extends StatelessWidget {
           const SizedBox(
             height: 16,
           ),
-          SelectField(
+          SelectFieldEditQuotation(
             name: "Validity",
             child: Obx(
               () {

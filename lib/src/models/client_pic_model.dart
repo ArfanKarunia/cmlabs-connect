@@ -21,7 +21,9 @@ class ClientPic {
 
   factory ClientPic.fromJson(Map<String, dynamic> json) {
     // Pastikan `contacts` diperlakukan sebagai List<ContactClientPic>
-    List<ContactClientPic> contactList = (json['contacts'] as List<dynamic>?)
+
+    print("data Client pic: ${json}");
+    final List<ContactClientPic> contactList = (json['contacts'] as List<dynamic>?)
             ?.map((contact) => ContactClientPic.fromJson(contact))
             .toList() ??
         [];

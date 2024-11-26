@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/contactPIC_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/contactPIC_controller.dart';
 import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../utils/color.dart';
-import '../../widgets/custom_buttom.dart';
+import '../../../utils/color.dart';
+import '../../../widgets/custom_buttom.dart';
 
 class AddContactView extends StatelessWidget {
   AddContactView({super.key, required this.clientPIC});
