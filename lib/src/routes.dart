@@ -17,9 +17,9 @@ import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_vie
 import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/form_volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/volunteer_view.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation/add_contact_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/edit_section/add_contact_view.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation/detail_quotation_view.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation/edit_history_view.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/edit_section/edit_history_view.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation/edit_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';

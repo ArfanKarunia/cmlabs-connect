@@ -201,12 +201,22 @@ class QuotationData {
   });
 
   factory QuotationData.fromJson(Map<String, dynamic> json) {
+    print(json);
     try {
       // Parsing client_pic menjadi List<ClientPic>
-      List<ClientPic> clientPics = (json['client_pic'] as List<dynamic>?)
-              ?.map((picJson) => ClientPic.fromJson(picJson))
-              .toList() ??
-          [];
+      List<ClientPic> clientPics = [];
+      if (json['client_pic'] is List) {
+        clientPics = (json['client_pic'] as List<dynamic>?)
+                ?.map((picJson) => ClientPic.fromJson(picJson))
+                .toList() ??
+            [];
+      } else if (json['client_pic'] is Map) {
+        clientPics = (json['client_pic'] as Map<String, dynamic>?)
+                ?.values
+                .map((picJson) => ClientPic.fromJson(picJson))
+                .toList() ??
+            [];
+      }
 
       // Parsing data meeting lainnya tetap sama
       List<String?> meetingTopics = (json['meeting_topic'] as List<dynamic>?)
@@ -283,27 +293,28 @@ class QuotationData {
       print("Error in QuotationData.fromJson: $e");
       print("Stacktrace: $stacktrace");
       return QuotationData(
-          language: '',
-          name: '',
-          phoneCode: '',
-          phoneNumber: '',
-          company: '',
-          companyIndustry: '',
-          registrationStatus: '',
-          website: '',
-          region: '',
-          type: [],
-          category: [], // default kosong
-          clientPIC: [], // default kosong
-          pic: '',
-          remarks: '',
-          notes: '',
-          meetingTopic: [],
-          meetingSchedule: [],
-          meetingStatus: [],
-          meetingNote: [],
-          meeting: '',
-          clientSource: null); // Fallback ke data kosong
+        language: '',
+        name: '',
+        phoneCode: '',
+        phoneNumber: '',
+        company: '',
+        companyIndustry: '',
+        registrationStatus: '',
+        website: '',
+        region: '',
+        type: [],
+        category: [], // default kosong
+        clientPIC: [], // default kosong
+        pic: '',
+        remarks: '',
+        notes: '',
+        meetingTopic: [],
+        meetingSchedule: [],
+        meetingStatus: [],
+        meetingNote: [],
+        meeting: '',
+        clientSource: null, // Fallback ke data kosong
+      );
     }
   }
 
@@ -396,4 +407,3 @@ class AgentData {
     };
   }
 }
-

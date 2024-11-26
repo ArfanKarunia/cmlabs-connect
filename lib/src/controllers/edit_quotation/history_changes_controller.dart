@@ -8,7 +8,7 @@ import 'package:dio/dio.dart' as dioPkg;
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../utils/toast.dart';
+import '../../utils/toast.dart';
 
 class HistoryChangesController extends GetxController {
   var search = Rx<String?>(null);

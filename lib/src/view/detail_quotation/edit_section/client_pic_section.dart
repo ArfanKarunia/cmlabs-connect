@@ -1,21 +1,20 @@
+import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/select_field_edit_quotation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../../controllers/detail_quotation_controller.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_buttom.dart';
-import '../edit_quotation_view.dart';
 
 class ClientSidePICSection extends StatelessWidget {
-  const ClientSidePICSection({
+  ClientSidePICSection({
     super.key,
-    required this.controller,
   });
 
-  final DetailQuotationController controller;
+  final ClientPicController clientPicController = Get.put(ClientPicController());
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +37,10 @@ class ClientSidePICSection extends StatelessWidget {
             () {
               return ListView.builder(
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: controller.selectedPICClient.length,
+                itemCount: clientPicController.selectedPICClient.length,
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
-                  var clientPic = controller.selectedPICClient[index];
+                  var clientPic = clientPicController.selectedPICClient[index];
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -49,7 +48,7 @@ class ClientSidePICSection extends StatelessWidget {
                         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            (controller.selectedPICClient.length > 1)
+                            (clientPicController.selectedPICClient.length > 1)
                                 ? "PIC ${index + 1} Name"
                                 : "PIC Name",
                             style: GoogleFonts.plusJakartaSans(
@@ -58,15 +57,15 @@ class ClientSidePICSection extends StatelessWidget {
                               color: AppColors.text_3,
                             ),
                           ),
-                          (controller.selectedPICClient.length > 1)
+                          (clientPicController.selectedPICClient.length > 1)
                               ? Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 10),
                                   child: CustomButton(
                                     backgroundColor: Colors.transparent,
                                     onPressed: () {
-                                      controller.removePICClient(index);
-                                      controller.selectedPICClient.refresh();
+                                      clientPicController.removePICClient(index);
+                                      clientPicController.selectedPICClient.refresh();
                                     },
                                     child: Icon(
                                       Ionicons.trash_outline,
@@ -82,9 +81,9 @@ class ClientSidePICSection extends StatelessWidget {
                         height: 10,
                       ),
                       TextFormField(
-                        controller: controller.nameControllers[index],
+                        controller: clientPicController.nameControllers[index],
                         onChanged: (value) {
-                          controller.selectedPICClient[index] = controller
+                          clientPicController.selectedPICClient[index] = clientPicController
                               .selectedPICClient[index]
                               .copyWith(name: value);
                         },
@@ -127,9 +126,9 @@ class ClientSidePICSection extends StatelessWidget {
                         height: 10,
                       ),
                       TextFormField(
-                        controller: controller.positionControllers[index],
+                        controller: clientPicController.positionControllers[index],
                         onChanged: (value) {
-                          controller.selectedPICClient[index] = controller
+                          clientPicController.selectedPICClient[index] = clientPicController
                               .selectedPICClient[index]
                               .copyWith(position: value);
                         },
@@ -198,7 +197,7 @@ class ClientSidePICSection extends StatelessWidget {
                                     SizedBox(
                                       height: 15,
                                     ),
-                                    SelectField(
+                                    SelectFieldEditQuotation(
                                       name: "Type",
                                       child: Container(
                                         child: contact?.type == null
@@ -266,7 +265,7 @@ class ClientSidePICSection extends StatelessWidget {
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    SelectField(
+                                    SelectFieldEditQuotation(
                                       name: "Status",
                                       child: Container(
                                         child: contact?.status == null
@@ -294,7 +293,7 @@ class ClientSidePICSection extends StatelessWidget {
                                     SizedBox(
                                       height: 20,
                                     ),
-                                    SelectField(
+                                    SelectFieldEditQuotation(
                                       name: "Detail Status",
                                       child: Container(
                                         child: contact?.detail == null
@@ -364,8 +363,8 @@ class ClientSidePICSection extends StatelessWidget {
                                       height: 51,
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          controller.selectedPICClient[index].contacts.remove(contact);
-                                          controller.selectedPICClient.refresh();
+                                          clientPicController.selectedPICClient[index].contacts.remove(contact);
+                                          clientPicController.selectedPICClient.refresh();
                                         },
                                         style: ButtonStyle(
                                           backgroundColor:
@@ -421,13 +420,13 @@ class ClientSidePICSection extends StatelessWidget {
                             Get.toNamed(
                               AppRoutes.addContactClientPIC,
                               arguments: {
-                                "clientPic": controller.selectedPICClient[index]
+                                "clientPic": clientPicController.selectedPICClient[index]
                               },
                             )?.then(
                               (value) {
-                                controller.selectedPICClient[index].contacts
+                                clientPicController.selectedPICClient[index].contacts
                                     .add(value);
-                                controller.selectedPICClient.refresh();
+                                clientPicController.selectedPICClient.refresh();
                               },
                             );
                           },
@@ -462,8 +461,8 @@ class ClientSidePICSection extends StatelessWidget {
                           ),
                         ),
                       ),
-                      (controller.selectedPICClient.length > 0 &&
-                              controller.selectedPICClient.length != index + 1)
+                      (clientPicController.selectedPICClient.length > 0 &&
+                              clientPicController.selectedPICClient.length != index + 1)
                           ? SizedBox(
                               height: 20,
                             )
@@ -481,7 +480,7 @@ class ClientSidePICSection extends StatelessWidget {
             height: 51,
             child: ElevatedButton(
                 onPressed: () {
-                  controller.addPICClient();
+                  clientPicController.addPICClient();
                 },
                 style: ButtonStyle(
                   backgroundColor:

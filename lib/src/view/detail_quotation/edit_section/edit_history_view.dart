@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:cmlabs_connect/src/controllers/history_changes_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:cmlabs_connect/src/models/history_changes_model.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/select_field_edit_quotation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,9 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:open_filex/open_filex.dart';
 
-import '../../utils/color.dart';
-import '../../widgets/tag_button.dart';
-import 'edit_quotation_view.dart';
+import '../../../utils/color.dart';
+import '../../../widgets/tag_button.dart';
 
 class EditHistoryView extends StatelessWidget {
   EditHistoryView({super.key, required this.historyData});
@@ -218,7 +218,7 @@ class EditHistoryView extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
-              SelectField(
+              SelectFieldEditQuotation(
                 name: "Type",
                 child: Obx(
                   () {
@@ -426,7 +426,7 @@ class EditHistoryView extends StatelessWidget {
                   SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
-                        _selectFile();
+                      _selectFile();
                     },
                     child: AbsorbPointer(
                       child: TextFormField(

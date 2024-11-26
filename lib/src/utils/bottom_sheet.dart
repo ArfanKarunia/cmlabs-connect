@@ -1,7 +1,10 @@
 import 'dart:ui';
 
+import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
+import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Future<dynamic> DeleteBottomSheet(
@@ -241,4 +244,99 @@ Future<dynamic> SignOutBottomSheet(
       );
     },
   );
+}
+
+
+class BottomSheetSaveChanges extends StatefulWidget {
+  BottomSheetSaveChanges({super.key, required this.quotation, required this.onPressed});
+
+  Quotation quotation;
+
+  final VoidCallback onPressed;
+
+  @override
+  State<BottomSheetSaveChanges> createState() => _BottomSheetSaveChangesState();
+}
+
+class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
+  EditQuotationController detailQuotationController =
+      Get.put(EditQuotationController());
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+            color: AppColors.white_1,
+            boxShadow: [
+              BoxShadow(
+                color: const Color.fromARGB(30, 0, 0, 0),
+                offset: const Offset(0, -4),
+                blurRadius: 10,
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.only(
+            left: 15,
+            right: 15,
+            bottom: 20,
+            top: 25,
+          ),
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 140,
+                height: 5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.text_4,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: widget.onPressed,
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(AppColors.primary),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    "Save",
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.white_1,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                "Click to save all changes",
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.text_2,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }

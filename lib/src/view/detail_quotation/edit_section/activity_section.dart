@@ -1,22 +1,22 @@
-import 'package:cmlabs_connect/src/controllers/activity_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/activity_controller.dart';
+import 'package:cmlabs_connect/src/view/detail_quotation/select_field_edit_quotation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../../../controllers/detail_quotation_controller.dart';
+import '../../../controllers/edit_quotation/edit_quotation_controller.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/tag_button.dart';
-import '../edit_quotation_view.dart';
 
 class ActivitySection extends StatelessWidget {
   ActivitySection({
     super.key,
   });
 
-  final DetailQuotationController detailQuotationController =
-      Get.put(DetailQuotationController());
+  final EditQuotationController detailQuotationController =
+      Get.put(EditQuotationController());
 
   final ActivityController activityController = Get.put(ActivityController());
 
@@ -164,12 +164,16 @@ class ActivitySection extends StatelessWidget {
                         const SizedBox(
                           height: 16,
                         ),
-                        SelectField(
+                        SelectFieldEditQuotation(
                           name: "Status",
                           child: Obx(
                             () {
-                              return 
-                              (activityController.selectedStatusActivity.value[index] != null && activityController.selectedStatusActivity.value[index]?['label'] != null)
+                              return (activityController.selectedStatusActivity
+                                              .value[index] !=
+                                          null &&
+                                      activityController.selectedStatusActivity
+                                              .value[index]?['label'] !=
+                                          null)
                                   ? Text(
                                       "${activityController.selectedStatusActivity.value[index]?['label']}",
                                       style: GoogleFonts.plusJakartaSans(
@@ -200,14 +204,14 @@ class ActivitySection extends StatelessWidget {
                                     .refresh();
                               },
                             );
-                            
+
                             // activityController.selectedStatusActivity.trigger(null);
                           },
                         ),
                         const SizedBox(
                           height: 16,
                         ),
-                        SelectField(
+                        SelectFieldEditQuotation(
                           name: "Type",
                           child: Obx(
                             () {
@@ -232,6 +236,7 @@ class ActivitySection extends StatelessWidget {
                                     final type = activityController
                                         .selectedTypeActivity
                                         .value[index][index2];
+                                    print(type);
                                     print("data type : $type");
                                     return Row(
                                       children: [
