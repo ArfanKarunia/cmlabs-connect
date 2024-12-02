@@ -6,8 +6,10 @@ import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/general_info_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/url_tracking_controller.dart';
+import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../utils/toast.dart';
@@ -15,74 +17,49 @@ import '../../utils/toast.dart';
 class EditQuotationController extends GetxController {
   var isChanged = false.obs;
 
-  
+  // General Info
+  Map<String, String>? initialPic;
+  Map<String, String>? initialPriority;
+  Map<String, String>? initialStatus;
+  Map<String, String>? initialType;
+
+  // Client PIC
+  List<ClientPic>? initialClientPics;
+
+  List<List<Map<String, String>?>>? initialContactType;
+  List<List<Map<String, String>?>>? initialContactStatus;
+  List<List<Map<String, String>?>>? initialContactDetail;
+  List<List<String?>>? initialContactInfo;
+  List<List<String?>>? initialContactNote;
+
+  // Activity
+  late List<String?> initialMeetingTopics;
+  late List<String?> initialMeetingSchedules;
+  late List<Map<String, String>?> initialSelectedStatusActivity;
+  late List<List<Map<String, String>?>> initialSelectedTypeActivity;
+  late List<String?> initialMeetingNotes;
+  late List<bool?> initialAvailabletoUser;
+  late String? initialRemarksMeeting;
+  late String? initialAdditionalNoteMeeting;
+
+
+
+  // Activity
+  late bool initialUrlTrackingStatus;
+
+
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
+  final GeneralInfoController generalInfoController =
+      Get.put(GeneralInfoController());
+  final ClientPicController clientPicController =
+      Get.put(ClientPicController());
+  final ActivityController activityController = Get.put(ActivityController());
+  final UrlTrackingController urlTrackingController =
+      Get.put(UrlTrackingController());
 
-  final GeneralInfoController generalInfoController = Get.put(GeneralInfoController());
   final baseUrl = Config.baseURL;
   final dio = Dio();
-
-  @override
-  void onInit() async {
-    super.onInit();
-
-    // await fetchList("pic");
-    // await fetchList("priority");
-    // await fetchList("status");
-
-    // menangkap jika terdapt perubahan
-    // ever<Map<String, String>?>(selectPic, (value) {
-    //   print("selectPic changed: $value");
-    //   isChanged.value = true;
-    // });
-
-    // ever<Map<String, String>?>(selectPriority, (value) {
-    //   print("selectPriority changed: $value");
-    //   isChanged.value = true;
-    // });
-
-    // ever<Map<String, String>?>(selectStatus, (value) {
-    //   print("selectStatus changed: $value");
-    //   isChanged.value = true;
-    // });
-
-    // ever<Map<String, String>?>(selectedType, (value) {
-    //   print("selectedType changed: $value");
-    //   isChanged.value = true;
-    // });
-
-    // for (var controller in nameControllers) {
-    //   controller.addListener(() {
-    //     // Jika teks berubah, tandai isChanged menjadi true
-    //     if (controller.text.isNotEmpty) {
-    //       isChanged.value = true;
-    //     }
-    //   });
-    // }
-
-    // // Menambahkan listener pada positionControllers
-    // for (var controller in positionControllers) {
-    //   controller.addListener(() {
-    //     // Jika teks berubah, tandai isChanged menjadi true
-    //     if (controller.text.isNotEmpty) {
-    //       isChanged.value = true;
-    //     }
-    //   });
-    // }
-
-  }
-
-  @override
-  void onClose() {
-    // for (var controller in nameControllers) {
-    //   controller.dispose();
-    // }
-    // for (var controller in positionControllers) {
-    //   controller.dispose();
-    // }
-    super.onClose();
-  }
 
   /*
 
@@ -99,12 +76,197 @@ class EditQuotationController extends GetxController {
     await generalInfoController.fetchList("priority");
     await generalInfoController.fetchList("status");
 
-    generalInfoController.loadData(quotation.data.pic?.trim(), quotation.priority, quotation.status, quotation.data.type[0]);
+    await generalInfoController.loadData(quotation.data.pic?.trim(),
+        quotation.priority, quotation.status, quotation.data.type[0]);
+    await clientPicController.loadData(quotation.data.clientPIC);
 
+    activityController.loadData(
+        quotation.data.meetingTopic,
+        quotation.data.meetingSchedule,
+        quotation.data.meetingStatus,
+        quotation.data.meetingType,
+        quotation.data.meetingNote,
+        quotation.data.remarks,
+        quotation.data.addtionalNotes);
+
+    setInitialValues();
+
+    isChanged.value = false;
+    onFieldChanged();
   }
 
   void clearSelectedData() {
     generalInfoController.clearSelectedData();
+    clientPicController.clearData();
+    activityController.clearData();
+
+    isChanged.value = false;
+  }
+
+  void checkForChanges() {
+
+    List<List<Map<String, String>?>> currentContactType = clientPicController.selectedContactType.value
+        .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+        .toList();
+
+    List<List<Map<String, String>?>> currentContactStatus = clientPicController.selectedContactStatus.value
+        .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+        .toList();
+
+    List<List<Map<String, String>?>> currentContactDetail = clientPicController.selectedDetailStatus.value
+        .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+        .toList();
+
+    List<List<String?>> currentContactInfo = clientPicController.infoContact.value
+        .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+        .toList();
+
+    List<List<String?>> currentContactNote = clientPicController.noteContact.value
+        .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+        .toList();
+
+    List<String?> currentMeetingTopic = activityController.meetingTopic.value
+        .map((controller) => controller.text)
+        .toList();
+
+    List<String?> currentMeetingSchedules = activityController.meetingSchedule.value
+        .map((controller) => controller.text)
+        .toList();
+
+    List<bool?> currentAvailableToUser =  List.from(activityController.isAvailableToUser);
+
+    List<Map<String, String>?> currentSelectedStatusActivity = List.from(activityController.selectedStatusActivity.value);
+    List<List<Map<String, String>?>> currentSelectedTypeActivity = List.from(activityController.selectedTypeActivity.value);
+    List<String?> currentMeetingNotes = activityController.meetingNote.value
+        .map((controller) => controller.text)
+        .toList();
+    String? currentRemarksMeeting = activityController.remarksMeeting.text;
+    String? currentAdditionalNoteMeeting = activityController.addtionalNoteMeeting.text;
+
+    bool currentUrlTrackingStatus = urlTrackingController.isTracking.value;
+
+
+    if (generalInfoController.selectPic.value != initialPic ||
+        generalInfoController.selectPriority.value != initialPriority ||
+        generalInfoController.selectStatus.value != initialStatus ||
+        generalInfoController.selectType.value != initialType ||
+        !listEquals(clientPicController.selectedPICClient, initialClientPics) ||
+        // !mapEquals(initialContactData, currentContactData) ||
+        !deepListEquals(currentContactType, initialContactType) ||
+        !deepListEquals(currentContactStatus, initialContactStatus) ||
+        !deepListEquals(currentContactDetail, initialContactDetail) ||
+        !deepStringListEquals(currentContactInfo, initialContactInfo) ||
+        !deepStringListEquals(currentContactNote, initialContactNote) ||
+        !listEquals(currentMeetingTopic, initialMeetingTopics) ||
+        !listEquals(currentMeetingSchedules, initialMeetingSchedules) ||
+        !listEquals(currentSelectedStatusActivity, initialSelectedStatusActivity) ||
+        !listEquals(currentAvailableToUser, initialAvailabletoUser) ||
+        !listEquals(currentSelectedTypeActivity, initialSelectedTypeActivity) ||
+        !listEquals(currentMeetingNotes, initialMeetingNotes) ||
+        currentRemarksMeeting != initialRemarksMeeting ||
+        currentAdditionalNoteMeeting != initialAdditionalNoteMeeting || 
+        currentUrlTrackingStatus != initialUrlTrackingStatus
+        ) {
+      isChanged.value = true;
+    } else {
+      isChanged.value = false;
+    }
+
+    
+  }
+
+  void onFieldChanged() {
+    checkForChanges();
+    // print("ada perubahan: ${isChanged.value}");
+  }
+
+  void setInitialValues() {
+  // Simpan data awal General Information
+    initialPic = generalInfoController.selectPic.value;
+    initialPriority = generalInfoController.selectPriority.value;
+    initialStatus = generalInfoController.selectStatus.value;
+    initialType = generalInfoController.selectType.value;
+
+    // Simpan data awal Client PIC
+    initialClientPics = List.from(clientPicController.selectedPICClient);
+
+    // initialContactData = clientPicController.getContactData();
+      initialContactType = clientPicController.selectedContactType.value
+          .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+          .toList();
+
+      initialContactStatus = clientPicController.selectedContactStatus.value
+          .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+          .toList();
+
+      initialContactDetail = clientPicController.selectedDetailStatus.value
+          .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+          .toList();
+
+      initialContactInfo = clientPicController.infoContact.value
+          .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+          .toList();
+
+      initialContactNote = clientPicController.noteContact.value
+          .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+          .toList();
+
+    initialContactStatus = List.from(clientPicController.selectedContactStatus.value);
+    initialContactDetail = List.from(clientPicController.selectedDetailStatus.value);
+    initialContactInfo = clientPicController.infoContact.value
+        .map((list) => list?.map((controller) => controller?.text).toList() ?? [])
+        .toList();
+    initialContactNote = clientPicController.noteContact.value
+        .map((list) => list?.map((controller) => controller?.text).toList() ?? [])
+        .toList();
+    
+
+    // Simpan data awal activity
+    initialMeetingTopics = activityController.meetingTopic.value
+        .map((controller) => controller.text)
+        .toList();
+
+    initialMeetingSchedules = activityController.meetingSchedule.value
+        .map((controller) => controller.text)
+        .toList();
+    
+    initialAvailabletoUser = List.from(activityController.isAvailableToUser);
+
+    initialSelectedStatusActivity = List.from(activityController.selectedStatusActivity.value);
+
+    initialSelectedTypeActivity = List.from(activityController.selectedTypeActivity.value);
+
+    initialMeetingNotes = activityController.meetingNote.value
+        .map((controller) => controller.text)
+        .toList();
+
+    initialRemarksMeeting = activityController.remarksMeeting.text;
+    initialAdditionalNoteMeeting = activityController.addtionalNoteMeeting.text;
+
+    // simpan data awal URL Tracking
+    initialUrlTrackingStatus = urlTrackingController.isTracking.value;
+  }
+
+  void clearInitialValue() {
+// Simpan data awal General Information
+    initialPic = null;
+    initialPriority = null;
+    initialStatus = null;
+    initialType = null;
+
+    // Simpan data awal Client PIC
+    initialClientPics = null;
+
+    // Simpan data awal Contact dari Client PIC
+    initialContactType = null;
+    initialContactStatus = null;
+    initialContactDetail = null;
+    initialContactInfo = null;
+    initialContactNote = null;
+
+    initialUrlTrackingStatus = false;
+
+    isChanged.value = false;
 
   }
 
@@ -150,7 +312,8 @@ class EditQuotationController extends GetxController {
 
     ClientPicController clientPicController = Get.put(ClientPicController());
 
-    GeneralInfoController generalInfoController = Get.put(GeneralInfoController());
+    GeneralInfoController generalInfoController =
+        Get.put(GeneralInfoController());
 
     var pic = generalInfoController.selectPic.value?["value"];
     var priority = generalInfoController.selectPriority.value?["value"];
@@ -251,6 +414,169 @@ class EditQuotationController extends GetxController {
 
     return jsonEncode(requestData);
   }
-
   
+  bool deepListEquals(List<List<Map<String, String>?>>? list1, List<List<Map<String, String>?>>? list2) {
+    if (list1 == null || list2 == null) return list1 == list2;
+    if (list1.length != list2.length) return false;
+
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i].length != list2[i].length) return false;
+      for (int j = 0; j < list1[i].length; j++) {
+        Map<String, String>? map1 = list1[i][j];
+        Map<String, String>? map2 = list2[i][j];
+
+        if (map1 == null || map2 == null) {
+          if (map1 != map2) return false;
+        } else {
+          if (!mapEquals(map1, map2)) return false; 
+        }
+      }
+    }
+    return true;
+  }
+
+  bool deepStringListEquals(List<List<String?>>? list1, List<List<String?>>? list2) {
+    if (list1 == null || list2 == null) return list1 == list2;
+    if (list1.length != list2.length) return false;
+
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i].length != list2[i].length) return false;
+      for (int j = 0; j < list1[i].length; j++) {
+        if (list1[i][j] != list2[i][j]) return false;
+      }
+    }
+    return true;
+  }
+
+  // void checkChanges(){
+
+  //   List<List<Map<String, String>?>> currentContactType = clientPicController.selectedContactType.value
+  //       .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+  //       .toList();
+
+  //   List<List<Map<String, String>?>> currentContactStatus = clientPicController.selectedContactStatus.value
+  //       .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+  //       .toList();
+
+  //   List<List<Map<String, String>?>> currentContactDetail = clientPicController.selectedDetailStatus.value
+  //       .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+  //       .toList();
+
+  //   List<List<String?>> currentContactInfo = clientPicController.infoContact.value
+  //       .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+  //       .toList();
+
+  //   List<List<String?>> currentContactNote = clientPicController.noteContact.value
+  //       .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+  //       .toList();
+
+  //   List<String?> currentMeetingTopic = activityController.meetingTopic.value
+  //       .map((controller) => controller.text)
+  //       .toList();
+
+  //   List<String?> currentMeetingSchedules = activityController.meetingSchedule.value
+  //       .map((controller) => controller.text)
+  //       .toList();
+
+  //   List<bool?> currentAvailableToUser =  List.from(activityController.isAvailableToUser);
+
+  //   List<Map<String, String>?> currentSelectedStatusActivity = List.from(activityController.selectedStatusActivity.value);
+  //   List<List<Map<String, String>?>> currentSelectedTypeActivity = List.from(activityController.selectedTypeActivity.value);
+  //   List<String?> currentMeetingNotes = activityController.meetingNote.value
+  //       .map((controller) => controller.text)
+  //       .toList();
+  //   String? currentRemarksMeeting = activityController.remarksMeeting.text;
+  //   String? currentAdditionalNoteMeeting = activityController.addtionalNoteMeeting.text;
+
+  //   print("+++ CHECK CHANGES +++");
+  //   print("initial pic: $initialPic");
+  //   print("current pic: ${generalInfoController.selectPic.value}");
+  //   print("has changed: ${generalInfoController.selectPic.value != initialPic}");
+  //   print("");
+
+  //   print("initial status: $initialStatus");
+  //   print("current status: ${generalInfoController.selectStatus.value}");
+  //   print("has changed: ${generalInfoController.selectPriority.value != initialPriority}");
+  //   print("");
+
+  //   print("initial priority: $initialPriority");
+  //   print("current priority: ${generalInfoController.selectPriority.value}");
+  //   print("has changed: ${generalInfoController.selectStatus.value != initialStatus}");
+  //   print("");
+
+  //   print("initial type: $initialType");
+  //   print("current type: ${generalInfoController.selectType.value}");
+  //   print("has changed: ${generalInfoController.selectType.value != initialType}");
+  //   print("");
+
+  //   print("initial client pic: $initialClientPics");
+  //   print("current client pic: ${clientPicController.selectedPICClient}");
+  //   print("has changed: ${!listEquals(clientPicController.selectedPICClient, initialClientPics)}");
+  //   print("");
+
+  //   print("initial contact type: $initialContactType");
+  //   print("current contact type : $currentContactType");
+  //   print("has changed: ${!deepListEquals(currentContactType, initialContactType)}");
+  //   print("");
+
+  //   print("initial contact status: $initialContactStatus");
+  //   print("current contact status : $currentContactStatus");
+  //   print("has changed: ${!deepListEquals(currentContactStatus, initialContactStatus)}");
+  //   print("");
+
+  //   print("initial contact detail: $initialContactDetail");
+  //   print("current contact detail : $currentContactDetail");
+  //   print("has changed: ${!deepListEquals(currentContactDetail, initialContactDetail)}");
+  //   print("");
+
+  //   print("initial contact info: $initialContactInfo");
+  //   print("current contact info : $currentContactInfo");
+  //   print("has changed: ${!deepStringListEquals(currentContactInfo, initialContactInfo)}");
+  //   print("");
+
+  //   print("initial contact note: $initialContactNote");
+  //   print("current contact note : $currentContactNote");
+  //   print("has changed: ${!deepStringListEquals(currentContactNote, initialContactNote)}");
+  //   print("");
+
+  //   print("initial meeting topic: $initialMeetingTopics");
+  //   print("current meeting topic : $currentMeetingTopic");
+  //   print("has changed: ${!listEquals(currentMeetingTopic, initialMeetingTopics)}");
+  //   print("");
+
+  //   print("initial meeting schedule: $initialMeetingSchedules");
+  //   print("current meeting schedule : $currentMeetingSchedules");
+  //   print("has changed: ${!listEquals(currentMeetingSchedules, initialMeetingSchedules)}");
+  //   print("");
+
+  //   print("initial meeting status: $initialSelectedStatusActivity");
+  //   print("current meeting status : $currentSelectedStatusActivity");
+  //   print("has changed: ${!listEquals(currentSelectedStatusActivity, initialSelectedStatusActivity)}");
+  //   print("");
+
+  //   print("initial meeting type: $initialSelectedTypeActivity");
+  //   print("current meeting type : $currentSelectedTypeActivity");
+  //   print("has changed: ${!listEquals(currentSelectedTypeActivity, initialSelectedTypeActivity)}");
+  //   print("");
+
+  //   print("initial meeting Available: $initialAvailabletoUser");
+  //   print("current meeting Available : $currentAvailableToUser");
+  //   print("has changed: ${!listEquals(currentAvailableToUser, initialAvailabletoUser)}");
+  //   print("");
+
+  //   print("initial meeting note: $initialMeetingNotes");
+  //   print("current meeting note : $currentMeetingNotes");
+  //   print("has changed: ${!listEquals(currentMeetingNotes, initialMeetingNotes)}");
+  //   print("");
+
+  //   print("initial meeting remarks: $initialRemarksMeeting");
+  //   print("current meeting remarks : $currentRemarksMeeting");
+  //   print("has changed: ${currentRemarksMeeting != initialRemarksMeeting}");
+  //   print("");
+
+  //   print("initial meeting additional note: $initialAdditionalNoteMeeting");
+  //   print("current meeting additional note : $currentAdditionalNoteMeeting");
+  //   print("has changed: ${currentAdditionalNoteMeeting != initialAdditionalNoteMeeting}");
+  //   print("");
+  // }
 }

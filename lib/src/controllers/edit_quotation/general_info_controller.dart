@@ -2,13 +2,12 @@ import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class GeneralInfoController extends GetxController {
   var search = Rx<String?>(null);
 
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
+  final AuthenticationController authenticationController = Get.put(AuthenticationController());
+
   final baseUrl = Config.baseURL;
   final dio = Dio();
 
@@ -33,19 +32,11 @@ class GeneralInfoController extends GetxController {
   var statusList = <Map<String, String>>[].obs;
   var typeList = <Map<String, String>>[].obs;
 
-  void loadData(String? pic, int priority, int status, String? type) {
-    print("pic: $pic");
-    print("priority: $priority");
-    print("status: $status");
-    print("type: $type");
-
-    // Mencocokkan dan menyimpan data pic ke selectPic
-    if (pic != null) {
-      selectPic.value = picList.firstWhere(
-        (element) => element['value'] == pic,
-        orElse: () => <String, String>{},
-      );
-    }
+  Future<void> loadData(String? pic, int priority, int status, String? type) async {
+    print("data pic: ${pic}");
+    print("data priority: ${priority}");
+    print("data status: ${status}");
+    print("data type: ${type}");
 
     // Mencocokkan dan menyimpan data priority ke selectPriority
     selectPriority.value = priorityList.firstWhere(
@@ -59,16 +50,19 @@ class GeneralInfoController extends GetxController {
       orElse: () => <String, String>{},
     );
 
+    if (pic != null) {
+      selectPic.value = picList.firstWhere(
+        (element) => element['value'] == pic,
+        orElse: () => <String, String>{},
+      );
+    }
+
     // Mencocokkan dan menyimpan data type ke selectType
     if (type != null) {
       selectType.value = {'value': type, 'label': type};
     }
 
-    // Debug output untuk memastikan hasil pencocokan
-    print("selectPic: ${selectPic.value}");
-    print("selectPriority: ${selectPriority.value}");
-    print("selectStatus: ${selectStatus.value}");
-    print("selectType: ${selectType.value}");
+    // editQuotationController.onFieldChanged();
   }
 
   void clearSelectedData() {
@@ -76,7 +70,7 @@ class GeneralInfoController extends GetxController {
     selectPic.value = null;
     selectPriority.value = null;
     selectStatus.value = null;
-    selectType.value =null;
+    selectType.value = null;
 
     print("selectPic: ${selectPic.value}");
     print("selectPriority: ${selectPriority.value}");

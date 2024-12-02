@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/app.dart';
@@ -16,13 +15,13 @@ import 'src/utils/custom_http_overrides.dart';
 Future<void> main() async {
   // initialization HIVE
   await Hive.initFlutter();
-  
+
   // Daftarkan adapter untuk setiap model
   Hive.registerAdapter(UserAdapter());
   Hive.registerAdapter(QuotationAdapter());
   Hive.registerAdapter(DashboardDataAdapter());
   Hive.registerAdapter(ClientSourceAdapter());
-  
+
   // membuka box (tempat penyimpanan) untuk Quotation
   await Hive.openBox<Quotation>('quotationBox');
   await Hive.openBox<ClientPic>('picBox');
@@ -30,7 +29,6 @@ Future<void> main() async {
   await Hive.openBox<DashboardData>('dashboardBox');
   await Hive.openBox<ClientSource>('clientSourceBox');
 
-  
   HttpOverrides.global = CustomHttpOverrides();
 
   await SentryFlutter.init((options) {
@@ -43,6 +41,4 @@ Future<void> main() async {
     options.tracesSampleRate = 1.0;
     options.profilesSampleRate = 1.0;
   }, appRunner: () => runApp(const MyApp()));
-  
 }
-

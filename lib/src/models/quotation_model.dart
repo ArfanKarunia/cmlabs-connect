@@ -164,7 +164,7 @@ class QuotationData {
   final List<String?> meetingNote;
 
   @HiveField(19)
-  final String? meeting;
+  final String? addtionalNotes;
 
   @HiveField(20)
   final DateTime? meetingAppointment;
@@ -172,6 +172,10 @@ class QuotationData {
   @HiveField(21)
   final String? message;
 
+  @HiveField(22)
+  final List<List<String>?> meetingType;
+
+  @HiveField(23)
   final ClientSource? clientSource;
 
   QuotationData({
@@ -194,14 +198,14 @@ class QuotationData {
     required this.meetingSchedule,
     required this.meetingStatus,
     required this.meetingNote,
-    this.meeting,
+    this.addtionalNotes,
     this.meetingAppointment,
     this.message,
+    required this.meetingType,
     this.clientSource,
   });
 
   factory QuotationData.fromJson(Map<String, dynamic> json) {
-    print(json);
     try {
       // Parsing client_pic menjadi List<ClientPic>
       List<ClientPic> clientPics = [];
@@ -239,6 +243,13 @@ class QuotationData {
               ?.map((note) => note.toString())
               .toList() ??
           [];
+
+      List<List<String>> meetingTypes = [];
+      if (json['meeting_type'] != null && json['meeting_type'] is List) {
+        meetingTypes = (json['meeting_type'] as List<dynamic>)
+            .map((type) => List<String>.from(type as List))
+            .toList();
+      }
 
       // Handle 'type' yang mungkin null, String, atau List
       List<String> types = [];
@@ -280,7 +291,8 @@ class QuotationData {
         meetingSchedule: meetingSchedules,
         meetingStatus: meetingStatuses,
         meetingNote: meetingNotes,
-        meeting: json['meeting'],
+        addtionalNotes: json['meeting'],
+        meetingType: meetingTypes,
         clientSource: ClientSource.fromJson(
           {
             'client_source': json['client_source'],
@@ -312,7 +324,8 @@ class QuotationData {
         meetingSchedule: [],
         meetingStatus: [],
         meetingNote: [],
-        meeting: '',
+        addtionalNotes: '',
+        meetingType: [],
         clientSource: null, // Fallback ke data kosong
       );
     }
@@ -340,7 +353,8 @@ class QuotationData {
           .toList(),
       'meeting_status': meetingStatus,
       'meeting_note': meetingNote,
-      'meeting': meeting,
+      'meeting': addtionalNotes,
+      'meeting_type': meetingType,
       'client_source': clientSource?.toJson()
     };
   }

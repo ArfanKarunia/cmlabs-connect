@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,6 +18,9 @@ class SelectEditView extends StatelessWidget {
   final String selectData;
 
   final dynamic controller;
+
+  final EditQuotationController editQuotationController =
+      Get.put(EditQuotationController());
 
   var temporaryData = Rx<Map<String, String>?>(null);
   var temporaryMultipleData = Rx<List<Map<String, String>?>>([]);
@@ -227,17 +231,22 @@ class SelectEditView extends StatelessWidget {
                         temporaryMultipleData.value.isNotEmpty) {
                       if (selectData == "pic") {
                         controller.addPIC(temporaryData.value!);
+                        editQuotationController.onFieldChanged();
                         Get.back();
                       } else if (selectData == "priority") {
                         controller.addPriority(temporaryData.value!);
+                        editQuotationController.onFieldChanged();
                         Get.back();
                       } else if (selectData == "status") {
                         controller.addStatus(temporaryData.value!);
                         if (temporaryData.value!["value"] == 0.toString() ||
                             temporaryData.value!["value"] == 4.toString()) {
+                          editQuotationController.onFieldChanged();
                           Get.back();
                         } else {
+                          editQuotationController.onFieldChanged();
                           Get.toNamed("/editSelect", arguments: "type");
+
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) {
@@ -251,6 +260,7 @@ class SelectEditView extends StatelessWidget {
                         }
                       } else if (selectData == "type") {
                         controller.addType(temporaryData.value!);
+                        editQuotationController.onFieldChanged();
                         Get.until((route) =>
                             Get.currentRoute == AppRoutes.editQuotation);
                       } else if (selectData == "type_contact") {
@@ -263,19 +273,23 @@ class SelectEditView extends StatelessWidget {
                         controller.addDetailStatus(temporaryData.value!);
                         Get.back(result: temporaryData.value);
                       } else if (selectData == "status_activity") {
+                        editQuotationController.onFieldChanged();
                         Get.back(result: temporaryData.value);
                       } else if (selectData == "type_activity") {
-                        Get.back(result: temporaryMultipleData);
+                        editQuotationController.onFieldChanged();
+                        Get.back(result: temporaryMultipleData.value);
                       } else if (selectData == "type_history") {
                         List<String?> data = [];
 
                         for (var type in temporaryMultipleData.value) {
                           data.add(type?['value'] ?? '');
                         }
+                        editQuotationController.onFieldChanged();
 
                         Get.back(result: data);
                       } else if (selectData == "validity_url_tracking") {
                         controller.addValidity(temporaryData.value);
+                        editQuotationController.onFieldChanged();
                         Get.back();
                       }
                     }

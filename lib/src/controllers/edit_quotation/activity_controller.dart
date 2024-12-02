@@ -4,25 +4,124 @@ import 'package:get/get.dart';
 class ActivityController extends GetxController {
   var search = Rx<String?>(null);
 
-  final meetingTopic = Rx<List<TextEditingController>>(
-    [TextEditingController(text: "")], // Teks awal kosong
-  );
+  final meetingTopic = Rx<List<TextEditingController>>([]);
 
-  final meetingSchedule = Rx<List<TextEditingController>>(
-    [TextEditingController(text: "")], // Teks awal kosong
-  );
+  final meetingSchedule = Rx<List<TextEditingController>>([]);
 
   var selectedStatusActivity = Rx<List<Map<String, String>?>>([{}]);
   var selectedTypeActivity = Rx<List<List<Map<String, String>?>>>([[]]);
 
-  var isAvailableToUser = <bool>[false].obs;
+  var isAvailableToUser = <bool>[].obs;
 
-  final meetingNote = Rx<List<TextEditingController>>(
-    [TextEditingController(text: "")], // Teks awal kosong
-  );
+  final meetingNote = Rx<List<TextEditingController>>([]);
 
   final remarksMeeting = TextEditingController();
   final addtionalNoteMeeting = TextEditingController();
+
+  void loadData(
+    List<String?> topic,
+    List<DateTime?> schedule,
+    List<String?> status,
+    List<List<String>?> type,
+    List<String?> note,
+    String? remarks,
+    String? addtionalNote,
+  ) {
+    // Update meetingTopic
+    if (topic.length != 0) {
+      meetingTopic.value =
+          topic.map((t) => TextEditingController(text: t ?? "")).toList();
+    } else {
+      meetingTopic.value = [TextEditingController()];
+    }
+
+    // Update meetingSchedule
+    if (schedule.length != 0) {
+      meetingSchedule.value = schedule
+          .map((s) =>
+              TextEditingController(text: s != null ? s.toIso8601String() : ""))
+          .toList();
+    } else {
+      meetingSchedule.value = [TextEditingController()];
+    }
+
+    // Update selectedStatusActivity
+    if (status.length != 0) {
+      selectedStatusActivity.value = status
+          .where((s) => s != null)
+          .map((s) => {"value": s!, "label": s})
+          .toList();
+    } else {
+      selectedStatusActivity.value = [{}];
+    }
+
+    if (type.isNotEmpty) {
+      // Jika type tidak kosong, lakukan mapping seperti biasa
+      selectedTypeActivity.value = type.map((innerList) {
+        if (innerList != null) {
+          return innerList
+              .map((item) {
+                return {"value": item, "label": item};
+              })
+              .whereType<Map<String, String>>() // Hanya elemen yang valid
+              .toList();
+        }
+        return <Map<String, String>>[];
+      }).toList() as List<List<Map<String, String>?>>;
+    } else {
+      // Jika type kosong, buat list kosong sesuai jumlah topik
+      selectedTypeActivity.value =
+          List.generate(topic.length, (_) => <Map<String, String>?>[]);
+    }
+
+    // print(selectedTypeActivity.value);
+
+    // Update isAvailableToUser
+    isAvailableToUser.value =
+        List.generate(meetingTopic.value.length, (index) => false);
+
+    // Update meetingNote
+    if (note.length != 0) {
+      meetingNote.value =
+          note.map((n) => TextEditingController(text: n ?? "")).toList();
+    } else {
+      meetingNote.value = [TextEditingController()];
+    }
+
+    // Update remarksMeeting
+    remarksMeeting.text = remarks ?? "";
+
+    // Update additionalNoteMeeting
+    addtionalNoteMeeting.text = addtionalNote ?? "";
+  }
+
+  void clearData() {
+    // Clear all variables
+    meetingTopic.value.clear();
+    meetingSchedule.value.clear();
+    selectedStatusActivity.value.clear();
+    selectedTypeActivity.value.clear();
+    isAvailableToUser.clear();
+    meetingNote.value.clear();
+    remarksMeeting.clear();
+    addtionalNoteMeeting.clear();
+
+    // Set dummy data
+    meetingTopic.value = [TextEditingController()];
+    meetingSchedule.value = [TextEditingController()];
+    selectedStatusActivity.value = [{}];
+    selectedTypeActivity.value = [[]];
+    isAvailableToUser.value = [false];
+    meetingNote.value = [TextEditingController()];
+
+    // Refresh observable lists
+    meetingTopic.refresh();
+    meetingSchedule.refresh();
+    selectedStatusActivity.refresh();
+    selectedTypeActivity.refresh();
+    isAvailableToUser.refresh();
+    meetingNote.refresh();
+  }
 
   void addMoreActivity() {
     meetingTopic.value.add(TextEditingController(text: ""));
@@ -30,7 +129,7 @@ class ActivityController extends GetxController {
 
     selectedStatusActivity.value.add({});
     selectedTypeActivity.value.add([]);
-    
+
     isAvailableToUser.add(false);
     meetingNote.value.add(TextEditingController(text: ""));
 
@@ -63,18 +162,17 @@ class ActivityController extends GetxController {
   }
 
   // ADD, DELETE, CLEAR TYPE ACTIVITY
-  void addType(int index, Map<String, String> type) {
-    // Cek jika status yang dipilih adalah "all"
-    if (type['value'] == "all") {
-      // Kosongkan filter status jika ada status lain
-      clearType(index);
-      selectedTypeActivity.value[index].add(type);
-    } else {
-      // Tambahkan status baru jika belum ada di dalam list
-      if (!selectedTypeActivity.value[index].contains(type)) {
-        selectedTypeActivity.value[index].add(type);
-      }
-    }
+  void addTypeActivity(int index, List<Map<String, String>?> data) {
+    // Tambahkan status baru jika belum ada di dalam list
+    print("tambah data $data pada activity ke - $index");
+    // print("tambah data $types, pada activity ke $index");
+    clearType(index);
+
+    selectedTypeActivity.value[index] = data;
+    // if (!selectedTypeActivity.value[index]
+    //     .any((existingType) => existingType?['value'] == type['value'])) {
+    //   selectedTypeActivity.value[index].add(type);
+    // }
   }
 
   void deleteType(int index, Map<String, String> type) {
@@ -93,8 +191,6 @@ class ActivityController extends GetxController {
     List result = [];
 
     // Debugging
-    print("Current Filter: ${select}");
-    print("Current Search Query: ${search.value}");
 
     if (select.toLowerCase() == 'status_activity') {
       result = statusActivityList;
@@ -128,24 +224,24 @@ class ActivityController extends GetxController {
   }
 
   final statusActivityList = [
-    {"value": "scheduled", "label": "Scheduled"},
-    {"value": "on_progress", "label": "On Progress"},
-    {"value": "canceled", "label": "Canceled"},
+    {"value": "Scheduled", "label": "Scheduled"},
+    {"value": "On Progress", "label": "On Progress"},
+    {"value": "Canceled", "label": "Canceled"},
   ];
 
   final typeActivityList = [
-    {"value": "mini_quick_research", "label": "Mini Quick Research"},
-    {"value": "pitch_deck", "label": "Pitch Dect"},
+    {"value": "Mini Quick Research", "label": "Mini Quick Research"},
+    {"value": "Pitch Deck", "label": "Pitch Deck"},
     {
-      "value": "prospective_client_pic_replacement",
+      "value": "Prospective Client PIC Replacement",
       "label": "Prospective Client PIC Replacement"
     },
     {
-      "value": "prospective_client_request",
+      "value": "Prospective Client Request",
       "label": "Prospective Client Request"
     },
-    {"value": "quotation_letter", "label": "Quotation Letter"},
-    {"value": "mou_letter", "label": "MOU Letter"},
-    {"value": "follow_up", "label": "Follow Up"},
+    {"value": "Quotation Letter", "label": "Quotation Letter"},
+    {"value": "MOU Letter", "label": "MOU Letter"},
+    {"value": "Follow Up", "label": "Follow Up"},
   ];
 }

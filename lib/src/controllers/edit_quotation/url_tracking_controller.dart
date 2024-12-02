@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
-import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +18,6 @@ class UrlTrackingController extends GetxController {
 
   var selectedValidity = Rx<Map<String, String>?>(null);
 
-  final EditQuotationController detailQuotationController = Get.put(EditQuotationController());
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
 
@@ -33,7 +31,6 @@ class UrlTrackingController extends GetxController {
     isTracking.value = value;
     fetchUrl(id);
     fetchValidity();
-    detailQuotationController.isChanged.value = true;
   }
 
   void generatePassword() {
