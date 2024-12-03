@@ -106,16 +106,20 @@ class QuotationDataAdapter extends TypeAdapter<QuotationData> {
       meetingSchedule: (fields[16] as List).cast<DateTime?>(),
       meetingStatus: (fields[17] as List).cast<String?>(),
       meetingNote: (fields[18] as List).cast<String?>(),
-      meeting: fields[19] as String?,
+      addtionalNotes: fields[19] as String?,
       meetingAppointment: fields[20] as DateTime?,
       message: fields[21] as String?,
+      meetingType: (fields[22] as List)
+          .map((dynamic e) => (e as List?)?.cast<String>())
+          .toList(),
+      clientSource: fields[23] as ClientSource?,
     );
   }
 
   @override
   void write(BinaryWriter writer, QuotationData obj) {
     writer
-      ..writeByte(22)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.language)
       ..writeByte(1)
@@ -155,11 +159,15 @@ class QuotationDataAdapter extends TypeAdapter<QuotationData> {
       ..writeByte(18)
       ..write(obj.meetingNote)
       ..writeByte(19)
-      ..write(obj.meeting)
+      ..write(obj.addtionalNotes)
       ..writeByte(20)
       ..write(obj.meetingAppointment)
       ..writeByte(21)
-      ..write(obj.message);
+      ..write(obj.message)
+      ..writeByte(22)
+      ..write(obj.meetingType)
+      ..writeByte(23)
+      ..write(obj.clientSource);
   }
 
   @override

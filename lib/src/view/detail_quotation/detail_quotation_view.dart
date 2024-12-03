@@ -20,9 +20,11 @@ class DetailQuotationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dataQuotation = detailQuotationController.detailData(quotation);
     editQuotationController.clearSelectedData();
-    
+    editQuotationController.clearInitialValue();
+    final dataQuotation = detailQuotationController.detailData(quotation);
+
+    print("perubahan : ${editQuotationController.isChanged.value}");
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),

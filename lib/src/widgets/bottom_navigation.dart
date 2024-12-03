@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/view/inbox_view.dart';
 import 'package:cmlabs_connect/src/view/account_view.dart';
@@ -14,7 +15,8 @@ class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
 
   final BottomNavController navController = Get.put(BottomNavController());
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController =
+      Get.put(QuotationController());
 
   final List<Widget> _pages = [
     HomeView(),
@@ -24,6 +26,8 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+
     return Obx(
       () => Scaffold(
         body: SizedBox.expand(

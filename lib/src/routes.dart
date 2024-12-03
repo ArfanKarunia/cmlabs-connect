@@ -50,7 +50,6 @@ class AppRoutes {
   static const String editProfileView = '/editProfileView';
   static const String selectDataProfile = '/editProfileView/form/select';
 
-
   static const String summaryView = '/summaryView';
   static const String formSummaryView = '/summaryView/form';
 
@@ -64,7 +63,8 @@ class AppRoutes {
 
   static const String certificationView = '/certificationView';
   static const String formCertificationnView = '/certificationView/form';
-  static const String selectDataCertification = '/certificationView/form/select';
+  static const String selectDataCertification =
+      '/certificationView/form/select';
 
   static const String organizationView = '/organizationView';
   static const String formOrganizationView = '/organizationView/form';
@@ -83,7 +83,6 @@ class AppRoutes {
   static const String selectDataPublication = '/publicationView/form/select';
 
   static const String changePasswordView = '/changePasswordView';
-
 
   // List of Route
   static List<GetPage> routes = [
@@ -130,10 +129,7 @@ class AppRoutes {
 
     GetPage(
       name: addContactClientPIC,
-      page: () {
-        final args = Get.arguments as Map<String, dynamic>;
-        return AddContactView(clientPIC: args['clientPic']);
-      },
+      page: () => AddContactView(),
     ),
 
     GetPage(

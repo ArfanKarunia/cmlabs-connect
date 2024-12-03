@@ -20,13 +20,11 @@ class ClientPic {
   });
 
   factory ClientPic.fromJson(Map<String, dynamic> json) {
-    // Pastikan `contacts` diperlakukan sebagai List<ContactClientPic>
-
-    print("data Client pic: ${json}");
-    final List<ContactClientPic> contactList = (json['contacts'] as List<dynamic>?)
-            ?.map((contact) => ContactClientPic.fromJson(contact))
-            .toList() ??
-        [];
+    final List<ContactClientPic> contactList =
+        (json['contacts'] as List<dynamic>?)
+                ?.map((contact) => ContactClientPic.fromJson(contact))
+                .toList() ??
+            [];
 
     return ClientPic(
       name: json['name'],
@@ -62,19 +60,19 @@ class ClientPic {
 @HiveType(typeId: 7)
 class ContactClientPic {
   @HiveField(0)
-  final String? type;
+  String? type;
 
   @HiveField(1)
-  final String? info;
+  String? info;
 
   @HiveField(2)
-  final String? status;
+  String? status;
 
   @HiveField(3)
-  final String? detail;
+  String? detail;
 
   @HiveField(4)
-  final String? note;
+  String? note;
 
   ContactClientPic({
     this.type,
@@ -110,5 +108,21 @@ class ContactClientPic {
       'detail': detail,
       'note': note,
     };
+  }
+
+  ContactClientPic copyWith({
+    String? type,
+    String? info,
+    String? status,
+    String? detail,
+    String? note,
+  }) {
+    return ContactClientPic(
+      type: type ?? this.type,
+      info: info ?? this.info,
+      status: status ?? this.status,
+      detail: detail ?? this.detail,
+      note: note ?? this.note,
+    );
   }
 }

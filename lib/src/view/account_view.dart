@@ -4,6 +4,7 @@ import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
+import 'package:cmlabs_connect/src/utils/icons.dart';
 import 'package:cmlabs_connect/src/widgets/custom_buttom.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -174,7 +175,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.summaryView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_interface.png"),
+                  image: AssetImage(AppIcons.summaryIcon),
                 ),
                 title: Text(
                   "Summary",
@@ -192,7 +193,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.experienceView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_misc.png"),
+                  image: AssetImage(AppIcons.experienceIcon),
                 ),
                 title: Text(
                   "Experiences",
@@ -210,7 +211,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.educationView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_writing.png"),
+                  image: AssetImage(AppIcons.educationIcon),
                 ),
                 title: Text(
                   "Education",
@@ -228,7 +229,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.organizationView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_structure.png"),
+                  image: AssetImage(AppIcons.organizationIcon),
                 ),
                 title: Text(
                   "Organization",
@@ -246,7 +247,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.volunteerView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_bag.png"),
+                  image: AssetImage(AppIcons.volunteerIcon),
                 ),
                 title: Text(
                   "Volunteer",
@@ -264,7 +265,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.certificationView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_book.png"),
+                  image: AssetImage(AppIcons.certificationIcon),
                 ),
                 title: Text(
                   "Certification",
@@ -282,7 +283,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.achievementView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_file.png"),
+                  image: AssetImage(AppIcons.achievementIcon),
                 ),
                 title: Text(
                   "Achievement",
@@ -300,7 +301,7 @@ class AccountView extends StatelessWidget {
                   Get.toNamed(AppRoutes.publicationView);
                 },
                 leading: Image(
-                  image: AssetImage("assets/icons/icons_download.png"),
+                  image: AssetImage(AppIcons.publicationIcon),
                 ),
                 title: Text(
                   "Publication",

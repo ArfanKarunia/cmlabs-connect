@@ -1,5 +1,4 @@
 import 'package:cmlabs_connect/src/controllers/edit_quotation/contactPIC_controller.dart';
-import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,9 +9,8 @@ import '../../../utils/color.dart';
 import '../../../widgets/custom_buttom.dart';
 
 class AddContactView extends StatelessWidget {
-  AddContactView({super.key, required this.clientPIC});
+  AddContactView({super.key});
 
-  final ClientPic clientPIC;
 
   final TextEditingController infoController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
@@ -264,6 +262,7 @@ class AddContactView extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     var dataContactPIC = contactpicController.createContactPIC(infoController.text, noteController.text);
+                    
                     Get.back(result: dataContactPIC);
                   },
                   style: ButtonStyle(
