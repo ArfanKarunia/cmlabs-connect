@@ -151,7 +151,6 @@ class EditQuotationController extends GetxController {
         generalInfoController.selectStatus.value != initialStatus ||
         generalInfoController.selectType.value != initialType ||
         !listEquals(clientPicController.selectedPICClient, initialClientPics) ||
-        // !mapEquals(initialContactData, currentContactData) ||
         !deepListEquals(currentContactType, initialContactType) ||
         !deepListEquals(currentContactStatus, initialContactStatus) ||
         !deepListEquals(currentContactDetail, initialContactDetail) ||
@@ -177,7 +176,6 @@ class EditQuotationController extends GetxController {
 
   void onFieldChanged() {
     checkForChanges();
-    // print("ada perubahan: ${isChanged.value}");
   }
 
   void setInitialValues() {
@@ -265,6 +263,7 @@ class EditQuotationController extends GetxController {
     initialContactNote = null;
 
     initialUrlTrackingStatus = false;
+    urlTrackingController.isTracking.value = false;
 
     isChanged.value = false;
 
@@ -318,19 +317,46 @@ class EditQuotationController extends GetxController {
     var pic = generalInfoController.selectPic.value?["value"];
     var priority = generalInfoController.selectPriority.value?["value"];
     var status = generalInfoController.selectStatus.value?["value"];
-    // var type = generalInfoController.selectType.value?["value"];
+    var type = generalInfoController.selectType.value?["value"];
 
     // Mengonversi list ClientPic ke dalam format JSON
-    var clientPic;
+    var clientPic = {};
+    if (clientPicController.selectedPICClient.isNotEmpty) {
+        for (var i = 0; i < clientPicController.selectedPICClient.length; i++) {
+            var client = clientPicController.selectedPICClient[i];
+            var contacts = [];
 
-    if (clientPicController.selectedPICClient.length > 0 &&
-        clientPicController.selectedPICClient[0].name != null &&
-        clientPicController.selectedPICClient[0].name != "") {
-      clientPic = {
-        for (var i = 0; i < clientPicController.selectedPICClient.length; i++)
-          '$i': clientPicController.selectedPICClient[i].toJson()
-      };
+            // Mengumpulkan informasi kontak untuk setiap PIC
+            if (clientPicController.selectedContactType.value.isNotEmpty) {
+                for (var j = 0; j < clientPicController.selectedContactType.value[i].length; j++) {
+                    var contactType = clientPicController.selectedContactType.value[i][j];
+                    var contactStatus = clientPicController.selectedContactStatus.value[i][j];
+                    var contactDetailStatus = clientPicController.selectedDetailStatus.value[i][j];
+                    var contactInfo = clientPicController.infoContact.value[i]?[j];
+                    var contactNote = clientPicController.noteContact.value[i]?[j];
+
+                    // Pastikan semua data ada sebelum menambahkannya ke daftar kontak
+                    if (contactType != null && contactInfo != null) {
+                        contacts.add({
+                            "type": contactType['value'],
+                            "info": contactInfo.text,
+                            "status": contactStatus?['value'] ?? '',
+                            "detail": contactDetailStatus?['value'] ?? '',
+                            "note": contactNote?.text,
+                        });
+                    }
+                }
+            }
+
+            // Menambahkan informasi PIC ke dalam clientPic
+            clientPic[i.toString()] = {
+                "name": client.name,
+                "position": client.position,
+                "contacts": contacts,
+            };
+        }
     }
+
 
     var meetingTopic = [];
     var meetingSchedule = [];
@@ -396,7 +422,7 @@ class EditQuotationController extends GetxController {
       "pic": pic,
       "priority": priority,
       "status": status,
-      // "type": type ?? [],
+      "type": [type],
       "client_pic": clientPic,
       "meeting_topic": meetingTopic,
       "meeting_schedule": meetingSchedule,

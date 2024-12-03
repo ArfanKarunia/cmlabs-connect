@@ -86,6 +86,12 @@ class ClientPicController extends GetxController {
       selectedPICClient.add(ClientPic(name: '', position: '', contacts: []));
       nameControllers.add(TextEditingController());
       positionControllers.add(TextEditingController());
+
+      selectedContactType.value.add([]);
+      selectedContactStatus.value.add([]);
+      selectedDetailStatus.value.add([]);
+      infoContact.value.add([]);
+      noteContact.value.add([]);
     }
 
     // // Debugging
@@ -173,27 +179,6 @@ class ClientPicController extends GetxController {
         .toList();
   }
 
-  Map<String, dynamic> getContactData() {
-    // Create a map to hold the data
-    Map<String, dynamic> contactData = {};
-
-    // Populate the map with the values from the reactive variables
-    contactData['selectedContactType'] = selectedContactType.value;
-    contactData['selectedContactStatus'] = selectedContactStatus.value;
-    contactData['selectedDetailStatus'] = selectedDetailStatus.value;
-
-    // Extracting text from TextEditingControllers for infoContact and noteContact
-    contactData['infoContact'] = infoContact.value.map((list) {
-      return list?.map((controller) => controller?.text).toList();
-    }).toList();
-
-    contactData['noteContact'] = noteContact.value.map((list) {
-      return list?.map((controller) => controller?.text).toList();
-    }).toList();
-
-    return contactData;
-  }
-
   // CLient PIC
   void addPICClient() {
     selectedPICClient.add(ClientPic(name: '', position: '', contacts: []));
@@ -223,7 +208,7 @@ class ClientPicController extends GetxController {
 
   void addContactPIC(int clientIndex, ContactClientPic contact) {
     if (clientIndex < selectedContactStatus.value.length) {
-      // selectedPICClient[clientIndex].contacts.add(contact);
+      selectedPICClient[clientIndex].contacts.add(contact);
 
       selectedContactStatus.value[clientIndex].add({'value': contact.status ?? '', 'label': contact.status ?? ''});
       selectedContactType.value[clientIndex].add({'value': contact.type ?? '', 'label': contact.type ?? ''});

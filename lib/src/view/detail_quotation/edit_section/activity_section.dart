@@ -114,6 +114,8 @@ class ActivitySection extends StatelessWidget {
                           onTap: () async {
                             FocusScope.of(context).requestFocus(
                                 FocusNode()); // Hapus fokus untuk menghindari keyboard tampil
+
+                            // Pilih tanggal
                             final selectedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
@@ -122,14 +124,37 @@ class ActivitySection extends StatelessWidget {
                             );
 
                             if (selectedDate != null) {
-                              final formattedDate =
-                                  DateFormat('dd-MM-yyyy').format(selectedDate);
-                              activityController
-                                      .meetingSchedule.value[index].text =
-                                  formattedDate; // Setel tanggal yang dipilih
+                              // Pilih waktu
+                              final selectedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+
+                              if (selectedTime != null) {
+                                // Gabungkan tanggal dan waktu
+                                final dateTime = DateTime(
+                                  selectedDate.year,
+                                  selectedDate.month,
+                                  selectedDate.day,
+                                  selectedTime.hour,
+                                  selectedTime.minute,
+                                );
+
+                                // Format tanggal dan waktu ke dalam format yang diinginkan
+                                final formattedDateTime =
+                                    DateFormat('yyyy-MM-dd HH:mm:ss')
+                                        .format(dateTime);
+
+                                // Setel tanggal dan waktu yang dipilih ke controller
+                                scheduleController.text =
+                                    formattedDateTime; // Setel ke TextFormField
+                                activityController
+                                        .meetingSchedule.value[index].text =
+                                    formattedDateTime; // Setel ke meetingSchedule
+                                activityController.meetingSchedule.refresh();
+                                editQuotationController.onFieldChanged();
+                              }
                             }
-                            activityController.meetingSchedule.refresh();
-                            editQuotationController.onFieldChanged();
                           },
                           readOnly: true,
                           style: GoogleFonts.plusJakartaSans(

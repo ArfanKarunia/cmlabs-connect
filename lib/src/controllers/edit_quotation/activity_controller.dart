@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class ActivityController extends GetxController {
   var search = Rx<String?>(null);
@@ -36,11 +37,13 @@ class ActivityController extends GetxController {
     }
 
     // Update meetingSchedule
-    if (schedule.length != 0) {
-      meetingSchedule.value = schedule
-          .map((s) =>
-              TextEditingController(text: s != null ? s.toIso8601String() : ""))
-          .toList();
+    if (schedule.isNotEmpty) {
+      meetingSchedule.value = schedule.map((s) {
+        // Format tanggal ke dalam format yang diinginkan
+        final formattedDate =
+            s != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(s) : "";
+        return TextEditingController(text: formattedDate);
+      }).toList();
     } else {
       meetingSchedule.value = [TextEditingController()];
     }
