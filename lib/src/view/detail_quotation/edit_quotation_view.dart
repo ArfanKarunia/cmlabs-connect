@@ -51,14 +51,11 @@ class _EditQuotationViewState extends State<EditQuotationView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.editQuotationController.loadExistingData(widget.quotation);
       widget.historyChangesController.fetchHistoryChanges(widget.quotation.id);
-      // widget.editQuotationController.onFieldChanged();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // print("CLIENT PIC: ${widget.quotation.data.clientPIC}");
-    // widget.editQuotationController.onFieldChanged();
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),

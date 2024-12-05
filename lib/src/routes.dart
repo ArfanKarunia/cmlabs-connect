@@ -22,6 +22,7 @@ import 'package:cmlabs_connect/src/view/detail_quotation/detail_quotation_view.d
 import 'package:cmlabs_connect/src/view/detail_quotation/edit_section/edit_history_view.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation/edit_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
+import 'package:cmlabs_connect/src/view/notification/layout_notification.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
@@ -43,6 +44,8 @@ class AppRoutes {
   static const String filter = '/filter';
   static const String filterSelect = '/filterSelect';
   static const String editSelect = '/editSelect';
+
+  static const String notification = '/notification';
 
   static const String historicalLead = '/historicalLead';
 
@@ -119,6 +122,9 @@ class AppRoutes {
       },
     ),
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
+
+    GetPage(name: notification, page: () => LayoutNotification()),
+    
     GetPage(
       name: detailQuotation,
       page: () {

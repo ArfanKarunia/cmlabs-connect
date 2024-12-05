@@ -32,11 +32,11 @@ class GeneralInfoController extends GetxController {
   var statusList = <Map<String, String>>[].obs;
   var typeList = <Map<String, String>>[].obs;
 
-  Future<void> loadData(String? pic, int priority, int status, String? type) async {
+  Future<void> loadData(String? pic, int priority, int status, List<String?> type) async {
     print("data pic: ${pic}");
     print("data priority: ${priority}");
     print("data status: ${status}");
-    print("data type: ${type}");
+    print("data type: ${type}'}");
 
     // Mencocokkan dan menyimpan data priority ke selectPriority
     selectPriority.value = priorityList.firstWhere(
@@ -58,8 +58,8 @@ class GeneralInfoController extends GetxController {
     }
 
     // Mencocokkan dan menyimpan data type ke selectType
-    if (type != null) {
-      selectType.value = {'value': type, 'label': type};
+    if (type.isNotEmpty) {
+      selectType.value = {'value': type[0]!, 'label': type[0]!};
     }
 
     // editQuotationController.onFieldChanged();

@@ -276,7 +276,7 @@ class QuotationData {
         name: json['name'],
         phoneCode: json['phone_code'],
         phoneNumber: json['phone_number'],
-        company: json['company_name'],
+        company: json['company_name'] ?? json['company'],
         companyIndustry: json['company_industry'],
         registrationStatus: json['registration-status'],
         website: json['website'],
