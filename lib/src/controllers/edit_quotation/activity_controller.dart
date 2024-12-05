@@ -20,73 +20,90 @@ class ActivityController extends GetxController {
   final addtionalNoteMeeting = TextEditingController();
 
   void loadData(
-    List<String?> topic,
-    List<DateTime?> schedule,
-    List<String?> status,
-    List<List<String>?> type,
-    List<String?> note,
+    List<String?>? topic,
+    List<DateTime?>? schedule,
+    List<String?>? status,
+    List<List<String>?>? type,
+    List<String?>? note,
     String? remarks,
     String? addtionalNote,
   ) {
+    print(topic);
+    print(schedule);
+    print(status);
+    print(type);
+    print(note);
+    print(remarks);
+    print(addtionalNote);
+
     // Update meetingTopic
-    if (topic.length != 0) {
-      meetingTopic.value =
-          topic.map((t) => TextEditingController(text: t ?? "")).toList();
+
+    if (topic != null) {
+      if (topic.isNotEmpty) {
+        meetingTopic.value =
+            topic.map((t) => TextEditingController(text: t ?? "")).toList();
+      }
     } else {
       meetingTopic.value = [TextEditingController()];
     }
 
     // Update meetingSchedule
-    if (schedule.isNotEmpty) {
-      meetingSchedule.value = schedule.map((s) {
-        // Format tanggal ke dalam format yang diinginkan
-        final formattedDate =
-            s != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(s) : "";
-        return TextEditingController(text: formattedDate);
-      }).toList();
+    if (schedule != null) {
+      if (schedule.isNotEmpty) {
+        meetingSchedule.value = schedule.map((s) {
+          // Format tanggal ke dalam format yang diinginkan
+          final formattedDate =
+              s != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(s) : "";
+          return TextEditingController(text: formattedDate);
+        }).toList();
+      }
     } else {
       meetingSchedule.value = [TextEditingController()];
     }
 
     // Update selectedStatusActivity
-    if (status.length != 0) {
-      selectedStatusActivity.value = status
-          .where((s) => s != null)
-          .map((s) => {"value": s!, "label": s})
-          .toList();
+    if (status != null) {
+      if (status.isNotEmpty) {
+        selectedStatusActivity.value = status
+            .where((s) => s != null)
+            .map((s) => {"value": s!, "label": s})
+            .toList();
+      }
     } else {
       selectedStatusActivity.value = [{}];
     }
 
-    if (type.isNotEmpty) {
-      // Jika type tidak kosong, lakukan mapping seperti biasa
-      selectedTypeActivity.value = type.map((innerList) {
-        if (innerList != null) {
-          return innerList
-              .map((item) {
-                return {"value": item, "label": item};
-              })
-              .whereType<Map<String, String>>() // Hanya elemen yang valid
-              .toList();
-        }
-        return <Map<String, String>>[];
-      }).toList() as List<List<Map<String, String>?>>;
+    if (type != null) {
+      if (type.isNotEmpty) {
+        // Jika type tidak kosong, lakukan mapping seperti biasa
+        selectedTypeActivity.value = type.map((innerList) {
+          if (innerList != null) {
+            return innerList
+                .map((item) {
+                  return {"value": item, "label": item};
+                })
+                .whereType<Map<String, String>>() // Hanya elemen yang valid
+                .toList();
+          }
+          return <Map<String, String>>[];
+        }).toList() as List<List<Map<String, String>?>>;
+      }
     } else {
       // Jika type kosong, buat list kosong sesuai jumlah topik
-      selectedTypeActivity.value =
-          List.generate(topic.length, (_) => <Map<String, String>?>[]);
+      selectedTypeActivity.value = List.generate(
+          meetingTopic.value.length, (_) => <Map<String, String>?>[]);
     }
-
-    // print(selectedTypeActivity.value);
 
     // Update isAvailableToUser
     isAvailableToUser.value =
         List.generate(meetingTopic.value.length, (index) => false);
 
     // Update meetingNote
-    if (note.length != 0) {
-      meetingNote.value =
-          note.map((n) => TextEditingController(text: n ?? "")).toList();
+    if (note != null) {
+      if (note.length != 0) {
+        meetingNote.value =
+            note.map((n) => TextEditingController(text: n ?? "")).toList();
+      }
     } else {
       meetingNote.value = [TextEditingController()];
     }

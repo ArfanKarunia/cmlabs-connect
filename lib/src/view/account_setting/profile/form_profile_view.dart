@@ -36,7 +36,6 @@ class FormProfileView extends StatelessWidget {
     user!.picUrl;
 
     try {
-
       usernameController.text = accountController.profileUsername.value ?? '';
       fullNameController.text = accountController.profileFullName.value ?? '';
       numberController.text = accountController.profileNumber.value ?? '';
@@ -46,7 +45,6 @@ class FormProfileView extends StatelessWidget {
       mediumController.text = accountController.profileMedium.value ?? '';
       quoraController.text = accountController.profileQuora.value ?? '';
       tiktokController.text = accountController.profileTiktok.value ?? '';
-
     } catch (e) {
       // Handle any errors that occur while fetching experience
       print('Error fetching experience: $e');
@@ -184,13 +182,33 @@ class FormProfileView extends StatelessWidget {
                   () {
                     return SelectField(
                       name: "Role/Position",
+                      onPressed: () {
+                        Get.toNamed(
+                          AppRoutes.selectDataProfile,
+                          arguments: "role",
+                        )?.then(
+                          (value) {
+                            accountController.addRole(value);
+                            print(
+                                "role selected: ${accountController.profileRole.value}");
+                            accountController.profileRole.refresh();
+                          },
+                        );
+                      },
+                      isMandatory: false,
                       child: (accountController.profileRole.value != null)
-                          ? Text(
-                              accountController.profileRole.value!,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                color: AppColors.text_1,
-                              ),
+                          ? Obx(
+                              () {
+                                return Text(
+                                  accountController
+                                          .profileRole.value?['name'] ??
+                                      '',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 13,
+                                    color: AppColors.text_1,
+                                  ),
+                                );
+                              },
                             )
                           : Text(
                               "Select Role/Position",
@@ -199,19 +217,6 @@ class FormProfileView extends StatelessWidget {
                                 color: AppColors.text_4,
                               ),
                             ),
-                      onPressed: () {
-                        Get.toNamed(
-                          AppRoutes.selectDataProfile,
-                          arguments: "role",
-                        )?.then(
-                          (value) {
-                            accountController.profileRole.value = value['name'];
-                            print(accountController.profileRole.value);
-                            accountController.profileRole.refresh();
-                          },
-                        );
-                      },
-                      isMandatory: false,
                     );
                   },
                 ),
@@ -222,6 +227,7 @@ class FormProfileView extends StatelessWidget {
                   title: "Phone Number",
                   hintText: "Phone Number",
                   controller: numberController,
+                
                   isMandatory: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -375,20 +381,28 @@ class FormProfileView extends StatelessWidget {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // Save the form
-                        accountController.profileUsername.value = usernameController.text;
-                        accountController.profileFullName.value = fullNameController.text;
-                        accountController.profileNumber.value = numberController.text;
+                        accountController.profileUsername.value =
+                            usernameController.text;
+                        accountController.profileFullName.value =
+                            fullNameController.text;
+                        accountController.profileNumber.value =
+                            numberController.text;
 
-                        accountController.profileLinkedin.value = linkedinController.text;
-                        accountController.profileWebsite.value = weblinkController.text;
-                        accountController.profileInstagram.value = instagramController.text;
+                        accountController.profileLinkedin.value =
+                            linkedinController.text;
+                        accountController.profileWebsite.value =
+                            weblinkController.text;
+                        accountController.profileInstagram.value =
+                            instagramController.text;
 
-                        accountController.profileMedium.value = mediumController.text;
-                        accountController.profileQuora.value = quoraController.text;
-                        accountController.profileTiktok.value = tiktokController.text;
+                        accountController.profileMedium.value =
+                            mediumController.text;
+                        accountController.profileQuora.value =
+                            quoraController.text;
+                        accountController.profileTiktok.value =
+                            tiktokController.text;
 
                         accountController.editProfile();
-
                       }
                     },
                     style: ButtonStyle(

@@ -76,8 +76,11 @@ class EditQuotationController extends GetxController {
     await generalInfoController.fetchList("priority");
     await generalInfoController.fetchList("status");
 
-    await generalInfoController.loadData(quotation.data.pic?.trim(),
-        quotation.priority, quotation.status, quotation.data.type[0]);
+    // print("${quotation.data.pic}");
+    print("${quotation.data.clientPIC}");
+
+    await generalInfoController.loadData(quotation.data.pic,
+        quotation.priority, quotation.status, quotation.data.type);
     await clientPicController.loadData(quotation.data.clientPIC);
 
     activityController.loadData(
@@ -432,7 +435,7 @@ class EditQuotationController extends GetxController {
       "meeting_note": meetingNote,
       "remarks": remarks,
       "notes": notes,
-      "url_track_status": urlTrackingController.isTracking.value ? "on" : "off",
+      "url_track_status": urlTrackingController.isTracking.value,
       "url": urlTrackingController.urlController.text,
       "password": urlTrackingController.passwordController.text,
       "validity": urlTrackingController.selectedValidity.value?['value'] ?? ''

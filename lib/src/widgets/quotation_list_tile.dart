@@ -219,8 +219,8 @@ class QuotationListTile extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             (quotation.data.category.isNotEmpty
-                                ? quotation.data.category.first ?? "-"
-                                : "-"),
+                                ? quotation.data.category.first ?? '-'
+                                : quotation.section ?? '-'),
                             maxLines: 1, // Membatasi hanya 1 baris
                             overflow: TextOverflow
                                 .ellipsis, // Menambahkan ellipsis (...) jika terlalu panjang

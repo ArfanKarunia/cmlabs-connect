@@ -1,4 +1,3 @@
-import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/view/inbox_view.dart';
 import 'package:cmlabs_connect/src/view/account_view.dart';
