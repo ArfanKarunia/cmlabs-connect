@@ -1,5 +1,8 @@
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/view/notification/all_notification_view.dart';
+import 'package:cmlabs_connect/src/view/notification/history_notification_view.dart';
+import 'package:cmlabs_connect/src/view/notification/new_notification_view.dart';
+import 'package:cmlabs_connect/src/view/notification/reminder_notification_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -53,18 +56,20 @@ class _LayoutNotificationState extends State<LayoutNotification>
               labelStyle: GoogleFonts.plusJakartaSans(
                   fontSize: 14, fontWeight: FontWeight.bold),
               indicatorColor: AppColors.primary,
+              dividerHeight: 0,
+              
               tabs: const [
                 Tab(
-                  text: 'All',
+                  text: '     All     ',
                 ),
                 Tab(
-                  text: "New",
+                  text: "     New     ",
                 ),
                 Tab(
-                  text: "Reminder",
+                  text: " Reminder ",
                 ),
                 Tab(
-                  text: "History",
+                  text: "   History   ",
                 )
               ],
             ),
@@ -75,15 +80,9 @@ class _LayoutNotificationState extends State<LayoutNotification>
               controller: tabController,
               children: [
                 AllNotificationView(),
-                Container(
-                  color: Colors.yellow,
-                ),
-                Container(
-                  color: Colors.green,
-                ),
-                Container(
-                  color: Colors.blue,
-                ),
+                NewNotificationView(),
+                ReminderNotificationView(),
+                HistoryNotificationView()
               ],
             ),
           ),

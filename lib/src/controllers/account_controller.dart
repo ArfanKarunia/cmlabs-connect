@@ -1477,10 +1477,11 @@ class AccountController extends GetxController {
         ),
       );
 
+
       if (response.statusCode == 200 && response.data != null) {
         var responseData = response.data['data'];
-
-        print("data: ${responseData['username']}");
+        User userData = User.fromMap(responseData);
+        userController.saveUser(userData);
 
         profileUsername.value = responseData['username'];
         profileFullName.value = responseData['name'];
@@ -1492,21 +1493,21 @@ class AccountController extends GetxController {
         profileQuora.value = responseData['quora'];
         profileTiktok.value = responseData['tiktok'];
 
-        int jobPositionId = int.parse(responseData['job_position']);
-
-        Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
-          (role) => role['id'] == jobPositionId, 
-        );
-
-        // Set profileRole based on the matched role
-        if (matchedRole != null) {
-          profileRole.value = matchedRole; 
-        } else {
-          profileRole.value = null; 
+        if (responseData['job_position'] != null ||
+            responseData['job_position'] != '') {
+          var jobPositionId = responseData['job_position'];
+          if (jobPositionId != null || jobPositionId != '') {
+            Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
+              (role) => role['id'] == int.parse(jobPositionId),
+            );
+            // Set profileRole based on the matched role
+            if (matchedRole != null) {
+              profileRole.value = matchedRole;
+            } else {
+              profileRole.value = null;
+            }
+          }
         }
-
-        User userData = User.fromMap(responseData);
-        userController.saveUser(userData);
       }
     } catch (e) {
       print('Error fetching status data: $e');
@@ -1567,7 +1568,6 @@ class AccountController extends GetxController {
       print('Error fetching status data: $e');
     }
   }
-
 
   Future<void> pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);

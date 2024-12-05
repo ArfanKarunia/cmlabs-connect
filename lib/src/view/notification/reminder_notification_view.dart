@@ -1,11 +1,12 @@
 import 'package:cmlabs_connect/src/utils/color.dart';
-import 'package:cmlabs_connect/src/widgets/notification_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
-class AllNotificationView extends StatelessWidget {
-  AllNotificationView({super.key});
+import '../../widgets/notification_tile.dart';
+
+class ReminderNotificationView extends StatelessWidget {
+  ReminderNotificationView({super.key});
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -71,7 +72,7 @@ class AllNotificationView extends StatelessWidget {
                     name: 'Nama Perusahaan',
                     date: DateTime.now(),
                     isRead: index % 2 == 0,
-                    isReminder: false,
+                    isReminder: true,
                   );
                 },
               ),
