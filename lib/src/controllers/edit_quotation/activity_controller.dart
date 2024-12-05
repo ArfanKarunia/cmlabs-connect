@@ -73,6 +73,8 @@ class ActivityController extends GetxController {
       selectedStatusActivity.value = [{}];
     }
 
+print(meetingTopic.value);
+
     if (type != null) {
       if (type.isNotEmpty) {
         // Jika type tidak kosong, lakukan mapping seperti biasa

@@ -46,17 +46,24 @@ class NotificationTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Reminder',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_1,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
+                  isReminder
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Reminder',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.text_1,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                          ],
+                        )
+                      : SizedBox(),
                   Text(
                     'You have a new quotation from: ',
                     style: GoogleFonts.plusJakartaSans(
@@ -74,16 +81,22 @@ class NotificationTile extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'that need to follow up',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_3,
-                      fontSize: 12,
-                    ),
-                  ),
+                  isReminder
+                      ? Column(
+                          children: [
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              'that need to follow up',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.text_3,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink(),
                 ],
               ),
               Container(

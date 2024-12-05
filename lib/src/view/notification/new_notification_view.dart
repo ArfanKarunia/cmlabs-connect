@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
-class AllNotificationView extends StatelessWidget {
-  AllNotificationView({super.key});
+class NewNotificationView extends StatelessWidget {
+  NewNotificationView({super.key});
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -98,7 +98,7 @@ class AllNotificationView extends StatelessWidget {
                     name: 'Nama Perusahaan',
                     date: DateTime.now(),
                     isRead: index % 2 == 0,
-                    isReminder: true,
+                    isReminder: false,
                   );
                 },
               ),
@@ -122,7 +122,7 @@ class AllNotificationView extends StatelessWidget {
                     name: 'Nama Perusahaan',
                     date: DateTime.now(),
                     isRead: index % 2 == 0,
-                    isReminder: true,
+                    isReminder: false,
                   );
                 },
               ),
