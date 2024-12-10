@@ -14,7 +14,8 @@ class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
 
   final BottomNavController navController = Get.put(BottomNavController());
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController =
+      Get.put(QuotationController());
 
   final List<Widget> _pages = [
     HomeView(),
@@ -24,6 +25,8 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
+
     return Obx(
       () => Scaffold(
         body: SizedBox.expand(

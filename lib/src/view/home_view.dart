@@ -1,4 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/historical_lead_controller.dart';
+import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -40,7 +41,9 @@ class HomeView extends StatefulWidget {
     HistoricalLeadController(),
   );
 
-  RefreshController _refreshController =
+  late ScrollController scrollController;
+
+  final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
@@ -71,9 +74,31 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     super.initState();
     widget.historicalLeadController.clear();
-    // widget.picController.fetchNewPICData();
-    // widget.dashboardController.saveDashboardData();
-    // widget.quotationController.fetchQuotationData();
+    widget.scrollController = ScrollController();
+
+    bool isLoadMoreInProgress = false;
+
+    widget.scrollController.addListener(() async {
+      if (widget.scrollController.position.pixels ==
+          widget.scrollController.position.maxScrollExtent) {
+        if (isLoadMoreInProgress) return;
+
+        isLoadMoreInProgress = true;
+
+        await Future.delayed(Duration(milliseconds: 500));
+
+        await widget.quotationController.loadMoreQuotations();
+
+        isLoadMoreInProgress = false;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller to avoid memory leaks
+    widget.scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -86,6 +111,7 @@ class _HomeViewState extends State<HomeView> {
           final shouldExit = await showDialog<bool>(
             context: context,
             builder: (context) => AlertDialog(
+              backgroundColor: AppColors.white_1,
               title: const Text("Konfirmasi Keluar"),
               content:
                   const Text("Apakah Anda yakin ingin keluar dari aplikasi?"),

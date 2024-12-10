@@ -46,6 +46,14 @@ class ContactpicController extends GetxController {
     note.value = value;
   }
 
+  void clearData(){
+    selectedContactStatus.value = null;
+    selectedContactType.value = null;
+    selectedDetailStatus.value = null;
+    info.value = null;
+    note.value = null;
+  }
+
   void setSearch(String? query) {
     search.value = query;
   }
@@ -103,52 +111,52 @@ class ContactpicController extends GetxController {
   }
 
   final typeContact = [
-    {"value": "email", "label": "Email"},
-    {"value": "whatsapp", "label": "Whatsapp"},
-    {"value": "phone_number", "label": "Phone Number"},
-    {"value": "telegram", "label": "Telegram"},
-    {"value": "linkedin", "label": "LinkedIn"},
-    {"value": "direct_visit", "label": "Direct Visit"},
+    {"value": "Email", "label": "Email"},
+    {"value": "Whatsapp", "label": "Whatsapp"},
+    {"value": "Phone Number", "label": "Phone Number"},
+    {"value": "Telegram", "label": "Telegram"},
+    {"value": "LinkedIn", "label": "LinkedIn"},
+    {"value": "Direct Visit", "label": "Direct Visit"},
   ];
 
   final statusContact = {
-    "email": [
-      {"value": "contacted", "label": "Contacted"},
-      {"value": "not_contacted", "label": "Not Contacted"},
+    "Email": [
+      {"value": "Contacted", "label": "Contacted"},
+      {"value": "Not Contacted", "label": "Not Contacted"},
     ],
-    "whatsapp": [
-      {"value": "contacted", "label": "Contacted"},
-      {"value": "not_contacted", "label": "Not Contacted"},
+    "Whatsapp": [
+      {"value": "Contacted", "label": "Contacted"},
+      {"value": "Not Contacted", "label": "Not Contacted"},
     ],
-    "phone_number": [
-      {"value": "contacted", "label": "Contacted"},
-      {"value": "not_contacted", "label": "Not Contacted"},
+    "Phone Number": [
+      {"value": "Contacted", "label": "Contacted"},
+      {"value": "Not Contacted", "label": "Not Contacted"},
     ],
-    "telegram": [
-      {"value": "contacted", "label": "Contacted"},
-      {"value": "not_contacted", "label": "Not Contacted"},
+    "Telegram": [
+      {"value": "Contacted", "label": "Contacted"},
+      {"value": "Not Contacted", "label": "Not Contacted"},
     ],
-    "linkedin": [
-      {"value": "contacted", "label": "Contacted"},
-      {"value": "not_contacted", "label": "Not Contacted"},
+    "LinkedIn": [
+      {"value": "Contacted", "label": "Contacted"},
+      {"value": "Not Contacted", "label": "Not Contacted"},
     ],
-    "direct_visit": [
-      {"value": "visited", "label": "Visited"},
-      {"value": "not_visited", "label": "Not Visited"},
+    "Direct Visit": [
+      {"value": "Visited", "label": "Visited"},
+      {"value": "Not Visited", "label": "Not Visited"},
     ],
   };
 
   Map<String, List<Map<String, String>>> detailStatusContact = {
-    "contacted": [
-      {"value": "unreachable", "label": "Unreachable"},
-      {"value": "no_futher_response", "label": "No further response"},
+    "Contacted": [
+      {"value": "Unreachable", "label": "Unreachable"},
+      {"value": "No further response", "label": "No further response"},
     ],
-    "not_contacted": [],
-    "visited": [
-      {"value": "met_pic", "label": "Met PIC"},
-      {"value": "failed_met_pic", "label": "Failed met PIC"},
+    "Not Contacted": [],
+    "Visited": [
+      {"value": "Met PIC", "label": "Met PIC"},
+      {"value": "Failed met PIC", "label": "Failed met PIC"},
     ],
-    "not_visited": [],
+    "Not Visited": [],
   };
 
   ContactClientPic createContactPIC(String? info, String? note) {
@@ -159,6 +167,7 @@ class ContactpicController extends GetxController {
       detail: selectedDetailStatus.value?['value'],
       note: note,
     );
+    clearData();
     return contactClientPic;
   }
 }

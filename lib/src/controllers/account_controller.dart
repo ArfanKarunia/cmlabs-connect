@@ -10,6 +10,7 @@ import 'package:cmlabs_connect/src/models/education_model.dart';
 import 'package:cmlabs_connect/src/models/experience_model.dart';
 import 'package:cmlabs_connect/src/models/organization_model.dart';
 import 'package:cmlabs_connect/src/models/publication_model.dart';
+import 'package:cmlabs_connect/src/models/user_model.dart';
 import 'package:cmlabs_connect/src/models/volunteer_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:get/get.dart';
@@ -1452,7 +1453,7 @@ class AccountController extends GetxController {
 
   var profileUsername = Rx<String?>(null);
   var profileFullName = Rx<String?>(null);
-  var profileRole = Rx<String?>(null);
+  var profileRole = Rx<Map<String, dynamic>?>(null);
   var profileNumber = Rx<String?>(null);
   var profileLinkedin = Rx<String?>(null);
   var profileWebsite = Rx<String?>(null);
@@ -1476,14 +1477,14 @@ class AccountController extends GetxController {
         ),
       );
 
+
       if (response.statusCode == 200 && response.data != null) {
         var responseData = response.data['data'];
-
-        print("data: ${responseData['username']}");
+        User userData = User.fromMap(responseData);
+        userController.saveUser(userData);
 
         profileUsername.value = responseData['username'];
         profileFullName.value = responseData['name'];
-        profileRole.value = responseData['job_position'];
         profileNumber.value = responseData['phone'];
         profileLinkedin.value = responseData['linkedin'];
         profileWebsite.value = responseData['link'];
@@ -1491,6 +1492,22 @@ class AccountController extends GetxController {
         profileMedium.value = responseData['medium'];
         profileQuora.value = responseData['quora'];
         profileTiktok.value = responseData['tiktok'];
+
+        if (responseData['job_position'] != null ||
+            responseData['job_position'] != '') {
+          var jobPositionId = responseData['job_position'];
+          if (jobPositionId != null || jobPositionId != '') {
+            Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
+              (role) => role['id'] == int.parse(jobPositionId),
+            );
+            // Set profileRole based on the matched role
+            if (matchedRole != null) {
+              profileRole.value = matchedRole;
+            } else {
+              profileRole.value = null;
+            }
+          }
+        }
       }
     } catch (e) {
       print('Error fetching status data: $e');
@@ -1498,11 +1515,13 @@ class AccountController extends GetxController {
   }
 
   Future<void> editProfile() async {
+    print(profileRole.value?['id']);
     try {
       // Create FormData for sending a file
       dioPkg.FormData formData = dioPkg.FormData.fromMap({
         "name": profileUsername.value,
         "username": profileFullName.value,
+        "job_position": profileRole.value?['id'],
         "phone": profileNumber.value,
         "linkedin": profileLinkedin.value,
         "instagram": profileInstagram.value,
@@ -1568,6 +1587,13 @@ class AccountController extends GetxController {
         selectedImage.value = imageFile;
       }
     }
+  }
+
+  void addRole(Map<String, dynamic> data) {
+    print("selected: $data");
+
+    profileRole.value = data;
+    print(profileRole.value);
   }
 
   Future<void> fetchRoleList() async {

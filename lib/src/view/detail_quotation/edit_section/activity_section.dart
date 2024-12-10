@@ -15,14 +15,13 @@ class ActivitySection extends StatelessWidget {
     super.key,
   });
 
-  final EditQuotationController detailQuotationController =
+  final EditQuotationController editQuotationController =
       Get.put(EditQuotationController());
 
   final ActivityController activityController = Get.put(ActivityController());
 
   @override
   Widget build(BuildContext context) {
-    print("meeting type ${activityController.selectedTypeActivity.value[0]}");
     return Container(
       child: SingleChildScrollView(
         child: Column(
@@ -52,6 +51,8 @@ class ActivitySection extends StatelessWidget {
                         activityController.meetingSchedule.value[index];
                     var noteController =
                         activityController.meetingNote.value[index];
+
+                    print(topicController.text);
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -68,6 +69,8 @@ class ActivitySection extends StatelessWidget {
                         ),
                         TextFormField(
                           controller: topicController,
+                          onChanged: (value) =>
+                              editQuotationController.onFieldChanged(),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             color: AppColors.text_1,
@@ -111,6 +114,8 @@ class ActivitySection extends StatelessWidget {
                           onTap: () async {
                             FocusScope.of(context).requestFocus(
                                 FocusNode()); // Hapus fokus untuk menghindari keyboard tampil
+
+                            // Pilih tanggal
                             final selectedDate = await showDatePicker(
                               context: context,
                               initialDate: DateTime.now(),
@@ -119,16 +124,37 @@ class ActivitySection extends StatelessWidget {
                             );
 
                             if (selectedDate != null) {
-                              final formattedDate =
-                                  DateFormat('dd-MM-yyyy').format(selectedDate);
-                              scheduleController.text =
-                                  formattedDate; // Setel tanggal yang dipilih
+                              // Pilih waktu
+                              final selectedTime = await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+
+                              if (selectedTime != null) {
+                                // Gabungkan tanggal dan waktu
+                                final dateTime = DateTime(
+                                  selectedDate.year,
+                                  selectedDate.month,
+                                  selectedDate.day,
+                                  selectedTime.hour,
+                                  selectedTime.minute,
+                                );
+
+                                // Format tanggal dan waktu ke dalam format yang diinginkan
+                                final formattedDateTime =
+                                    DateFormat('yyyy-MM-dd HH:mm:ss')
+                                        .format(dateTime);
+
+                                // Setel tanggal dan waktu yang dipilih ke controller
+                                scheduleController.text =
+                                    formattedDateTime; // Setel ke TextFormField
+                                activityController
+                                        .meetingSchedule.value[index].text =
+                                    formattedDateTime; // Setel ke meetingSchedule
+                                activityController.meetingSchedule.refresh();
+                                editQuotationController.onFieldChanged();
+                              }
                             }
-                          },
-                          onChanged: (value) {
-                            // Tampilkan nilai yang dipilih
-                            print(
-                                "Updated schedule: ${scheduleController.text}");
                           },
                           readOnly: true,
                           style: GoogleFonts.plusJakartaSans(
@@ -202,6 +228,7 @@ class ActivitySection extends StatelessWidget {
                                 activityController.addStatus(index, value);
                                 activityController.selectedStatusActivity
                                     .refresh();
+                                editQuotationController.onFieldChanged();
                               },
                             );
 
@@ -215,8 +242,9 @@ class ActivitySection extends StatelessWidget {
                           name: "Type",
                           child: Obx(
                             () {
-                              if (activityController
-                                  .selectedTypeActivity.value[index].isEmpty) {
+                              if (activityController.selectedTypeActivity
+                                      .value[index].length ==
+                                  0) {
                                 return Container(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
@@ -229,6 +257,8 @@ class ActivitySection extends StatelessWidget {
                                 );
                               } else {
                                 return ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: AlwaysScrollableScrollPhysics(),
                                   scrollDirection: Axis.horizontal,
                                   itemCount: activityController
                                       .selectedTypeActivity.value[index].length,
@@ -248,6 +278,8 @@ class ActivitySection extends StatelessWidget {
                                             activityController
                                                 .selectedTypeActivity
                                                 .refresh();
+                                            editQuotationController
+                                                .onFieldChanged();
                                           },
                                         ),
                                         (type?.length == index2)
@@ -271,11 +303,13 @@ class ActivitySection extends StatelessWidget {
                               },
                             )?.then(
                               (value) {
-                                for (var data in value) {
-                                  activityController.addType(index, data);
-                                }
+                                print(value);
+                                activityController.addTypeActivity(
+                                    index, value);
                                 activityController.selectedTypeActivity
                                     .refresh();
+
+                                editQuotationController.onFieldChanged();
                               },
                             );
                           },
@@ -317,8 +351,8 @@ class ActivitySection extends StatelessWidget {
                                       onChanged: (bool value) {
                                         activityController
                                             .isAvailableToUser[index] = value;
-                                        print(activityController
-                                            .isAvailableToUser[index]);
+                                        editQuotationController
+                                            .onFieldChanged();
                                       },
                                     ),
                                   ),
@@ -343,6 +377,8 @@ class ActivitySection extends StatelessWidget {
                         ),
                         TextFormField(
                           controller: noteController,
+                          onChanged: (value) =>
+                              editQuotationController.onFieldChanged(),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             color: AppColors.text_1,
@@ -376,6 +412,7 @@ class ActivitySection extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     activityController.deleteActivity(index);
+                                    editQuotationController.onFieldChanged();
                                   },
                                   style: ButtonStyle(
                                     backgroundColor:
@@ -438,6 +475,7 @@ class ActivitySection extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   activityController.addMoreActivity();
+                  editQuotationController.onFieldChanged();
                 },
                 style: ButtonStyle(
                   backgroundColor:
@@ -487,6 +525,7 @@ class ActivitySection extends StatelessWidget {
             ),
             TextFormField(
               controller: activityController.remarksMeeting,
+              onChanged: (value) => editQuotationController.onFieldChanged(),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: AppColors.text_1,
@@ -527,6 +566,7 @@ class ActivitySection extends StatelessWidget {
             ),
             TextFormField(
               controller: activityController.addtionalNoteMeeting,
+              onChanged: (value) => editQuotationController.onFieldChanged(),
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 14,
                 color: AppColors.text_1,

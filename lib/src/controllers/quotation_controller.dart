@@ -78,8 +78,8 @@ class QuotationController extends GetxController {
 
   Future<void> fetchQuotationData({bool isLoadMore = false}) async {
     try {
-      if (isLoadMore) {
-        isLoadingMore.value = true;
+      if (!isLoadMore) {
+        start.value = 0;
       }
 
       // Cek apakah data sudah ada di Hive (local storage)
@@ -114,7 +114,9 @@ class QuotationController extends GetxController {
                   quotations; // Mengganti list dengan data baru
             }
 
-            newestIdQuotation.value = quotations.first.id;
+            if (!isLoadMore) {
+              newestIdQuotation.value = quotations.first.id;
+            }
             newQuotationCount.value = 0;
 
             // Simpan data baru ke Hive
@@ -171,6 +173,10 @@ class QuotationController extends GetxController {
           }).toList();
 
           var newQuotationId = quotations.first.id;
+          print("id data baru: $newQuotationId");
+          print("id data saat ini: ${newestIdQuotation.value}");
+
+          newQuotationCount.value = 0;
 
           if (newestIdQuotation.value < newQuotationId) {
             newQuotationCount.value = newQuotationId - newestIdQuotation.value;

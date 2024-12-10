@@ -1,5 +1,4 @@
 import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
-import 'package:cmlabs_connect/src/controllers/edit_quotation/general_info_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/url_tracking_controller.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
@@ -30,8 +29,6 @@ class EditQuotationView extends StatefulWidget {
   final HistoryChangesController historyChangesController =
       Get.put(HistoryChangesController());
 
-  final GeneralInfoController generalInfoController = Get.put(GeneralInfoController());
-
   @override
   State<EditQuotationView> createState() => _EditQuotationViewState();
 }
@@ -47,24 +44,18 @@ class _EditQuotationViewState extends State<EditQuotationView> {
   //   super.dispose();
   // }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Menjalankan aksi pertama kali saat halaman dibuka
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     widget.editQuotationController.update();
-  //     // widget.detailQuotationController.isChanged.value = false;
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    // Menjalankan aksi pertama kali saat halaman dibuka
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.editQuotationController.loadExistingData(widget.quotation);
+      widget.historyChangesController.fetchHistoryChanges(widget.quotation.id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    // widget.editQuotationController.loadExistingData(widget.quotation);
-    widget.editQuotationController.loadExistingData(widget.quotation);
-    widget.historyChangesController.fetchHistoryChanges(widget.quotation.id);
-
-
-    print(widget.quotation.id);
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -141,6 +132,9 @@ class _EditQuotationViewState extends State<EditQuotationView> {
                                       widget.urlTrackingController
                                           .changeStatusTracking(
                                               widget.quotation.id, value);
+
+                                      widget.editQuotationController
+                                          .onFieldChanged();
                                     },
                                   ),
                                 ),

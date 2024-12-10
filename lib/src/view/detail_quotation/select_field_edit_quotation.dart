@@ -1,4 +1,6 @@
+import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -18,6 +20,8 @@ class SelectFieldEditQuotation extends StatelessWidget {
   bool isMandatory;
   VoidCallback onPressed;
   Widget child;
+
+  final EditQuotationController editQuotationController = Get.put(EditQuotationController());
 
   @override
   Widget build(BuildContext context) {
