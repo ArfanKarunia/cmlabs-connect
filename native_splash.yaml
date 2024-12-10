@@ -1,0 +1,10 @@
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+
+  color: "#18A0FB"
+
+  android_12:
+    color: "#18A0FB"
+    image: "assets/images/logos/cmlabs_splash.png"
