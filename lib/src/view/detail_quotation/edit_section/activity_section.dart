@@ -40,6 +40,14 @@ class ActivitySection extends StatelessWidget {
             ),
             Obx(
               () {
+                print("note: ${activityController.meetingTopic.value.length}");
+                print("note: ${activityController.meetingNote.value.length}");
+                print(
+                    "schedule: ${activityController.meetingSchedule.value.length}");
+                print(
+                    "type: ${activityController.selectedTypeActivity.value.length}");
+                print(
+                    "status ${activityController.selectedStatusActivity.value.length}");
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),

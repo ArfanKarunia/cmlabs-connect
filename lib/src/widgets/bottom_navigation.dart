@@ -91,6 +91,7 @@ class BottomNavigation extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         quotationController.resetQuotatioinData();
+        quotationController.fetchCheckNewData();
         controller.changePage(index);
       },
       child: Container(

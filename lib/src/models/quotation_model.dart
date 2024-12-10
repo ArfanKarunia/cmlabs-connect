@@ -257,7 +257,13 @@ class QuotationData {
         if (json['type'] is String) {
           types = [json['type']];
         } else if (json['type'] is List) {
-          types = List<String>.from(json['type']);
+          // Check if the list contains only null values
+          if (json['type'].every((element) => element == null)) {
+            types = []; // Set to empty list if all elements are null
+          } else {
+            types = List<String>.from(json['type']
+                .where((element) => element != null)); // Filter out nulls
+          }
         }
       }
 

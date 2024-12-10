@@ -1,1 +1,1 @@
-enum StatusLead { newLead, followedUp, accepted, rejected, onHold }
+enum StatusLead { newLead, followedUp, accepted, rejected, onHold}

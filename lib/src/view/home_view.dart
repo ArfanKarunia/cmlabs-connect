@@ -28,6 +28,8 @@ class HomeView extends StatefulWidget {
   final BottomNavController navController = Get.put(
     BottomNavController(),
   );
+
+
   final UserController userController = Get.put(
     UserController(),
   );
@@ -73,6 +75,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+
     widget.historicalLeadController.clear();
     widget.scrollController = ScrollController();
 
@@ -106,53 +109,103 @@ class _HomeViewState extends State<HomeView> {
     User? user = widget.userController.user.value;
     user!.picUrl;
 
-    return WillPopScope(
-        onWillPop: () async {
-          final shouldExit = await showDialog<bool>(
-            context: context,
-            builder: (context) => AlertDialog(
-              backgroundColor: AppColors.white_1,
-              title: const Text("Konfirmasi Keluar"),
-              content:
-                  const Text("Apakah Anda yakin ingin keluar dari aplikasi?"),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text("Batal"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    // Langsung keluar aplikasi
-                    if (Platform.isAndroid) {
-                      SystemNavigator.pop(); // Untuk Android
-                    } else if (Platform.isIOS) {
-                      exit(0); // Untuk iOS
-                    }
-                  },
-                  child: const Text("Keluar"),
-                ),
-              ],
-            ),
-          );
-          return shouldExit ?? false;
-        },
-        child: Scaffold(
-          backgroundColor: Color(0xFFF9F9F9),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: AppColors.dashboardContainer),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Scaffold(
+      backgroundColor: Color(0xFFF9F9F9),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.dashboardContainer),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColors.white,
+                              image: DecorationImage(
+                                image: (user.picUrl != null &&
+                                        user.picUrl!.isNotEmpty)
+                                    ? NetworkImage(user.picUrl!)
+                                    : const AssetImage(
+                                        "assets/icons/cmlabs_icon.png",
+                                      ) as ImageProvider,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 15,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${user.name}",
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.text_1,
+                                ),
+                              ),
+                              Text(
+                                widget.userController.roleName.value,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  color: AppColors.text_2,
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              Get.toNamed(AppRoutes.notification);
+                            },
+                            icon: const Icon(
+                              Icons.notifications_outlined,
+                              color: AppColors.text_1,
+                              size: 35,
+                            ),
+                          ),
+                          Positioned(
+                            top: 10,
+                            right: 13,
+                            child: Container(
+                              height: 10,
+                              width: 10,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.danger,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  Obx(
+                    () {
+                      return Container(
+                        padding: EdgeInsets.only(top: 20),
+                        child: Column(
+
                           children: [
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,

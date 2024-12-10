@@ -20,7 +20,6 @@ class _LoginViewState extends State<LoginView> {
   final AuthenticationController authController =
       Get.put(AuthenticationController());
 
-  // final ClientSourceController clientSourceController = Get.put(ClientSourceController());
 
   bool isCheckedRememberme = false;
 
@@ -143,8 +142,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    // emailController.text = "rifqiiiardhian@gmail.com";
-    // passwordController.text = "Rifqi@1310";
     return Scaffold(
       backgroundColor: Color(0xFFF1F1F1),
       body: Stack(
@@ -283,7 +280,7 @@ class _LoginViewState extends State<LoginView> {
                                     authController.isLoading.value
                                         ? null
                                         : _submitForm();
-                    
+
                                     // Navigasi ke halaman /home
                                   }
                                 },

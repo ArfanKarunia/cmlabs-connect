@@ -561,6 +561,7 @@ class ClientSidePICSection extends StatelessWidget {
                           onPressed: () {
                             Get.toNamed(
                               AppRoutes.addContactClientPIC,
+                              arguments: index
                             )?.then(
                               (value) {
                                 clientPicController.addContactPIC(index, value);
@@ -645,7 +646,7 @@ class ClientSidePICSection extends StatelessWidget {
                       width: 10,
                     ),
                     Text(
-                      "Add More",
+                      "Add More PIC",
                       style: GoogleFonts.plusJakartaSans(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,

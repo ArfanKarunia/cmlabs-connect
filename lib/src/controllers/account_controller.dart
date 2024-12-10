@@ -1477,9 +1477,21 @@ class AccountController extends GetxController {
         ),
       );
 
-
       if (response.statusCode == 200 && response.data != null) {
         var responseData = response.data['data'];
+
+        String? jobPosition = responseData['job_position'];
+        String? role = getRoleName(jobPosition, roleList.value);
+
+        if (role == null) {
+          if (responseData['role_name'] != null ||
+              responseData['role_name'] != '') {
+            userController.roleName.value = responseData['role_name'];
+          }
+        } else {
+          userController.roleName.value = role;
+        }
+
         User userData = User.fromMap(responseData);
         userController.saveUser(userData);
 
@@ -1501,11 +1513,7 @@ class AccountController extends GetxController {
               (role) => role['id'] == int.parse(jobPositionId),
             );
             // Set profileRole based on the matched role
-            if (matchedRole != null) {
-              profileRole.value = matchedRole;
-            } else {
-              profileRole.value = null;
-            }
+            profileRole.value = matchedRole;
           }
         }
       }
@@ -1567,6 +1575,21 @@ class AccountController extends GetxController {
       showErrorToast("Error: An unexpected error occurred.");
       print('Error fetching status data: $e');
     }
+  }
+
+  String? getRoleName(String? jobPositionId, List<Map<String, dynamic>> roles) {
+    if (jobPositionId == null) {
+      return null; // Default role if jobPositionId is null
+    }
+
+    // Find the role that matches the job position ID
+    var matchedRole = roles.firstWhere(
+      (role) => role['id'].toString() == jobPositionId,
+      orElse: () => {}, // Return null if no match is found
+    );
+
+    // Return the role name if found, otherwise return 'User'
+    return matchedRole != {} ? matchedRole['name'] : null;
   }
 
   Future<void> pickImage() async {
