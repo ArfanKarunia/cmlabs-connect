@@ -1,3 +1,5 @@
+import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
+import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
@@ -11,7 +13,7 @@ import '../utils/bottom_sheet.dart';
 import '../utils/color.dart';
 
 class QuotationListTile extends StatelessWidget {
-  const QuotationListTile({
+  QuotationListTile({
     super.key,
     required this.quotation,
     required this.onDelete,
@@ -21,6 +23,8 @@ class QuotationListTile extends StatelessWidget {
   final Quotation quotation;
   final VoidCallback onDelete;
   final VoidCallback onChatWA;
+
+  final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
 
   @override
   Widget build(BuildContext context) {
@@ -46,9 +50,9 @@ class QuotationListTile extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        detailQuotationController.quotation.value = quotation;
         Get.toNamed(
           '/detailQuotation',
-          arguments: {'quotation': quotation},
         );
       },
       child: Container(
@@ -207,20 +211,19 @@ class QuotationListTile extends StatelessWidget {
                         children: [
                           Text(
                             (quotation.data.company?.isEmpty ?? true)
-                                ? "Nama Perusahaan"
+                                ? "N/A"
                                 : quotation.data.company!,
                             maxLines: 1,
                             style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.text_1,
+                              color: (quotation.data.company?.isEmpty ?? true) ? AppColors.text_3 :AppColors.text_1,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            (quotation.data.category.isNotEmpty
-                                ? quotation.data.category.first ?? '-'
-                                : quotation.section ?? '-'),
+                            quotation.section != 'ads' ? 
+                            StringUtils.toCamelCase(quotation.section) : quotation.data.category.join(','),
                             maxLines: 1, // Membatasi hanya 1 baris
                             overflow: TextOverflow
                                 .ellipsis, // Menambahkan ellipsis (...) jika terlalu panjang

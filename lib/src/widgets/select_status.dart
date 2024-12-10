@@ -48,7 +48,8 @@ class SelectStatus extends StatelessWidget {
           Expanded(
             child: Obx(
               () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal, // Menjadikan scroll horizontal
+                scrollDirection:
+                    Axis.horizontal, // Menjadikan scroll horizontal
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -61,7 +62,7 @@ class SelectStatus extends StatelessWidget {
                             horizontal: 7,
                             vertical: 3,
                           ),
-                          decoration: (controller.filterStatus.isEmpty)
+                          decoration: (controller.filterStatus.value == null)
                               ? BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
                                   color: AppColors.primary,
@@ -72,7 +73,7 @@ class SelectStatus extends StatelessWidget {
                                 ),
                           child: Center(
                             child: Text('Recently',
-                                style: (controller.filterStatus.isEmpty)
+                                style: (controller.filterStatus.value == null)
                                     ? GoogleFonts.plusJakartaSans(
                                         color: AppColors.white,
                                         fontSize: 11,
@@ -132,21 +133,16 @@ class SelectStatus extends StatelessWidget {
                                   padding: const EdgeInsets.only(right: 8),
                                   child: GestureDetector(
                                     onTap: () {
-                                      if (controller.filterStatus
-                                          .contains(status)) {
-                                        controller.deleteFilterStatus(status);
-                                      } else {
-                                        controller.addFilterStatus(status);
-                                      }
+                                      controller.addFilterStatus(status);
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 7,
                                         vertical: 3,
                                       ),
-                                      decoration: (controller.filterStatus
-                                              .contains(StatusLead
-                                                  .values[index]))
+                                      decoration: (controller
+                                                  .filterStatus.value ==
+                                              StatusLead.values[index])
                                           ? BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(5),
@@ -161,10 +157,8 @@ class SelectStatus extends StatelessWidget {
                                         child: Text(
                                           label,
                                           style: (controller
-                                                      .filterStatus
-                                                      .isNotEmpty &&
-                                                  controller.filterStatus
-                                                      .contains(status))
+                                                      .filterStatus.value ==
+                                                  StatusLead.values[index])
                                               ? GoogleFonts.plusJakartaSans(
                                                   color: AppColors.white,
                                                   fontSize: 11,

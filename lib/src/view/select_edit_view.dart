@@ -75,7 +75,7 @@ class SelectEditView extends StatelessWidget {
                     fontWeight: FontWeight.w400,
                   ),
                   decoration: InputDecoration(
-                    hintText: "Search $selectData",
+                    hintText: "Search ${formatText(selectData)}",
                     hintStyle: GoogleFonts.plusJakartaSans(
                       color: AppColors.text_4,
                       fontSize: 12,
@@ -137,7 +137,7 @@ class SelectEditView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: Text(
-                  "Select $selectData",
+                  "Select ${formatText(selectData)}",
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 10,
                     color: AppColors.text_4,
@@ -161,6 +161,27 @@ class SelectEditView extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final data = controller
                             .searchData(selectData.toLowerCase())[index];
+
+                        print(controller
+                            .searchData(selectData.toLowerCase()));
+
+                        if (controller
+                            .searchData(selectData.toLowerCase()).length == 0) {
+                          return SizedBox(
+                            height: 200,
+                            width: double.infinity,
+                            child: Center(
+                              child: Text(
+                                "No Data",
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.text_4,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
 
                         // Hanya bungkus bagian yang perlu dipantau dengan Obx
                         return GestureDetector(

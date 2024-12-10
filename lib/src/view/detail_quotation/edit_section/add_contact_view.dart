@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/contactPIC_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,9 @@ import '../../../utils/color.dart';
 import '../../../widgets/custom_buttom.dart';
 
 class AddContactView extends StatelessWidget {
-  AddContactView({super.key});
+  AddContactView({super.key, required this.indexClientPIC});
 
+  final int indexClientPIC;
 
   final TextEditingController infoController = TextEditingController();
   final TextEditingController noteController = TextEditingController();
@@ -18,10 +20,16 @@ class AddContactView extends StatelessWidget {
   final ContactpicController contactpicController =
       Get.put(ContactpicController());
 
+  final ClientPicController clientPicController =
+      Get.put(ClientPicController());
+
   @override
   Widget build(BuildContext context) {
     print(
         "isi dari contact value : ${contactpicController.selectedContactType.value}");
+    var lenghtContact =
+        clientPicController.selectedContactType.value[indexClientPIC].length;
+    print("Banyak Contact: $lenghtContact");
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -45,7 +53,7 @@ class AddContactView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Contact 1",
+                "Contact ${lenghtContact + 1}",
                 style: GoogleFonts.plusJakartaSans(
                   color: AppColors.text_1,
                   fontSize: 16,
@@ -131,7 +139,7 @@ class AddContactView extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
                       color: AppColors.text_4),
-                  hintText: "Select Contact Type",
+                  hintText: "Fill the contact based on type above",
                   errorStyle: GoogleFonts.plusJakartaSans(
                       color: AppColors.danger,
                       fontSize: 12,
@@ -261,8 +269,9 @@ class AddContactView extends StatelessWidget {
                 height: 51,
                 child: ElevatedButton(
                   onPressed: () {
-                    var dataContactPIC = contactpicController.createContactPIC(infoController.text, noteController.text);
-                    
+                    var dataContactPIC = contactpicController.createContactPIC(
+                        infoController.text, noteController.text);
+
                     Get.back(result: dataContactPIC);
                   },
                   style: ButtonStyle(

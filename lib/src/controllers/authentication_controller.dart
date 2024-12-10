@@ -17,6 +17,8 @@ class AuthenticationController extends GetxController {
 
   var isLoading = false.obs;
   var isRememberMe = false.obs;
+  final roleList = Rx<List<Map<String, dynamic>>>([]);
+
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
@@ -34,27 +36,41 @@ class AuthenticationController extends GetxController {
         data: {'email': email, 'password': password},
       );
 
-      print("Response status: ${response.statusCode}");
-      print("Response data: ${response.data}");
-
       if (response.statusCode == 200) {
         var data = response.data;
-
-        String message = data['message'];
-        User userData = User.fromMap(data['data_user']);
-
-        userController.saveUser(userData);
-        userController.password.value = password;
 
         accesToken.value = data['access_token'];
         tokenType.value = data['token_type'];
 
-        showSuccessToast('$message, Selamat datang ${userData.name}');
+        await fetchRoleList();
+        
+        var roles = roleList.value;
+
+        String message = data['message'];
+
+        var data_user = data['data_user'];
+        String? jobPosition = data_user['job_position'];
+        String? role = getRoleName(jobPosition, roles);
+
+        if (role == null) {
+          if (data_user['role_name'] != null || data_user['role_name'] != '') {
+            userController.roleName.value = data_user['role_name'];
+          }
+        } else {
+          userController.roleName.value = role;
+        }
+
+        User user = User.fromMap(data_user);
+
+        userController.saveUser(user);
+        userController.password.value = password;
+
+        showSuccessToast('$message, Selamat datang ${user.name}');
         Get.toNamed('/home');
 
         var feedback = {
           "status": 'Success',
-          "message": 'Login Berhasil, Selamat datang ${userData.name}',
+          "message": 'Login Berhasil, Selamat datang ${user.name}',
         };
 
         return feedback;
@@ -94,7 +110,6 @@ class AuthenticationController extends GetxController {
   }
 
   Future<void> logout() async {
-
     try {
       dio.options.headers = {
         'Authorization': 'Bearer ${accesToken.value}',
@@ -105,9 +120,6 @@ class AuthenticationController extends GetxController {
       var response = await dio.post(
         '$baseUrl/auth/logout',
       );
-
-      print("Response data: ${response.statusCode}");
-      print("Response data: ${response}");
 
       if (response.statusCode == 200) {
         userController.user.value = null;
@@ -136,7 +148,6 @@ class AuthenticationController extends GetxController {
 
     var body = jsonEncode(requestData);
 
-    print(body);
     try {
       var response = await http.post(
         Uri.parse('$baseUrl/profile/change-password'),
@@ -158,6 +169,48 @@ class AuthenticationController extends GetxController {
       }
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
+      print('Error fetching status data: $e');
+    }
+  }
+
+  String? getRoleName(String? jobPositionId, List<Map<String, dynamic>> roles) {
+    if (jobPositionId == null) {
+      return null; // Default role if jobPositionId is null
+    }
+
+    // Find the role that matches the job position ID
+    var matchedRole = roles.firstWhere(
+      (role) => role['id'].toString() == jobPositionId,
+      orElse: () => {}, // Return null if no match is found
+    );
+
+    // Return the role name if found, otherwise return 'User'
+    return matchedRole != {} ? matchedRole['name'] : null;
+  }
+
+  Future<void> fetchRoleList() async {
+    try {
+      String? accessToken = accesToken.value;
+
+      final response = await dio.get(
+        '$baseUrl/profile/position',
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data['data'] as List;
+
+        // Simpan data specialization
+        roleList.value = responseData
+            .map((item) => {
+                  'id': item['id'],
+                  'name': item['name'],
+                })
+            .toList();
+      }
+    } catch (e) {
       print('Error fetching status data: $e');
     }
   }

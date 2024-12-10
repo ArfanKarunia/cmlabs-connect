@@ -15,12 +15,13 @@ class QuotationController extends GetxController {
   var quotationList = <Quotation>[].obs;
   var isLoadingMore = false.obs;
   var start = 0.obs;
-  final limit = 10;
+  var limit = 10.obs;
   var newestIdQuotation = Rx<int>(0);
   var newQuotationCount = Rx<int>(0);
 
   var filterCategory = <String>[].obs;
-  var filterStatus = <StatusLead>[].obs;
+  // var filterStatus = <StatusLead>[].obs;
+  var filterStatus = Rx<StatusLead?>(null);
   var filterClientSource = <String>[].obs;
   var filterPic = <String>[].obs;
 
@@ -76,25 +77,31 @@ class QuotationController extends GetxController {
 
   */
 
-  Future<void> fetchQuotationData({bool isLoadMore = false}) async {
+  Future<void> fetchQuotationData(
+      {bool isLoadMore = false, bool refreshData = false}) async {
     try {
-      if (!isLoadMore) {
-        start.value = 0;
-      }
+      // if (!isLoadMore) {
+      //   start.value = 0;
+      // }
 
       // Cek apakah data sudah ada di Hive (local storage)
       if (quotationBox!.isNotEmpty) {
         // Jika data ada di local storage, ambil data dari Hive
         var localData =
-            quotationBox!.values.skip(start.value).take(limit).toList();
+            quotationBox!.values.skip(start.value).take(limit.value).toList();
         quotationList.addAll(localData);
         print("Data diambil dari local storage.");
       } else {
         // Jika data belum ada di local storage, fetch data dari API
         String? accessToken = authenticationController.accesToken.value;
 
+        if (refreshData) {
+          start.value = 0;
+          limit.value = quotationList.length;
+        }
+
         final response = await dio.get(
-          '$baseUrl/dashboard/data_recent_quotation?start=${start.value}&limit=$limit',
+          '$baseUrl/dashboard/data_recent_quotation?start=${start.value}&limit=${limit.value}',
           options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
         );
 
@@ -118,6 +125,9 @@ class QuotationController extends GetxController {
               newestIdQuotation.value = quotations.first.id;
             }
             newQuotationCount.value = 0;
+            if (refreshData) {
+              limit.value = 10;
+            }
 
             // Simpan data baru ke Hive
             // saveDataToHive(quotations);
@@ -147,7 +157,6 @@ class QuotationController extends GetxController {
 
   void checkNewQuotationsPeriodically() {
     Timer.periodic(Duration(seconds: 60), (timer) async {
-      print("Check new data");
       await fetchCheckNewData();
     });
   }
@@ -173,8 +182,6 @@ class QuotationController extends GetxController {
           }).toList();
 
           var newQuotationId = quotations.first.id;
-          print("id data baru: $newQuotationId");
-          print("id data saat ini: ${newestIdQuotation.value}");
 
           newQuotationCount.value = 0;
 
@@ -183,8 +190,6 @@ class QuotationController extends GetxController {
             newestIdQuotation.value = newQuotationId;
           }
 
-          print("jumlah data baru: ${newQuotationCount.value}");
-          print("id Terbaru: ${newestIdQuotation.value}");
         }
       }
     } catch (e) {
@@ -212,8 +217,7 @@ class QuotationController extends GetxController {
 
   */
   Future<void> loadMoreQuotations() async {
-    start.value += limit;
-    print(start.value);
+    start.value += limit.value;
     await fetchQuotationData(isLoadMore: true);
   }
 
@@ -223,7 +227,6 @@ class QuotationController extends GetxController {
 
     clearFilter();
     fetchQuotationData();
-    print("Jumlah Quotation saat ini: ${quotationList.length}");
   }
 
   /*
@@ -233,16 +236,23 @@ class QuotationController extends GetxController {
     Fungsi ini digunakan untuk menyimpan data inputan filter Status
 
   */
-  void addFilterStatus(StatusLead status) {
-    filterStatus.add(status);
-  }
+  // void addFilterStatus(StatusLead status) {
+  //   filterStatus.add(status);
+  // }
 
-  void deleteFilterStatus(StatusLead status) {
-    filterStatus.remove(status);
+  // void deleteFilterStatus(StatusLead status) {
+  //   filterStatus.remove(status);
+  // }
+
+  // void clearFilterStatus() {
+  //   filterStatus.clear();
+  // }
+  void addFilterStatus(StatusLead status) {
+    filterStatus.value = status; // Set the single status
   }
 
   void clearFilterStatus() {
-    filterStatus.clear();
+    filterStatus.value = null; // Clear the status
   }
 
   void clearFilterClientSource() {
@@ -327,7 +337,7 @@ class QuotationController extends GetxController {
   */
   void clearFilter() {
     search.value = null;
-    filterStatus.clear();
+    filterStatus.value = null;
     filterCategory.clear();
     filterClientSource.clear();
 
@@ -345,17 +355,11 @@ class QuotationController extends GetxController {
   List<Quotation> get filteredQuotations {
     List<Quotation> result = quotationList;
 
-    if (filterStatus.isEmpty || filterClientSource.isEmpty) {
-      result = quotationList;
-    }
-
-    // Jika filterStatus tidak kosong, lakukan filter berdasarkan status lead
-    if (filterStatus.isNotEmpty) {
-      List<int> filterStatusIndexes =
-          filterStatus.map((status) => status.index).toList();
+    if (filterStatus.value != null) {
+      int filterStatusIndex = filterStatus.value!.index;
 
       result = result
-          .where((quotation) => filterStatusIndexes.contains(quotation.status))
+          .where((quotation) => quotation.status == filterStatusIndex)
           .toList();
     }
 
@@ -449,7 +453,6 @@ class QuotationController extends GetxController {
     }
 
     final url = Uri.parse("https://wa.me/$phoneNumber");
-    print(url);
 
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }

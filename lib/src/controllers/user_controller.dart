@@ -1,4 +1,3 @@
-
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -8,6 +7,8 @@ import '../models/user_model.dart';
 class UserController extends GetxController {
   var user = Rx<User?>(null);
   var password = Rx<String?>(null);
+  var roleName = "User".obs;
+
 
   Box<User>? userBox;
 
@@ -19,7 +20,7 @@ class UserController extends GetxController {
 
     // Buka box sebelum melakukan inisialisasi user
     userBox = await Hive.openBox<User>('userBox');
-    
+
     // Ambil user setelah box terbuka
     user.value = getUser();
   }
@@ -52,6 +53,4 @@ class UserController extends GetxController {
     }
     return null;
   }
-
-  
 }

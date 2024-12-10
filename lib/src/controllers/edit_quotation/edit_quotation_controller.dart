@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
+import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/activity_controller.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
@@ -50,6 +51,7 @@ class EditQuotationController extends GetxController {
 
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
+  final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
   final GeneralInfoController generalInfoController =
       Get.put(GeneralInfoController());
   final ClientPicController clientPicController =
@@ -71,10 +73,12 @@ class EditQuotationController extends GetxController {
 
   */
 
-  void loadExistingData(Quotation quotation) async {
+  void loadExistingData() async {
     await generalInfoController.fetchList("pic");
     await generalInfoController.fetchList("priority");
     await generalInfoController.fetchList("status");
+
+    var quotation = detailQuotationController.quotation.value!;
 
     // print("${quotation.data.pic}");
     print("${quotation.data.clientPIC}");

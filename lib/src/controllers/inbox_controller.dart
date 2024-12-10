@@ -39,7 +39,7 @@ class InboxController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    fetchQuotationData();
+    // fetchQuotationData();
   }
 
   /*
@@ -75,7 +75,6 @@ class InboxController extends GetxController {
           if (isLoadMore) {
             quotationList.addAll(quotations); // Menambah data baru
 
-            print("Jumlah quotation list sekarang: ${quotationList.length}");
           } else {
             quotationList.value = quotations; // Mengganti list dengan data baru
           }
@@ -99,7 +98,6 @@ class InboxController extends GetxController {
   */
   Future<void> loadMoreQuotations() async {
     start.value += limit;
-    print(start.value);
     await fetchQuotationData(isLoadMore: true);
   }
 
@@ -322,7 +320,6 @@ class InboxController extends GetxController {
     }
 
     final url = Uri.parse("https://wa.me/$phoneNumber");
-    print(url);
 
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }

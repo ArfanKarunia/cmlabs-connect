@@ -128,14 +128,16 @@ class AppRoutes {
     GetPage(
       name: detailQuotation,
       page: () {
-        final args = Get.arguments as Map<String, dynamic>;
-        return DetailQuotationView(quotation: args['quotation']);
+        return DetailQuotationView();
       },
     ),
 
     GetPage(
       name: addContactClientPIC,
-      page: () => AddContactView(),
+      page: () {
+        final args = Get.arguments as int;
+        return AddContactView(indexClientPIC: args,);
+      },
     ),
 
     GetPage(

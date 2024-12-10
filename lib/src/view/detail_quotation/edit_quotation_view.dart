@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/url_tracking_controller.dart';
@@ -22,6 +23,9 @@ class EditQuotationView extends StatefulWidget {
 
   final EditQuotationController editQuotationController =
       Get.put(EditQuotationController());
+
+  final DetailQuotationController detailQuotationController =
+      Get.put(DetailQuotationController());
 
   final UrlTrackingController urlTrackingController =
       Get.put(UrlTrackingController());
@@ -49,14 +53,13 @@ class _EditQuotationViewState extends State<EditQuotationView> {
     super.initState();
     // Menjalankan aksi pertama kali saat halaman dibuka
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      widget.editQuotationController.loadExistingData(widget.quotation);
+      widget.editQuotationController.loadExistingData();
       widget.historyChangesController.fetchHistoryChanges(widget.quotation.id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -180,9 +183,12 @@ class _EditQuotationViewState extends State<EditQuotationView> {
                             ? SizedBox.shrink()
                             : BottomSheetSaveChanges(
                                 quotation: widget.quotation,
-                                onPressed: () {
-                                  widget.editQuotationController
+                                onPressed: () async {
+                                  await widget.editQuotationController
                                       .updateQuotation(widget.quotation);
+                                  await widget.detailQuotationController
+                                      .fetchDetailQuotation(
+                                          widget.quotation.id);
                                 },
                               ),
                       );

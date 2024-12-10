@@ -26,6 +26,8 @@ class HomeView extends StatefulWidget {
   final BottomNavController navController = Get.put(
     BottomNavController(),
   );
+
+
   final UserController userController = Get.put(
     UserController(),
   );
@@ -69,6 +71,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
+
     widget.historicalLeadController.clear();
     widget.scrollController = ScrollController();
 
@@ -154,7 +157,7 @@ class _HomeViewState extends State<HomeView> {
                                 ),
                               ),
                               Text(
-                                "${user.roleName}",
+                                widget.userController.roleName.value,
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
                                   color: AppColors.text_2,

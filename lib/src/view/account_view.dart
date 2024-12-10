@@ -97,13 +97,15 @@ class AccountView extends StatelessWidget {
                               SizedBox(
                                 height: 2,
                               ),
-                              Text(
-                                userController.user.value?.roleName ?? 'User',
+                              Obx(() {
+                                return Text(
+                                userController.roleName.value,
                                 style: GoogleFonts.plusJakartaSans(
                                   color: AppColors.text_3,
                                   fontSize: 13,
                                 ),
-                              ),
+                              );
+                              },),
                               SizedBox(
                                 height: 2,
                               ),

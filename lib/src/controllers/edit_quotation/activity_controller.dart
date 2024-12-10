@@ -37,78 +37,97 @@ class ActivityController extends GetxController {
     print(addtionalNote);
 
     // Update meetingTopic
-
-    if (topic != null) {
-      if (topic.isNotEmpty) {
-        meetingTopic.value =
-            topic.map((t) => TextEditingController(text: t ?? "")).toList();
-      }
+    if (topic != null && topic.isNotEmpty) {
+      meetingTopic.value =
+          topic.map((t) => TextEditingController(text: t ?? "")).toList();
     } else {
       meetingTopic.value = [TextEditingController()];
     }
 
     // Update meetingSchedule
-    if (schedule != null) {
-      if (schedule.isNotEmpty) {
-        meetingSchedule.value = schedule.map((s) {
-          // Format tanggal ke dalam format yang diinginkan
-          final formattedDate =
-              s != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(s) : "";
-          return TextEditingController(text: formattedDate);
-        }).toList();
-      }
+    if (schedule != null && schedule.isNotEmpty) {
+      meetingSchedule.value = schedule.map((s) {
+        final formattedDate =
+            s != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(s) : "";
+        return TextEditingController(text: formattedDate);
+      }).toList();
     } else {
       meetingSchedule.value = [TextEditingController()];
     }
 
     // Update selectedStatusActivity
-    if (status != null) {
-      if (status.isNotEmpty) {
-        selectedStatusActivity.value = status
-            .where((s) => s != null)
-            .map((s) => {"value": s!, "label": s})
-            .toList();
-      }
+    if (status != null && status.isNotEmpty) {
+      selectedStatusActivity.value = status
+          .where((s) => s != null)
+          .map((s) => {"value": s!, "label": s})
+          .toList();
     } else {
       selectedStatusActivity.value = [{}];
     }
 
-print(meetingTopic.value);
-
-    if (type != null) {
-      if (type.isNotEmpty) {
-        // Jika type tidak kosong, lakukan mapping seperti biasa
-        selectedTypeActivity.value = type.map((innerList) {
-          if (innerList != null) {
-            return innerList
-                .map((item) {
-                  return {"value": item, "label": item};
-                })
-                .whereType<Map<String, String>>() // Hanya elemen yang valid
-                .toList();
-          }
-          return <Map<String, String>>[];
-        }).toList() as List<List<Map<String, String>?>>;
-      }
+    // Update selectedTypeActivity
+    if (type != null && type.isNotEmpty) {
+      selectedTypeActivity.value = type.map((innerList) {
+        if (innerList != null) {
+          return innerList
+              .map((item) {
+                return {"value": item, "label": item};
+              })
+              .whereType<Map<String, String>>() // Only valid elements
+              .toList();
+        }
+        return <Map<String, String>>[];
+      }).toList() as List<List<Map<String, String>?>>;
     } else {
-      // Jika type kosong, buat list kosong sesuai jumlah topik
       selectedTypeActivity.value = List.generate(
           meetingTopic.value.length, (_) => <Map<String, String>?>[]);
+    }
+
+     // Update meetingNote
+    if (note != null && note.isNotEmpty) {
+      meetingNote.value =
+          note.map((n) => TextEditingController(text: n ?? "")).toList();
+    } else {
+      meetingNote.value = [TextEditingController()];
+    }
+
+    // Ensure all lists have the same length
+    int maxLength = [
+      meetingTopic.value.length,
+      meetingSchedule.value.length,
+      selectedStatusActivity.value.length,
+      selectedTypeActivity.value.length,
+      meetingNote.value.length,
+    ].reduce((a, b) => a > b ? a : b); // Find the maximum length
+
+    print("Data quotation meeting note berjumlah ${meetingNote.value.length}");
+    print("Max Lenght $maxLength");
+
+    // Adjust meetingSchedule
+    while (meetingSchedule.value.length < maxLength) {
+      meetingSchedule.value.add(TextEditingController(text: ""));
+    }
+
+    // Adjust selectedStatusActivity
+    while (selectedStatusActivity.value.length < maxLength) {
+      selectedStatusActivity.value.add({});
+    }
+
+    // Adjust selectedTypeActivity
+    while (selectedTypeActivity.value.length < maxLength) {
+      selectedTypeActivity.value.add([]);
+    }
+
+    // Adjust meetingNote
+    while (meetingNote.value.length < maxLength) {
+      meetingNote.value.add(TextEditingController(text: ""));
     }
 
     // Update isAvailableToUser
     isAvailableToUser.value =
         List.generate(meetingTopic.value.length, (index) => false);
 
-    // Update meetingNote
-    if (note != null) {
-      if (note.length != 0) {
-        meetingNote.value =
-            note.map((n) => TextEditingController(text: n ?? "")).toList();
-      }
-    } else {
-      meetingNote.value = [TextEditingController()];
-    }
+   
 
     // Update remarksMeeting
     remarksMeeting.text = remarks ?? "";
