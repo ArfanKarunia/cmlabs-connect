@@ -99,7 +99,6 @@ class FilterController extends GetxController {
         if (response.statusCode == 200 && response.data != null) {
           var responseData = response.data['data'];
 
-          print("respon API: ${responseData}");
 
           var mappedData = responseData.map<Map<String, String>>((pic) {
             return {
@@ -125,7 +124,6 @@ class FilterController extends GetxController {
         if (response.statusCode == 200 && response.data != null) {
           var responseData = response.data['data'];
 
-          print("respon API: ${responseData}");
 
           var mappedData = responseData.map<Map<String, String>>((category) {
             return {
