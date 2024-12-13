@@ -25,8 +25,6 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Obx(
       () => Scaffold(
         body: SizedBox.expand(
@@ -60,17 +58,50 @@ class BottomNavigation extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: _buildNavItem(
-                        icon: Ionicons.file_tray_full_outline,
-                        label: 'Inbox Lead',
-                        index: 1,
-                        controller: navController,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          _buildNavItem(
+                            icon: Ionicons.file_tray_full_outline,
+                            label: 'Inbox Lead',
+                            index: 1,
+                            controller: navController,
+                          ),
+                          Positioned(
+                            top: 10,
+                            right: 50,
+                            child: Obx(
+                              () {
+                                return quotationController
+                                            .newQuotationCount.value !=
+                                        0
+                                    ? Container(
+                                        width: 15,
+                                        height: 15,
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppColors.danger),
+                                        child: Center(
+                                          child: Text(
+                                            "${quotationController.newQuotationCount.value}",
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 8,
+                                              color: AppColors.white_1,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox.shrink();
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Expanded(
                       child: _buildNavItem(
-                        icon: Ionicons.settings_outline,
-                        label: 'Setting',
+                        icon: Ionicons.person_outline,
+                        label: 'Account',
                         index: 2,
                         controller: navController,
                       ),

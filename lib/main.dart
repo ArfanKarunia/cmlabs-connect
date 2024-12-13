@@ -13,6 +13,8 @@ import 'src/models/quotation_model.dart';
 import 'src/utils/custom_http_overrides.dart';
 
 Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
   // initialization HIVE
   await Hive.initFlutter();
 

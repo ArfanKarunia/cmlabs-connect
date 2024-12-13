@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,7 +28,7 @@ class SelectFilterView extends StatelessWidget {
   Widget build(BuildContext context) {
     tempMapData.value.clear();
     tempData.value = null;
-    if (filter != 'year' && filter != 'month') {
+    if (filter != 'year' && filter != 'month' && filter != 'time_range') {
       controller.fetchList(filter);
     }
 
@@ -38,7 +39,7 @@ class SelectFilterView extends StatelessWidget {
         backgroundColor: Color(0xFFF9F9F9),
         surfaceTintColor: Color(0xFFF9F9F9),
         title: Text(
-          "Filter $filter",
+          "Filter ${StringUtils.toCamelCase(filter)}",
           style: GoogleFonts.plusJakartaSans(
             fontSize: 20,
             color: AppColors.text_1,
@@ -65,7 +66,7 @@ class SelectFilterView extends StatelessWidget {
                           fontWeight: FontWeight.w400,
                         ),
                         decoration: InputDecoration(
-                          hintText: "Search $filter",
+                          hintText: "Search ${StringUtils.toCamelCase(filter)}",
                           hintStyle: GoogleFonts.plusJakartaSans(
                             color: AppColors.text_4,
                             fontSize: 12,
@@ -94,7 +95,7 @@ class SelectFilterView extends StatelessWidget {
                       ),
                     )
                   : Container(),
-              (filter != "year" && filter != "month")
+              (filter != "year" && filter != "month" && filter != "time_range")
                   ? Obx(
                       () {
                         if (tempMapData.value.isNotEmpty) {
@@ -128,7 +129,7 @@ class SelectFilterView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 10, bottom: 10),
                 child: Text(
-                  "Select $filter",
+                  "Select ${StringUtils.toCamelCase(filter)}",
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 10,
                     color: AppColors.text_4,
@@ -136,85 +137,86 @@ class SelectFilterView extends StatelessWidget {
                   ),
                 ),
               ),
-              Obx(
-                () {
-                  return Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: AppColors.white_1,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount:
-                          controller.searchData(filter.toLowerCase()).length,
-                      itemBuilder: (context, index) {
-                        final data =
-                            controller.searchData(filter.toLowerCase())[index];
-                        print(data);
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.white_1,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: ListView.builder(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemCount: controller.searchData(filter.toLowerCase()).length,
+                  itemBuilder: (context, index) {
+                    final data =
+                        controller.searchData(filter.toLowerCase())[index];
+                    print(data);
 
-                        // Hanya bungkus bagian yang perlu dipantau dengan Obx
-                        return GestureDetector(
-                          onTap: () {
-                            if (filter != 'year' && filter != 'month') {
-                              if (data['value'] == 'all') {
-                                if (tempMapData.value.isNotEmpty) {
-                                  tempMapData.value.clear();
-                                }
-                                tempMapData.value.add(allData);
-                              } else if (tempMapData.value.contains(data)) {
-                                tempMapData.value.remove(data);
-                              } else {
-                                if (tempMapData.value.contains(allData)) {
-                                  tempMapData.value.clear();
-                                }
-                                tempMapData.value.add(data);
-                              }
-                              tempMapData.refresh();
-                            } else {
-                              if (tempData.value == data) {
-                                tempData.value = null;
-                              } else {
-                                tempData.value = data;
-                              }
-                              print(tempData.value);
+                    // Hanya bungkus bagian yang perlu dipantau dengan Obx
+                    return GestureDetector(
+                      onTap: () {
+                        if (filter != 'year' &&
+                            filter != 'month' &&
+                            filter != "time_range") {
+                          if (data['value'] == 'all') {
+                            if (tempMapData.value.isNotEmpty) {
+                              tempMapData.value.clear();
                             }
-                          },
-                          child: Obx(
-                            () {
-                              // Bungkus hanya bagian warna dan teks yang perlu dipantau
-                              return Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: (filter != 'year' && filter != 'month')
-                                      ? (tempMapData.value.contains(data)
-                                          ? AppColors.bgPrimary
-                                          : AppColors.white_1)
-                                      : (tempData.value == data)
-                                          ? AppColors.bgPrimary
-                                          : AppColors.white_1,
-                                ),
-                                padding: EdgeInsetsDirectional.symmetric(
-                                    horizontal: 14, vertical: 12),
-                                child: Text(
-                                  (filter != 'year' && filter != 'month')
-                                      ? data['label'] ?? "-"
-                                      : data,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 13,
-                                    color: AppColors.text_1,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        );
+                            tempMapData.value.add(allData);
+                          } else if (tempMapData.value.contains(data)) {
+                            tempMapData.value.remove(data);
+                          } else {
+                            if (tempMapData.value.contains(allData)) {
+                              tempMapData.value.clear();
+                            }
+                            tempMapData.value.add(data);
+                          }
+                          tempMapData.refresh();
+                        } else {
+                          if (tempData.value == data) {
+                            tempData.value = null;
+                          } else {
+                            tempData.value = data;
+                          }
+                          print(tempData.value);
+                        }
                       },
-                    ),
-                  );
-                },
+                      child: Obx(
+                        () {
+                          // Bungkus hanya bagian warna dan teks yang perlu dipantau
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: (filter != 'year' &&
+                                      filter != 'month' &&
+                                      filter != "time_range")
+                                  ? (tempMapData.value.contains(data)
+                                      ? AppColors.bgPrimary
+                                      : AppColors.white_1)
+                                  : (tempData.value == data)
+                                      ? AppColors.bgPrimary
+                                      : AppColors.white_1,
+                            ),
+                            padding: EdgeInsetsDirectional.symmetric(
+                                horizontal: 14, vertical: 12),
+                            child: Text(
+                              (filter != 'year' &&
+                                      filter != 'month' &&
+                                      filter != "time_range")
+                                  ? data['label'] ?? "-"
+                                  : data,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                color: AppColors.text_1,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
               ),
               SizedBox(
                 height: 20,
@@ -228,6 +230,8 @@ class SelectFilterView extends StatelessWidget {
                     if (filter == 'year') {
                       Get.back(result: tempData.value);
                     } else if (filter == 'month') {
+                      Get.back(result: tempData.value);
+                    } else if (filter == 'time_range') {
                       Get.back(result: tempData.value);
                     } else if (filter == 'status') {
                       for (var data in tempMapData.value) {

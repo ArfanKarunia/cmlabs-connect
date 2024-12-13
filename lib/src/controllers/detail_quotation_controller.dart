@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
@@ -25,6 +26,8 @@ class DetailQuotationController extends GetxController {
 
   final QuotationController quotationController =
       Get.put(QuotationController());
+  
+  final NotificationController notificationController = Get.put(NotificationController());
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
@@ -100,7 +103,6 @@ class DetailQuotationController extends GetxController {
 
           await getAdditionalData(serviceQuotation.value, rawData['data']);
 
-
           // Find the index of the existing quotation in the list
           int index = quotationController.quotationList
               .indexWhere((quotation) => quotation.id == id);
@@ -111,11 +113,12 @@ class DetailQuotationController extends GetxController {
                 updatedQuotation; // Update the existing quotation
 
             quotationController.fetchQuotationData(refreshData: true);
+            notificationController.fetchNotification(refreshData: true);
+            
           } else {
             // Optionally, you can add the new quotation if it doesn't exist
             quotationController.quotationList.add(updatedQuotation);
           }
-
         }
       }
     } catch (e) {
@@ -286,62 +289,62 @@ class DetailQuotationController extends GetxController {
                   parts.length > 1 ? parts[1] : data['language'] ?? '-',
             };
           }
-          // additionalData.value = {
-          //   "section_ads": data['section'] ?? '-',
-          //   "category_ads": data['category'] ?? '-',
-          //   "form_ads": data['form'] ?? '-',
-          //   "service_ads": data['service'] ?? '-',
-          //   "package_ads": data['package'] ?? '-',
-          //   "media_ads": data['media'] ?? '-',
-          //   "quotation_ads": data['quotation'] ?? '-',
-          //   "language": data['language'] ?? '-',
-          //   "socmed_platform": data['socmed_platform'] ?? '-',
-          //   "content_type": data['content_type'] ?? '-',
-          //   "word_count": data['word_count'] ?? '-',
-          //   "bussiness_sector": data['bussiness_sector'] ?? '-',
-          //   "copywriting_style": data['copywriting_style'] ?? '-',
-          //   "project_duration": data['project_duration'] ?? '-',
-          // };
           break;
         case 'aso-services': // DONE
-          Map<String, dynamic>? appData =
-              await fetchAppData(data['data_app_id']);
+          if (data['data_app_id'] != '-') {
+            Map<String, dynamic>? appData =
+                await fetchAppData(data['data_app_id']);
+            print(data['data_app_id']);
+            print(appData);
 
-
-          if (appData != null) {
-            additionalData.value = {
-              "icon_App": appData['icon_App'],
-              "data_app_name": appData['name_App'] != ''
-                  ? appData['name_App']
-                  : data['data_app_name'],
-              "subtitle_App": appData['subtitle_App'],
-              "data_app_platform": data['data_app_platform'],
-              "data_app_in_app": appData['in_app'] != ''
-                  ? appData['in_app']
-                  : data['data_app_in_app'],
-              "data_app_cat": data['data_app_cat'],
-              "updates": appData['updates_app'],
-              "review_&_rating": appData['reviews_rating_App'] != ''
-                  ? appData['reviews_rating_App']
-                  : data['data_app_rating'],
-              "data_app_url": appData['url_App'] != ''
-                  ? appData['url_App']
-                  : data['data_app_url'],
-              "data_package": data['data_package'],
-              // "data_app_id": data['data_app_id'],
-            };
+            if (appData != null) {
+              additionalData.value = {
+                "icon_App": appData['icon_App'],
+                "data_app_name": appData['name_App'] != ''
+                    ? appData['name_App'] ?? '-'
+                    : data['data_app_name'] ?? '-',
+                "subtitle_App": appData['subtitle_App'] ?? '-',
+                "data_app_platform": data['data_app_platform'] ?? '-',
+                "data_app_in_app": appData['in_app'] != ''
+                    ? appData['in_app'] ?? '-'
+                    : data['data_app_in_app'] ?? '-',
+                "data_app_cat": data['data_app_cat'] ?? '-',
+                "updates": appData['updates_app'] ?? '-',
+                "review_&_rating": appData['reviews_rating_App'] != ''
+                    ? appData['reviews_rating_App'] ?? '-'
+                    : data['data_app_rating'] ?? '-',
+                "data_app_url": appData['url_App'] != ''
+                    ? appData['url_App'] ?? '-'
+                    : data['data_app_url'] ?? '-',
+                "data_package": data['data_package'] ?? '-',
+                // "data_app_id": data['data_app_id'],
+              };
+            } else {
+              additionalData.value = {
+                "data_package": data['data_package'],
+                "data_app_id": data['data_app_id'],
+                "data_app_platform": data['data_app_platform'],
+                "data_app_url": data['data_app_url'],
+                "data_app_cat": data['data_app_cat'],
+                "data_app_rating": data['data_app_rating'],
+                "data_app_in_app": data['data_app_in_app'],
+                "data_app_name": data['data_app_name'],
+                "custom_keyword": data['custom_keyword'],
+                "appname": data['appname'],
+              };
+            }
           } else {
             additionalData.value = {
-              "data_package": data['data_package'],
-              "data_app_id": data['data_app_id'],
-              "data_app_platform": data['data_app_platform'],
-              "data_app_url": data['data_app_url'],
-              "data_app_cat": data['data_app_cat'],
-              "data_app_rating": data['data_app_rating'],
-              "data_app_in_app": data['data_app_in_app'],
-              "data_app_name": data['data_app_name'],
-              "custom_keyword": data['custom_keyword'],
-              "appname": data['appname'],
+              "data_package": '-',
+              "data_app_id": '-',
+              "data_app_platform": '-',
+              "data_app_url": '-',
+              "data_app_cat": '-',
+              "data_app_rating": '-',
+              "data_app_in_app": '-',
+              "data_app_name": '-',
+              "custom_keyword": '-',
+              "appname": '-',
             };
           }
           break;
