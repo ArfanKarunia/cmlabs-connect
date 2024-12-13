@@ -1,19 +1,33 @@
+import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/widgets/notification_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
-class AllNotificationView extends StatelessWidget {
+class AllNotificationView extends StatefulWidget {
   AllNotificationView({super.key});
 
+  @override
+  State<AllNotificationView> createState() => _AllNotificationViewState();
+}
+
+class _AllNotificationViewState extends State<AllNotificationView> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
+
+  final NotificationController notificationController =
+      Get.put(NotificationController());
+
+  late ScrollController scrollController;
 
   void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
+    notificationController.fetchNotification();
+
     _refreshController.refreshCompleted();
   }
 
@@ -22,9 +36,41 @@ class AllNotificationView extends StatelessWidget {
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use loadFailed(),if no data return,use LoadNodata()
 
-    // quotationController.fetchQuotationData();
+    notificationController.fetchNotification();
 
     _refreshController.loadComplete();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    scrollController = ScrollController();
+
+    bool isLoadMoreInProgress = false;
+
+    scrollController.addListener(() async {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
+        if (isLoadMoreInProgress) return;
+
+        isLoadMoreInProgress = true;
+
+        await Future.delayed(Duration(milliseconds: 500));
+
+        await notificationController.fetchNotification(
+            isLoadMore: isLoadMoreInProgress);
+
+        isLoadMoreInProgress = false;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the controller to avoid memory leaks
+    scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -50,81 +96,147 @@ class AllNotificationView extends StatelessWidget {
           onLoading: _onLoading,
           controller: _refreshController,
           child: ListView(
+            controller: scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
             children: [
-              Text(
-                "Today",
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.text_1,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 4,
-                itemBuilder: (context, index) {
-                  return NotificationTile(
-                    name: 'Nama Perusahaan',
-                    date: DateTime.now(),
-                    isRead: index % 2 == 0,
-                    isReminder: false,
-                  );
+              Obx(
+                () {
+                  return notificationController
+                          .todayNotification.value.isNotEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Today",
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.text_1,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: notificationController
+                                  .todayNotification.value.length,
+                              itemBuilder: (context, index) {
+                                var notifToday = notificationController
+                                    .todayNotification.value[index]!;
+                                return NotificationTile(
+                                  id: notifToday.id,
+                                  name: notifToday.company,
+                                  date: notifToday.createdAt,
+                                  isRead: notifToday.isRead,
+                                  isReminder: notifToday.isRemainder,
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink();
                 },
               ),
               SizedBox(
                 height: 20,
               ),
-              Text(
-                "This Week",
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.text_1,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 2,
-                itemBuilder: (context, index) {
-                  return NotificationTile(
-                    name: 'Nama Perusahaan',
-                    date: DateTime.now(),
-                    isRead: index % 2 == 0,
-                    isReminder: true,
-                  );
+              Obx(
+                () {
+                  return notificationController
+                          .weekNotification.value.isNotEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "This Week",
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.text_1,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: notificationController
+                                  .weekNotification.value.length,
+                              itemBuilder: (context, index) {
+                                var notifWeek = notificationController
+                                    .weekNotification.value[index]!;
+                                return NotificationTile(
+                                  id: notifWeek.id,
+                                  name: notifWeek.company,
+                                  date: notifWeek.createdAt,
+                                  isRead: notifWeek.isRead,
+                                  isReminder: notifWeek.isRemainder,
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink();
                 },
               ),
-              Text(
-                "This Month",
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.text_1,
-                ),
-              ),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
-              ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  return NotificationTile(
-                    name: 'Nama Perusahaan',
-                    date: DateTime.now(),
-                    isRead: index % 2 == 0,
-                    isReminder: true,
-                  );
+              Obx(
+                () {
+                  return notificationController
+                          .monthNotification.value.isNotEmpty
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "This Month",
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.text_1,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: notificationController
+                                  .monthNotification.value.length,
+                              itemBuilder: (context, index) {
+                                var notifMonth = notificationController
+                                    .monthNotification.value[index]!;
+                                return NotificationTile(
+                                  id: notifMonth.id,
+                                  name: notifMonth.company,
+                                  date: notifMonth.createdAt,
+                                  isRead: notifMonth.isRead,
+                                  isReminder: notifMonth.isRemainder,
+                                );
+                              },
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink();
                 },
+              ),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 10),
+                child: Center(
+                  child: Text(
+                    "No more data",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      color: AppColors.text_4,
+                    ),
+                  ),
+                ),
               ),
               SizedBox(
                 height: 20,

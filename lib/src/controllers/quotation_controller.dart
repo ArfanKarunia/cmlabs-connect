@@ -158,6 +158,7 @@ class QuotationController extends GetxController {
   void checkNewQuotationsPeriodically() {
     Timer.periodic(Duration(seconds: 60), (timer) async {
       await fetchCheckNewData();
+      print("check new data : ${newQuotationCount.value}");
     });
   }
 
@@ -190,6 +191,7 @@ class QuotationController extends GetxController {
             newestIdQuotation.value = newQuotationId;
           }
 
+          print("check new data : ${newQuotationCount.value}");
         }
       }
     } catch (e) {

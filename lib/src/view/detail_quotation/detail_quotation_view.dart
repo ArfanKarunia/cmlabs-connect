@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
@@ -16,6 +17,8 @@ class DetailQuotationView extends StatelessWidget {
 
   final DetailQuotationController detailQuotationController =
       Get.put(DetailQuotationController());
+
+  final NotificationController notificationController = Get.put(NotificationController());
 
   final QuotationController quotationController =
       Get.put(QuotationController());
@@ -35,6 +38,10 @@ class DetailQuotationView extends StatelessWidget {
     if (quotation != null) {
       detailQuotationController.fetchDetailQuotation(quotation.id);
     }
+
+    notificationController.updateReadParam(quotation!.id);
+
+    detailQuotationController.isShowAll.value = false;
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -408,73 +415,78 @@ class AdditionalDataWithBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-            
-    return quotation.data.category.join(', ') != 'new-amber' ? Column(
-      children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Additional Data',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.text_1,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
+    return quotation.data.category.join(', ') != 'new-amber'
+        ? Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Additional Data',
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.text_1,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 6,
+                      ),
+                      Text(
+                        "${quotation?.data.category.isNotEmpty == true ? quotation!.data.category.join(', ') : StringUtils.toCamelCase(quotation?.section)}",
+                        style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.text_1,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                SizedBox(
-                  height: 6,
-                ),
-                Text(
-                  "${quotation?.data.category.isNotEmpty == true ? quotation!.data.category.join(', ') : StringUtils.toCamelCase(quotation?.section)}",
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.text_1,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
+                  const SizedBox(height: 6),
 
-            // Button to Open Modal
-            
-            ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                  foregroundColor: WidgetStatePropertyAll(AppColors.primary),
-                  overlayColor: WidgetStatePropertyAll(AppColors.bgPrimary),
-                  shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    side: BorderSide(width: 1, color: AppColors.primary),
-                  ))),
-              onPressed: () {
-                if (detailQuotationController.additionalData.value != null) {
-                  _showAdditionalDataModal(
-                    context,
-                    detailQuotationController.additionalData.value!,
-                  );
-                }
-              },
-              child: Text(
-                'View Details',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
+                  // Button to Open Modal
+
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor:
+                            WidgetStatePropertyAll(AppColors.white_1),
+                        foregroundColor:
+                            WidgetStatePropertyAll(AppColors.primary),
+                        overlayColor:
+                            WidgetStatePropertyAll(AppColors.bgPrimary),
+                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          side: BorderSide(width: 1, color: AppColors.primary),
+                        ))),
+                    onPressed: () {
+                      if (detailQuotationController.additionalData.value !=
+                          null) {
+                        _showAdditionalDataModal(
+                          context,
+                          detailQuotationController.additionalData.value!,
+                        );
+                      }
+                    },
+                    child: Text(
+                      'View Details',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
-        Divider(
-          color: AppColors.text_4,
-        ),
-      ],
-    ) : SizedBox.shrink();
+              Divider(
+                color: AppColors.text_4,
+              ),
+            ],
+          )
+        : SizedBox.shrink();
   }
 }
 
@@ -520,7 +532,11 @@ class AddtionalDataAso extends StatelessWidget {
             child: Obx(
               () {
                 return Text(
-                  '${detailQuotationController.additionalData.value!['data_app_name']}}',
+                  detailQuotationController
+                              .additionalData.value?['data_app_name'] !=
+                          '-'
+                      ? '${detailQuotationController.additionalData.value?['data_app_name'] ?? '-'}}'
+                      : '-',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,

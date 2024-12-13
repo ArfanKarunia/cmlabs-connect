@@ -1,9 +1,12 @@
+import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/view/notification/all_notification_view.dart';
 import 'package:cmlabs_connect/src/view/notification/history_notification_view.dart';
 import 'package:cmlabs_connect/src/view/notification/new_notification_view.dart';
 import 'package:cmlabs_connect/src/view/notification/reminder_notification_view.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LayoutNotification extends StatefulWidget {
@@ -17,6 +20,12 @@ class _LayoutNotificationState extends State<LayoutNotification>
     with SingleTickerProviderStateMixin {
   late TabController tabController;
 
+  final DetailQuotationController detailQuotationController =
+      Get.put(DetailQuotationController());
+
+  final NotificationController notificationController =
+      Get.put(NotificationController());
+
   @override
   void initState() {
     tabController = TabController(length: 4, vsync: this);
@@ -24,10 +33,13 @@ class _LayoutNotificationState extends State<LayoutNotification>
       setState(() {});
     });
     super.initState();
+    notificationController.fetchNotification();
   }
 
   @override
   Widget build(BuildContext context) {
+    detailQuotationController.quotation.value = null;
+
     return Container(
       color: Color(0xFFF9F9F9),
       child: SafeArea(
@@ -57,16 +69,103 @@ class _LayoutNotificationState extends State<LayoutNotification>
                   fontSize: 14, fontWeight: FontWeight.bold),
               indicatorColor: AppColors.primary,
               dividerHeight: 0,
-              
-              tabs: const [
-                Tab(
-                  text: '     All     ',
+              tabs: [
+                Container(
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Tab(
+                        text: '     All     ',
+                      ),
+                      Obx(
+                        () {
+                          return notificationController.unreadAll.value != 0
+                              ? Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.danger),
+                                  child: Center(
+                                    child: Text(
+                                      "${notificationController.unreadAll.value}",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 8,
+                                        color: AppColors.white_1,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox.shrink();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                Tab(
-                  text: "     New     ",
+                Container(
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Tab(
+                        text: "     New     ",
+                      ),
+                      Obx(
+                        () {
+                          return notificationController.unreadNew.value != 0
+                              ? Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.danger),
+                                  child: Center(
+                                    child: Text(
+                                      "${notificationController.unreadNew.value}",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 8,
+                                        color: AppColors.white_1,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox.shrink();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                Tab(
-                  text: " Reminder ",
+                Container(
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Tab(
+                        text: " Reminder ",
+                      ),
+                      Obx(
+                        () {
+                          return notificationController.unreadReminder.value !=
+                                  0
+                              ? Container(
+                                  width: 15,
+                                  height: 15,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.danger),
+                                  child: Center(
+                                    child: Text(
+                                      "${notificationController.unreadReminder.value}",
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 8,
+                                        color: AppColors.white_1,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SizedBox.shrink();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
                 Tab(
                   text: "   History   ",

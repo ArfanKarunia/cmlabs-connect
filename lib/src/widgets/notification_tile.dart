@@ -1,21 +1,27 @@
+import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 class NotificationTile extends StatelessWidget {
-  const NotificationTile({
+  NotificationTile({
     super.key,
+    required this.id,
     required this.name,
     required this.date,
     required this.isReminder,
     required this.isRead,
   });
 
+  final int id;
   final String name;
   final DateTime date;
   final bool isReminder;
   final bool isRead;
+
+  final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,7 @@ class NotificationTile extends StatelessWidget {
       decoration: BoxDecoration(
           color: AppColors.white_1,
           borderRadius: BorderRadius.circular(5),
-          border: isRead
+          border: !isRead
               ? Border.all(
                   color: AppColors.primary,
                   width: 1,
@@ -117,7 +123,12 @@ class NotificationTile extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                await detailQuotationController.fetchDetailQuotation(id);
+                Get.toNamed(
+                  '/detailQuotation',
+                );
+              },
               style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(AppColors.white_1),
                 foregroundColor: WidgetStatePropertyAll(AppColors.primary),
