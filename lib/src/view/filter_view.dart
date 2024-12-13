@@ -40,7 +40,9 @@ class FilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // filterController.filter.value = '';
+    filterController.fetchList('pic');
+    filterController.fetchList('client_source');
+    filterController.fetchList('category');
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -364,85 +366,7 @@ class FilterView extends StatelessWidget {
             SizedBox(
               height: 20,
             ),
-            Text(
-              "Status",
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text_1,
-              ),
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Container(
-              height: 51,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.primaryText),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Stack(
-                alignment: Alignment.centerRight,
-                children: [
-                  Obx(
-                    () {
-                      if (filterController.filterStatusList.isEmpty) {
-                        return Container(
-                          padding: EdgeInsets.only(left: 10),
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "All",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14,
-                              color: AppColors.text_3,
-                            ),
-                          ),
-                        );
-                      }
-                      return ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: filterController.filterStatusList.length,
-                        itemBuilder: (context, index) {
-                          final status =
-                              filterController.filterStatusList[index];
-                          return TagButton(
-                            statusLabel: status['label'] ?? '-',
-                            onPressed: () {
-                              filterController.deleteFilterStatus(status);
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  Container(
-                    height: 45,
-                    width: 45,
-                    child: CustomButton(
-                      backgroundColor: Colors.transparent,
-                      onPressed: () {
-                        Get.toNamed(
-                          "/filterSelect",
-                          arguments: {
-                            'selectData': "status",
-                            'controller': filterController,
-                          },
-                        );
-                      },
-                      child: Icon(
-                        Ionicons.chevron_down_outline,
-                        color: AppColors.text_1,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
+
             Text(
               "Client Source",
               style: GoogleFonts.plusJakartaSans(
@@ -533,7 +457,8 @@ class FilterView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  filterController.setDateRange(temporaryStartDate, temporaryEndDate);
+                  filterController.setDateRange(
+                      temporaryStartDate, temporaryEndDate);
                   filterController.searchFilter('all');
                 },
                 style: ButtonStyle(

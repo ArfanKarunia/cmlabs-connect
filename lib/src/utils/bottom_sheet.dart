@@ -248,9 +248,10 @@ Future<dynamic> SignOutBottomSheet(
 
 
 class BottomSheetSaveChanges extends StatefulWidget {
-  BottomSheetSaveChanges({super.key, required this.quotation, required this.onPressed});
+  BottomSheetSaveChanges({super.key, this.quotation, required this.onPressed, this.name});
 
-  Quotation quotation;
+  Quotation? quotation;
+  String? name;
 
   final VoidCallback onPressed;
 
@@ -315,7 +316,7 @@ class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
                     ),
                   ),
                   child: Text(
-                    "Save",
+                    widget.name ?? "Save",
                     style: GoogleFonts.plusJakartaSans(
                       color: AppColors.white_1,
                       fontWeight: FontWeight.bold,
@@ -326,7 +327,7 @@ class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
               ),
               const SizedBox(height: 10),
               Text(
-                "Click to save all changes",
+                "Click to ${widget.name ?? 'save'} all changes",
                 style: GoogleFonts.plusJakartaSans(
                   color: AppColors.text_2,
                   fontSize: 10,
