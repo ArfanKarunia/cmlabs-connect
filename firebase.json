@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"cmlabs-connect","appId":"1:854108264405:android:4a9eaf3d82edd12a9d0f5c","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"cmlabs-connect","configurations":{"android":"1:854108264405:android:4a9eaf3d82edd12a9d0f5c","ios":"1:854108264405:ios:15734ec91a17aea89d0f5c"}}}}}}

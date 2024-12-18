@@ -117,7 +117,7 @@ class _InboxViewState extends State<InboxView> {
                         Obx(
                           () {
                             return Text(
-                              "${widget.quotationController.quotationList.length}",
+                              "${widget.quotationController.totalLeads.value}",
                               style: GoogleFonts.plusJakartaSans(
                                 color: AppColors.primary,
                                 fontSize: 12,

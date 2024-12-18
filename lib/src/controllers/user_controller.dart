@@ -1,4 +1,5 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
+import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -6,9 +7,9 @@ import '../models/user_model.dart';
 
 class UserController extends GetxController {
   var user = Rx<User?>(null);
+  var deviceToken = Rx<String?>(null);
   var password = Rx<String?>(null);
   var roleName = "User".obs;
-
 
   Box<User>? userBox;
 
@@ -33,17 +34,19 @@ class UserController extends GetxController {
   }
 
   Future<void> saveUser(User newUser) async {
-    if (userBox != null) {
-      await userBox!.put('user', newUser); // Simpan data dengan kunci 'user'
-      user.value = newUser;
+    user.value = newUser;
+    // print("FCM Token: ${deviceToken.value}");
 
-      print("Data User disimpan: ${user.value}");
+    // if (userBox != null) {
+    //   await userBox!.put('user', newUser); // Simpan data dengan kunci 'user'
 
-      User? storedUser = userBox!.get('user'); // Ambil data dengan kunci 'user'
-      print('Stored User setelah penyimpanan: $storedUser');
-    } else {
-      print("UserBox belum diinisialisasi.");
-    }
+    //   print("Data User disimpan: ${user.value}");
+
+    //   User? storedUser = userBox!.get('user'); // Ambil data dengan kunci 'user'
+    //   print('Stored User setelah penyimpanan: $storedUser');
+    // } else {
+    //   print("UserBox belum diinisialisasi.");
+    // }
   }
 
   User? getUser() {

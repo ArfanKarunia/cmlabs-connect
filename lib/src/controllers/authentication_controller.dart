@@ -19,7 +19,6 @@ class AuthenticationController extends GetxController {
   var isRememberMe = false.obs;
   final roleList = Rx<List<Map<String, dynamic>>>([]);
 
-
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
@@ -43,7 +42,7 @@ class AuthenticationController extends GetxController {
         tokenType.value = data['token_type'];
 
         await fetchRoleList();
-        
+
         var roles = roleList.value;
 
         String message = data['message'];
@@ -64,6 +63,9 @@ class AuthenticationController extends GetxController {
 
         userController.saveUser(user);
         userController.password.value = password;
+
+        await storeDeviceToken(userController.deviceToken.value!,
+            userController.user.value!.id.toString());
 
         showSuccessToast('$message, Selamat datang ${user.name}');
         Get.toNamed('/home');
@@ -107,6 +109,38 @@ class AuthenticationController extends GetxController {
       isLoading(false); // Pastikan untuk menonaktifkan loading
     }
     return null;
+  }
+
+  Future<void> storeDeviceToken(String token, String userId) async {
+    Dio dio = Dio();
+
+    final apiUrl = baseUrl + "/notification/store_device_token";
+
+    var requestData = {
+      "token": token,
+      "user_id": userId,
+    };
+
+    var body = jsonEncode(requestData);
+
+    try {
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer ${accesToken.value}',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      print("response code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        print("Device Token berhasil di kirim");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> logout() async {

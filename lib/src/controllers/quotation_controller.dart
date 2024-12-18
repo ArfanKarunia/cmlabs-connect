@@ -13,6 +13,8 @@ import 'authentication_controller.dart';
 
 class QuotationController extends GetxController {
   var quotationList = <Quotation>[].obs;
+  var totalLeads = Rx<int>(0);
+
   var isLoadingMore = false.obs;
   var start = 0.obs;
   var limit = 10.obs;
@@ -48,6 +50,7 @@ class QuotationController extends GetxController {
   void onInit() async {
     super.onInit();
     quotationBox = await Hive.openBox<Quotation>('quotationBox');
+    await fetchTotalLeads();
     fetchQuotationData();
     checkNewQuotationsPeriodically();
   }
@@ -80,10 +83,6 @@ class QuotationController extends GetxController {
   Future<void> fetchQuotationData(
       {bool isLoadMore = false, bool refreshData = false}) async {
     try {
-      // if (!isLoadMore) {
-      //   start.value = 0;
-      // }
-
       // Cek apakah data sudah ada di Hive (local storage)
       if (quotationBox!.isNotEmpty) {
         // Jika data ada di local storage, ambil data dari Hive
@@ -147,6 +146,39 @@ class QuotationController extends GetxController {
     }
   }
 
+  Future<void> fetchTotalLeads() async {
+    try {
+      // Ambil access token dari AuthenticationController
+      String? accessToken = authenticationController.accesToken.value;
+
+      // Ambil data dari API
+      final response = await dio.get(
+        baseUrl + '/dashboard/total_all',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data;
+
+        if (responseData['status'] == 'success') {
+          // Kembalikan data yang di didapatkan dari API
+          totalLeads.value = responseData['data'];
+        } else {
+          print("Status API tidak 'success'.");
+        }
+      } else {
+        print(
+            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
   /*
   
     FUNGSI Check new Data Quotation
@@ -156,7 +188,7 @@ class QuotationController extends GetxController {
   */
 
   void checkNewQuotationsPeriodically() {
-    Timer.periodic(Duration(seconds: 60), (timer) async {
+    Timer.periodic(Duration(seconds: 10), (timer) async {
       await fetchCheckNewData();
       print("check new data : ${newQuotationCount.value}");
     });

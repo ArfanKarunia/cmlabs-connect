@@ -1,10 +1,12 @@
 import 'dart:io';
 
+import 'package:cmlabs_connect/services/notification_service.dart';
 import 'package:cmlabs_connect/src/app.dart';
 import 'package:cmlabs_connect/src/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'src/models/client_pic_model.dart';
 import 'src/models/client_source_model.dart';
@@ -13,8 +15,11 @@ import 'src/models/quotation_model.dart';
 import 'src/utils/custom_http_overrides.dart';
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp();
+  await NotificationService.instance.initialize();
+
   // initialization HIVE
   await Hive.initFlutter();
 

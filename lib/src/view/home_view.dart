@@ -104,8 +104,7 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    User? user = widget.userController.user.value;
-    user!.picUrl;
+    User user = widget.userController.user.value!;
 
     return WillPopScope(
       onWillPop: () async {
@@ -321,7 +320,7 @@ class _HomeViewState extends State<HomeView> {
                               Obx(
                                 () {
                                   return Text(
-                                    "${widget.quotationController.quotationList.length}",
+                                    "${widget.quotationController.totalLeads.value}",
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: AppColors.primary,

@@ -102,7 +102,7 @@ class _LoginViewState extends State<LoginView> {
     }
 
     if (value == null || value.isEmpty) {
-      return 'The email must not be empty';
+      return 'The password must not be empty';
     }
 
     return null; // Return null jika tidak ada error
