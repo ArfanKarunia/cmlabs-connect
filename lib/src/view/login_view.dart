@@ -5,7 +5,6 @@ import 'package:ionicons/ionicons.dart';
 
 import '../controllers/authentication_controller.dart';
 import '../utils/color.dart';
-import '../utils/toast.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -19,7 +18,6 @@ class _LoginViewState extends State<LoginView> {
 
   final AuthenticationController authController =
       Get.put(AuthenticationController());
-
 
   bool isCheckedRememberme = false;
 
@@ -46,15 +44,20 @@ class _LoginViewState extends State<LoginView> {
         );
 
         if (response != null) {
-          var status = response['status'];
-          var message = response['message'];
+          final status = response['status'];
+          final message = response['message'];
 
           if (status == "Success") {
             setState(() {
               _messageError = null;
             });
 
-            showSuccessToast(message!);
+            Get.snackbar(
+              'Login Successful',
+              message!,
+              snackPosition: SnackPosition.TOP,
+              duration: Duration(seconds: 4),
+            );
 
             Get.toNamed('/home');
           }
@@ -65,18 +68,33 @@ class _LoginViewState extends State<LoginView> {
             });
 
             _formKey.currentState!.validate();
-            showErrorToast(message!);
+            Get.snackbar(
+              'Login Failed',
+              _messageError!,
+              snackPosition: SnackPosition.TOP,
+              duration: Duration(seconds: 4),
+            );
           }
         }
       } catch (e) {
-        showErrorToast(e.toString());
-        print(e);
+        // Tampilkan snackbar untuk kegagalan login
+        Get.snackbar(
+          'Login Failed',
+          e.toString(),
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 4),
+        );
 
         print('Login failed: ${e.toString()}');
       }
     } else {
       // Jika form tidak valid, tampilkan pesan error
-      showErrorToast("Form is not valid");
+      Get.snackbar(
+        'Login Failed',
+        "Form is not valid",
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 4),
+      );
     }
   }
 

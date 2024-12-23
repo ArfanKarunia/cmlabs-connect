@@ -52,6 +52,9 @@ class HomeView extends StatefulWidget {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
+
+    quotationController.fetchQuotationData();
+
     _refreshController.refreshCompleted();
   }
 

@@ -1,5 +1,4 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
@@ -35,6 +34,7 @@ class UserController extends GetxController {
 
   Future<void> saveUser(User newUser) async {
     user.value = newUser;
+    user.refresh();
     // print("FCM Token: ${deviceToken.value}");
 
     // if (userBox != null) {

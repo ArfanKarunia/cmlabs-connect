@@ -15,79 +15,96 @@ import '../widgets/select_status.dart';
 class InboxView extends StatefulWidget {
   InboxView({super.key});
 
-  @override
-  State<InboxView> createState() => _InboxViewState();
-
   final QuotationController quotationController =
       Get.put(QuotationController());
 
   final EditQuotationController detailQuotationController =
       Get.put(EditQuotationController());
-}
 
-RefreshController _refreshInboxController =
-    RefreshController(initialRefresh: false);
+  // RefreshController _refreshInboxController =
+  //     RefreshController(initialRefresh: false);
 
-late ScrollController scrollController;
+  late ScrollController scrollController;
 
-void _onRefresh() async {
-  // monitor network fetch
-  await Future.delayed(Duration(milliseconds: 1000));
-  // if failed,use refreshFailed()
-  _refreshInboxController.refreshCompleted();
-}
+  final RefreshController _refreshInboxController = RefreshController();
 
-void _onLoading() async {
-  // monitor network fetch
-  await Future.delayed(Duration(milliseconds: 1000));
-  // if failed,use loadFailed(),if no data return,use LoadNodata()
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    quotationController.fetchQuotationData();
 
-  QuotationController().fetchQuotationData();
+    _refreshInboxController.refreshCompleted();
+  }
 
-  _refreshInboxController.loadComplete();
+  void _onLoading() async {
+    // monitor network fetch
+    await Future.delayed(Duration(milliseconds: 1000));
+    // if failed,use loadFailed(),if no data return,use LoadNodata()
+
+    quotationController.loadMoreQuotations();
+
+    _refreshInboxController.loadComplete();
+  }
+
+  @override
+  State<InboxView> createState() => _InboxViewState();
 }
 
 class _InboxViewState extends State<InboxView> {
   @override
   void initState() {
     super.initState();
-    scrollController = ScrollController();
+    widget.scrollController = ScrollController();
 
+    // Menandakan apakah sedang ada proses load more atau tidak
     bool isLoadMoreInProgress = false;
 
-    scrollController.addListener(() async {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
-        if (isLoadMoreInProgress) return;
+    // Memastikan kita menunggu sampai widget selesai rendering untuk mulai deteksi scroll
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.scrollController.addListener(() async {
+        // Mengecek apakah sudah mencapai bagian bawah list
+        if (widget.scrollController.position.pixels ==
+                widget.scrollController.position.maxScrollExtent &&
+            !isLoadMoreInProgress) {
+          // Mencegah pemanggilan load more jika masih ada proses load more sebelumnya
+          if (isLoadMoreInProgress) return;
 
-        isLoadMoreInProgress = true;
+          // Tandai bahwa proses load more sedang berlangsung
+          isLoadMoreInProgress = true;
 
-        await Future.delayed(Duration(milliseconds: 500));
+          // Delay untuk mensimulasikan proses fetching data
+          await Future.delayed(Duration(milliseconds: 500));
 
-        await widget.quotationController.loadMoreQuotations();
+          // Panggil method untuk load lebih banyak data
+          await widget.quotationController.loadMoreQuotations();
 
-        isLoadMoreInProgress = false;
-      }
+          // Tandai bahwa load more sudah selesai
+          isLoadMoreInProgress = false;
+        }
+      });
     });
   }
 
   @override
   void dispose() {
     // Dispose of the controller to avoid memory leaks
-    scrollController.dispose();
+    widget.scrollController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     widget.detailQuotationController.clearSelectedData();
+    print(widget.quotationController.filteredQuotations.length);
+
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 30),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
@@ -220,6 +237,53 @@ class _InboxViewState extends State<InboxView> {
               SizedBox(
                 height: 25,
               ),
+              Obx(
+                () {
+                  return widget.quotationController.newQuotationCount.value > 0
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: IntrinsicWidth(
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                ),
+                                backgroundColor:
+                                    WidgetStatePropertyAll(AppColors.primary),
+                                foregroundColor:
+                                    WidgetStatePropertyAll(AppColors.white_1),
+                                overlayColor:
+                                    WidgetStatePropertyAll(Colors.white30),
+                              ),
+                              onPressed: () {
+                                widget.quotationController.fetchQuotationData();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Ionicons.arrow_up_outline,
+                                    size: 18,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "${widget.quotationController.newQuotationCount.value}+ New Leads",
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink();
+                },
+              ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -229,91 +293,110 @@ class _InboxViewState extends State<InboxView> {
                           widget.quotationController.filteredQuotations;
 
                       if (quotationList.isEmpty) {
-                        return Container(
-                          width: double.infinity,
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Ionicons.briefcase_outline,
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Ionicons.briefcase_outline,
+                                color: AppColors.text_4,
+                                size: 40,
+                              ),
+                              Text(
+                                'No available data',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
                                   color: AppColors.text_4,
-                                  size: 40,
                                 ),
-                                Text(
-                                  'No available data',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.text_4,
-                                  ),
-                                ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         );
                       }
 
-                      return Container(
-                        width: double.infinity,
-                        child: SmartRefresher(
-                          enablePullDown: true,
-                          header: ClassicHeader(
-                            refreshStyle: RefreshStyle.Follow,
-                            refreshingIcon: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: AppColors.text_4,
-                                strokeWidth: 2,
-                              ),
+                      return SmartRefresher(
+                        enablePullDown: true,
+                        header: ClassicHeader(
+                          refreshStyle: RefreshStyle.Follow,
+                          refreshingIcon: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              color: AppColors.text_4,
+                              strokeWidth: 2,
                             ),
                           ),
-                          onRefresh: _onRefresh,
-                          onLoading: _onLoading,
-                          controller: _refreshInboxController,
-                          child: ListView.builder(
-                            controller: scrollController,
-                            shrinkWrap: true,
-                            physics: AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            itemCount: widget
-                                .quotationController.filteredQuotations.length,
-                            itemBuilder: (context, index) {
-                              final quotation = quotationList[index];
-
-                              return Column(
-                                children: [
-                                  QuotationListTile(
-                                    quotation: quotation,
-                                    onDelete: () {
-                                      print(quotation.id);
-                                      // widget.quotationController.deleteDataQuotation(quotation.id);
-                                    },
-                                    onChatWA: () {
-                                      // print(quotation);
-                                      widget.quotationController
-                                          .redirectToWhatsapp(quotation);
-                                    },
-                                  ),
-                                  (index + 1 ==
-                                          widget.quotationController
-                                              .filteredQuotations.length)
-                                      ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
-                                          child: Center(
-                                            child: CircularProgressIndicator(
-                                              color: AppColors.text_4,
-                                              strokeWidth: 2,
-                                            ),
-                                          ),
-                                        )
-                                      : SizedBox.shrink(),
-                                ],
-                              );
-                            },
+                        ),
+                        footer: ClassicFooter(
+                          loadStyle: LoadStyle.HideAlways,
+                          loadingIcon: CircularProgressIndicator(
+                            color: AppColors.text_4,
+                            strokeWidth: 2,
                           ),
+                        ),
+                        onRefresh: widget._onRefresh,
+                        // onLoading: widget._onLoading,
+                        controller: widget._refreshInboxController,
+                        child: ListView.builder(
+                          controller: widget.scrollController,
+                          itemCount: widget
+                              .quotationController.filteredQuotations.length,
+                          itemBuilder: (context, index) {
+                            final quotation = widget
+                                .quotationController.filteredQuotations[index];
+
+                            // Periksa apakah item sedang dihapus
+                            final isRemoving = widget
+                                .quotationController.removingIndexes
+                                .contains(index);
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                AnimatedSize(
+                                  duration: const Duration(milliseconds: 500),
+                                  child: AnimatedOpacity(
+                                    duration: const Duration(milliseconds: 500),
+                                    opacity: isRemoving ? 0 : 1,
+                                    child: isRemoving
+                                        ? SizedBox
+                                            .shrink() // Kosongkan jika sedang dihapus
+                                        : QuotationListTile(
+                                            key: ValueKey(quotation.id),
+                                            quotation: quotation,
+                                            onDelete: () async {
+                                              Get.back();
+
+                                              await widget.quotationController
+                                                  .deleteQuotationWithAnimation(
+                                                      index);
+                                            },
+                                            onChatWA: () {
+                                              widget.quotationController
+                                                  .redirectToWhatsapp(
+                                                      quotation);
+                                            },
+                                          ),
+                                  ),
+                                ),
+                                (index + 1 ==
+                                        widget.quotationController
+                                            .filteredQuotations.length)
+                                    ? Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        child: Center(
+                                          child: CircularProgressIndicator(
+                                            color: AppColors.text_4,
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox.shrink(),
+                              ],
+                            );
+                          },
                         ),
                       );
                     },

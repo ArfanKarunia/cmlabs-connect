@@ -67,7 +67,6 @@ class AuthenticationController extends GetxController {
         await storeDeviceToken(userController.deviceToken.value!,
             userController.user.value!.id.toString());
 
-        showSuccessToast('$message, Selamat datang ${user.name}');
         Get.toNamed('/home');
 
         var feedback = {
@@ -78,33 +77,29 @@ class AuthenticationController extends GetxController {
         return feedback;
       }
     } on DioException catch (e) {
-      print(e.response);
-      if (e.response != null) {
-        print('Error Status Code: ${e.response!.statusCode}');
+      print("error: ${e.response}");
 
-        var message = 'The selected email or password is invalid';
+      // Default pesan error
+      String message = 'The selected email or password is invalid';
 
-        // Pesan error yang sama untuk status 401 dan 500
-        var feedback = {
-          "status": 'Error',
-          "message": message,
-        };
-
-        print("data error: $feedback");
-
-        // Menangani status 401 dan 500
-        if (e.response!.statusCode == 401 || e.response!.statusCode == 500) {
-          return feedback;
+      // Cek apakah response berisi data dan memiliki key 'error'
+      if (e.response?.data != null &&
+          e.response!.data is Map<String, dynamic>) {
+        var errorData = e.response!.data as Map<String, dynamic>;
+        if (errorData.containsKey('error')) {
+          message = errorData['error']; // Ambil pesan dari key 'error'
         }
-      } else {
-        // Jika tidak ada response (misal masalah jaringan)
-        var feedback = {
-          "status": 'Error',
-          "message": 'connection error occurred',
-        };
-
-        return feedback;
       }
+      
+      
+
+      // Return feedback error
+      var feedback = {
+        "status": 'Error',
+        "message": message,
+      };
+
+      return feedback;
     } finally {
       isLoading(false); // Pastikan untuk menonaktifkan loading
     }

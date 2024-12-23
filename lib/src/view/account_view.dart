@@ -13,9 +13,14 @@ import 'package:ionicons/ionicons.dart';
 
 import '../models/user_model.dart';
 
-class AccountView extends StatelessWidget {
+class AccountView extends StatefulWidget {
   AccountView({super.key});
 
+  @override
+  State<AccountView> createState() => _AccountViewState();
+}
+
+class _AccountViewState extends State<AccountView> {
   final UserController userController = Get.put(
     UserController(),
   );
@@ -27,11 +32,6 @@ class AccountView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    accountController.fetchProfile();
-
-    User? user = userController.user.value;
-    user!.picUrl;
-
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -55,86 +55,94 @@ class AccountView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Container(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+                  child: Obx(
+                    () {
+                      final user = userController.user.value!;
+
+                      return Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColors.white,
-                              image: DecorationImage(
-                                image: (user.picUrl != null &&
-                                        user.picUrl!.isNotEmpty)
-                                    ? NetworkImage(user.picUrl!)
-                                    : const AssetImage(
-                                        "assets/icons/cmlabs_icon.png",
-                                      ) as ImageProvider,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 24,
-                          ),
-                          Column(
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text(
-                                user.name,
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: AppColors.text_1,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.white,
+                                  image: DecorationImage(
+                                    image: (user.picUrl != null &&
+                                            user.picUrl!.isNotEmpty)
+                                        ? NetworkImage(user.picUrl!)
+                                        : const AssetImage(
+                                            "assets/icons/cmlabs_icon.png",
+                                          ) as ImageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                               SizedBox(
-                                height: 2,
+                                width: 24,
                               ),
-                              Obx(() {
-                                return Text(
-                                userController.roleName.value,
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: AppColors.text_3,
-                                  fontSize: 13,
-                                ),
-                              );
-                              },),
-                              SizedBox(
-                                height: 2,
-                              ),
-                              Text(
-                                user.email,
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: AppColors.primary,
-                                  fontSize: 12,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.name,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: AppColors.text_1,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 2,
+                                  ),
+                                  Obx(
+                                    () {
+                                      return Text(
+                                        userController.roleName.value,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.text_3,
+                                          fontSize: 13,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 2,
+                                  ),
+                                  Text(
+                                    user.email,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: AppColors.primary,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        child: CustomButton(
-                          onPressed: () {},
-                          borderRadius: BorderRadius.circular(10),
-                          backgroundColor: Colors.transparent,
-                          overlayColor: Colors.black12,
-                          child: Icon(
-                            Icons.notifications_outlined,
-                            color: AppColors.text_1,
-                            size: 29,
+                          Container(
+                            padding: EdgeInsets.all(5),
+                            child: CustomButton(
+                              onPressed: () {},
+                              borderRadius: BorderRadius.circular(10),
+                              backgroundColor: Colors.transparent,
+                              overlayColor: Colors.black12,
+                              child: Icon(
+                                Icons.notifications_outlined,
+                                color: AppColors.text_1,
+                                size: 29,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ],
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),
@@ -155,7 +163,7 @@ class AccountView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  onPressed: () {
+                  onPressed: () async {
                     Get.toNamed(AppRoutes.editProfileView);
                   },
                   child: Text(

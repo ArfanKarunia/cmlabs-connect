@@ -126,6 +126,7 @@ class BottomNavigation extends StatelessWidget {
         controller.changePage(index);
       },
       child: Container(
+        width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 15),
         decoration: BoxDecoration(
           border: Border(

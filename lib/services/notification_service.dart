@@ -43,6 +43,7 @@ class NotificationService {
 
     userController.deviceToken.value = token;
     
+    print("Token Device: $token");
 
   }
 
