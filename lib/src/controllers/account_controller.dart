@@ -26,6 +26,13 @@ class AccountController extends GetxController {
   final baseUrl = Config.baseURL;
   final Dio dio = Dio();
 
+  @override
+  void onInit() async {
+    super.onInit();
+    await fetchRoleList();
+    await fetchProfile();
+  }
+
   /* 
      ++ SUMMARY ++
   
@@ -1481,41 +1488,55 @@ class AccountController extends GetxController {
         var responseData = response.data['data'];
 
         String? jobPosition = responseData['job_position'];
-        String? role = getRoleName(jobPosition, roleList.value);
 
-        if (role == null) {
-          if (responseData['role_name'] != null ||
-              responseData['role_name'] != '') {
-            userController.roleName.value = responseData['role_name'];
+        if (jobPosition != null && jobPosition.isNotEmpty) {
+          // Jika job_position tidak null
+          String? role = getRoleName(jobPosition, roleList.value);
+
+          if (role == null) {
+            if (responseData['role_name'] != null &&
+                responseData['role_name'].isNotEmpty) {
+              userController.roleName.value = responseData['role_name'];
+            }
+          } else {
+            userController.roleName.value = role;
           }
-        } else {
-          userController.roleName.value = role;
-        }
 
-        User userData = User.fromMap(responseData);
-        userController.saveUser(userData);
-
-        profileUsername.value = responseData['username'];
-        profileFullName.value = responseData['name'];
-        profileNumber.value = responseData['phone'];
-        profileLinkedin.value = responseData['linkedin'];
-        profileWebsite.value = responseData['link'];
-        profileInstagram.value = responseData['instagram'];
-        profileMedium.value = responseData['medium'];
-        profileQuora.value = responseData['quora'];
-        profileTiktok.value = responseData['tiktok'];
-
-        if (responseData['job_position'] != null ||
-            responseData['job_position'] != '') {
-          var jobPositionId = responseData['job_position'];
-          if (jobPositionId != null || jobPositionId != '') {
-            Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
-              (role) => role['id'] == int.parse(jobPositionId),
-            );
-            // Set profileRole based on the matched role
+          // Cari role berdasarkan job_position jika ada
+          Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
+            (role) => role['id'] == int.parse(jobPosition),
+            orElse: () => {},
+          );
+          if (matchedRole != null) {
+            profileRole.value = matchedRole;
+          }
+        } else if (userController.roleName.value != 'User') {
+          // Jika job_position null atau kosong, cek roleName
+          String roleName = userController.roleName.value;
+          Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
+            (role) => role['name'] == roleName,
+            orElse: () => {},
+          );
+          if (matchedRole != null) {
             profileRole.value = matchedRole;
           }
         }
+
+
+        profileUsername.value = responseData['username'] ?? '';
+        profileFullName.value = responseData['name'] ?? '';
+        profileNumber.value = responseData['phone'] ?? '';
+        profileLinkedin.value = responseData['linkedin'] ?? '';
+        profileWebsite.value = responseData['link'] ?? '';
+        profileInstagram.value = responseData['instagram'] ?? '';
+        profileMedium.value = responseData['medium'] ?? '';
+        profileQuora.value = responseData['quora'] ?? '';
+        profileTiktok.value = responseData['tiktok'] ?? '';
+
+        // Simpan data user dan profil lainnya
+        User userData = User.fromMap(responseData);
+        userController.saveUser(userData);
+
       }
     } catch (e) {
       print('Error fetching status data: $e');
@@ -1527,8 +1548,8 @@ class AccountController extends GetxController {
     try {
       // Create FormData for sending a file
       dioPkg.FormData formData = dioPkg.FormData.fromMap({
-        "name": profileUsername.value,
-        "username": profileFullName.value,
+        "name": profileFullName.value,
+        "username": profileUsername.value,
         "job_position": profileRole.value?['id'],
         "phone": profileNumber.value,
         "linkedin": profileLinkedin.value,
@@ -1561,8 +1582,9 @@ class AccountController extends GetxController {
       );
 
       if (response.statusCode == 200) {
+        await fetchProfile();
+        
         showSuccessToast("Success: update basic information in profile");
-        fetchProfile();
 
         Get.back();
       } else {

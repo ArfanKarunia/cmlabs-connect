@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,15 +10,21 @@ import '../constant/config.dart';
 import '../constant/const.dart';
 import '../models/quotation_model.dart';
 import '../utils/toast.dart';
+import '../widgets/quotation_list_tile.dart';
 import 'authentication_controller.dart';
 
 class QuotationController extends GetxController {
+  final listInboxKey = GlobalKey<AnimatedListState>();
   var quotationList = <Quotation>[].obs;
+  var totalLeads = Rx<int>(0);
+
   var isLoadingMore = false.obs;
   var start = 0.obs;
   var limit = 10.obs;
   var newestIdQuotation = Rx<int>(0);
   var newQuotationCount = Rx<int>(0);
+  final RxList<bool> itemVisibility = RxList<bool>();
+  final RxSet<int> removingIndexes = <int>{}.obs;
 
   var filterCategory = <String>[].obs;
   // var filterStatus = <StatusLead>[].obs;
@@ -48,6 +55,7 @@ class QuotationController extends GetxController {
   void onInit() async {
     super.onInit();
     quotationBox = await Hive.openBox<Quotation>('quotationBox');
+    await fetchTotalLeads();
     fetchQuotationData();
     checkNewQuotationsPeriodically();
   }
@@ -80,10 +88,6 @@ class QuotationController extends GetxController {
   Future<void> fetchQuotationData(
       {bool isLoadMore = false, bool refreshData = false}) async {
     try {
-      // if (!isLoadMore) {
-      //   start.value = 0;
-      // }
-
       // Cek apakah data sudah ada di Hive (local storage)
       if (quotationBox!.isNotEmpty) {
         // Jika data ada di local storage, ambil data dari Hive
@@ -116,9 +120,34 @@ class QuotationController extends GetxController {
             // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
             if (isLoadMore) {
               quotationList.addAll(quotations); // Menambah data baru
+              for (var item in quotations) {
+                int index = quotationList.length;
+                quotationList.add(item);
+                listInboxKey.currentState
+                    ?.insertItem(index); // Tambahkan item baru
+              }
             } else {
-              quotationList.value =
-                  quotations; // Mengganti list dengan data baru
+              for (int i = quotationList.length - 1; i >= 0; i--) {
+                listInboxKey.currentState?.removeItem(
+                  i,
+                  (context, animation) {
+                    final removedItem = quotationList.removeAt(i);
+                    return SizeTransition(
+                      sizeFactor: animation,
+                      child: QuotationListTile(
+                        quotation: removedItem,
+                        onDelete: () {},
+                        onChatWA: () {},
+                      ),
+                    );
+                  },
+                  duration: const Duration(milliseconds: 300),
+                );
+              }
+              quotationList.value = quotations; // Ganti dengan data baru
+              for (int i = 0; i < quotations.length; i++) {
+                listInboxKey.currentState?.insertItem(i);
+              } // Mengganti list dengan data baru
             }
 
             if (!isLoadMore) {
@@ -147,6 +176,39 @@ class QuotationController extends GetxController {
     }
   }
 
+  Future<void> fetchTotalLeads() async {
+    try {
+      // Ambil access token dari AuthenticationController
+      String? accessToken = authenticationController.accesToken.value;
+
+      // Ambil data dari API
+      final response = await dio.get(
+        baseUrl + '/dashboard/total_all',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        var responseData = response.data;
+
+        if (responseData['status'] == 'success') {
+          // Kembalikan data yang di didapatkan dari API
+          totalLeads.value = responseData['data'];
+        } else {
+          print("Status API tidak 'success'.");
+        }
+      } else {
+        print(
+            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
   /*
   
     FUNGSI Check new Data Quotation
@@ -156,7 +218,7 @@ class QuotationController extends GetxController {
   */
 
   void checkNewQuotationsPeriodically() {
-    Timer.periodic(Duration(seconds: 60), (timer) async {
+    Timer.periodic(Duration(seconds: 10), (timer) async {
       await fetchCheckNewData();
       print("check new data : ${newQuotationCount.value}");
     });
@@ -170,7 +232,7 @@ class QuotationController extends GetxController {
       var limit = 1;
 
       final response = await dio.get(
-        '$baseUrl/dashboard/data_recent_quotation?start=${start}&limit=$limit',
+        '$baseUrl/dashboard/data_recent_quotation?start=$start&limit=$limit',
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
@@ -183,8 +245,6 @@ class QuotationController extends GetxController {
           }).toList();
 
           var newQuotationId = quotations.first.id;
-
-          newQuotationCount.value = 0;
 
           if (newestIdQuotation.value < newQuotationId) {
             newQuotationCount.value = newQuotationId - newestIdQuotation.value;
@@ -219,6 +279,7 @@ class QuotationController extends GetxController {
 
   */
   Future<void> loadMoreQuotations() async {
+    print("Load More");
     start.value += limit.value;
     await fetchQuotationData(isLoadMore: true);
   }
@@ -355,7 +416,9 @@ class QuotationController extends GetxController {
 
   */
   List<Quotation> get filteredQuotations {
-    List<Quotation> result = quotationList;
+    List<Quotation> result = List.from(quotationList);
+
+    print("Quotation lenght: ${result.length}");
 
     if (filterStatus.value != null) {
       int filterStatusIndex = filterStatus.value!.index;
@@ -466,12 +529,57 @@ class QuotationController extends GetxController {
     Fungsi ini digunakan untuk menyimpan data ke dalam local Storage HIVE (quotationBox)
 
   */
-  void deleteDataQuotation(int id) async {
-    try {
-      // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
 
-      // Ambil data dari API
+  void hideItem(int index) {
+    itemVisibility[index] = false;
+  }
+
+  bool isItemVisible(int index) {
+    return itemVisibility[index];
+  }
+
+  Future<bool> deleteQuotationWithAnimation(int index) async {
+  final removedQuotation = filteredQuotations[index];
+
+  // Langkah 1: Tandai item sebagai sedang dihapus
+  removingIndexes.add(index);
+  update(); // Perbarui UI untuk memulai animasi
+
+  // Langkah 2: Tunggu animasi selesai
+  await Future.delayed(const Duration(milliseconds: 500));
+
+  // Langkah 3: Lakukan penghapusan di server
+  final isDeleted = await deleteDataQuotation(removedQuotation.id);
+
+  if (isDeleted) {
+    // Jika berhasil, hapus dari `quotationList`
+    quotationList.removeWhere((quotation) => quotation.id == removedQuotation.id);
+
+    showSuccessToast('Berhasil menghapus Quotation');
+    removingIndexes.remove(index); // Hapus tanda indeks
+    update(); // Perbarui UI
+    return true;
+  } else {
+    // Jika gagal, batalkan penghapusan
+    removingIndexes.remove(index);
+    update(); // Perbarui UI
+
+    showErrorToast('Gagal menghapus Quotation');
+    return false;
+  }
+}
+
+
+  Future<bool> deleteDataQuotation(int id) async {
+    try {
+      // Pastikan token tidak null
+      final String? accessToken = authenticationController.accesToken.value;
+
+      if (accessToken == null || accessToken.isEmpty) {
+        showErrorToast('Gagal menghapus Quotation: Token tidak valid');
+        return false;
+      }
+
       final response = await dio.delete(
         '$baseUrl/quotation/delete/$id',
         options: Options(
@@ -483,14 +591,22 @@ class QuotationController extends GetxController {
 
       if (response.statusCode == 200 && response.data != null) {
         showSuccessToast('Berhasil menghapus Quotation');
+        return true; // Berhasil
       } else {
         showErrorToast('Gagal menghapus Quotation');
-
         print(
             "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+        return false; // Gagal
       }
     } catch (e) {
       print('Error fetching data: $e');
+      showErrorToast('Terjadi kesalahan saat menghapus data');
+      return false; // Gagal
     }
   }
+
+  // void addQuotation(Quotation newQuotation) {
+  //   quotationList.insert(0, newQuotation);
+  //   listKey.currentState?.insertItem(0);
+  // }
 }

@@ -19,7 +19,6 @@ class AuthenticationController extends GetxController {
   var isRememberMe = false.obs;
   final roleList = Rx<List<Map<String, dynamic>>>([]);
 
-
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
@@ -43,7 +42,7 @@ class AuthenticationController extends GetxController {
         tokenType.value = data['token_type'];
 
         await fetchRoleList();
-        
+
         var roles = roleList.value;
 
         String message = data['message'];
@@ -65,7 +64,9 @@ class AuthenticationController extends GetxController {
         userController.saveUser(user);
         userController.password.value = password;
 
-        showSuccessToast('$message, Selamat datang ${user.name}');
+        await storeDeviceToken(userController.deviceToken.value!,
+            userController.user.value!.id.toString());
+
         Get.toNamed('/home');
 
         var feedback = {
@@ -76,37 +77,65 @@ class AuthenticationController extends GetxController {
         return feedback;
       }
     } on DioException catch (e) {
-      print(e.response);
-      if (e.response != null) {
-        print('Error Status Code: ${e.response!.statusCode}');
+      print("error: ${e.response}");
 
-        var message = 'The selected email or password is invalid';
+      // Default pesan error
+      String message = 'The selected email or password is invalid';
 
-        // Pesan error yang sama untuk status 401 dan 500
-        var feedback = {
-          "status": 'Error',
-          "message": message,
-        };
-
-        print("data error: $feedback");
-
-        // Menangani status 401 dan 500
-        if (e.response!.statusCode == 401 || e.response!.statusCode == 500) {
-          return feedback;
+      // Cek apakah response berisi data dan memiliki key 'error'
+      if (e.response?.data != null &&
+          e.response!.data is Map<String, dynamic>) {
+        var errorData = e.response!.data as Map<String, dynamic>;
+        if (errorData.containsKey('error')) {
+          message = errorData['error']; // Ambil pesan dari key 'error'
         }
-      } else {
-        // Jika tidak ada response (misal masalah jaringan)
-        var feedback = {
-          "status": 'Error',
-          "message": 'connection error occurred',
-        };
-
-        return feedback;
       }
+      
+      
+
+      // Return feedback error
+      var feedback = {
+        "status": 'Error',
+        "message": message,
+      };
+
+      return feedback;
     } finally {
       isLoading(false); // Pastikan untuk menonaktifkan loading
     }
     return null;
+  }
+
+  Future<void> storeDeviceToken(String token, String userId) async {
+    Dio dio = Dio();
+
+    final apiUrl = baseUrl + "/notification/store_device_token";
+
+    var requestData = {
+      "token": token,
+      "user_id": userId,
+    };
+
+    var body = jsonEncode(requestData);
+
+    try {
+      var response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {
+          'Authorization': 'Bearer ${accesToken.value}',
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      print("response code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        print("Device Token berhasil di kirim");
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> logout() async {

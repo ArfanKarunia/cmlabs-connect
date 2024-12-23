@@ -29,26 +29,19 @@ class FormProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    accountController.fetchRoleList();
-    accountController.fetchProfile();
+    User user = userController.user.value!;
 
-    User? user = userController.user.value;
-    user!.picUrl;
+    usernameController.text = accountController.profileUsername.value ?? '';
+    fullNameController.text = accountController.profileFullName.value ?? '';
+    numberController.text = accountController.profileNumber.value ?? '';
+    linkedinController.text = accountController.profileLinkedin.value ?? '';
+    weblinkController.text = accountController.profileWebsite.value ?? '';
+    instagramController.text = accountController.profileInstagram.value ?? '';
+    mediumController.text = accountController.profileMedium.value ?? '';
+    quoraController.text = accountController.profileQuora.value ?? '';
+    tiktokController.text = accountController.profileTiktok.value ?? '';
 
-    try {
-      usernameController.text = accountController.profileUsername.value ?? '';
-      fullNameController.text = accountController.profileFullName.value ?? '';
-      numberController.text = accountController.profileNumber.value ?? '';
-      linkedinController.text = accountController.profileLinkedin.value ?? '';
-      weblinkController.text = accountController.profileWebsite.value ?? '';
-      instagramController.text = accountController.profileInstagram.value ?? '';
-      mediumController.text = accountController.profileMedium.value ?? '';
-      quoraController.text = accountController.profileQuora.value ?? '';
-      tiktokController.text = accountController.profileTiktok.value ?? '';
-    } catch (e) {
-      // Handle any errors that occur while fetching experience
-      print('Error fetching experience: $e');
-    }
+    print(accountController.profileUsername.value);
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -227,7 +220,6 @@ class FormProfileView extends StatelessWidget {
                   title: "Phone Number",
                   hintText: "Phone Number",
                   controller: numberController,
-                
                   isMandatory: false,
                   validator: (value) {
                     if (value == null || value.isEmpty) {

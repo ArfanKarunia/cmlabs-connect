@@ -57,6 +57,8 @@ class NotificationController extends GetxController {
     }
   }
 
+  
+
   Future<void> fetchNotification(
       {bool isLoadMore = false, bool refreshData = false}) async {
     print("Fetch Notification");
