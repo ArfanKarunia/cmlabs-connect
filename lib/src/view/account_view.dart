@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/account_controller.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
@@ -10,8 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
-
-import '../models/user_model.dart';
 
 class AccountView extends StatefulWidget {
   AccountView({super.key});
@@ -27,6 +26,8 @@ class _AccountViewState extends State<AccountView> {
 
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
+
+  final NotificationController notificationController = Get.put(NotificationController());
 
   final AccountController accountController = Get.put(AccountController());
 
@@ -126,19 +127,40 @@ class _AccountViewState extends State<AccountView> {
                               ),
                             ],
                           ),
-                          Container(
-                            padding: EdgeInsets.all(5),
-                            child: CustomButton(
-                              onPressed: () {},
-                              borderRadius: BorderRadius.circular(10),
-                              backgroundColor: Colors.transparent,
-                              overlayColor: Colors.black12,
-                              child: Icon(
-                                Icons.notifications_outlined,
-                                color: AppColors.text_1,
-                                size: 29,
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  Get.toNamed(AppRoutes.notification);
+                                },
+                                icon: const Icon(
+                                  Icons.notifications_outlined,
+                                  color: AppColors.text_1,
+                                  size: 28,
+                                ),
                               ),
-                            ),
+                              Obx(
+                                () {
+                                  return notificationController.unreadAll
+                                              .value !=
+                                          0
+                                      ? Positioned(
+                                          top: 10,
+                                          right: 13,
+                                          child: Container(
+                                            height: 10,
+                                            width: 10,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: AppColors.danger,
+                                            ),
+                                          ),
+                                        )
+                                      : SizedBox.shrink();
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       );

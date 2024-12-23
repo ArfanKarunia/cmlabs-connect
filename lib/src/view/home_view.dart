@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/controllers/historical_lead_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -42,6 +43,9 @@ class HomeView extends StatefulWidget {
   final HistoricalLeadController historicalLeadController = Get.put(
     HistoricalLeadController(),
   );
+
+  final NotificationController notificationController =
+      Get.put(NotificationController());
 
   late ScrollController scrollController;
 
@@ -107,6 +111,9 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   Widget build(BuildContext context) {
+    widget.notificationController.fetchAmountUnreadNotification();
+    widget.dashboardController.saveDashboardData();
+
     User user = widget.userController.user.value!;
 
     return WillPopScope(
@@ -214,18 +221,26 @@ class _HomeViewState extends State<HomeView> {
                                 size: 35,
                               ),
                             ),
-                            Positioned(
-                              top: 10,
-                              right: 13,
-                              child: Container(
-                                height: 10,
-                                width: 10,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColors.danger,
-                                ),
-                              ),
-                            )
+                            Obx(
+                              () {
+                                return widget.notificationController.unreadAll
+                                            .value !=
+                                        0
+                                    ? Positioned(
+                                        top: 10,
+                                        right: 13,
+                                        child: Container(
+                                          height: 10,
+                                          width: 10,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppColors.danger,
+                                          ),
+                                        ),
+                                      )
+                                    : SizedBox.shrink();
+                              },
+                            ),
                           ],
                         ),
                       ],

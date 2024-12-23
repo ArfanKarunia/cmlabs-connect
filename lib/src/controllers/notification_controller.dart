@@ -57,8 +57,6 @@ class NotificationController extends GetxController {
     }
   }
 
-  
-
   Future<void> fetchNotification(
       {bool isLoadMore = false, bool refreshData = false}) async {
     print("Fetch Notification");
@@ -105,9 +103,7 @@ class NotificationController extends GetxController {
             todayNotification.value.clear();
             weekNotification.value.clear();
             monthNotification.value.clear();
-            unreadAll.value = 0;
-            unreadNew.value = 0;
-            unreadReminder.value = 0;
+            
           }
 
           DateTime now = DateTime.now();
@@ -127,7 +123,56 @@ class NotificationController extends GetxController {
               // Notification last month
               monthNotification.value.add(notification);
             }
+          }
 
+          if (refreshData) {
+            limit.value = 10;
+          }
+
+          todayNotification.refresh();
+          weekNotification.refresh();
+          monthNotification.refresh();
+        }
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
+  }
+
+  Future<void> fetchAmountUnreadNotification() async {
+    try {
+      String? accessToken = authenticationController.accesToken.value;
+
+      var endDate = DateTime.now();
+      var startDate = endDate.subtract(Duration(days: 30));
+      print("StartDate: $startDate");
+      print("endDate: $endDate");
+
+      String startDateString =
+          "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
+      String endDateString =
+          "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+
+      final response = await dio.get(
+        '$baseUrl/notification/list_notification?is_read=0&start=0&limit=50&start_date=$startDateString&end_date=$endDateString',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final rawData = response.data['data'];
+
+        if (rawData != null && rawData is List) {
+          List<NotificationModel> allNotification =
+              rawData.map<NotificationModel>((item) {
+            return NotificationModel.fromJson(item);
+          }).toList();
+
+          unreadAll.value = 0;
+          unreadNew.value = 0;
+          unreadReminder.value = 0;
+
+          // Categorize notifications
+          for (var notification in allNotification) {
             if (notification.isRead == false) {
               unreadAll.value++; // Count all unread notifications
               if (notification.status == 0) {
@@ -144,13 +189,6 @@ class NotificationController extends GetxController {
           print("unread new : ${unreadNew.value}");
           print("unread reminder : ${unreadReminder.value}");
 
-          if (refreshData) {
-            limit.value = 10;
-          }
-
-          todayNotification.refresh();
-          weekNotification.refresh();
-          monthNotification.refresh();
         }
       }
     } catch (e) {

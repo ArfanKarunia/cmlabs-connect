@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constant/config.dart';
 import '../constant/const.dart';
 import '../models/quotation_model.dart';
+import '../utils/string_utils.dart';
 import '../utils/toast.dart';
 import '../widgets/quotation_list_tile.dart';
 import 'authentication_controller.dart';
@@ -39,6 +41,9 @@ class QuotationController extends GetxController {
 
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
+
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
@@ -219,6 +224,7 @@ class QuotationController extends GetxController {
 
   void checkNewQuotationsPeriodically() {
     Timer.periodic(Duration(seconds: 10), (timer) async {
+      await dashboardController.saveDashboardData();
       await fetchCheckNewData();
       print("check new data : ${newQuotationCount.value}");
     });
@@ -457,16 +463,50 @@ class QuotationController extends GetxController {
     }
 
     // Jika filter category tidak null, lakukan filter berdasarkan category
+
     if (filterCategory.isNotEmpty) {
       if (filterCategory.contains('all')) {
+        // If 'all' is in the filter, clear the filter and return all quotations
+        filterCategory.clear();
+        return result; // Return all quotations
+      } else {
+        // Filter based on the category
+        result = result.where((quotation) {
+          // Determine the category to check against
+          final categories = quotation.section != 'ads'
+              ? [StringUtils.toCamelCase(quotation.section)]
+              : quotation.data.category;
+
+          // Check if any of the categories match the filter
+          return categories.any((cat) =>
+              cat != null && filterCategory.contains(cat.toLowerCase()));
+        }).toList();
+      }
+    }
+
+    if (filterCategory.isNotEmpty) {
+      if (filterCategory.contains('all')) {
+        // If 'all' is in the filter, clear the filter and return all quotations
         filterCategory.clear();
         result = quotationList;
       } else {
         result = result.where((quotation) {
-          // Mengecek apakah ada nilai category dalam quotation yang sesuai dengan filterCategory
-          final categories =
-              quotation.data.category.map((cat) => cat?.toLowerCase());
-          return categories.any((cat) => filterCategory.contains(cat));
+          // Get the categories from quotation.data.category and the section
+          final categories = <String?>[];
+
+          // Add categories from quotation.data.category
+          categories
+              .addAll(quotation.data.category.map((cat) => cat?.toLowerCase()));
+
+          // Add the section if it's not 'ads' and convert it to lowercase
+          if (quotation.section != 'ads') {
+            categories
+                .add(StringUtils.toCamelCase(quotation.section).toLowerCase());
+          }
+
+          // Check if any of the categories match the filterCategory
+          return categories
+              .any((cat) => cat != null && filterCategory.contains(cat));
         }).toList();
       }
     }
@@ -539,36 +579,36 @@ class QuotationController extends GetxController {
   }
 
   Future<bool> deleteQuotationWithAnimation(int index) async {
-  final removedQuotation = filteredQuotations[index];
+    final removedQuotation = filteredQuotations[index];
 
-  // Langkah 1: Tandai item sebagai sedang dihapus
-  removingIndexes.add(index);
-  update(); // Perbarui UI untuk memulai animasi
+    // Langkah 1: Tandai item sebagai sedang dihapus
+    removingIndexes.add(index);
+    update(); // Perbarui UI untuk memulai animasi
 
-  // Langkah 2: Tunggu animasi selesai
-  await Future.delayed(const Duration(milliseconds: 500));
+    // Langkah 2: Tunggu animasi selesai
+    await Future.delayed(const Duration(milliseconds: 500));
 
-  // Langkah 3: Lakukan penghapusan di server
-  final isDeleted = await deleteDataQuotation(removedQuotation.id);
+    // Langkah 3: Lakukan penghapusan di server
+    final isDeleted = await deleteDataQuotation(removedQuotation.id);
 
-  if (isDeleted) {
-    // Jika berhasil, hapus dari `quotationList`
-    quotationList.removeWhere((quotation) => quotation.id == removedQuotation.id);
+    if (isDeleted) {
+      // Jika berhasil, hapus dari `quotationList`
+      quotationList
+          .removeWhere((quotation) => quotation.id == removedQuotation.id);
 
-    showSuccessToast('Berhasil menghapus Quotation');
-    removingIndexes.remove(index); // Hapus tanda indeks
-    update(); // Perbarui UI
-    return true;
-  } else {
-    // Jika gagal, batalkan penghapusan
-    removingIndexes.remove(index);
-    update(); // Perbarui UI
+      showSuccessToast('Berhasil menghapus Quotation');
+      removingIndexes.remove(index); // Hapus tanda indeks
+      update(); // Perbarui UI
+      return true;
+    } else {
+      // Jika gagal, batalkan penghapusan
+      removingIndexes.remove(index);
+      update(); // Perbarui UI
 
-    showErrorToast('Gagal menghapus Quotation');
-    return false;
+      showErrorToast('Gagal menghapus Quotation');
+      return false;
+    }
   }
-}
-
 
   Future<bool> deleteDataQuotation(int id) async {
     try {

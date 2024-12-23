@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,8 @@ class FilterView extends StatelessWidget {
 
   final QuotationController quotationController =
       Get.put(QuotationController());
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
 
   final FilterController filterController = Get.put(FilterController());
 
@@ -43,6 +46,10 @@ class FilterView extends StatelessWidget {
     filterController.fetchList('pic');
     filterController.fetchList('client_source');
     filterController.fetchList('category');
+    dashboardController.clearDataRange();
+    dashboardController.clearFilterCategory();
+    dashboardController.clearFilterPic();
+    dashboardController.clearFilterClientSource();
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
