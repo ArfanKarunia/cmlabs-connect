@@ -42,9 +42,8 @@ class NotificationService {
     final token = await _messaging.getToken();
 
     userController.deviceToken.value = token;
-    
-    print("Token Device: $token");
 
+    print("Token Device: $token");
   }
 
   Future<void> setupFlutterNotification() async {
@@ -99,7 +98,7 @@ class NotificationService {
                   'This channel is used for important notifications.',
               importance: Importance.high,
               priority: Priority.high,
-              icon: '@mipmap/ic_launcher',
+              icon: '@drawable/ic_notification',
             ),
             iOS: const DarwinNotificationDetails(
                 presentAlert: true, presentBadge: true, presentSound: true)),
