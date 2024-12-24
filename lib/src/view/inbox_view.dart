@@ -289,7 +289,7 @@ class _InboxViewState extends State<InboxView> {
                   child: Obx(
                     () {
                       List quotationList =
-                          widget.quotationController.quotationList;
+                          widget.quotationController.filteredQuotations;
 
                       if (quotationList.isEmpty) {
                         return Center(
@@ -340,13 +340,13 @@ class _InboxViewState extends State<InboxView> {
                         child: ListView.builder(
                           controller: widget.scrollController,
                           itemCount:
-                              widget.quotationController.quotationList.length,
+                              widget.quotationController.filteredQuotations.length,
                           itemBuilder: (context, index) {
                             final quotation =
-                                widget.quotationController.quotationList[index];
+                                widget.quotationController.filteredQuotations[index];
 
                             var lengthQuotation =
-                                widget.quotationController.quotationList.length;
+                                widget.quotationController.filteredQuotations.length;
 
                             // Periksa apakah item sedang dihapus
                             final isRemoving = widget
@@ -384,7 +384,7 @@ class _InboxViewState extends State<InboxView> {
                                 ),
                                 (index + 1 ==
                                             widget.quotationController
-                                                .quotationList.length &&
+                                                .filteredQuotations.length &&
                                         lengthQuotation % 10 == 0)
                                     ? Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -398,7 +398,7 @@ class _InboxViewState extends State<InboxView> {
                                       )
                                     : (index + 1 ==
                                             widget.quotationController
-                                                .quotationList.length)
+                                                .filteredQuotations.length)
                                         ? Container(
                                             width: double.infinity,
                                             padding: const EdgeInsets.symmetric(

@@ -22,8 +22,50 @@ class AuthenticationController extends GetxController {
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
-  Box<User>? userBox;
+  Box<Map>? loginBox;
   UserController userController = Get.put(UserController());
+
+  @override
+  void onInit() {
+    super.onInit();
+    loginBox = Hive.box<Map>('login'); // Inisialisasi Box remember me
+    loadRememberedUser();
+  }
+
+  Future<void> loadRememberedUser() async {
+    try {
+      isLoading(true);
+      var rememberedData = loginBox?.get('remember');
+      if (rememberedData != null) {
+        String email = rememberedData['email'];
+        String password = rememberedData['password'];
+        print("Data Remember me");
+        print(rememberedData);
+        print("email: $email");
+        print("password: $password");
+
+        isRememberMe.value = true;
+
+        await login(email, password);
+      } else {
+        print("Data Remember me");
+      }
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  void saveRememberedLogin(String email, String password) {
+    loginBox?.put('remember', {'email': email, 'password': password});
+  }
+
+  void clearRememberedLogin() {
+    loginBox?.delete('remember');
+  }
+
+  void toggleRememberMe(bool value) {
+    isRememberMe(value);
+  }
 
   Future<Map<String, String>?> login(String email, String password) async {
     // isLoading.value = true;
@@ -67,6 +109,12 @@ class AuthenticationController extends GetxController {
         await storeDeviceToken(userController.deviceToken.value!,
             userController.user.value!.id.toString());
 
+        if (isRememberMe.value) {
+          saveRememberedLogin(email, password);
+        } else {
+          clearRememberedLogin();
+        }
+
         Get.toNamed('/home');
 
         var feedback = {
@@ -90,8 +138,6 @@ class AuthenticationController extends GetxController {
           message = errorData['error']; // Ambil pesan dari key 'error'
         }
       }
-      
-      
 
       // Return feedback error
       var feedback = {
@@ -152,10 +198,9 @@ class AuthenticationController extends GetxController {
 
       if (response.statusCode == 200) {
         userController.user.value = null;
-        userController.userBox = null;
-        userController.userBox = null;
         accesToken.value = '';
         tokenType.value = '';
+        clearRememberedLogin();
 
         showSuccessToast('Succses: Logout}');
         Get.offAllNamed('/login');
@@ -244,15 +289,11 @@ class AuthenticationController extends GetxController {
     }
   }
 
-  void toggleRememberMe(bool value) {
-    isRememberMe(value);
-  }
+  // User? getUser() {
+  //   return userBox!.get('user'); // Ambil data user dari Hive
+  // }
 
-  User? getUser() {
-    return userBox!.get('user'); // Ambil data user dari Hive
-  }
-
-  bool isLoggedIn() {
-    return getUser() != null; // Cek apakah user sudah login
-  }
+  // bool isLoggedIn() {
+  //   return getUser() != null; // Cek apakah user sudah login
+  // }
 }

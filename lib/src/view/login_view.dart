@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import '../controllers/authentication_controller.dart';
 import '../utils/color.dart';
@@ -335,6 +336,20 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
             ],
+          ),
+          Obx(
+            () { 
+              print(authController.isLoading.value);
+              if (authController.isLoading.value) {
+                return Container(
+                  decoration: BoxDecoration(color: Colors.black38),
+                  child: Center(
+                      child: LoadingAnimationWidget.progressiveDots(
+                          color: AppColors.white_1, size: 50)),
+                );
+              }
+              return SizedBox.shrink();
+            },
           ),
         ],
       ),

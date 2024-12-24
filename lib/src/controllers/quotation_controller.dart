@@ -559,25 +559,25 @@ class QuotationController extends GetxController {
     //       .toList();
     // }
 
-    // // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
-    // // Filter berdasarkan pencarian (search) jika search tidak kosong
-    // if (search.value != null && search.value!.isNotEmpty) {
-    //   final query = search.value!.toLowerCase();
+    // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
+    // Filter berdasarkan pencarian (search) jika search tidak kosong
+    if (search.value != null && search.value!.isNotEmpty) {
+      final query = search.value!.toLowerCase();
 
-    //   result = result.where((quotation) {
-    //     // Memastikan setiap properti non-null sebelum digunakan
-    //     return (quotation.email.toLowerCase().contains(query)) ||
-    //         (quotation.section?.toLowerCase().contains(query) ?? false) ||
-    //         (quotation.data.company?.toLowerCase().contains(query) ?? false) ||
-    //         (quotation.data.name?.toLowerCase().contains(query) ?? false) ||
-    //         (quotation.data.category
-    //             .any((cat) => cat!.toLowerCase().contains(query))) ||
-    //         (quotation.data.clientSource?.value
-    //                 ?.toLowerCase()
-    //                 .contains(query) ??
-    //             false);
-    //   }).toList();
-    // }
+      result = result.where((quotation) {
+        // Memastikan setiap properti non-null sebelum digunakan
+        return (quotation.email.toLowerCase().contains(query)) ||
+            (quotation.section?.toLowerCase().contains(query) ?? false) ||
+            (quotation.data.company?.toLowerCase().contains(query) ?? false) ||
+            (quotation.data.name?.toLowerCase().contains(query) ?? false) ||
+            (quotation.data.category
+                .any((cat) => cat!.toLowerCase().contains(query))) ||
+            (quotation.data.clientSource?.value
+                    ?.toLowerCase()
+                    .contains(query) ??
+                false);
+      }).toList();
+    }
 
     return result;
   }
