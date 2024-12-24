@@ -571,8 +571,7 @@ class AddtionalDataAso extends StatelessWidget {
           () {
             return Text(
               StringUtils.toCamelCase(detailQuotationController
-                      .additionalData.value?['app_name_inputted']) ??
-                  "-",
+                      .additionalData.value?['app_name_inputted']),
               style: GoogleFonts.plusJakartaSans(
                 color: AppColors.text_1,
                 fontSize: 12,

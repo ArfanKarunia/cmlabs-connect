@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
+import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 import '../constant/config.dart';
 import '../constant/const.dart';
 import '../models/quotation_model.dart';
-import '../utils/string_utils.dart';
 import '../utils/toast.dart';
 import '../widgets/quotation_list_tile.dart';
 import 'authentication_controller.dart';
@@ -106,11 +106,18 @@ class QuotationController extends GetxController {
 
         if (refreshData) {
           start.value = 0;
-          limit.value = quotationList.length;
+          limit.value = quotationList.isNotEmpty ? quotationList.length : 10;
         }
 
+        if (isLoadMore == false && refreshData == false) {
+          start.value = 0;
+          limit.value = 10;
+        }
+
+        String url = await constructFilteredUrl(start.value, limit.value);
+
         final response = await dio.get(
-          '$baseUrl/dashboard/data_recent_quotation?start=${start.value}&limit=${limit.value}',
+          url,
           options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
         );
 
@@ -122,10 +129,13 @@ class QuotationController extends GetxController {
               return Quotation.fromJson(item);
             }).toList();
 
+            print('jumlah Data: ${quotations.length}');
+
             // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
             if (isLoadMore) {
               quotationList.addAll(quotations); // Menambah data baru
               for (var item in quotations) {
+                print('status : ${item.status}');
                 int index = quotationList.length;
                 quotationList.add(item);
                 listInboxKey.currentState
@@ -151,14 +161,12 @@ class QuotationController extends GetxController {
               }
               quotationList.value = quotations; // Ganti dengan data baru
               for (int i = 0; i < quotations.length; i++) {
+                print('status : ${quotations[i].status}');
+
                 listInboxKey.currentState?.insertItem(i);
               } // Mengganti list dengan data baru
             }
 
-            if (!isLoadMore) {
-              newestIdQuotation.value = quotations.first.id;
-            }
-            newQuotationCount.value = 0;
             if (refreshData) {
               limit.value = 10;
             }
@@ -228,6 +236,35 @@ class QuotationController extends GetxController {
       await fetchCheckNewData();
       print("check new data : ${newQuotationCount.value}");
     });
+  }
+
+  Future<void> refreshNewData() async {
+    try {
+      // Jika data belum ada di local storage, fetch data dari API
+      String? accessToken = authenticationController.accesToken.value;
+      var start = 0;
+      var limit = 1;
+
+      final response = await dio.get(
+        '$baseUrl/dashboard/data_recent_quotation?start=$start&limit=$limit',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final rawData = response.data['data'];
+
+        if (rawData != null && rawData is List) {
+          List<Quotation> quotations = rawData.map<Quotation>((item) {
+            return Quotation.fromJson(item);
+          }).toList();
+
+          newestIdQuotation.value = quotations.first.id;
+          newQuotationCount.value = 0;
+        }
+      }
+    } catch (e) {
+      print('Error fetching data: $e');
+    }
   }
 
   Future<void> fetchCheckNewData() async {
@@ -333,7 +370,7 @@ class QuotationController extends GetxController {
   }
 
   void clearFilterCategory() {
-    filterPic.clear();
+    filterCategory.clear();
   }
 
   void clearDataRange() {
@@ -426,121 +463,121 @@ class QuotationController extends GetxController {
 
     print("Quotation lenght: ${result.length}");
 
-    if (filterStatus.value != null) {
-      int filterStatusIndex = filterStatus.value!.index;
+    // if (filterStatus.value != null) {
+    //   int filterStatusIndex = filterStatus.value!.index;
 
-      result = result
-          .where((quotation) => quotation.status == filterStatusIndex)
-          .toList();
-    }
+    //   result = result
+    //       .where((quotation) => quotation.status == filterStatusIndex)
+    //       .toList();
+    // }
 
-    // Jika filterClientSource tidak kosong, lakukan filter berdasarkan client source
-    if (filterClientSource.isNotEmpty) {
-      if (filterClientSource.contains('all')) {
-        filterClientSource.clear();
-        result = quotationList;
-      } else {
-        result = result.where((quotation) {
-          // Pastikan clientSource memiliki nilai dan cocok dengan salah satu dari filterClientSource
-          final clientSourceValue =
-              quotation.data.clientSource?.value?.toLowerCase() ?? '';
-          return filterClientSource.contains(clientSourceValue);
-        }).toList();
-      }
-    }
+    // // Jika filterClientSource tidak kosong, lakukan filter berdasarkan client source
+    // if (filterClientSource.isNotEmpty) {
+    //   if (filterClientSource.contains('all')) {
+    //     filterClientSource.clear();
+    //     result = quotationList;
+    //   } else {
+    //     result = result.where((quotation) {
+    //       // Pastikan clientSource memiliki nilai dan cocok dengan salah satu dari filterClientSource
+    //       final clientSourceValue =
+    //           quotation.data.clientSource?.value?.toLowerCase() ?? '';
+    //       return filterClientSource.contains(clientSourceValue);
+    //     }).toList();
+    //   }
+    // }
 
-    if (filterPic.isNotEmpty) {
-      if (filterPic.contains('all')) {
-        filterPic.clear();
-        result = quotationList;
-      } else {
-        result = result.where((quotation) {
-          // Pastikan clientSource memiliki nilai dan cocok dengan salah satu dari filterClientSource
-          final picValue = quotation.data.pic?.toLowerCase() ?? '';
-          return filterPic.contains(picValue);
-        }).toList();
-      }
-    }
+    // if (filterPic.isNotEmpty) {
+    //   if (filterPic.contains('all')) {
+    //     filterPic.clear();
+    //     result = quotationList;
+    //   } else {
+    //     result = result.where((quotation) {
+    //       // Pastikan clientSource memiliki nilai dan cocok dengan salah satu dari filterClientSource
+    //       final picValue = quotation.data.pic?.toLowerCase() ?? '';
+    //       return filterPic.contains(picValue);
+    //     }).toList();
+    //   }
+    // }
 
-    // Jika filter category tidak null, lakukan filter berdasarkan category
+    // // Jika filter category tidak null, lakukan filter berdasarkan category
 
-    if (filterCategory.isNotEmpty) {
-      if (filterCategory.contains('all')) {
-        // If 'all' is in the filter, clear the filter and return all quotations
-        filterCategory.clear();
-        return result; // Return all quotations
-      } else {
-        // Filter based on the category
-        result = result.where((quotation) {
-          // Determine the category to check against
-          final categories = quotation.section != 'ads'
-              ? [StringUtils.toCamelCase(quotation.section)]
-              : quotation.data.category;
+    // if (filterCategory.isNotEmpty) {
+    //   if (filterCategory.contains('all')) {
+    //     // If 'all' is in the filter, clear the filter and return all quotations
+    //     filterCategory.clear();
+    //     return result; // Return all quotations
+    //   } else {
+    //     // Filter based on the category
+    //     result = result.where((quotation) {
+    //       // Determine the category to check against
+    //       final categories = quotation.section != 'ads'
+    //           ? [StringUtils.toCamelCase(quotation.section)]
+    //           : quotation.data.category;
 
-          // Check if any of the categories match the filter
-          return categories.any((cat) =>
-              cat != null && filterCategory.contains(cat.toLowerCase()));
-        }).toList();
-      }
-    }
+    //       // Check if any of the categories match the filter
+    //       return categories.any((cat) =>
+    //           cat != null && filterCategory.contains(cat.toLowerCase()));
+    //     }).toList();
+    //   }
+    // }
 
-    if (filterCategory.isNotEmpty) {
-      if (filterCategory.contains('all')) {
-        // If 'all' is in the filter, clear the filter and return all quotations
-        filterCategory.clear();
-        result = quotationList;
-      } else {
-        result = result.where((quotation) {
-          // Get the categories from quotation.data.category and the section
-          final categories = <String?>[];
+    // if (filterCategory.isNotEmpty) {
+    //   if (filterCategory.contains('all')) {
+    //     // If 'all' is in the filter, clear the filter and return all quotations
+    //     filterCategory.clear();
+    //     result = quotationList;
+    //   } else {
+    //     result = result.where((quotation) {
+    //       // Get the categories from quotation.data.category and the section
+    //       final categories = <String?>[];
 
-          // Add categories from quotation.data.category
-          categories
-              .addAll(quotation.data.category.map((cat) => cat?.toLowerCase()));
+    //       // Add categories from quotation.data.category
+    //       categories
+    //           .addAll(quotation.data.category.map((cat) => cat?.toLowerCase()));
 
-          // Add the section if it's not 'ads' and convert it to lowercase
-          if (quotation.section != 'ads') {
-            categories
-                .add(StringUtils.toCamelCase(quotation.section).toLowerCase());
-          }
+    //       // Add the section if it's not 'ads' and convert it to lowercase
+    //       if (quotation.section != 'ads') {
+    //         categories
+    //             .add(StringUtils.toCamelCase(quotation.section).toLowerCase());
+    //       }
 
-          // Check if any of the categories match the filterCategory
-          return categories
-              .any((cat) => cat != null && filterCategory.contains(cat));
-        }).toList();
-      }
-    }
+    //       // Check if any of the categories match the filterCategory
+    //       return categories
+    //           .any((cat) => cat != null && filterCategory.contains(cat));
+    //     }).toList();
+    //   }
+    // }
 
-    // Filter berdasarkan rentang tanggal
-    DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
-    if (filterStartDate.value != null) {
-      result = result
-          .where((quotation) =>
-              quotation.createdAt.isAfter(filterStartDate.value!) &&
-              quotation.createdAt
-                  .isBefore(effectiveEndDate.add(Duration(days: 1))))
-          .toList();
-    }
+    // // Filter berdasarkan rentang tanggal
+    // DateTime effectiveEndDate = filterEndDate.value ?? DateTime.now();
+    // if (filterStartDate.value != null) {
+    //   result = result
+    //       .where((quotation) =>
+    //           quotation.createdAt.isAfter(filterStartDate.value!) &&
+    //           quotation.createdAt
+    //               .isBefore(effectiveEndDate.add(Duration(days: 1))))
+    //       .toList();
+    // }
 
-    // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
-    // Filter berdasarkan pencarian (search) jika search tidak kosong
-    if (search.value != null && search.value!.isNotEmpty) {
-      final query = search.value!.toLowerCase();
+    // // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
+    // // Filter berdasarkan pencarian (search) jika search tidak kosong
+    // if (search.value != null && search.value!.isNotEmpty) {
+    //   final query = search.value!.toLowerCase();
 
-      result = result.where((quotation) {
-        // Memastikan setiap properti non-null sebelum digunakan
-        return (quotation.email.toLowerCase().contains(query)) ||
-            (quotation.section?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.company?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.name?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.category
-                .any((cat) => cat!.toLowerCase().contains(query))) ||
-            (quotation.data.clientSource?.value
-                    ?.toLowerCase()
-                    .contains(query) ??
-                false);
-      }).toList();
-    }
+    //   result = result.where((quotation) {
+    //     // Memastikan setiap properti non-null sebelum digunakan
+    //     return (quotation.email.toLowerCase().contains(query)) ||
+    //         (quotation.section?.toLowerCase().contains(query) ?? false) ||
+    //         (quotation.data.company?.toLowerCase().contains(query) ?? false) ||
+    //         (quotation.data.name?.toLowerCase().contains(query) ?? false) ||
+    //         (quotation.data.category
+    //             .any((cat) => cat!.toLowerCase().contains(query))) ||
+    //         (quotation.data.clientSource?.value
+    //                 ?.toLowerCase()
+    //                 .contains(query) ??
+    //             false);
+    //   }).toList();
+    // }
 
     return result;
   }
@@ -643,6 +680,78 @@ class QuotationController extends GetxController {
       showErrorToast('Terjadi kesalahan saat menghapus data');
       return false; // Gagal
     }
+  }
+
+  Future<String> constructFilteredUrl(int start, int limit) async {
+    // Konversi filter tanggal ke format string
+    String? startDateString = filterStartDate.value != null
+        ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+        : null;
+    String? endDateString = filterEndDate.value != null
+        ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+        : null;
+
+    // Konversi filterStatus ke string
+    String? statusValue;
+    if (filterStatus.value != null) {
+      switch (filterStatus.value!) {
+        case StatusLead.newLead:
+          statusValue = 'new';
+          break;
+        case StatusLead.followedUp:
+          statusValue = 'followed-up';
+          break;
+        case StatusLead.accepted:
+          statusValue = 'accepted';
+          break;
+        case StatusLead.rejected:
+          statusValue = 'rejected';
+          break;
+        case StatusLead.onHold:
+          statusValue = 'on-hold';
+          break;
+      }
+    }
+
+    // Construct query parameters
+    Map<String, String> queryParams = {};
+
+    if (startDateString != null) {
+      queryParams['startDate'] = startDateString;
+    }
+    if (endDateString != null) {
+      queryParams['endDate'] = endDateString;
+    }
+    if (filterCategory.isNotEmpty) {
+      queryParams['category'] = filterCategory.join(',');
+    }
+    if (filterPic.isNotEmpty) {
+      queryParams['pic'] = StringUtils.toCamelCase(filterPic.join(','));
+    }
+    if (filterClientSource.isNotEmpty) {
+      queryParams['clientSource'] =
+          StringUtils.toCamelCase(filterClientSource.join(','));
+    }
+    if (statusValue != null) {
+      queryParams['status'] = statusValue;
+    }
+
+    // Build the query string
+    String queryString = queryParams.entries
+        .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+        .join('&');
+
+    // Construct the full URL
+    String url =
+        '$baseUrl/dashboard/data_recent_quotation?limit=$limit&start=$start';
+    if (queryString.isNotEmpty) {
+      url += '&$queryString';
+    }
+
+    // Debug log
+    print('Constructed URL: $url');
+
+    return url;
   }
 
   // void addQuotation(Quotation newQuotation) {

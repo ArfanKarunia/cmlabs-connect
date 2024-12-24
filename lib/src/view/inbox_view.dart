@@ -32,7 +32,7 @@ class InboxView extends StatefulWidget {
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
-    quotationController.fetchQuotationData();
+    quotationController.fetchQuotationData(refreshData: true);
 
     _refreshInboxController.refreshCompleted();
   }
@@ -96,7 +96,6 @@ class _InboxViewState extends State<InboxView> {
   @override
   Widget build(BuildContext context) {
     widget.detailQuotationController.clearSelectedData();
-    print(widget.quotationController.filteredQuotations.length);
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -290,7 +289,7 @@ class _InboxViewState extends State<InboxView> {
                   child: Obx(
                     () {
                       List quotationList =
-                          widget.quotationController.filteredQuotations;
+                          widget.quotationController.quotationList;
 
                       if (quotationList.isEmpty) {
                         return Center(
@@ -340,11 +339,14 @@ class _InboxViewState extends State<InboxView> {
                         controller: widget._refreshInboxController,
                         child: ListView.builder(
                           controller: widget.scrollController,
-                          itemCount: widget
-                              .quotationController.filteredQuotations.length,
+                          itemCount:
+                              widget.quotationController.quotationList.length,
                           itemBuilder: (context, index) {
-                            final quotation = widget
-                                .quotationController.filteredQuotations[index];
+                            final quotation =
+                                widget.quotationController.quotationList[index];
+
+                            var lengthQuotation =
+                                widget.quotationController.quotationList.length;
 
                             // Periksa apakah item sedang dihapus
                             final isRemoving = widget
@@ -381,8 +383,9 @@ class _InboxViewState extends State<InboxView> {
                                   ),
                                 ),
                                 (index + 1 ==
-                                        widget.quotationController
-                                            .filteredQuotations.length)
+                                            widget.quotationController
+                                                .quotationList.length &&
+                                        lengthQuotation % 10 == 0)
                                     ? Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10),
@@ -393,7 +396,25 @@ class _InboxViewState extends State<InboxView> {
                                           ),
                                         ),
                                       )
-                                    : SizedBox.shrink(),
+                                    : (index + 1 ==
+                                            widget.quotationController
+                                                .quotationList.length)
+                                        ? Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10),
+                                            child: Center(
+                                              child: Text(
+                                                "No more data",
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 14,
+                                                  color: AppColors.text_4,
+                                                ),
+                                              ),
+                                            ),
+                                          )
+                                        : SizedBox.shrink(),
                               ],
                             );
                           },

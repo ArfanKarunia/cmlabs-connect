@@ -57,7 +57,7 @@ class HomeView extends StatefulWidget {
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
 
-    quotationController.fetchQuotationData();
+    quotationController.fetchQuotationData(refreshData: true);
 
     _refreshController.refreshCompleted();
   }
@@ -113,6 +113,7 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     widget.notificationController.fetchAmountUnreadNotification();
     widget.dashboardController.saveDashboardData();
+    widget.quotationController.refreshNewData();
 
     User user = widget.userController.user.value!;
 
@@ -414,6 +415,8 @@ class _HomeViewState extends State<HomeView> {
                                   WidgetStatePropertyAll(Colors.white30),
                             ),
                             onPressed: () {
+                              widget.quotationController.clearFilter();
+                              widget.quotationController.refreshNewData();
                               widget.quotationController.fetchQuotationData();
                             },
                             child: Row(
@@ -448,7 +451,7 @@ class _HomeViewState extends State<HomeView> {
                 child: Obx(
                   () {
                     List quotationList =
-                        widget.quotationController.filteredQuotations;
+                        widget.quotationController.quotationList;
 
                     return quotationList.isEmpty
                         ? Container(
@@ -499,18 +502,24 @@ class _HomeViewState extends State<HomeView> {
                                 physics: AlwaysScrollableScrollPhysics(),
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 0),
-                                itemCount: widget.quotationController
-                                    .filteredQuotations.length,
+                                itemCount: widget
+                                    .quotationController.quotationList.length,
                                 itemBuilder: (context, index) {
                                   final quotation = quotationList[index];
+
+                                  var lengthQuotation = widget
+                                      .quotationController.quotationList.length;
 
                                   return Column(
                                     children: [
                                       QuotationListTile(
                                         quotation: quotation,
-                                        onDelete: () {
-                                          print(quotation.id);
-                                          // widget.quotationController.deleteDataQuotation(quotation.id);
+                                        onDelete: () async {
+                                          Get.back();
+
+                                          await widget.quotationController
+                                              .deleteQuotationWithAnimation(
+                                                  index);
                                         },
                                         onChatWA: () {
                                           // print(quotation);
@@ -519,8 +528,9 @@ class _HomeViewState extends State<HomeView> {
                                         },
                                       ),
                                       (index + 1 ==
-                                              widget.quotationController
-                                                  .filteredQuotations.length)
+                                                  widget.quotationController
+                                                      .quotationList.length &&
+                                              lengthQuotation % 10 == 0)
                                           ? Padding(
                                               padding:
                                                   const EdgeInsets.symmetric(
@@ -533,7 +543,25 @@ class _HomeViewState extends State<HomeView> {
                                                 ),
                                               ),
                                             )
-                                          : SizedBox.shrink(),
+                                          : (index + 1 ==
+                                                  widget.quotationController
+                                                      .quotationList.length)
+                                              ? Container(
+                                                  width: double.infinity,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 10),
+                                                  child: Center(
+                                                    child: Text(
+                                                      "No more data",
+                                                      style: GoogleFonts
+                                                          .plusJakartaSans(
+                                                        fontSize: 14,
+                                                        color: AppColors.text_4,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox.shrink(),
                                     ],
                                   );
                                 },

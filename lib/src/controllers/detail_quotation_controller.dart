@@ -173,8 +173,6 @@ class DetailQuotationController extends GetxController {
       "company_name": quotation.data.company ?? "N/A",
       "company_profile": quotation.data.companyIndustry ?? "-",
       "page_source": quotation.url,
-      // "service": StringUtils.toCamelCase(quotation.section),
-      // "region": quotation.data.region ?? "-",
     };
 
     // Check if the section is 'ramadan24' and add the additional data
@@ -231,9 +229,8 @@ class DetailQuotationController extends GetxController {
           "service": StringUtils.toCamelCase(categoryText),
         });
       } else {
-        String category = categories == '-' ? section : '-';
         details.addAll({
-          "service": StringUtils.toCamelCase(category).replaceAll(',', ', '),
+          "service": StringUtils.toCamelCase(quotation.section),
         });
       }
     }

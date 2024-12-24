@@ -95,6 +95,7 @@ class FilterView extends StatelessWidget {
                     ),
                     onPressed: () {
                       filterController.searchFilter('all');
+                      quotationController.fetchQuotationData(refreshData: true);
                     },
                     child: Text(
                       "Clear filter",
@@ -467,6 +468,7 @@ class FilterView extends StatelessWidget {
                   filterController.setDateRange(
                       temporaryStartDate, temporaryEndDate);
                   filterController.searchFilter('all');
+                  quotationController.fetchQuotationData();
                 },
                 style: ButtonStyle(
                   fixedSize: WidgetStatePropertyAll(
