@@ -1,6 +1,7 @@
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 
@@ -362,7 +363,8 @@ class FilterController extends GetxController {
       String clientSourceValue = data['value'].toString().toLowerCase();
 
       quotationController.addFilterClientSource(clientSourceValue);
-      dashboardController.addFilterClientSource(clientSourceValue);
+      print("Client Source : ${clientSourceValue}");
+      dashboardController.addFilterClientSource(StringUtils.toCamelCase(clientSourceValue));
     }
 
     clearFilterClientSource();
@@ -377,7 +379,7 @@ class FilterController extends GetxController {
       String picValue = data['value'].toString().toLowerCase();
 
       quotationController.addFilterPic(picValue);
-      dashboardController.addFilterPic(picValue);
+      dashboardController.addFilterPic(StringUtils.toCamelCase(picValue));
     }
 
     clearFilterPic();

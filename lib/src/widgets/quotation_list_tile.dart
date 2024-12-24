@@ -24,7 +24,8 @@ class QuotationListTile extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback onChatWA;
 
-  final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
+  final DetailQuotationController detailQuotationController =
+      Get.put(DetailQuotationController());
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +105,8 @@ class QuotationListTile extends StatelessWidget {
                                     onTap: onChatWA,
                                     splashColor: Colors.black12, // Ripple color
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           "WA",
@@ -147,7 +149,8 @@ class QuotationListTile extends StatelessWidget {
                                     },
                                     splashColor: Colors.black12, // Ripple color
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           "Delete",
@@ -218,15 +221,25 @@ class QuotationListTile extends StatelessWidget {
                                   : quotation.data.company!,
                               maxLines: 1,
                               style: GoogleFonts.plusJakartaSans(
-                                color: (quotation.data.company?.isEmpty ?? true) ? AppColors.text_3 :AppColors.text_1,
+                                color: (quotation.data.company?.isEmpty ?? true)
+                                    ? AppColors.text_3
+                                    : AppColors.text_1,
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              quotation.section != 'ads' ? 
-                              StringUtils.toCamelCase(quotation.section) : quotation.data.category.join(','),
+                              quotation.data.category.isNotEmpty
+                                  ? StringUtils.toCamelCase(quotation.data.category.map((cat) {
+                                      return cat == null || cat.isEmpty
+                                          ? '-'
+                                          : cat.replaceAll(
+                                              'SEO Article', 'SEO Writing');
+                                    }).join(', '))
+                                  : StringUtils.toCamelCase(quotation.section),
+                              // quotation.section != 'ads' ?
+                              // StringUtils.toCamelCase(quotation.section) : quotation.data.category.join(','),
                               maxLines: 1, // Membatasi hanya 1 baris
                               overflow: TextOverflow
                                   .ellipsis, // Menambahkan ellipsis (...) jika terlalu panjang
@@ -266,7 +279,7 @@ class QuotationListTile extends StatelessWidget {
                         ),
                       ),
                     ),
-      
+
                     // Berfungsi agar informasi quotation hanya setengah tile
                     Expanded(child: Container()),
                   ],

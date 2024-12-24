@@ -18,7 +18,8 @@ class DetailQuotationView extends StatelessWidget {
   final DetailQuotationController detailQuotationController =
       Get.put(DetailQuotationController());
 
-  final NotificationController notificationController = Get.put(NotificationController());
+  final NotificationController notificationController =
+      Get.put(NotificationController());
 
   final QuotationController quotationController =
       Get.put(QuotationController());
@@ -65,9 +66,10 @@ class DetailQuotationView extends StatelessWidget {
             children: [
               Obx(
                 () {
-                  var dataQuotation = detailQuotationController.detailData();
+                  var dataQuotation =
+                      detailQuotationController.detailData.value;
                   return Text(
-                    dataQuotation['company'] ?? "N/A",
+                    dataQuotation?['company'] ?? "N/A",
                     style: GoogleFonts.plusJakartaSans(
                       color: AppColors.text_1,
                       fontSize: 18,
@@ -85,21 +87,36 @@ class DetailQuotationView extends StatelessWidget {
                 width: double.infinity,
                 child: Obx(
                   () {
-                    var dataQuotation = detailQuotationController.detailData();
+                    // Ambil data detailQuotation, pastikan null check
+                    var dataQuotation =
+                        detailQuotationController.detailData.value;
+
+                    // Jika dataQuotation null, kembalikan widget kosong
+                    if (dataQuotation == null) {
+                      return Container();
+                    }
+
                     return ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       itemCount: (detailQuotationController.isShowAll.value)
-                          ? detailQuotationController.title.length
-                          : 8,
+                          ? dataQuotation
+                              .length // Menampilkan semua data jika isShowAll true
+                          : dataQuotation.length > 8
+                              ? 8
+                              : dataQuotation
+                                  .length, // Menampilkan hanya 8 data pertama jika isShowAll false
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
-                        final title = detailQuotationController.title[index];
+                        // Ambil key berdasarkan index
+                        final title = dataQuotation.keys.elementAt(index);
+                        // Ambil value terkait key
                         final value = dataQuotation[title];
+
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              title,
+                              StringUtils.toCamelCase(title),
                               style: GoogleFonts.plusJakartaSans(
                                 color: AppColors.text_1,
                                 fontSize: 14,
@@ -110,7 +127,7 @@ class DetailQuotationView extends StatelessWidget {
                               height: 6,
                             ),
                             Text(
-                              value ?? "-",
+                              value ?? "-", // Menampilkan '-' jika value null
                               style: GoogleFonts.plusJakartaSans(
                                 color: AppColors.text_1,
                                 fontSize: 12,
@@ -150,36 +167,50 @@ class DetailQuotationView extends StatelessWidget {
                                           detailQuotationController
                                                   .serviceQuotation.value ==
                                               'expert-writing' ||
-                                          detailQuotationController.serviceQuotation
-                                                  .value ==
+                                          detailQuotationController
+                                                  .serviceQuotation.value ==
                                               "website-copywriting" ||
-                                          detailQuotationController.serviceQuotation
-                                                  .value ==
+                                          detailQuotationController
+                                                  .serviceQuotation.value ==
                                               "content-writing" ||
-                                          detailQuotationController.serviceQuotation
-                                                  .value ==
+                                          detailQuotationController
+                                                  .serviceQuotation.value ==
                                               "press-release" ||
                                           detailQuotationController
                                                   .serviceQuotation.value ==
                                               "seo-writing" ||
                                           detailQuotationController
                                                   .serviceQuotation.value ==
-                                              'ads'
+                                              "seo-services" ||
+                                          (detailQuotationController
+                                                      .serviceQuotation.value ==
+                                                  'ads' &&
+                                              detailQuotationController
+                                                      .additionalData
+                                                      .value?['proposal'] ==
+                                                  null)
                                       ? AdditionalDataWithBottomSheet(
                                           detailQuotationController:
                                               detailQuotationController,
-                                          quotation: quotation!)
+                                          quotation: quotation)
                                       : SizedBox.shrink(),
                                   detailQuotationController
                                                   .serviceQuotation.value ==
                                               'visuwisu' ||
                                           detailQuotationController
                                                   .serviceQuotation.value ==
-                                              "development-service"
+                                              "development-service" ||
+                                          (detailQuotationController
+                                                      .serviceQuotation.value ==
+                                                  'ads' &&
+                                              detailQuotationController
+                                                      .additionalData
+                                                      .value?['proposal'] !=
+                                                  null)
                                       ? AddtionalDataDirect(
                                           detailQuotationController:
                                               detailQuotationController,
-                                          quotation: quotation!,
+                                          quotation: quotation,
                                         )
                                       : SizedBox.shrink(),
                                   detailQuotationController
@@ -188,7 +219,7 @@ class DetailQuotationView extends StatelessWidget {
                                       ? AddtionalDataAso(
                                           detailQuotationController:
                                               detailQuotationController,
-                                          quotation: quotation!)
+                                          quotation: quotation)
                                       : SizedBox.shrink()
                                 ],
                               ),
@@ -356,6 +387,24 @@ class AddtionalDataDirect extends StatelessWidget {
                       ],
                     )
                   : SizedBox.shrink(),
+              detailQuotationController.additionalData.value?['proposal'] != null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Partnership',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.text_1,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 12,
+                        )
+                      ],
+                    )
+                  : SizedBox.shrink(),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -415,7 +464,8 @@ class AdditionalDataWithBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return quotation.data.category.join(', ') != 'new-amber'
+    return quotation.data.category.join(', ') != 'new-amber' &&
+            detailQuotationController.additionalData.value != null
         ? Column(
             children: [
               Row(
@@ -437,7 +487,7 @@ class AdditionalDataWithBottomSheet extends StatelessWidget {
                         height: 6,
                       ),
                       Text(
-                        "${quotation?.data.category.isNotEmpty == true ? quotation!.data.category.join(', ') : StringUtils.toCamelCase(quotation?.section)}",
+                        "${quotation.data.category.isNotEmpty == true ? quotation.data.category.join(', ') : StringUtils.toCamelCase(quotation.section)}",
                         style: GoogleFonts.plusJakartaSans(
                           color: AppColors.text_1,
                           fontSize: 12,
@@ -507,6 +557,34 @@ class AddtionalDataAso extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
+          "App Name Inputted",
+          style: GoogleFonts.plusJakartaSans(
+            color: AppColors.text_1,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(
+          height: 6,
+        ),
+        Obx(
+          () {
+            return Text(
+              StringUtils.toCamelCase(detailQuotationController
+                      .additionalData.value?['app_name_inputted']) ??
+                  "-",
+              style: GoogleFonts.plusJakartaSans(
+                color: AppColors.text_1,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
+            );
+          },
+        ),
+        Divider(
+          color: AppColors.text_4,
+        ),
+        Text(
           'Mobile App Name',
           style: GoogleFonts.plusJakartaSans(
             color: AppColors.text_1,
@@ -519,23 +597,25 @@ class AddtionalDataAso extends StatelessWidget {
         // Button to Open Modal
         ElevatedButton(
             style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                foregroundColor: WidgetStatePropertyAll(AppColors.primary),
-                overlayColor: WidgetStatePropertyAll(AppColors.bgPrimary),
-                shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+              backgroundColor: WidgetStatePropertyAll(AppColors.white_1),
+              foregroundColor: WidgetStatePropertyAll(AppColors.primary),
+              overlayColor: WidgetStatePropertyAll(AppColors.bgPrimary),
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5),
                   side: BorderSide(width: 1, color: AppColors.primary),
-                ))),
+                ),
+              ),
+            ),
             onPressed: () {
               isShowData.value = !isShowData.value;
             },
             child: Obx(
               () {
                 return Text(
-                  detailQuotationController
-                              .additionalData.value?['data_app_name'] !=
+                  detailQuotationController.additionalData.value?['app_name'] !=
                           '-'
-                      ? '${detailQuotationController.additionalData.value?['data_app_name'] ?? '-'}}'
+                      ? '${detailQuotationController.additionalData.value?['app_name'] ?? '-'}'
                       : '-',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
@@ -649,7 +729,11 @@ void _showAdditionalDataModal(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Render Additional Data
-              ...additionalData.entries.map((entry) {
+              ...additionalData.entries
+                  .where((entry) =>
+                      entry.key != 'package' &&
+                      entry.key != 'selected_language') // Skip keys
+                  .map((entry) {
                 final key = StringUtils.toCamelCase(entry.key);
                 final value = entry.value;
 
@@ -665,7 +749,6 @@ void _showAdditionalDataModal(
                 // Handle content_type.list and copywriting_style.list
                 if ((entry.key == 'content_type' ||
                         entry.key == 'page_type' ||
-                        entry.key == 'copywriting_style' ||
                         entry.key == 'copywriting_style') &&
                     value is Map &&
                     value['list'] != null) {
@@ -681,6 +764,7 @@ void _showAdditionalDataModal(
                   value ?? "-",
                 );
               }).toList(),
+
               const SizedBox(height: 16),
               // Close Button
               SizedBox(

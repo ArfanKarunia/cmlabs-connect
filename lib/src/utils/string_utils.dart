@@ -1,3 +1,5 @@
+import 'package:get/get_connect/http/src/utils/utils.dart';
+
 class StringUtils {
   // Static method to convert a hyphenated string to camel case
   static String toCamelCase(String? input) {
@@ -6,7 +8,7 @@ class StringUtils {
     }
 
     return input
-        .split(RegExp(r'[-_]')) // Split by hyphen or underscore
+        .split(RegExp(r'[-_\s]')) // Split by hyphen or underscore
         .map((word) {
       if (word.isEmpty) return ''; // Skip empty parts
       return word[0].toUpperCase() + word.substring(1).toLowerCase();
@@ -24,5 +26,22 @@ class StringUtils {
       // For negative values, return remaining days
       return "${-value} day${-value > 1 ? 's' : ''} remaining";
     }
+  }
+
+  static Map<String, String> extractPackageLanguage(String? type) {
+    if (type == null || type.isEmpty) {
+      return {
+        "package": '-',
+        "selected_language": '-',
+      };
+    }
+
+    final parts = type.split('-');
+    return {
+      "package": parts.first, // Ambil bagian sebelum tanda '-'
+      "selected_language": parts.length > 1
+          ? toCamelCase(parts[1])
+          : '-',
+    };
   }
 }
