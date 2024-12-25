@@ -68,7 +68,7 @@ class Quotation extends HiveObject {
           ? int.tryParse(json['user_id'].toString())
           : null,
       feature: json['feature'],
-      url: json['url'],
+      url: json['url'] ?? '-',
       email: json['email'] ?? "-",
       data: QuotationData.fromJson(json['data']),
       agent: json['agent'] != null ? AgentData.fromJson(json['agent']) : null,
@@ -76,9 +76,9 @@ class Quotation extends HiveObject {
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'])
           : null,
-      section: json['section'],
-      priority: json['priority'],
-      status: json['status'],
+      section: json['section'] ?? '-',
+      priority: json['priority'] ?? 0,
+      status: json['status'] ?? 0,
       deletedAt: json['deleted_at'] != null
           ? DateTime.parse(json['deleted_at'])
           : null,
@@ -206,6 +206,7 @@ class QuotationData {
   });
 
   factory QuotationData.fromJson(Map<String, dynamic> json) {
+
     try {
       // Parsing client_pic menjadi List<ClientPic>
       List<ClientPic> clientPics = [];
@@ -278,26 +279,26 @@ class QuotationData {
       }
 
       return QuotationData(
-        language: json['language'],
-        name: json['name'],
-        phoneCode: json['phone_code'],
-        phoneNumber: json['phone_number'],
-        company: json['company_name'] ?? json['company'],
-        companyIndustry: json['company_industry'],
-        registrationStatus: json['registration-status'],
-        website: json['website'],
-        region: json['region'],
+        language: json['language'] ?? '-',
+        name: json['name'] ?? '-',
+        phoneCode: json['phone_code'] ?? '-',
+        phoneNumber: json['phone_number'] ?? '-',
+        company: json['company_name'] ?? json['company'] ?? '-',
+        companyIndustry: json['company_industry'] ?? '-',
+        registrationStatus: json['registration-status'] ?? '-',
+        website: json['website'] ?? '-',
+        region: json['region'] ?? '-',
         type: types,
         category: categories,
         clientPIC: clientPics, // Menggunakan List<ClientPic>
-        pic: json['pic'],
-        remarks: json['remarks'],
-        notes: json['notes'],
+        pic: json['pic'] ?? '-',
+        remarks: json['remarks'] ?? '-',
+        notes: json['notes'] ?? '-',
         meetingTopic: meetingTopics,
         meetingSchedule: meetingSchedules,
         meetingStatus: meetingStatuses,
         meetingNote: meetingNotes,
-        addtionalNotes: json['meeting'],
+        addtionalNotes: json['meeting'] ?? '-',
         meetingType: meetingTypes,
         clientSource: ClientSource.fromJson(
           {
@@ -391,6 +392,7 @@ class AgentData {
   });
 
   factory AgentData.fromJson(Map<String, dynamic> json) {
+
     try {
       return AgentData(
         browser: json['browser'] is String ? json['browser'] : null,

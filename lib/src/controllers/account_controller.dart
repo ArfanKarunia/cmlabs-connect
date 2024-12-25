@@ -2,8 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/achievement_model.dart';
 import 'package:cmlabs_connect/src/models/certification_model.dart';
 import 'package:cmlabs_connect/src/models/education_model.dart';
@@ -20,9 +19,8 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class AccountController extends GetxController {
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
-  final UserController userController = Get.put(UserController());
+
+  final UserControler userController = Get.put(UserControler());
   final baseUrl = Config.baseURL;
   final Dio dio = Dio();
 
@@ -46,7 +44,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchSummary() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response1 = await dio.get(
@@ -61,7 +59,7 @@ class AccountController extends GetxController {
         print(responseData);
 
         // Check if 'about' is null before assigning
-        about.value = responseData['about'] ?? null;
+        about.value = responseData['about'];
 
         // Check if 'specialization' is null or not a List, then assign an empty list if needed
         if (responseData['specialization'] != null &&
@@ -97,7 +95,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchSpecializationList() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/profile/list-specialization',
@@ -129,7 +127,7 @@ class AccountController extends GetxController {
 
   Future<void> deleteSummary() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       // untuk Filter Status
@@ -158,7 +156,7 @@ class AccountController extends GetxController {
 
   Future<void> addSumary() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       var data = {
@@ -205,7 +203,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchExperience() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -253,7 +251,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -309,7 +307,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -348,7 +346,7 @@ class AccountController extends GetxController {
 
   Future<void> deleteExperience(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // untuk Filter Status
       final response = await dio.delete(
@@ -373,7 +371,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchProjectList() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/profile/list-specialization',
@@ -419,7 +417,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchEducation() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -468,7 +466,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -525,7 +523,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -564,7 +562,7 @@ class AccountController extends GetxController {
 
   Future<void> deleteEducation(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // untuk Filter Status
       final response = await dio.delete(
@@ -604,7 +602,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchCertification() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -653,7 +651,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -709,7 +707,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -748,7 +746,7 @@ class AccountController extends GetxController {
 
   Future<void> deleteCertification(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // untuk Filter Status
       final response = await dio.delete(
@@ -787,7 +785,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchOrganization() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -834,7 +832,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -889,7 +887,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -928,7 +926,7 @@ class AccountController extends GetxController {
 
   Future<void> deleteOrganization(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // untuk Filter Status
       final response = await dio.delete(
@@ -965,7 +963,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchAchievement() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -1010,7 +1008,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -1063,7 +1061,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -1102,7 +1100,7 @@ class AccountController extends GetxController {
 
   Future<void> deleteAchievement(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // untuk Filter Status
       final response = await dio.delete(
@@ -1142,7 +1140,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchVolunteer() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -1189,7 +1187,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/add-volunteer'),
@@ -1239,7 +1237,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/update-volunteer'),
@@ -1273,7 +1271,7 @@ class AccountController extends GetxController {
 
   Future<void> deleteVolunteer(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.delete(
         '$baseUrl/profile/delete-volunteer?id=$id',
@@ -1307,7 +1305,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchPublication() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -1351,7 +1349,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/add-publication'),
@@ -1398,7 +1396,7 @@ class AccountController extends GetxController {
     print(body);
     try {
       String? accessToken =
-          authenticationController.accesToken.value.toString();
+          userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/update-publication'),
@@ -1432,7 +1430,7 @@ class AccountController extends GetxController {
 
   Future<void> deletePublication(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.delete(
         '$baseUrl/profile/delete-publication?id=$id',
@@ -1474,7 +1472,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchProfile() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       final response = await dio.get(
@@ -1507,20 +1505,16 @@ class AccountController extends GetxController {
             (role) => role['id'] == int.parse(jobPosition),
             orElse: () => {},
           );
-          if (matchedRole != null) {
-            profileRole.value = matchedRole;
-          }
-        } else if (userController.roleName.value != 'User') {
+          profileRole.value = matchedRole;
+                } else if (userController.roleName.value != 'User') {
           // Jika job_position null atau kosong, cek roleName
           String roleName = userController.roleName.value;
           Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
             (role) => role['name'] == roleName,
             orElse: () => {},
           );
-          if (matchedRole != null) {
-            profileRole.value = matchedRole;
-          }
-        }
+          profileRole.value = matchedRole;
+                }
 
 
         profileUsername.value = responseData['username'] ?? '';
@@ -1567,7 +1561,7 @@ class AccountController extends GetxController {
       });
 
       // Access token and user ID
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value!.id;
 
       dio.options.headers = {
@@ -1643,7 +1637,7 @@ class AccountController extends GetxController {
 
   Future<void> fetchRoleList() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/profile/position',
@@ -1679,7 +1673,7 @@ class AccountController extends GetxController {
     List result = [];
 
     // Debugging
-    print("select: ${data}");
+    print("select: $data");
 
     if (data == "project") {
       result = projectList.value;

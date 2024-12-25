@@ -1,9 +1,9 @@
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/historical_lead_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../constant/config.dart';
-import 'authentication_controller.dart';
 
 class HistoricalLeadController extends GetxController {
   var search = Rx<String?>(null);
@@ -17,8 +17,7 @@ class HistoricalLeadController extends GetxController {
   final historicalData1 = Rx<HistoricalLeadModel?>(null);
   final historicalData2 = Rx<HistoricalLeadModel?>(null);
 
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
+  final UserControler userControler = Get.put(UserControler());
 
   final baseUrl = Config.baseURL;
   final Dio dio = Dio();
@@ -41,7 +40,7 @@ class HistoricalLeadController extends GetxController {
   Future<void> fetchHistoricalData(int index) async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       var data = requestData(index);
 
@@ -86,7 +85,7 @@ class HistoricalLeadController extends GetxController {
     List result = [];
 
     // Debugging
-    print("Current Filter: ${select}");
+    print("Current Filter: $select");
     print("Current Search Query: ${search.value}");
 
     if (select == 'year') {

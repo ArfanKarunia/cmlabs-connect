@@ -136,7 +136,19 @@ class _AllNotificationViewState extends State<AllNotificationView> {
                             ),
                           ],
                         )
-                      : SizedBox.shrink();
+                      : Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          child: Center(
+                            child: Text(
+                              "No more data",
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                color: AppColors.text_4,
+                              ),
+                            ),
+                          ),
+                        );
                 },
               ),
               SizedBox(

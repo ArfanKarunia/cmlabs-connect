@@ -56,7 +56,10 @@ class SelectStatus extends StatelessWidget {
                     SizedBox(
                       height: 25,
                       child: GestureDetector(
-                        onTap: () => controller.clearFilterStatus(),
+                        onTap: () {
+                          controller.clearFilterStatus();
+                          controller.fetchQuotationData(refreshData: true);
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 7,
@@ -134,6 +137,8 @@ class SelectStatus extends StatelessWidget {
                                   child: GestureDetector(
                                     onTap: () {
                                       controller.addFilterStatus(status);
+                                      controller.fetchQuotationData(
+                                          refreshData: true);
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(

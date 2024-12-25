@@ -1,5 +1,7 @@
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 
@@ -8,7 +10,7 @@ import '../constant/const.dart';
 
 class FilterController extends GetxController {
   var search = Rx<String?>(null);
-  
+
   // Menyimpan list status
   var statusList = <Map<String, String>>[].obs;
   var clientSourceList = <Map<String, String>>[].obs;
@@ -25,24 +27,21 @@ class FilterController extends GetxController {
   var startDate = Rx<DateTime?>(null);
   var endDate = Rx<DateTime?>(null);
 
-
   // Inisialisasi Dio dan AuthenticationController
   final Dio dio = Dio();
-  final AuthenticationController authenticationController = Get.find();
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController =
+      Get.put(QuotationController());
+  final DashboardController dashboardController =
+      Get.put(DashboardController());
+  final UserControler userControler = Get.put(UserControler());
 
   final String baseUrl = Config.baseURL;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // fetchList();
-  }
 
   // Fetch data status dari API
   Future<void> fetchList(String filter) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // untuk Filter Status
       if (filter.toLowerCase() == "status") {
@@ -99,7 +98,6 @@ class FilterController extends GetxController {
         if (response.statusCode == 200 && response.data != null) {
           var responseData = response.data['data'];
 
-
           var mappedData = responseData.map<Map<String, String>>((pic) {
             return {
               'value': pic['value']?.toString() ?? '',
@@ -111,7 +109,6 @@ class FilterController extends GetxController {
 
           picList.add({'value': 'all', 'label': 'All'});
           picList.addAll(mappedData);
-
         }
       } else if (filter.toLowerCase() == 'category') {
         final response = await dio.get(
@@ -123,7 +120,6 @@ class FilterController extends GetxController {
 
         if (response.statusCode == 200 && response.data != null) {
           var responseData = response.data['data'];
-
 
           var mappedData = responseData.map<Map<String, String>>((category) {
             return {
@@ -232,7 +228,7 @@ class FilterController extends GetxController {
     // Cek jika status yang dipilih adalah "all"
     if (category['value'] == "all") {
       // Kosongkan filter status jika ada status lain
-      clearFilterPic();
+      clearFilterCategory();
       filterCategoryList.add(category);
     } else {
       // Jika "all" ada, hapus dari list sebelum menambahkan status baru
@@ -264,7 +260,7 @@ class FilterController extends GetxController {
     // fetchList();
 
     // Debugging
-    print("Current Filter: ${filter}");
+    print("Current Filter: $filter");
     print("Current Search Query: ${search.value}");
 
     if (filter.toLowerCase() == 'status') {
@@ -355,12 +351,15 @@ class FilterController extends GetxController {
 
   void filterByClientSource() {
     quotationController.clearFilterClientSource();
+    dashboardController.clearFilterClientSource();
 
     for (var data in filterClientSourceList) {
       // Convert both values to lowercase to ensure case-insensitive comparison
       String clientSourceValue = data['value'].toString().toLowerCase();
 
       quotationController.addFilterClientSource(clientSourceValue);
+      print("Client Source : $clientSourceValue");
+      dashboardController.addFilterClientSource(StringUtils.toCamelCase(clientSourceValue));
     }
 
     clearFilterClientSource();
@@ -368,12 +367,14 @@ class FilterController extends GetxController {
 
   void filterByPIC() {
     quotationController.clearFilterPic();
+    dashboardController.clearFilterPic();
 
     for (var data in filterPicList) {
       // Convert both values to lowercase to ensure case-insensitive comparison
       String picValue = data['value'].toString().toLowerCase();
 
       quotationController.addFilterPic(picValue);
+      dashboardController.addFilterPic(StringUtils.toCamelCase(picValue));
     }
 
     clearFilterPic();
@@ -381,12 +382,14 @@ class FilterController extends GetxController {
 
   void filterByCategory() {
     quotationController.clearFilterCategory();
+    dashboardController.clearFilterCategory();
 
     for (var data in filterCategoryList) {
       // Convert both values to lowercase to ensure case-insensitive comparison
       String categoryValue = data['value'].toString().toLowerCase();
 
       quotationController.addFilterCategory(categoryValue);
+      dashboardController.addFilterCategory(categoryValue);
     }
 
     clearFilterCategory();
@@ -402,9 +405,13 @@ class FilterController extends GetxController {
 
   void filterByDateRange() {
     quotationController.clearDataRange();
+    dashboardController.clearDataRange();
 
     quotationController.filterStartDate.value = startDate.value;
     quotationController.filterEndDate.value = endDate.value;
+
+    dashboardController.filterStartDate.value = startDate.value;
+    dashboardController.filterEndDate.value = endDate.value;
 
     startDate.value = null;
     endDate.value = null;
@@ -415,15 +422,9 @@ class FilterController extends GetxController {
 
     if (filter.toLowerCase() == "all") {
       filterByDateRange();
-
-      filterByStatus();
       filterByCategory();
       filterByClientSource();
       filterByPIC();
-
-      // Filter Status
-    } else if (filter.toLowerCase() == "status") {
-      filterByStatus();
 
       // Filter Client Source
     } else if (filter.toLowerCase() == 'client source') {
@@ -437,6 +438,8 @@ class FilterController extends GetxController {
     } else if (filter.toLowerCase() == 'category') {
       filterByCategory();
     }
+
+    dashboardController.saveDashboardData();
 
     Get.until((route) => Get.currentRoute == '/home');
   }

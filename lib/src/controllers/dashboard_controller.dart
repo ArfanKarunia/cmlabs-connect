@@ -1,4 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -7,15 +8,23 @@ import '../constant/config.dart';
 import '../models/dashboard_data_model.dart';
 
 class DashboardController extends GetxController {
-  var dashboardData = Rx<DashboardData?>(null);
+  // var dashboardData = Rx<DashboardData?>(null);
 
   var amount_newLeads = Rx<int>(0);
   var amount_acceptedLeads = Rx<int>(0);
   var amount_followedUpLeads = Rx<int>(0);
   var amount_last30Day = Rx<int>(0);
 
-  AuthenticationController authenticationController =
+  var filterCategory = <String>[].obs;
+  var filterClientSource = <String>[].obs;
+  var filterPic = <String>[].obs;
+  var filterStartDate = Rx<DateTime?>(null);
+  var filterEndDate = Rx<DateTime?>(null);
+
+  final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
+
+  final UserControler userControler = Get.put(UserControler());
 
   Box<DashboardData>? dashboardBox;
 
@@ -37,7 +46,7 @@ class DashboardController extends GetxController {
   }
 
   // Fungsi untuk mengambil data dari API
-  void saveDashboardData() async {
+  Future<void> saveDashboardData() async {
     try {
       // Ambil data yang diperlukan dari response
       amount_acceptedLeads.value = await fetchAcceptedLeadData();
@@ -45,29 +54,74 @@ class DashboardController extends GetxController {
       amount_followedUpLeads.value = await fetchFollowedUpLeadData();
       amount_last30Day.value = await fetchLast30DaysLeadData();
 
-      dashboardData.value = DashboardData(
-        amountAcceptedLeads: amount_acceptedLeads.value,
-        amountNewLeads: amount_newLeads.value,
-        amountFollowedupLeads: amount_followedUpLeads.value,
-        amountLast30Days: amount_last30Day.value,
-      );
+      // dashboardData.value = DashboardData(
+      //   amountAcceptedLeads: amount_acceptedLeads.value,
+      //   amountNewLeads: amount_newLeads.value,
+      //   amountFollowedupLeads: amount_followedUpLeads.value,
+      //   amountLast30Days: amount_last30Day.value,
+      // );
 
-      await dashboardBox!.put('dashboard', dashboardData.value!);
 
+      // await dashboardBox!.put('dashboard', dashboardData.value!);
     } catch (e) {
-
       print('Error fetching data: $e');
     }
+  }
+
+  void clearFilter() {
+    filterPic.clear();
+    filterCategory.clear();
+    filterClientSource.clear();
+
+    filterStartDate.value = null;
+    filterEndDate.value = null;
   }
 
   Future<int> fetchNewLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
+
+      String? startDateString = filterStartDate.value != null
+          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+      String? endDateString = filterEndDate.value != null
+          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+
+      // Construct query parameters
+      Map<String, String> queryParams = {};
+
+      if (startDateString != null) {
+        queryParams['startDate'] = startDateString;
+      }
+      if (endDateString != null) {
+        queryParams['endDate'] = endDateString;
+      }
+      if (filterCategory.isNotEmpty) {
+        queryParams['category'] = filterCategory.join(',');
+      }
+      if (filterPic.isNotEmpty) {
+        queryParams['pic'] = filterPic.join(',');
+      }
+      if (filterClientSource.isNotEmpty) {
+        queryParams['clientSource'] = filterClientSource.join(',');
+      }
+
+      // Build the query string
+      String queryString = queryParams.entries
+          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+          .join('&');
+
+      // Construct the full URL
+      String url = '$baseUrl/dashboard/total_today';
+      if (queryString.isNotEmpty) {
+        url += '?$queryString';
+      }
 
       // Ambil data dari API
       final response = await dio.get(
-        baseUrl + '/dashboard/total_today',
+        url,
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
@@ -97,11 +151,48 @@ class DashboardController extends GetxController {
   Future<int> fetchLast30DaysLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
+
+      String? startDateString = filterStartDate.value != null
+          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+      String? endDateString = filterEndDate.value != null
+          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+
+      // Construct query parameters
+      Map<String, String> queryParams = {};
+
+      if (startDateString != null) {
+        queryParams['startDate'] = startDateString;
+      }
+      if (endDateString != null) {
+        queryParams['endDate'] = endDateString;
+      }
+      if (filterCategory.isNotEmpty) {
+        queryParams['category'] = filterCategory.join(',');
+      }
+      if (filterPic.isNotEmpty) {
+        queryParams['pic'] = filterPic.join(',');
+      }
+      if (filterClientSource.isNotEmpty) {
+        queryParams['clientSource'] = filterClientSource.join(',');
+      }
+
+      // Build the query string
+      String queryString = queryParams.entries
+          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+          .join('&');
+
+      // Construct the full URL
+      String url = '$baseUrl/dashboard/total_30_today';
+      if (queryString.isNotEmpty) {
+        url += '?$queryString';
+      }
 
       // Ambil data dari API
       final response = await dio.get(
-        baseUrl + '/dashboard/total_30_today',
+        url,
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
@@ -131,11 +222,48 @@ class DashboardController extends GetxController {
   Future<int> fetchFollowedUpLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
+
+      String? startDateString = filterStartDate.value != null
+          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+      String? endDateString = filterEndDate.value != null
+          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+
+      // Construct query parameters
+      Map<String, String> queryParams = {};
+
+      if (startDateString != null) {
+        queryParams['startDate'] = startDateString;
+      }
+      if (endDateString != null) {
+        queryParams['endDate'] = endDateString;
+      }
+      if (filterCategory.isNotEmpty) {
+        queryParams['category'] = filterCategory.join(',');
+      }
+      if (filterPic.isNotEmpty) {
+        queryParams['pic'] = filterPic.join(',');
+      }
+      if (filterClientSource.isNotEmpty) {
+        queryParams['clientSource'] = filterClientSource.join(',');
+      }
+
+      // Build the query string
+      String queryString = queryParams.entries
+          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+          .join('&');
+
+      // Construct the full URL
+      String url = '$baseUrl/dashboard/total_followed_up';
+      if (queryString.isNotEmpty) {
+        url += '?$queryString';
+      }
 
       // Ambil data dari API
       final response = await dio.get(
-        baseUrl + '/dashboard/total_followed_up',
+        url,
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
@@ -165,11 +293,48 @@ class DashboardController extends GetxController {
   Future<int> fetchAcceptedLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
+
+      String? startDateString = filterStartDate.value != null
+          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+      String? endDateString = filterEndDate.value != null
+          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+          : null;
+
+      // Construct query parameters
+      Map<String, String> queryParams = {};
+
+      if (startDateString != null) {
+        queryParams['startDate'] = startDateString;
+      }
+      if (endDateString != null) {
+        queryParams['endDate'] = endDateString;
+      }
+      if (filterCategory.isNotEmpty) {
+        queryParams['category'] = filterCategory.join(',');
+      }
+      if (filterPic.isNotEmpty) {
+        queryParams['pic'] = filterPic.join(',');
+      }
+      if (filterClientSource.isNotEmpty) {
+        queryParams['clientSource'] = filterClientSource.join(',');
+      }
+
+      // Build the query string
+      String queryString = queryParams.entries
+          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+          .join('&');
+
+      // Construct the full URL
+      String url = '$baseUrl/dashboard/total_accepted';
+      if (queryString.isNotEmpty) {
+        url += '?$queryString';
+      }
 
       // Ambil data dari API
       final response = await dio.get(
-        baseUrl + '/dashboard/total_accepted',
+        url,
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
@@ -193,6 +358,68 @@ class DashboardController extends GetxController {
       print('Error fetching data: $e');
     }
     return 0;
+  }
+
+  void clearFilterClientSource() {
+    filterClientSource.clear();
+  }
+
+  void clearFilterPic() {
+    filterPic.clear();
+  }
+
+  void clearFilterCategory() {
+    filterCategory.clear();
+  }
+
+  void clearDataRange() {
+    filterStartDate.value = null;
+    filterEndDate.value = null;
+  }
+
+  /*
+  
+    FUNGSI Set Filter Category
+
+    Fungsi ini digunakan untuk menyimpan data inputan filter Category
+
+  */
+  void addFilterCategory(String category) {
+    filterCategory.add(category);
+  }
+
+  void removeFilterCategory(String category) {
+    filterCategory.remove(category);
+  }
+
+  /*
+  
+    FUNGSI Set Filter Client Source
+
+    Fungsi ini digunakan untuk menyimpan data inputan filter Client Source
+
+  */
+  void addFilterClientSource(String clientSource) {
+    filterClientSource.add(clientSource);
+  }
+
+  void removeClientSource(String clientSource) {
+    filterClientSource.remove(clientSource);
+  }
+
+  /*
+  
+    FUNGSI Set Filter PIC
+
+    Fungsi ini digunakan untuk menyimpan data inputan filter PIC
+
+  */
+  void addFilterPic(String pic) {
+    filterPic.add(pic);
+  }
+
+  void removeFilterPic(String pic) {
+    filterPic.remove(pic);
   }
 
   // Fungsi untuk menyimpan data ke dalam Hive

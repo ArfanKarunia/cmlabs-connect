@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/account_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,7 +12,7 @@ import '../select_field.dart';
 class FormProfileView extends StatelessWidget {
   FormProfileView({super.key});
 
-  final UserController userController = Get.put(UserController());
+  final UserControler userController = Get.put(UserControler());
   final AccountController accountController = Get.put(AccountController());
 
   final TextEditingController usernameController = TextEditingController();

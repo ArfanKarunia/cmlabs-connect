@@ -62,7 +62,7 @@ class ContactpicController extends GetxController {
     List result = [];
 
     // Debugging
-    print("Current Filter: ${select}");
+    print("Current Filter: $select");
     print("Current Search Query: ${search.value}");
 
     if (select.toLowerCase() == 'type_contact') {

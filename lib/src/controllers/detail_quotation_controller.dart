@@ -2,6 +2,7 @@ import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:dio/dio.dart';
@@ -15,6 +16,7 @@ class DetailQuotationController extends GetxController {
   var pitchDuration = Rx<String?>(null);
 
   var serviceQuotation = Rx<String?>(null);
+  var detailData = Rx<Map<String, dynamic>?>(null);
   var additionalData = Rx<Map<String, dynamic>?>(null);
 
   void changeShowValue() {
@@ -24,64 +26,20 @@ class DetailQuotationController extends GetxController {
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
 
+  final UserControler userControler = Get.put(UserControler());
+
   final QuotationController quotationController =
       Get.put(QuotationController());
-  
-  final NotificationController notificationController = Get.put(NotificationController());
+
+  final NotificationController notificationController =
+      Get.put(NotificationController());
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
-  final title = [
-    "ID",
-    "Joined at",
-    "Status",
-    "Category",
-    "Client Source",
-    "Name",
-    "Email",
-    "Whatsapp",
-    "Company Website",
-    "Registration Status",
-    "Company Name",
-    "Company Profile",
-    "Page Source",
-    "Service",
-    "Region",
-  ];
-
-  Map<String, String> detailData() {
-    String section = StringUtils.toCamelCase(quotation.value!.section);
-    List<String?>? categories = quotation.value?.data.category;
-
-    // Cek apakah category ada dan tidak kosong
-    String category = categories != null && categories.isNotEmpty
-        ? "$section, ${categories.join(', ')}"
-        : section;
-    return {
-      "company": quotation.value!.data.company ?? "N/A",
-      "ID": quotation.value!.id.toString(),
-      "Joined at": DateFormat('d MMMM yyyy, HH:mm:ss')
-          .format(quotation.value!.createdAt),
-      "Status": labelStatusLead(quotation.value!.status),
-      "Category": category,
-      "Client Source": quotation.value!.data.clientSource?.name ?? "-",
-      "Name": quotation.value!.data.name ?? "-",
-      "Email": quotation.value!.email,
-      "Whatsapp": quotation.value!.data.phoneNumber ?? "-",
-      "Company Website": quotation.value!.data.website ?? "-",
-      "Registration Status": "-",
-      "Company Name": quotation.value!.data.company ?? "N/A",
-      "Company Profile": quotation.value!.data.companyIndustry ?? "-",
-      "Page Source": quotation.value!.url,
-      "Service": StringUtils.toCamelCase(quotation.value!.section),
-      "Region": quotation.value!.data.region ?? "-",
-    };
-  }
-
   Future<void> fetchDetailQuotation(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/quotation/$id',
@@ -94,36 +52,176 @@ class DetailQuotationController extends GetxController {
         if (rawData != null) {
           // Create a new Quotation object from the fetched data
           Quotation updatedQuotation = Quotation.fromJson(rawData);
-
           quotation.value = updatedQuotation;
 
+          // Set pitch duration and service quotation
           pitchDuration.value =
               StringUtils.setPitchDuration(rawData['pitching_duration']);
           serviceQuotation.value = rawData['section'];
 
+          // Generate detail data
+          detailData.value = null;
+          print(id);
+          generateDetailData(updatedQuotation, additionalData: rawData['data']);
+
+          // Update additional data
           await getAdditionalData(serviceQuotation.value, rawData['data']);
 
-          // Find the index of the existing quotation in the list
+          // Update quotation list
           int index = quotationController.quotationList
               .indexWhere((quotation) => quotation.id == id);
 
-          // If the quotation exists, update it
           if (index != -1) {
-            quotationController.quotationList[index] =
-                updatedQuotation; // Update the existing quotation
-
-            quotationController.fetchQuotationData(refreshData: true);
-            notificationController.fetchNotification(refreshData: true);
-            
+            quotationController.quotationList[index] = updatedQuotation;
           } else {
-            // Optionally, you can add the new quotation if it doesn't exist
             quotationController.quotationList.add(updatedQuotation);
           }
+
+          quotationController.fetchQuotationData(refreshData: true);
+          notificationController.fetchNotification(refreshData: true);
         }
       }
     } catch (e) {
       print('Error fetching data: $e');
     }
+  }
+
+  void generateDetailData(Quotation quotation, {dynamic additionalData}) {
+    String section = StringUtils.toCamelCase(quotation.section);
+    List<String?>? categories = quotation.data.category;
+
+    // Format category
+    String categoryText = categories.isNotEmpty
+        ? StringUtils.toCamelCase(categories.map((cat) {
+            return cat == null || cat.isEmpty
+                ? '-'
+                : cat.replaceAll('SEO Article', 'SEO Writing');
+          }).join(', '))
+        : section;
+
+    // Prepare basic detail data
+    Map<String, dynamic> details = {
+      "ID": quotation.id.toString(),
+      "joined_at": DateFormat('d MMMM yyyy, HH:mm:ss')
+          .format(quotation.createdAt.toLocal()),
+      "status": labelStatusLead(quotation.status),
+      "category": categoryText,
+      "client_source": quotation.data.clientSource?.name ?? "-",
+      "name": quotation.data.name ?? "-",
+      "email": quotation.email,
+      "whatsapp": quotation.data.phoneNumber ?? "-",
+      "company_website": quotation.data.website ?? "-",
+      "registration_status": additionalData['registration-status'] ?? '-',
+      "company_name": quotation.data.company ?? "N/A",
+      "company_profile": quotation.data.companyIndustry ?? "-",
+      "page_source": quotation.url,
+    };
+
+    // Check if the section is 'ramadan24' and add the additional data
+    if (section.toLowerCase() == 'ramadan24') {
+      details.addAll({
+        "package_name": additionalData['package_name'] ?? "-",
+        "package_price": additionalData['package_price'] ?? "-",
+        "budget": additionalData['budget'] ?? "-",
+      });
+    }
+
+    // Check for 'data_package' and add it to the details
+    if (additionalData['data_package'] != null) {
+      details.addAll({
+        "aso_package": additionalData['data_package'] ?? "-",
+      });
+    }
+
+    // Check for 'custom_keywrd_aso' and add it to the details
+    if (additionalData['custom_keyword'] != null) {
+      // If 'custom_keywrd_aso' is a list, join its elements into a single string
+      String customKeywords = additionalData['custom_keyword'] is List
+          ? (additionalData['custom_keyword'] as List).join(', ')
+          : additionalData['custom_keyword'].toString();
+
+      details.addAll({
+        "custom_keyword_aso": customKeywords.isEmpty ? customKeywords : '-',
+      });
+    }
+
+    // Check if it is evergreen and handle service and category accordingly
+    bool isEvergreen = additionalData['isEvergreen'] ?? false;
+    if (isEvergreen) {
+      String serviceCategory = additionalData['service'] ?? '-';
+      serviceCategory =
+          serviceCategory.replaceAll('-', ' ').replaceAll('_', ' ');
+      serviceCategory = serviceCategory.replaceAll(',', ', ');
+
+      details.addAll({
+        "service": StringUtils.toCamelCase(serviceCategory)
+            .replaceAll('SEO Article', 'SEO Writing'),
+      });
+    } else {
+      if (additionalData['category'] != null) {
+        String categoryText = "";
+        if (additionalData['category'] is List) {
+          categoryText = (additionalData['category'] as List).map((cat) {
+            return cat.replaceAll('SEO Article', 'SEO Writing');
+          }).join(', ');
+        } else {
+          categoryText = additionalData['category'] ?? '-';
+        }
+        details.addAll({
+          "service": StringUtils.toCamelCase(categoryText),
+        });
+      } else {
+        details.addAll({
+          "service": StringUtils.toCamelCase(quotation.section),
+        });
+      }
+    }
+
+    // Process type using StringUtils.extractPackageLanguage
+    var type = additionalData['type'];
+
+    if (type != null) {
+      if (type is String) {
+        // Jika type berupa String, proses seperti biasa
+        var packageLanguage = StringUtils.extractPackageLanguage(type);
+
+        details.addAll({
+          "package": packageLanguage["package"] ?? "-",
+          "selected_language": packageLanguage["selected_language"] ?? "-",
+        });
+      }
+    }
+
+    // Process region
+    String? region = additionalData['region'];
+    if (region != null) {
+      details.addAll({
+        "region": region != 'en'
+            ? region.toUpperCase()
+            : (quotation.url.contains('/en/'))
+                ? "GLOBAL"
+                : "-",
+      });
+    }
+
+    // Check for 'development-service' section
+    if (quotation.section == 'development-service') {
+      details.addAll({
+        "development_service_message": additionalData['message'] ?? '-',
+      });
+    }
+
+    // Check for 'Evergreen Media Buying' section
+    if (additionalData['section'] == 'Evergreen Media Buying') {
+      details.addAll({
+        "evergreen_package": additionalData['package'] ?? '-',
+        "evergreen_media": additionalData['media'] ?? '-',
+      });
+    }
+
+    // Set the detailData
+    detailData.value = details;
+    // print("========== Pembatas ==========");
   }
 
   Future<Map<String, dynamic>?> fetchAppData(String appId) async {
@@ -210,6 +308,32 @@ class DetailQuotationController extends GetxController {
             "message": data['message'] ?? '-',
           };
           break;
+        case 'seo-services': // DONE
+
+          if (data['seo_target'] != null) {
+            additionalData.value = {
+              "language": data['language'] ?? '', // "Multi langual"
+              "niche": data['niche'] ?? '', // "1 Country"
+              "seo_target": data['seo_target'] ??
+                  '', // "Reach a certain ranking (target competitor) in organic market share"
+              "online_asset": data['online_assets'] ?? '', // "30"
+              "age_of_website": data['age_website'] ?? '', // "1 - 3 Years"
+              "content_writer_team":
+                  data['writer_team'] ?? '', // "Yes, 1-3 Writers"
+              "your_seo_understanding": data['seo_understand'] ?? '', // "0"
+              "do_you_have_targeted_keyword?":
+                  data['have_targeted_keyword'] ?? '', // "Yes"
+              "cmlabs_will_help_your_(?)_website":
+                  data['count_website'] ?? '', // "2-5"
+              "cmlabs_is_your_first_SEO_consultant?":
+                  data['first_seo_consultant'] ?? '', // "Yes"
+              "meeting_appointment":
+                  data['meeting_appointment'] ?? '', // "2025-01-10"
+              "message": data['message'] ??
+                  '', // "Hi Marketing, can you please send me the quotation immediately? Thanks :)"
+            };
+          }
+          break;
         case 'seo-writing': // DONE
           additionalData.value = {
             "language": data['language'],
@@ -222,15 +346,17 @@ class DetailQuotationController extends GetxController {
           };
           break;
         case 'content-writing':
-          additionalData.value = {
-            "language": data['language'] ?? '-',
-            "word_quantity": data['word_quantity'] ?? '-',
-            "bussiness_sector": data['bussiness_sector'] ?? '-',
-            "project_duration": data['project_duration'] ?? '-',
-            "total_article": data['total_article'] ?? '-',
-            "meeting_appointment": data['meeting_appointment'] ?? '-',
-            "message": data['message'] ?? '-',
-          };
+          if (data['word_quantity'] != null) {
+            additionalData.value = {
+              "language": data['language'] ?? '-',
+              "word_quantity": data['word_quantity'] ?? '-',
+              "bussiness_sector": data['bussiness_sector'] ?? '-',
+              "project_duration": data['project_duration'] ?? '-',
+              "total_article": data['total_article'] ?? '-',
+              "meeting_appointment": data['meeting_appointment'] ?? '-',
+              "message": data['message'] ?? '-',
+            };
+          }
           break;
         case 'expert-writing': // DONE
           additionalData.value = {
@@ -238,7 +364,9 @@ class DetailQuotationController extends GetxController {
             "word_count": data['word_count'] ?? '-',
             "bussiness_sector": data['bussiness_sector'] ?? '-',
             "total_article": data['total_article'] ?? '-',
-            "project_duration": data['project_duration'] ?? '-',
+            "project_duration": data['project_duration'] != null
+                ? "${data['project_duration']} month"
+                : '-',
             "meeting_appointment": data['meeting_appointment'] ?? '-',
             "message": data['message'] ?? '-',
           };
@@ -288,35 +416,51 @@ class DetailQuotationController extends GetxController {
               "selected_language":
                   parts.length > 1 ? parts[1] : data['language'] ?? '-',
             };
+          } else if (data['partnership'] != null) {
+            additionalData.value = {
+              "proposal": data['partnership_detail']['proposal'] ?? '-',
+              "urgency_level": StringUtils.toCamelCase(data['email-urgency']),
+              "contact_me_by": data['follow_up_through'] ?? '-',
+            };
+
+            // Check if follow-up is 'meeting' and add meeting details
+            if (data['follow_up_through'] == 'meeting') {
+              additionalData.value!.addAll({
+                "preferred_date": data['meeting_appointment'] ?? "-",
+                "preferred_time": data['meeting_time'] != null
+                    ? "${data['meeting_time']['clock'] != null ? data['meeting_time']['clock']['from'] : '00:00'} - ${data['meeting_time']['clock'] != null ? data['meeting_time']['clock']['to'] : '00:00'}"
+                    : '00:00 - 00:00',
+              });
+            }
           }
           break;
         case 'aso-services': // DONE
           if (data['data_app_id'] != '-') {
             Map<String, dynamic>? appData =
                 await fetchAppData(data['data_app_id']);
-            print(data['data_app_id']);
-            print(appData);
 
             if (appData != null) {
               additionalData.value = {
+                "app_name_inputted": data['appname'],
                 "icon_App": appData['icon_App'],
-                "data_app_name": appData['name_App'] != ''
+                "app_name": appData['name_App'] != ''
                     ? appData['name_App'] ?? '-'
                     : data['data_app_name'] ?? '-',
-                "subtitle_App": appData['subtitle_App'] ?? '-',
-                "data_app_platform": data['data_app_platform'] ?? '-',
-                "data_app_in_app": appData['in_app'] != ''
+                "App Subtitle": appData['subtitle_App'] ?? '-',
+                "platform": data['data_app_platform'] ?? '-',
+                "in_app": appData['in_app'] != ''
                     ? appData['in_app'] ?? '-'
                     : data['data_app_in_app'] ?? '-',
-                "data_app_cat": data['data_app_cat'] ?? '-',
+                "category": data['data_app_cat'] ?? '-',
                 "updates": appData['updates_app'] ?? '-',
                 "review_&_rating": appData['reviews_rating_App'] != ''
                     ? appData['reviews_rating_App'] ?? '-'
                     : data['data_app_rating'] ?? '-',
-                "data_app_url": appData['url_App'] != ''
+                "app_url": appData['url_App'] != ''
                     ? appData['url_App'] ?? '-'
                     : data['data_app_url'] ?? '-',
-                "data_package": data['data_package'] ?? '-',
+                "aso_package": data['data_package'] ?? '-',
+                "custom_keyword(ASO_package)": '-',
                 // "data_app_id": data['data_app_id'],
               };
             } else {

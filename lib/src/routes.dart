@@ -123,7 +123,7 @@ class AppRoutes {
     ),
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
 
-    GetPage(name: notification, page: () => LayoutNotification()),
+    GetPage(name: notification, page: () => const LayoutNotification()),
     
     GetPage(
       name: detailQuotation,
