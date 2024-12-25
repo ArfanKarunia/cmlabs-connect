@@ -15,6 +15,14 @@ class NotificationController extends GetxController {
   var endDate = Rx<DateTime?>(null);
   var selectTimeRange = Rx<String?>(null);
 
+  // Configuration Notification
+  final quiteDay = Rx<List<Map<String, String>?>>([]);
+
+  final pushNotifNewQuotation = Rx<bool>(false);
+  final pushNotifFollowedUpQuotation = Rx<bool>(false);
+
+  final emailNotifNewQuotation = Rx<bool>(false);
+  final emailNotifFollowedUpQuotation = Rx<bool>(false);
 
   final UserControler userControler = Get.put(UserControler());
 
@@ -104,7 +112,6 @@ class NotificationController extends GetxController {
             todayNotification.value.clear();
             weekNotification.value.clear();
             monthNotification.value.clear();
-            
           }
 
           DateTime now = DateTime.now();
@@ -189,7 +196,6 @@ class NotificationController extends GetxController {
           print("unread all : ${unreadAll.value}");
           print("unread new : ${unreadNew.value}");
           print("unread reminder : ${unreadReminder.value}");
-
         }
       }
     } catch (e) {
@@ -232,16 +238,12 @@ class NotificationController extends GetxController {
       result = timeRangeList;
     }
 
+    if (select.toLowerCase() == 'days') {
+      result = dayList;
+    }
+
     return result;
   }
-
-  final timeRangeList = [
-    "Last 7 days",
-    'Last 1 month',
-    'Last 3 months',
-    "Last 6 months",
-    "Last 1 year",
-  ];
 
   Future<List<NotificationModel?>> fetchHistoryNotification(
       DateTime startDate, DateTime endDate) async {
@@ -277,4 +279,26 @@ class NotificationController extends GetxController {
 
     return filteredData; // Mengembalikan daftar notifikasi
   }
+
+  void clearQuiteDay(){
+    quiteDay.value.clear();
+  }
+
+  final timeRangeList = [
+    {'value': "Last 7 days", 'label': "Last 7 days"},
+    {'value': "Last 1 month", 'label': "Last 1 month"},
+    {'value': "Last 3 months", 'label': "Last 3 months"},
+    {'value': "Last 6 months", 'label': "Last 6 months"},
+    {'value': "Last 1 year", 'label': "Last 1 year"},
+  ];
+
+  final dayList = [
+    {'value': "Monday", 'label': "Monday"},
+    {'value': "Tuesday", 'label': "Tuesday"},
+    {'value': "Wednesday", 'label': "Wednesday"},
+    {'value': "Thursday", 'label': "Thursday"},
+    {'value': "Friday", 'label': "Friday"},
+    {'value': "Saturday", 'label': "Saturday"},
+    {'value': "Sunday", 'label': "Sunday"},
+  ];
 }

@@ -8,11 +8,11 @@ import '../constant/config.dart';
 class HistoricalLeadController extends GetxController {
   var search = Rx<String?>(null);
 
-  final year1 = Rx<String?>(null);
-  final year2 = Rx<String?>(null);
+  final year1 = Rx<Map<String, String>?>(null);
+  final year2 = Rx<Map<String, String>?>(null);
 
-  final month1 = Rx<String?>(null);
-  final month2 = Rx<String?>(null);
+  final month1 = Rx<Map<String, String>?>(null);
+  final month2 = Rx<Map<String, String>?>(null);
 
   final historicalData1 = Rx<HistoricalLeadModel?>(null);
   final historicalData2 = Rx<HistoricalLeadModel?>(null);
@@ -45,13 +45,15 @@ class HistoricalLeadController extends GetxController {
       var data = requestData(index);
 
       // Ambil data dari API
-      final response = await dio.get('$baseUrl/dashboard/historical_data_new',
-          options: Options(
-            headers: {
-              'Authorization': 'Bearer $accessToken',
-            },
-          ),
-          data: data);
+      final response = await dio.get(
+        '$baseUrl/dashboard/historical_data_new',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $accessToken',
+          },
+        ),
+        data: data,
+      );
 
       if (response.statusCode == 200 && response.data != null) {
         var responseData = response.data;
@@ -68,12 +70,6 @@ class HistoricalLeadController extends GetxController {
       }
     } catch (e) {
       print('Error fetching data: $e');
-    }
-  }
-
-  Future<void> fetchList(String filter) async {
-    try {} catch (e) {
-      print('Error fetching status data: $e');
     }
   }
 
@@ -123,50 +119,59 @@ class HistoricalLeadController extends GetxController {
   }
 
   Map<String, dynamic> requestData(int index) {
-    String monthString = index == 1 ? month1.value ?? '' : month2.value ?? '';
+    String monthData = '';
+    String yearData = '';
 
-    int monthInt = convertMonthToInt(monthString);
-    
+    if (month1.value != null || month2.value != null) {
+      monthData = index == 1
+          ? month1.value!['value'] ?? ''
+          : month2.value!['value'] ?? '';
+    }
+
+    if (year1.value != null || year2.value != null) {
+      yearData = index == 1
+          ? year1.value!['value'] ?? ''
+          : year2.value!['value'] ?? '';
+    }
+
     Map<String, dynamic> requestData = {
-      "year": index == 1 ? year1.value : year2.value,
-      "month": monthInt,
+      "year": yearData,
+      "month": monthData,
     };
 
     return requestData;
   }
 
-  int convertMonthToInt(String month) {
-    int index = monthList.indexOf(month);
 
-    return index != -1 ? index + 1 : 0;
-  }
+  final yearList = List.generate(
+    10,
+    (index) {
+      final currentYear = DateTime.now().year;
+      return {
+        "value": "${currentYear - index}",
+        "label": "${currentYear - index}",
+      };
+    },
+  );
 
-  final yearList = [
-    "2024",
-    "2023",
-    "2022",
-    "2021",
-    "2020",
-    "2019",
-    "2018",
-    "2017",
-    "2016",
-    "2015",
-    "2014",
-  ];
-
-  final monthList = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "Desember",
-  ];
+  final monthList = List.generate(
+    12,
+    (index) => {
+      "value": "${index + 1}", // Value berupa angka bulan (1 - 12)
+      "label": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ][index], // Label berupa nama bulan
+    },
+  );
 }

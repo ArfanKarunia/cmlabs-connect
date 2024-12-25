@@ -32,8 +32,8 @@ class QuotationController extends GetxController {
   var filterCategory = <String>[].obs;
   // var filterStatus = <StatusLead>[].obs;
   var filterStatus = Rx<StatusLead?>(null);
-  var filterClientSource = <String>[].obs;
-  var filterPic = <String>[].obs;
+  var filterClientSource = Rx<String?>(null);
+  var filterPic = Rx<String?>(null);
 
   var filterStartDate = Rx<DateTime?>(null);
   var filterEndDate = Rx<DateTime?>(null);
@@ -367,11 +367,11 @@ class QuotationController extends GetxController {
   }
 
   void clearFilterClientSource() {
-    filterClientSource.clear();
+    filterClientSource.value = null;
   }
 
   void clearFilterPic() {
-    filterPic.clear();
+    filterPic.value = null;
   }
 
   void clearFilterCategory() {
@@ -406,11 +406,11 @@ class QuotationController extends GetxController {
 
   */
   void addFilterClientSource(String clientSource) {
-    filterClientSource.add(clientSource);
+    filterClientSource.value = clientSource;
   }
 
-  void removeClientSource(String clientSource) {
-    filterClientSource.remove(clientSource);
+  void removeClientSource() {
+    filterClientSource.value = null;
   }
 
   /*
@@ -421,11 +421,11 @@ class QuotationController extends GetxController {
 
   */
   void addFilterPic(String pic) {
-    filterPic.add(pic);
+    filterPic.value = pic;
   }
 
-  void removeFilterPic(String pic) {
-    filterPic.remove(pic);
+  void removeFilterPic() {
+    filterPic.value = null;
   }
 
   /*
@@ -448,9 +448,10 @@ class QuotationController extends GetxController {
   */
   void clearFilter() {
     search.value = null;
-    filterStatus.value = null;
     filterCategory.clear();
-    filterClientSource.clear();
+    filterStatus.value = null;
+    filterClientSource.value = null;
+    filterPic.value = null;
 
     filterStartDate.value = null;
     filterEndDate.value = null;
@@ -730,12 +731,12 @@ class QuotationController extends GetxController {
     if (filterCategory.isNotEmpty) {
       queryParams['category'] = filterCategory.join(',');
     }
-    if (filterPic.isNotEmpty) {
-      queryParams['pic'] = StringUtils.toCamelCase(filterPic.join(','));
+    if (filterPic.value != null) {
+      queryParams['pic'] = StringUtils.toCamelCase(filterPic.value);
     }
-    if (filterClientSource.isNotEmpty) {
+    if (filterClientSource.value != null) {
       queryParams['clientSource'] =
-          StringUtils.toCamelCase(filterClientSource.join(','));
+          StringUtils.toCamelCase(filterClientSource.value);
     }
     if (statusValue != null) {
       queryParams['status'] = statusValue;

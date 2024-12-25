@@ -8,4 +8,5 @@ class AppIcons {
   static const String certificationIcon = 'assets/icons/icons_book.png';
   static const String achievementIcon = 'assets/icons/icons_file.png';
   static const String publicationIcon = 'assets/icons/icons_download.png';
+  static const String setNotification = 'assets/icons/icons_setNotif.png';
 }

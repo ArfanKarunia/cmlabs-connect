@@ -1,4 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
+import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:get/get.dart';
@@ -281,6 +282,7 @@ class FilterView extends StatelessWidget {
                           arguments: {
                             'selectData': "category",
                             'controller': filterController,
+                            'isMultipleChoice': true,
                           },
                         );
                       },
@@ -320,7 +322,8 @@ class FilterView extends StatelessWidget {
                 children: [
                   Obx(
                     () {
-                      if (filterController.filterPicList.isEmpty) {
+                      var pic = filterController.filterPic.value;
+                      if (pic == null) {
                         return Container(
                           padding: EdgeInsets.only(left: 10),
                           alignment: Alignment.centerLeft,
@@ -333,18 +336,16 @@ class FilterView extends StatelessWidget {
                           ),
                         );
                       }
-                      return ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: filterController.filterPicList.length,
-                        itemBuilder: (context, index) {
-                          final pic = filterController.filterPicList[index];
-                          return TagButton(
-                            statusLabel: pic['label'] ?? '-',
-                            onPressed: () {
-                              filterController.deleteFilterPic(pic);
-                            },
-                          );
-                        },
+                      return Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          pic['label'] ?? "-",
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            color: AppColors.text_1,
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -359,6 +360,7 @@ class FilterView extends StatelessWidget {
                           arguments: {
                             'selectData': "pic",
                             'controller': filterController,
+                            'isMultipleChoice': false,
                           },
                         );
                       },
@@ -401,7 +403,9 @@ class FilterView extends StatelessWidget {
                 children: [
                   Obx(
                     () {
-                      if (filterController.filterClientSourceList.isEmpty) {
+                      var clientSource =
+                          filterController.filterClientSource.value;
+                      if (clientSource == null) {
                         return Container(
                           padding: EdgeInsets.only(left: 10),
                           alignment: Alignment.centerLeft,
@@ -414,20 +418,16 @@ class FilterView extends StatelessWidget {
                           ),
                         );
                       }
-                      return ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount:
-                            filterController.filterClientSourceList.length,
-                        itemBuilder: (context, index) {
-                          final data =
-                              filterController.filterClientSourceList[index];
-                          return TagButton(
-                            statusLabel: data['label'] ?? '-',
-                            onPressed: () {
-                              filterController.deleteFilterClientSource(data);
-                            },
-                          );
-                        },
+                      return Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          clientSource['label'] ?? "-",
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            color: AppColors.text_1,
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -438,10 +438,11 @@ class FilterView extends StatelessWidget {
                       backgroundColor: Colors.transparent,
                       onPressed: () {
                         Get.toNamed(
-                          "/filterSelect",
+                          AppRoutes.filterSelect,
                           arguments: {
                             'selectData': "client_source",
                             'controller': filterController,
+                            'isMultipleChoice': false,
                           },
                         );
                       },
