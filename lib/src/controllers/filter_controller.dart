@@ -19,8 +19,9 @@ class FilterController extends GetxController {
 
   // Menyimpan Filter
   var filterStatusList = <Map<String, String>>[].obs;
-  var filterClientSourceList = <Map<String, String>>[].obs;
-  var filterPicList = <Map<String, String>>[].obs;
+  // var filterClientSourceList = <Map<String, String>>[].obs;
+  var filterClientSource = Rx<Map<String, String>?>(null);
+  var filterPic = Rx<Map<String, String>?>(null);
   var filterCategoryList = <Map<String, String>>[].obs;
 
   // Menyimpan Filter Tanggal
@@ -36,7 +37,6 @@ class FilterController extends GetxController {
   final UserControler userControler = Get.put(UserControler());
 
   final String baseUrl = Config.baseURL;
-
 
   // Fetch data status dari API
   Future<void> fetchList(String filter) async {
@@ -168,7 +168,7 @@ class FilterController extends GetxController {
   }
 
   void clearFilterClientSource() {
-    filterClientSourceList.clear();
+    filterClientSource.value = null;
   }
 
   // ADD, DELETE, CLEAR CLIENT SOURCE
@@ -177,23 +177,13 @@ class FilterController extends GetxController {
     if (clientSource['value'] == "all") {
       // Kosongkan filter status jika ada status lain
       clearFilterClientSource();
-      filterClientSourceList.add(clientSource);
     } else {
-      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
-      if (filterClientSourceList.any((element) => element['value'] == "all")) {
-        filterClientSourceList
-            .removeWhere((element) => element['value'] == "all");
-      }
-
-      // Tambahkan status baru jika belum ada di dalam list
-      if (!filterClientSourceList.contains(clientSource)) {
-        filterClientSourceList.add(clientSource);
-      }
+      filterClientSource.value = clientSource;
     }
   }
 
-  void deleteFilterClientSource(Map<String, String> clientSource) {
-    filterClientSourceList.remove(clientSource);
+  void deleteFilterClientSource() {
+    filterClientSource.value = null;
   }
 
   void addFilterPic(Map<String, String> pic) {
@@ -201,26 +191,26 @@ class FilterController extends GetxController {
     if (pic['value'] == "all") {
       // Kosongkan filter status jika ada status lain
       clearFilterPic();
-      filterPicList.add(pic);
     } else {
-      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
-      if (filterPicList.any((element) => element['value'] == "all")) {
-        filterPicList.removeWhere((element) => element['value'] == "all");
-      }
+      filterPic.value = pic;
+      // // Jika "all" ada, hapus dari list sebelum menambahkan status baru
+      // if (filterPicList.any((element) => element['value'] == "all")) {
+      //   filterPicList.removeWhere((element) => element['value'] == "all");
+      // }
 
-      // Tambahkan status baru jika belum ada di dalam list
-      if (!filterPicList.contains(pic)) {
-        filterPicList.add(pic);
-      }
+      // // Tambahkan status baru jika belum ada di dalam list
+      // if (!filterPicList.contains(pic)) {
+      //   filterPicList.add(pic);
+      // }
     }
   }
 
-  void deleteFilterPic(Map<String, String> status) {
-    filterPicList.remove(status);
+  void deleteFilterPic() {
+    filterPic.value = null;
   }
 
   void clearFilterPic() {
-    filterPicList.clear();
+    filterPic.value = null;
   }
 
   // ADD, DELETE, CLEAR Filter Category
@@ -353,13 +343,13 @@ class FilterController extends GetxController {
     quotationController.clearFilterClientSource();
     dashboardController.clearFilterClientSource();
 
-    for (var data in filterClientSourceList) {
-      // Convert both values to lowercase to ensure case-insensitive comparison
-      String clientSourceValue = data['value'].toString().toLowerCase();
+    if (filterClientSource.value != null) {
+      String clientSourceValue =
+          filterClientSource.value!['value'].toString().toLowerCase();
 
       quotationController.addFilterClientSource(clientSourceValue);
-      print("Client Source : $clientSourceValue");
-      dashboardController.addFilterClientSource(StringUtils.toCamelCase(clientSourceValue));
+      dashboardController
+          .addFilterClientSource(StringUtils.toCamelCase(clientSourceValue));
     }
 
     clearFilterClientSource();
@@ -369,10 +359,8 @@ class FilterController extends GetxController {
     quotationController.clearFilterPic();
     dashboardController.clearFilterPic();
 
-    for (var data in filterPicList) {
-      // Convert both values to lowercase to ensure case-insensitive comparison
-      String picValue = data['value'].toString().toLowerCase();
-
+    if (filterPic.value != null) {
+      String picValue = filterPic.value!['value'].toString().toLowerCase();
       quotationController.addFilterPic(picValue);
       dashboardController.addFilterPic(StringUtils.toCamelCase(picValue));
     }

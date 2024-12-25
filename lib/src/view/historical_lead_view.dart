@@ -40,7 +40,7 @@ class HistoricalLeadView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Select Filter",
+                "Select Filter Data Range 1",
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -74,7 +74,9 @@ class HistoricalLeadView extends StatelessWidget {
                                           ),
                                         )
                                       : Text(
-                                          historicalLeadController.year1.value!,
+                                          historicalLeadController
+                                                  .year1.value!['label'] ??
+                                              '-',
                                           style: GoogleFonts.plusJakartaSans(
                                             color: AppColors.text_1,
                                             fontSize: 13,
@@ -88,6 +90,7 @@ class HistoricalLeadView extends StatelessWidget {
                                     'selectData': "year",
                                     'controller': historicalLeadController,
                                     'canSearch': false,
+                                    'isMultipleChoice': false,
                                   },
                                 )?.then(
                                   (value) {
@@ -123,7 +126,7 @@ class HistoricalLeadView extends StatelessWidget {
                                         )
                                       : Text(
                                           historicalLeadController
-                                              .month1.value!,
+                                              .month1.value!['label'] ?? '-',
                                           style: GoogleFonts.plusJakartaSans(
                                             color: AppColors.text_1,
                                             fontSize: 13,
@@ -137,6 +140,7 @@ class HistoricalLeadView extends StatelessWidget {
                                     'selectData': "month",
                                     'controller': historicalLeadController,
                                     'canSearch': false,
+                                    'isMultipleChoice': false,
                                   },
                                 )?.then(
                                   (value) {
@@ -154,6 +158,18 @@ class HistoricalLeadView extends StatelessWidget {
                 },
               ),
 
+              SizedBox(
+                height: 20,
+              ),
+
+              Text(
+                "Select Filter Data Range 2",
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.text_2,
+                ),
+              ),
               SizedBox(
                 height: 20,
               ),
@@ -180,7 +196,7 @@ class HistoricalLeadView extends StatelessWidget {
                                         ),
                                       )
                                     : Text(
-                                        historicalLeadController.year2.value!,
+                                        historicalLeadController.year2.value!['label'] ?? '-',
                                         style: GoogleFonts.plusJakartaSans(
                                           color: AppColors.text_1,
                                           fontSize: 13,
@@ -195,6 +211,7 @@ class HistoricalLeadView extends StatelessWidget {
                                     'selectData': "year",
                                     'controller': historicalLeadController,
                                     'canSearch': false,
+                                    'isMultipleChoice': false,
                                   },
                                 )?.then(
                                   (value) {
@@ -228,7 +245,8 @@ class HistoricalLeadView extends StatelessWidget {
                                         ),
                                       )
                                     : Text(
-                                        historicalLeadController.month2.value!,
+                                        historicalLeadController
+                                            .month2.value!['label'] ?? '-',
                                         style: GoogleFonts.plusJakartaSans(
                                           color: AppColors.text_1,
                                           fontSize: 13,
@@ -243,6 +261,7 @@ class HistoricalLeadView extends StatelessWidget {
                                     'selectData': "month",
                                     'controller': historicalLeadController,
                                     'canSearch': false,
+                                    'isMultipleChoice': false,
                                   },
                                 )?.then(
                                   (value) {
@@ -330,22 +349,22 @@ class HistoricalLeadView extends StatelessWidget {
                                         null)
                                 ? ResultDataHistoricalWidget(
                                     index: 1,
-                                    year: historicalLeadController.year1.value!,
+                                    year: historicalLeadController.year1.value!['label'] ?? '-',
                                     month:
-                                        historicalLeadController.month1.value!,
+                                        historicalLeadController.month1.value!['label'] ?? '-',
                                   )
                                 : Container(),
                             (historicalLeadController.historicalData2.value !=
-                                    null &&
+                                        null &&
                                     historicalLeadController.year2.value !=
                                         null &&
                                     historicalLeadController.month2.value !=
                                         null)
                                 ? ResultDataHistoricalWidget(
                                     index: 2,
-                                    year: historicalLeadController.year2.value!,
+                                    year: historicalLeadController.year2.value!['label'] ?? '-',
                                     month:
-                                        historicalLeadController.month2.value!,
+                                        historicalLeadController.month2.value!['label'] ?? '-',
                                   )
                                 : Container(),
                           ],

@@ -14,10 +14,12 @@ class SelectFilterView extends StatefulWidget {
     required this.filter,
     required this.controller,
     this.canSearch = true,
+    this.isMultipleChoice = true,
   });
 
   final String filter;
   final dynamic controller;
+  final bool isMultipleChoice;
 
   final bool canSearch;
 
@@ -26,7 +28,7 @@ class SelectFilterView extends StatefulWidget {
 }
 
 class _SelectFilterViewState extends State<SelectFilterView> {
-  var tempData = Rx<String?>(null);
+  var tempData = Rx<Map<String, String>?>(null);
   var tempMapData = Rx<List<Map<String, String>?>>([]);
   var canSelect = Rx<bool>(false);
 
@@ -52,7 +54,8 @@ class _SelectFilterViewState extends State<SelectFilterView> {
     tempData.value = null;
     if (widget.filter != 'year' &&
         widget.filter != 'month' &&
-        widget.filter != 'time_range') {
+        widget.filter != 'time_range' &&
+        widget.filter != 'days') {
       widget.controller.fetchList(widget.filter);
     }
 
@@ -125,9 +128,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                             ),
                           )
                         : Container(),
-                    (widget.filter != "year" &&
-                            widget.filter != "month" &&
-                            widget.filter != "time_range")
+                    (widget.isMultipleChoice)
                         ? Obx(
                             () {
                               if (tempMapData.value.isNotEmpty) {
@@ -189,9 +190,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                           // Hanya bungkus bagian yang perlu dipantau dengan Obx
                           return GestureDetector(
                             onTap: () {
-                              if (widget.filter != 'year' &&
-                                  widget.filter != 'month' &&
-                                  widget.filter != "time_range") {
+                              if (widget.isMultipleChoice) {
                                 if (data['value'] == 'all') {
                                   if (tempMapData.value.isNotEmpty) {
                                     tempMapData.value.clear();
@@ -221,9 +220,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: (widget.filter != 'year' &&
-                                            widget.filter != 'month' &&
-                                            widget.filter != "time_range")
+                                    color: (widget.isMultipleChoice)
                                         ? (tempMapData.value.contains(data)
                                             ? AppColors.bgPrimary
                                             : AppColors.white_1)
@@ -234,11 +231,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                   padding: EdgeInsetsDirectional.symmetric(
                                       horizontal: 14, vertical: 12),
                                   child: Text(
-                                    (widget.filter != 'year' &&
-                                            widget.filter != 'month' &&
-                                            widget.filter != "time_range")
-                                        ? data['label'] ?? "-"
-                                        : data,
+                                    data['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       color: AppColors.text_1,
@@ -291,26 +284,21 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                               } else if (widget.filter == 'month') {
                                 Get.back(result: tempData.value);
                               } else if (widget.filter == 'time_range') {
-                                Get.back(result: tempData.value);
-                              } else if (widget.filter == 'status') {
-                                for (var data in tempMapData.value) {
-                                  widget.controller.addFilterStatus(data);
-                                }
-                                Get.back();
+                                Get.back(result: tempData.value!['value']);
+                              } else if (widget.filter == 'days') {
+                                Get.back(result: tempMapData.value);
                               } else if (widget.filter == 'category') {
                                 for (var data in tempMapData.value) {
                                   widget.controller.addFilterCategory(data);
                                 }
                                 Get.back();
                               } else if (widget.filter == 'pic') {
-                                for (var data in tempMapData.value) {
-                                  widget.controller.addFilterPic(data);
-                                }
+                                widget.controller
+                                    .addFilterPic(tempData.value);
                                 Get.back();
                               } else if (widget.filter == 'client_source') {
-                                for (var data in tempMapData.value) {
-                                  widget.controller.addFilterClientSource(data);
-                                }
+                                widget.controller
+                                    .addFilterClientSource(tempData.value);
                                 Get.back();
                               }
                             },

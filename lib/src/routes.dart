@@ -7,6 +7,7 @@ import 'package:cmlabs_connect/src/view/account_setting/education/education_view
 import 'package:cmlabs_connect/src/view/account_setting/education/form_education_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/experience_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
+import 'package:cmlabs_connect/src/view/account_setting/notification/setting_notification_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/organization/form_organization_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/organization/organization_vew.dart';
 import 'package:cmlabs_connect/src/view/account_setting/profile/form_profile_view.dart';
@@ -85,6 +86,8 @@ class AppRoutes {
   static const String formPublicationView = '/publicationView/form';
   static const String selectDataPublication = '/publicationView/form/select';
 
+  static const String settingNotification = '/settingNotification';
+
   static const String changePasswordView = '/changePasswordView';
 
   // List of Route
@@ -105,8 +108,14 @@ class AppRoutes {
         final String filter = args['selectData'];
         final dynamic controller = args['controller'];
         final bool canSearch = args['canSearch'] ?? true;
+        final bool isMultipleChoice = args['isMultipleChoice'] ?? true;
+
         return SelectFilterView(
-            filter: filter, controller: controller, canSearch: canSearch);
+          filter: filter,
+          controller: controller,
+          canSearch: canSearch,
+          isMultipleChoice: isMultipleChoice,
+        );
       },
     ),
     GetPage(
@@ -115,6 +124,7 @@ class AppRoutes {
         final args = Get.arguments as Map<String, dynamic>;
         final String selectData = args['selectData'];
         final dynamic controller = args['controller'];
+
         return SelectEditView(
           selectData: selectData,
           controller: controller,
@@ -124,7 +134,7 @@ class AppRoutes {
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
 
     GetPage(name: notification, page: () => const LayoutNotification()),
-    
+
     GetPage(
       name: detailQuotation,
       page: () {
@@ -136,7 +146,9 @@ class AppRoutes {
       name: addContactClientPIC,
       page: () {
         final args = Get.arguments as int;
-        return AddContactView(indexClientPIC: args,);
+        return AddContactView(
+          indexClientPIC: args,
+        );
       },
     ),
 
@@ -371,6 +383,12 @@ class AppRoutes {
         final args = Get.arguments as String;
         return SelectData(data: args);
       },
+    ),
+
+    // SETTING NOTIFICATION
+    GetPage(
+      name: settingNotification,
+      page: () => SettingNotificationView(),
     ),
   ];
 }

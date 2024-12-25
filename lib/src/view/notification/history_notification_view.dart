@@ -66,6 +66,7 @@ class HistoryNotificationView extends StatelessWidget {
                           'selectData': "time_range",
                           'controller': notificationController,
                           'canSearch': false,
+                          'isMultipleChoice': false,
                         },
                       )?.then(
                         (value) {

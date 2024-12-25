@@ -26,7 +26,8 @@ class _AccountViewState extends State<AccountView> {
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
 
-  final NotificationController notificationController = Get.put(NotificationController());
+  final NotificationController notificationController =
+      Get.put(NotificationController());
 
   final AccountController accountController = Get.put(AccountController());
 
@@ -141,8 +142,8 @@ class _AccountViewState extends State<AccountView> {
                               ),
                               Obx(
                                 () {
-                                  return notificationController.unreadAll
-                                              .value !=
+                                  return notificationController
+                                              .unreadAll.value !=
                                           0
                                       ? Positioned(
                                           top: 10,
@@ -336,6 +337,24 @@ class _AccountViewState extends State<AccountView> {
                 ),
                 title: Text(
                   "Publication",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: Icon(Ionicons.chevron_forward_outline),
+              ),
+              ListTile(
+                splashColor: Colors.black12,
+                tileColor: AppColors.white_1,
+                onTap: () {
+                  Get.toNamed(AppRoutes.settingNotification);
+                },
+                leading: Image(
+                  image: AssetImage(AppIcons.setNotification),
+                ),
+                title: Text(
+                  "Notification Setting",
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
