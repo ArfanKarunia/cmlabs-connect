@@ -130,6 +130,7 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
+    authController.loadRememberedUser();
 
     // clientSourceController.fetchClientSourceData();
     // Tambahkan listener ke controller
@@ -339,7 +340,7 @@ class _LoginViewState extends State<LoginView> {
           ),
           Obx(
             () { 
-              print(authController.isLoading.value);
+              ;
               if (authController.isLoading.value) {
                 return Container(
                   decoration: BoxDecoration(color: Colors.black38),

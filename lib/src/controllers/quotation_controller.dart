@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -41,6 +42,7 @@ class QuotationController extends GetxController {
 
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
+  final UserControler userControler = Get.put(UserControler());
 
   final DashboardController dashboardController =
       Get.put(DashboardController());
@@ -92,6 +94,7 @@ class QuotationController extends GetxController {
 
   Future<void> fetchQuotationData(
       {bool isLoadMore = false, bool refreshData = false}) async {
+    print(userControler.accesToken.value);
     try {
       // Cek apakah data sudah ada di Hive (local storage)
       if (quotationBox!.isNotEmpty) {
@@ -102,7 +105,7 @@ class QuotationController extends GetxController {
         print("Data diambil dari local storage.");
       } else {
         // Jika data belum ada di local storage, fetch data dari API
-        String? accessToken = authenticationController.accesToken.value;
+        String? accessToken = userControler.accesToken.value;
 
         if (refreshData) {
           start.value = 0;
@@ -192,11 +195,11 @@ class QuotationController extends GetxController {
   Future<void> fetchTotalLeads() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // Ambil data dari API
       final response = await dio.get(
-        baseUrl + '/dashboard/total_all',
+        '$baseUrl/dashboard/total_all',
         options: Options(
           headers: {
             'Authorization': 'Bearer $accessToken',
@@ -231,17 +234,19 @@ class QuotationController extends GetxController {
   */
 
   void checkNewQuotationsPeriodically() {
-    Timer.periodic(Duration(seconds: 10), (timer) async {
-      await dashboardController.saveDashboardData();
-      await fetchCheckNewData();
-      print("check new data : ${newQuotationCount.value}");
-    });
+    if (userControler.accesToken.value != null) {
+      Timer.periodic(const Duration(seconds: 10), (timer) async {
+        await dashboardController.saveDashboardData();
+        await fetchCheckNewData();
+        print("check new data : ${newQuotationCount.value}");
+      });
+    }
   }
 
   Future<void> refreshNewData() async {
     try {
       // Jika data belum ada di local storage, fetch data dari API
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
       var start = 0;
       var limit = 1;
 
@@ -270,7 +275,7 @@ class QuotationController extends GetxController {
   Future<void> fetchCheckNewData() async {
     try {
       // Jika data belum ada di local storage, fetch data dari API
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
       var start = 0;
       var limit = 1;
 
@@ -650,7 +655,7 @@ class QuotationController extends GetxController {
   Future<bool> deleteDataQuotation(int id) async {
     try {
       // Pastikan token tidak null
-      final String? accessToken = authenticationController.accesToken.value;
+      final String? accessToken = userControler.accesToken.value;
 
       if (accessToken == null || accessToken.isEmpty) {
         showErrorToast('Gagal menghapus Quotation: Token tidak valid');

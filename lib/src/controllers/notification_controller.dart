@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/notification_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -15,8 +15,9 @@ class NotificationController extends GetxController {
   var endDate = Rx<DateTime?>(null);
   var selectTimeRange = Rx<String?>(null);
 
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
+
+  final UserControler userControler = Get.put(UserControler());
+
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
@@ -37,19 +38,19 @@ class NotificationController extends GetxController {
     DateTime now = DateTime.now();
 
     if (range == "Last 7 days") {
-      startDate.value = now.subtract(Duration(days: 7));
+      startDate.value = now.subtract(const Duration(days: 7));
       endDate.value = now;
     } else if (range == "Last 1 month") {
-      startDate.value = now.subtract(Duration(days: 30));
+      startDate.value = now.subtract(const Duration(days: 30));
       endDate.value = now;
     } else if (range == "Last 3 months") {
-      startDate.value = now.subtract(Duration(days: 90));
+      startDate.value = now.subtract(const Duration(days: 90));
       endDate.value = now;
     } else if (range == "Last 6 months") {
-      startDate.value = now.subtract(Duration(days: 180));
+      startDate.value = now.subtract(const Duration(days: 180));
       endDate.value = now;
     } else if (range == "Last 1 year") {
-      startDate.value = now.subtract(Duration(days: 365));
+      startDate.value = now.subtract(const Duration(days: 365));
       endDate.value = now;
     } else {
       startDate.value = null;
@@ -61,10 +62,10 @@ class NotificationController extends GetxController {
       {bool isLoadMore = false, bool refreshData = false}) async {
     print("Fetch Notification");
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       var endDate = DateTime.now();
-      var startDate = endDate.subtract(Duration(days: 30));
+      var startDate = endDate.subtract(const Duration(days: 30));
 
       String startDateString =
           "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
@@ -111,15 +112,15 @@ class NotificationController extends GetxController {
           // Categorize notifications
           for (var notification in allNotification) {
             if (notification.createdAt
-                .isAfter(now.subtract(Duration(days: 1)))) {
+                .isAfter(now.subtract(const Duration(days: 1)))) {
               // Notification  today
               todayNotification.value.add(notification);
             } else if (notification.createdAt
-                .isAfter(now.subtract(Duration(days: 7)))) {
+                .isAfter(now.subtract(const Duration(days: 7)))) {
               // Notification last week
               weekNotification.value.add(notification);
             } else if (notification.createdAt
-                .isAfter(now.subtract(Duration(days: 30)))) {
+                .isAfter(now.subtract(const Duration(days: 30)))) {
               // Notification last month
               monthNotification.value.add(notification);
             }
@@ -141,10 +142,10 @@ class NotificationController extends GetxController {
 
   Future<void> fetchAmountUnreadNotification() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       var endDate = DateTime.now();
-      var startDate = endDate.subtract(Duration(days: 30));
+      var startDate = endDate.subtract(const Duration(days: 30));
       print("StartDate: $startDate");
       print("endDate: $endDate");
 
@@ -197,7 +198,7 @@ class NotificationController extends GetxController {
   }
 
   Future<void> updateReadParam(int id) async {
-    String? accessToken = authenticationController.accesToken.value;
+    String? accessToken = userControler.accesToken.value;
 
     Map<String, dynamic> requestData = {
       "id": id,
@@ -247,7 +248,7 @@ class NotificationController extends GetxController {
     List<NotificationModel?> filteredData = [];
 
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // Format tanggal ke dalam string dengan format YYYY-MM-DD
       String startDateString =

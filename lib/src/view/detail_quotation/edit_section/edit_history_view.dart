@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/history_changes_model.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation/select_field_edit_quotation.dart';
 import 'package:file_picker/file_picker.dart';
@@ -21,7 +21,7 @@ class EditHistoryView extends StatelessWidget {
   final HistoryChangesController historyChangesController =
       Get.put(HistoryChangesController());
 
-  final UserController userController = Get.put(UserController());
+  final UserControler userController = Get.put(UserControler());
 
   TextEditingController nameControllers = TextEditingController();
   TextEditingController noteController = TextEditingController();

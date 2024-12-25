@@ -1,4 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -20,8 +21,10 @@ class DashboardController extends GetxController {
   var filterStartDate = Rx<DateTime?>(null);
   var filterEndDate = Rx<DateTime?>(null);
 
-  AuthenticationController authenticationController =
+  final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
+
+  final UserControler userControler = Get.put(UserControler());
 
   Box<DashboardData>? dashboardBox;
 
@@ -77,7 +80,7 @@ class DashboardController extends GetxController {
   Future<int> fetchNewLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       String? startDateString = filterStartDate.value != null
           ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
@@ -148,7 +151,7 @@ class DashboardController extends GetxController {
   Future<int> fetchLast30DaysLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       String? startDateString = filterStartDate.value != null
           ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
@@ -219,7 +222,7 @@ class DashboardController extends GetxController {
   Future<int> fetchFollowedUpLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       String? startDateString = filterStartDate.value != null
           ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
@@ -290,7 +293,7 @@ class DashboardController extends GetxController {
   Future<int> fetchAcceptedLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       String? startDateString = filterStartDate.value != null
           ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"

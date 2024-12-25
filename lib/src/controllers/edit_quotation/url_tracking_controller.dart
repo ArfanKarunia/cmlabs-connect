@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,11 +15,9 @@ class UrlTrackingController extends GetxController {
   final TextEditingController urlController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  final UserControler userControler = Get.put(UserControler());
 
   var selectedValidity = Rx<Map<String, String>?>(null);
-
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
 
   final baseUrl = Config.baseURL;
 
@@ -40,7 +38,7 @@ class UrlTrackingController extends GetxController {
 
   Future<void> fetchUrl(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // get Data PIC
       final response = await dio.get(
@@ -62,7 +60,7 @@ class UrlTrackingController extends GetxController {
 
   Future<void> fetchValidity() async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // get Data PIC
       final response = await dio.get(
@@ -103,7 +101,7 @@ class UrlTrackingController extends GetxController {
     List result = [];
 
     // Debugging
-    print("Current Filter: ${select}");
+    print("Current Filter: $select");
     print("Current Search Query: ${search.value}");
 
     result = validityDurationList;

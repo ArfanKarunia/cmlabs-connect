@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -10,7 +10,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class NotificationService {
-  UserController userController = Get.put(UserController());
+  UserControler userController = Get.put(UserControler());
 
   NotificationService._();
   static final NotificationService instance = NotificationService._();
@@ -66,7 +66,7 @@ class NotificationService {
     const initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final initializationSettingsDarwin = DarwinInitializationSettings();
+    final initializationSettingsDarwin = const DarwinInitializationSettings();
 
     final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
@@ -90,7 +90,7 @@ class NotificationService {
         notification.hashCode,
         notification.title,
         notification.body,
-        NotificationDetails(
+        const NotificationDetails(
             android: AndroidNotificationDetails(
               'high_importance_channel',
               'High Importance Notifications',
@@ -100,7 +100,7 @@ class NotificationService {
               priority: Priority.high,
               icon: '@drawable/ic_notification',
             ),
-            iOS: const DarwinNotificationDetails(
+            iOS: DarwinNotificationDetails(
                 presentAlert: true, presentBadge: true, presentSound: true)),
         payload: message.data.toString(),
       );

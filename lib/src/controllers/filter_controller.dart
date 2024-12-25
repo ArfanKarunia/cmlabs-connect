@@ -1,6 +1,6 @@
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
@@ -29,24 +29,19 @@ class FilterController extends GetxController {
 
   // Inisialisasi Dio dan AuthenticationController
   final Dio dio = Dio();
-  final AuthenticationController authenticationController = Get.find();
   final QuotationController quotationController =
       Get.put(QuotationController());
   final DashboardController dashboardController =
       Get.put(DashboardController());
+  final UserControler userControler = Get.put(UserControler());
 
   final String baseUrl = Config.baseURL;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // fetchList();
-  }
 
   // Fetch data status dari API
   Future<void> fetchList(String filter) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // untuk Filter Status
       if (filter.toLowerCase() == "status") {
@@ -265,7 +260,7 @@ class FilterController extends GetxController {
     // fetchList();
 
     // Debugging
-    print("Current Filter: ${filter}");
+    print("Current Filter: $filter");
     print("Current Search Query: ${search.value}");
 
     if (filter.toLowerCase() == 'status') {
@@ -363,7 +358,7 @@ class FilterController extends GetxController {
       String clientSourceValue = data['value'].toString().toLowerCase();
 
       quotationController.addFilterClientSource(clientSourceValue);
-      print("Client Source : ${clientSourceValue}");
+      print("Client Source : $clientSourceValue");
       dashboardController.addFilterClientSource(StringUtils.toCamelCase(clientSourceValue));
     }
 

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/history_changes_model.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/dio.dart' as dioPkg;
@@ -13,8 +13,8 @@ import '../../utils/toast.dart';
 class HistoryChangesController extends GetxController {
   var search = Rx<String?>(null);
 
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
+  final UserControler userControler = Get.put(UserControler());
+
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
@@ -82,7 +82,7 @@ class HistoryChangesController extends GetxController {
 
       // Set headers untuk dio request
       dio.options.headers = {
-        'Authorization': 'Bearer ${authenticationController.accesToken}',
+        'Authorization': 'Bearer ${userControler.accesToken.value}',
         'Content-Type': 'multipart/form-data',
       };
 
@@ -115,7 +115,7 @@ class HistoryChangesController extends GetxController {
 
   Future<void> deleteHistory(int idHistory) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // untuk Filter Status
       final response =
@@ -139,7 +139,7 @@ class HistoryChangesController extends GetxController {
 
   Future<void> fetchHistoryChanges(int idQuotation) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/quotation/get_history',
@@ -165,7 +165,7 @@ class HistoryChangesController extends GetxController {
 
   Future<void> fetchTypeHistory(int idHistory) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/quotation/get_history_byId',

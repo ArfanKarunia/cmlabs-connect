@@ -32,8 +32,8 @@ Future<dynamic> DeleteBottomSheet(
             children: [
               Container(
                 padding:
-                    EdgeInsets.only(left: 15, right: 15, bottom: 50, top: 25),
-                decoration: BoxDecoration(
+                    const EdgeInsets.only(left: 15, right: 15, bottom: 50, top: 25),
+                decoration: const BoxDecoration(
                   color: AppColors.white_1,
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(20),
@@ -51,7 +51,7 @@ Future<dynamic> DeleteBottomSheet(
                         color: AppColors.text_4,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 20,
                     ),
                     Text(
@@ -62,7 +62,7 @@ Future<dynamic> DeleteBottomSheet(
                         fontSize: 24,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Text(
@@ -73,7 +73,7 @@ Future<dynamic> DeleteBottomSheet(
                         fontSize: 14,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     SizedBox(
@@ -83,7 +83,7 @@ Future<dynamic> DeleteBottomSheet(
                         onPressed: onDelete,
                         style: ButtonStyle(
                           backgroundColor:
-                              WidgetStatePropertyAll(AppColors.primary),
+                              const WidgetStatePropertyAll(AppColors.primary),
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -100,7 +100,7 @@ Future<dynamic> DeleteBottomSheet(
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
                     Text(
@@ -147,9 +147,9 @@ Future<dynamic> SignOutBottomSheet(
             children: [
               Container(
                 padding:
-                    EdgeInsets.only(left: 15, right: 15, bottom: 40, top: 25),
+                    const EdgeInsets.only(left: 15, right: 15, bottom: 40, top: 25),
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: AppColors.white_1,
                   borderRadius: BorderRadius.vertical(
                     top: Radius.circular(20),
@@ -166,7 +166,7 @@ Future<dynamic> SignOutBottomSheet(
                         color: AppColors.text_4,
                       ),
                     ),
-                    SizedBox(height: 26),
+                    const SizedBox(height: 26),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -178,8 +178,8 @@ Future<dynamic> SignOutBottomSheet(
                             fontSize: 20,
                           ),
                         ),
-                        SizedBox(width: 10),
-                        Icon(
+                        const SizedBox(width: 10),
+                        const Icon(
                           Icons.login_rounded,
                           weight: 3,
                           size: 28,
@@ -187,7 +187,7 @@ Future<dynamic> SignOutBottomSheet(
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       "Are you sure wanna Sign Out?",
                       style: GoogleFonts.plusJakartaSans(
@@ -196,7 +196,7 @@ Future<dynamic> SignOutBottomSheet(
                         fontSize: 13,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     SizedBox(
                       width: double.infinity,
                       height: 51,
@@ -204,14 +204,14 @@ Future<dynamic> SignOutBottomSheet(
                         onPressed: onPressed,
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all(AppColors.bgDanger),
+                              WidgetStateProperty.all(AppColors.bgDanger),
                           foregroundColor:
-                              MaterialStateProperty.all(AppColors.danger),
-                          overlayColor: MaterialStateProperty.all(
-                              Color.fromRGBO(253, 208, 208, 0.7)),
+                              WidgetStateProperty.all(AppColors.danger),
+                          overlayColor: WidgetStateProperty.all(
+                              const Color.fromRGBO(253, 208, 208, 0.7)),
                           shadowColor:
-                              MaterialStateProperty.all(Colors.transparent),
-                          shape: MaterialStateProperty.all(
+                              WidgetStateProperty.all(Colors.transparent),
+                          shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
@@ -226,7 +226,7 @@ Future<dynamic> SignOutBottomSheet(
                         ),
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     Text(
                       "Swipe down or Tap the screen to close",
                       style: GoogleFonts.plusJakartaSans(
@@ -268,16 +268,16 @@ class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
     return Wrap(
       children: [
         Container(
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20),
               topRight: Radius.circular(20),
             ),
             color: AppColors.white_1,
             boxShadow: [
               BoxShadow(
-                color: const Color.fromARGB(30, 0, 0, 0),
-                offset: const Offset(0, -4),
+                color: Color.fromARGB(30, 0, 0, 0),
+                offset: Offset(0, -4),
                 blurRadius: 10,
               ),
             ],
@@ -308,8 +308,8 @@ class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
                   onPressed: widget.onPressed,
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all(AppColors.primary),
-                    shape: MaterialStateProperty.all(
+                        WidgetStateProperty.all(AppColors.primary),
+                    shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),

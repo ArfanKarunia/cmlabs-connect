@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
@@ -7,6 +8,7 @@ class GeneralInfoController extends GetxController {
   var search = Rx<String?>(null);
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
+  final UserControler userControler = Get.put(UserControler());
 
   final baseUrl = Config.baseURL;
   final dio = Dio();
@@ -33,10 +35,10 @@ class GeneralInfoController extends GetxController {
   var typeList = <Map<String, String>>[].obs;
 
   Future<void> loadData(String? pic, int priority, int status, List<String?> type) async {
-    print("data pic: ${pic}");
-    print("data priority: ${priority}");
-    print("data status: ${status}");
-    print("data type: ${type}'}");
+    print("data pic: $pic");
+    print("data priority: $priority");
+    print("data status: $status");
+    print("data type: $type'}");
 
     // Mencocokkan dan menyimpan data priority ke selectPriority
     selectPriority.value = priorityList.firstWhere(
@@ -119,7 +121,7 @@ class GeneralInfoController extends GetxController {
     List result = [];
 
     // Debugging
-    print("Current Filter: ${select}");
+    print("Current Filter: $select");
     print("Current Search Query: ${search.value}");
 
     if (select.toLowerCase() == 'pic') {
@@ -179,7 +181,7 @@ class GeneralInfoController extends GetxController {
 
   Future<void> fetchList(String search) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       // get Data PIC
       if (search.toLowerCase() == "pic") {

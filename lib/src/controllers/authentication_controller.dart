@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cmlabs_connect/src/controllers/user_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -12,9 +12,6 @@ import '../models/user_model.dart';
 import '../utils/toast.dart';
 
 class AuthenticationController extends GetxController {
-  var accesToken = ''.obs;
-  var tokenType = ''.obs;
-
   var isLoading = false.obs;
   var isRememberMe = false.obs;
   final roleList = Rx<List<Map<String, dynamic>>>([]);
@@ -23,13 +20,12 @@ class AuthenticationController extends GetxController {
   final baseUrl = Config.baseURL;
 
   Box<Map>? loginBox;
-  UserController userController = Get.put(UserController());
+  UserControler userController = Get.put(UserControler());
 
   @override
   void onInit() {
     super.onInit();
     loginBox = Hive.box<Map>('login'); // Inisialisasi Box remember me
-    loadRememberedUser();
   }
 
   Future<void> loadRememberedUser() async {
@@ -70,7 +66,8 @@ class AuthenticationController extends GetxController {
   Future<Map<String, String>?> login(String email, String password) async {
     // isLoading.value = true;
 
-    final apiUrl = baseUrl + "/auth/login";
+    print("Sedang Login");
+    final apiUrl = "$baseUrl/auth/login";
     try {
       var response = await dio.post(
         apiUrl,
@@ -80,8 +77,10 @@ class AuthenticationController extends GetxController {
       if (response.statusCode == 200) {
         var data = response.data;
 
-        accesToken.value = data['access_token'];
-        tokenType.value = data['token_type'];
+        print(data);
+
+        userController.accesToken.value = data['access_token'];
+        userController.tokenType.value = data['token_type'];
 
         await fetchRoleList();
 
@@ -89,19 +88,19 @@ class AuthenticationController extends GetxController {
 
         String message = data['message'];
 
-        var data_user = data['data_user'];
-        String? jobPosition = data_user['job_position'];
+        var dataUser = data['data_user'];
+        String? jobPosition = dataUser['job_position'];
         String? role = getRoleName(jobPosition, roles);
 
         if (role == null) {
-          if (data_user['role_name'] != null || data_user['role_name'] != '') {
-            userController.roleName.value = data_user['role_name'];
+          if (dataUser['role_name'] != null || dataUser['role_name'] != '') {
+            userController.roleName.value = dataUser['role_name'];
           }
         } else {
           userController.roleName.value = role;
         }
 
-        User user = User.fromMap(data_user);
+        User user = User.fromMap(dataUser);
 
         userController.saveUser(user);
         userController.password.value = password;
@@ -115,7 +114,7 @@ class AuthenticationController extends GetxController {
           clearRememberedLogin();
         }
 
-        Get.toNamed('/home');
+        Get.offAndToNamed('/home');
 
         var feedback = {
           "status": 'Success',
@@ -155,7 +154,7 @@ class AuthenticationController extends GetxController {
   Future<void> storeDeviceToken(String token, String userId) async {
     Dio dio = Dio();
 
-    final apiUrl = baseUrl + "/notification/store_device_token";
+    final apiUrl = "$baseUrl/notification/store_device_token";
 
     var requestData = {
       "token": token,
@@ -168,7 +167,7 @@ class AuthenticationController extends GetxController {
       var response = await http.post(
         Uri.parse(apiUrl),
         headers: {
-          'Authorization': 'Bearer ${accesToken.value}',
+          'Authorization': 'Bearer ${userController.accesToken.value}',
           'Content-Type': 'application/json',
         },
         body: body,
@@ -186,24 +185,24 @@ class AuthenticationController extends GetxController {
 
   Future<void> logout() async {
     try {
-      dio.options.headers = {
-        'Authorization': 'Bearer ${accesToken.value}',
-        'Content-Type': 'application/json',
-      };
-
       // Make the POST request
+      print(baseUrl);
+      print(userController.accesToken.value);
       var response = await dio.post(
         '$baseUrl/auth/logout',
+        options: Options(headers: {
+          'Authorization': 'Bearer ${userController.accesToken.value}'
+        }),
       );
 
       if (response.statusCode == 200) {
-        userController.user.value = null;
-        accesToken.value = '';
-        tokenType.value = '';
         clearRememberedLogin();
 
-        showSuccessToast('Succses: Logout}');
+        showSuccessToast('Succses: Logout');
         Get.offAllNamed('/login');
+        userController.user.value = null;
+        userController.accesToken.value = '';
+        userController.tokenType.value = '';
       }
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
@@ -226,7 +225,7 @@ class AuthenticationController extends GetxController {
       var response = await http.post(
         Uri.parse('$baseUrl/profile/change-password'),
         headers: {
-          'Authorization': 'Bearer ${accesToken.value}',
+          'Authorization': 'Bearer ${userController.accesToken.value}',
           'Content-Type': 'application/json',
         },
         body: body,
@@ -264,7 +263,7 @@ class AuthenticationController extends GetxController {
 
   Future<void> fetchRoleList() async {
     try {
-      String? accessToken = accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/profile/position',

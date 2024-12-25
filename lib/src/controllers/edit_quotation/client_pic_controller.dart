@@ -45,7 +45,7 @@ class ClientPicController extends GetxController {
     infoContact.value.clear();
     noteContact.value.clear();
 
-    if (clientPIC.length != 0) {
+    if (clientPIC.isNotEmpty) {
       // Tambahkan data ke RxList dan inisialisasi controller
       for (var pic in clientPIC) {
         var dataClientPic = ClientPic(

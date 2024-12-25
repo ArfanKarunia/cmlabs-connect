@@ -1,4 +1,3 @@
-import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class StringUtils {
   // Static method to convert a hyphenated string to camel case

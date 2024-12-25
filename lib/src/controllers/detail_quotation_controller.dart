@@ -2,6 +2,7 @@ import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:dio/dio.dart';
@@ -25,6 +26,8 @@ class DetailQuotationController extends GetxController {
   final AuthenticationController authenticationController =
       Get.put(AuthenticationController());
 
+  final UserControler userControler = Get.put(UserControler());
+
   final QuotationController quotationController =
       Get.put(QuotationController());
 
@@ -34,70 +37,9 @@ class DetailQuotationController extends GetxController {
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
-  // final title = [
-  //   "ID",
-  //   "Joined at",
-  //   "Status",
-  //   "Category",
-  //   "Client Source",
-  //   "Name",
-  //   "Email",
-  //   "Whatsapp",
-  //   "Company Website",
-  //   "Registration Status",
-  //   "Company Name",
-  //   "Company Profile",
-  //   "Page Source",
-  //   "Service",
-  //   "Region",
-  // ];
-
-  // Map<String, String> detailData__() {
-  //   String section = StringUtils.toCamelCase(quotation.value!.section);
-  //   List<String?>? categories = quotation.value?.data.category;
-
-  //   // Cek apakah category ada dan tidak kosong
-  //   String categoryText;
-
-  //   if (categories != null && categories.isNotEmpty) {
-  //     // Ganti 'SEO Article' dengan 'SEO Writing' dan format kategori
-  //     List<String> formattedCategories = categories.map((cat) {
-  //       return cat == null || cat.isEmpty
-  //           ? '-'
-  //           : cat.replaceAll('SEO Article', 'SEO Writing');
-  //     }).toList();
-
-  //     // Gabungkan section dengan kategori yang diformat
-  //     categoryText = "$section, ${formattedCategories.join(', ')}";
-  //   } else {
-  //     // Jika kategori tidak ada, tampilkan hanya section
-  //     categoryText = section;
-  //   }
-
-  //   return {
-  //     "company": quotation.value!.data.company ?? "N/A",
-  //     "ID": quotation.value!.id.toString(),
-  //     "Joined at": DateFormat('d MMMM yyyy, HH:mm:ss')
-  //         .format(quotation.value!.createdAt),
-  //     "Status": labelStatusLead(quotation.value!.status),
-  //     "Category": categoryText,
-  //     "Client Source": quotation.value!.data.clientSource?.name ?? "-",
-  //     "Name": quotation.value!.data.name ?? "-",
-  //     "Email": quotation.value!.email,
-  //     "Whatsapp": quotation.value!.data.phoneNumber ?? "-",
-  //     "Company Website": quotation.value!.data.website ?? "-",
-  //     "Registration Status": "-",
-  //     "Company Name": quotation.value!.data.company ?? "N/A",
-  //     "Company Profile": quotation.value!.data.companyIndustry ?? "-",
-  //     "Page Source": quotation.value!.url,
-  //     "Service": StringUtils.toCamelCase(quotation.value!.section),
-  //     "Region": quotation.value!.data.region ?? "-",
-  //   };
-  // }
-
   Future<void> fetchDetailQuotation(int id) async {
     try {
-      String? accessToken = authenticationController.accesToken.value;
+      String? accessToken = userControler.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/quotation/$id',

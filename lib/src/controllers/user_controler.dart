@@ -3,12 +3,14 @@ import 'package:get/get.dart';
 
 import '../models/user_model.dart';
 
-class UserController extends GetxController {
+class UserControler extends GetxController {
+  var accesToken = Rx<String?>(null);
+  var tokenType = Rx<String?>(null);
+
   var user = Rx<User?>(null);
   var deviceToken = Rx<String?>(null);
   var password = Rx<String?>(null);
   var roleName = "User".obs;
-
 
   final baseUrl = Config.baseURL;
 
@@ -28,6 +30,4 @@ class UserController extends GetxController {
     //   print("UserBox belum diinisialisasi.");
     // }
   }
-
-
 }
