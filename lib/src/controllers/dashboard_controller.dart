@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../constant/config.dart';
+import '../utils/string_utils.dart';
 
 class DashboardController extends GetxController {
   // var dashboardData = Rx<DashboardData?>(null);
@@ -38,7 +39,6 @@ class DashboardController extends GetxController {
       amount_newLeads.value = await fetchNewLeadData();
       amount_followedUpLeads.value = await fetchFollowedUpLeadData();
       amount_last30Day.value = await fetchLast30DaysLeadData();
-
     } catch (e) {
       print('Error fetching data: $e');
     }
@@ -58,42 +58,45 @@ class DashboardController extends GetxController {
       // Ambil access token dari AuthenticationController
       String? accessToken = userControler.accesToken.value;
 
-      String? startDateString = filterStartDate.value != null
-          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
-      String? endDateString = filterEndDate.value != null
-          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
+      // String? startDateString = filterStartDate.value != null
+      //     ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+      //     : null;
+      // String? endDateString = filterEndDate.value != null
+      //     ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+      //     : null;
 
-      // Construct query parameters
-      Map<String, String> queryParams = {};
+      // // Construct query parameters
+      // Map<String, String> queryParams = {};
 
-      if (startDateString != null) {
-        queryParams['startDate'] = startDateString;
-      }
-      if (endDateString != null) {
-        queryParams['endDate'] = endDateString;
-      }
-      if (filterCategory.isNotEmpty) {
-        queryParams['category'] = filterCategory.join(',');
-      }
-      if (filterPic.value != null) {
-        queryParams['pic'] = filterPic.value!;
-      }
-      if (filterClientSource.value != null) {
-        queryParams['clientSource'] = filterClientSource.value!;
-      }
+      // if (startDateString != null) {
+      //   queryParams['startDate'] = startDateString;
+      // }
+      // if (endDateString != null) {
+      //   queryParams['endDate'] = endDateString;
+      // }
+      // if (filterCategory.isNotEmpty) {
+      //   queryParams['category'] = filterCategory.join(',');
+      // }
+      // if (filterPic.value != null) {
+      //   queryParams['pic'] = filterPic.value!;
+      // }
+      // if (filterClientSource.value != null) {
+      //   queryParams['clientSource'] = filterClientSource.value!;
+      // }
 
-      // Build the query string
-      String queryString = queryParams.entries
-          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
-          .join('&');
+      // // Build the query string
+      // String queryString = queryParams.entries
+      //     .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+      //     .join('&');
 
-      // Construct the full URL
-      String url = '$baseUrl/dashboard/total_today';
-      if (queryString.isNotEmpty) {
-        url += '?$queryString';
-      }
+      // // Construct the full URL
+      // String url = '$baseUrl/dashboard/total_today';
+      // if (queryString.isNotEmpty) {
+      //   url += '?$queryString';
+      // }
+
+      String url = constructDashboardUrl('total_today');
+
 
       // Ambil data dari API
       final response = await dio.get(
@@ -129,42 +132,9 @@ class DashboardController extends GetxController {
       // Ambil access token dari AuthenticationController
       String? accessToken = userControler.accesToken.value;
 
-      String? startDateString = filterStartDate.value != null
-          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
-      String? endDateString = filterEndDate.value != null
-          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
 
-      // Construct query parameters
-      Map<String, String> queryParams = {};
+      String url = constructDashboardUrl('total_30_today');
 
-      if (startDateString != null) {
-        queryParams['startDate'] = startDateString;
-      }
-      if (endDateString != null) {
-        queryParams['endDate'] = endDateString;
-      }
-      if (filterCategory.isNotEmpty) {
-        queryParams['category'] = filterCategory.join(',');
-      }
-      if (filterPic.value != null) {
-        queryParams['pic'] = filterPic.value!;
-      }
-      if (filterClientSource.value != null) {
-        queryParams['clientSource'] = filterClientSource.value!;
-      }
-
-      // Build the query string
-      String queryString = queryParams.entries
-          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
-          .join('&');
-
-      // Construct the full URL
-      String url = '$baseUrl/dashboard/total_30_today';
-      if (queryString.isNotEmpty) {
-        url += '?$queryString';
-      }
 
       // Ambil data dari API
       final response = await dio.get(
@@ -200,42 +170,44 @@ class DashboardController extends GetxController {
       // Ambil access token dari AuthenticationController
       String? accessToken = userControler.accesToken.value;
 
-      String? startDateString = filterStartDate.value != null
-          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
-      String? endDateString = filterEndDate.value != null
-          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
+      // String? startDateString = filterStartDate.value != null
+      //     ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+      //     : null;
+      // String? endDateString = filterEndDate.value != null
+      //     ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+      //     : null;
 
-      // Construct query parameters
-      Map<String, String> queryParams = {};
+      // // Construct query parameters
+      // Map<String, String> queryParams = {};
 
-      if (startDateString != null) {
-        queryParams['startDate'] = startDateString;
-      }
-      if (endDateString != null) {
-        queryParams['endDate'] = endDateString;
-      }
-      if (filterCategory.isNotEmpty) {
-        queryParams['category'] = filterCategory.join(',');
-      }
-      if (filterPic.value != null) {
-        queryParams['pic'] = filterPic.value!;
-      }
-      if (filterClientSource.value != null) {
-        queryParams['clientSource'] = filterClientSource.value!;
-      }
+      // if (startDateString != null) {
+      //   queryParams['startDate'] = startDateString;
+      // }
+      // if (endDateString != null) {
+      //   queryParams['endDate'] = endDateString;
+      // }
+      // if (filterCategory.isNotEmpty) {
+      //   queryParams['category'] = filterCategory.join(',');
+      // }
+      // if (filterPic.value != null) {
+      //   queryParams['pic'] = filterPic.value!;
+      // }
+      // if (filterClientSource.value != null) {
+      //   queryParams['clientSource'] = filterClientSource.value!;
+      // }
 
-      // Build the query string
-      String queryString = queryParams.entries
-          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
-          .join('&');
+      // // Build the query string
+      // String queryString = queryParams.entries
+      //     .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
+      //     .join('&');
 
-      // Construct the full URL
-      String url = '$baseUrl/dashboard/total_followed_up';
-      if (queryString.isNotEmpty) {
-        url += '?$queryString';
-      }
+
+      // // Construct the full URL
+      // String url = '$baseUrl/dashboard/total_followed_up';
+      // if (queryString.isNotEmpty) {
+      //   url += '?$queryString';
+      // }
+      String url = constructDashboardUrl('total_followed_up');
 
       // Ambil data dari API
       final response = await dio.get(
@@ -271,42 +243,7 @@ class DashboardController extends GetxController {
       // Ambil access token dari AuthenticationController
       String? accessToken = userControler.accesToken.value;
 
-      String? startDateString = filterStartDate.value != null
-          ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
-      String? endDateString = filterEndDate.value != null
-          ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
-          : null;
-
-      // Construct query parameters
-      Map<String, String> queryParams = {};
-
-      if (startDateString != null) {
-        queryParams['startDate'] = startDateString;
-      }
-      if (endDateString != null) {
-        queryParams['endDate'] = endDateString;
-      }
-      if (filterCategory.isNotEmpty) {
-        queryParams['category'] = filterCategory.join(',');
-      }
-      if (filterPic.value != null) {
-        queryParams['pic'] = filterPic.value!;
-      }
-      if (filterClientSource.value != null) {
-        queryParams['clientSource'] = filterClientSource.value!;
-      }
-
-      // Build the query string
-      String queryString = queryParams.entries
-          .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
-          .join('&');
-
-      // Construct the full URL
-      String url = '$baseUrl/dashboard/total_accepted';
-      if (queryString.isNotEmpty) {
-        url += '?$queryString';
-      }
+      String url = constructDashboardUrl("total_accepted");
 
       // Ambil data dari API
       final response = await dio.get(
@@ -396,5 +333,54 @@ class DashboardController extends GetxController {
 
   void removeFilterPic() {
     filterPic.value = null;
+  }
+
+  String constructDashboardUrl(String metric)  {
+    // Konversi filter tanggal ke format string
+    String? startDateString = filterStartDate.value != null
+        ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
+        : null;
+    String? endDateString = filterEndDate.value != null
+        ? "${filterEndDate.value!.year}-${filterEndDate.value!.month.toString().padLeft(2, '0')}-${filterEndDate.value!.day.toString().padLeft(2, '0')}"
+        : null;
+
+    // Construct query parameters
+    List<String> queryParams = [];
+
+    if (startDateString != null) {
+      queryParams.add('startDate=${Uri.encodeComponent(startDateString)}');
+    }
+    if (endDateString != null) {
+      queryParams.add('endDate=${Uri.encodeComponent(endDateString)}');
+    }
+    if (filterPic.value != null) {
+      queryParams.add(
+          'pic=${Uri.encodeComponent(StringUtils.toCamelCase(filterPic.value))}');
+    }
+    if (filterClientSource.value != null) {
+      queryParams.add(
+          'clientSource=${Uri.encodeComponent(StringUtils.toCamelCase(filterClientSource.value))}');
+    }
+
+    // Handle category filter with array format
+    if (filterCategory.isNotEmpty) {
+      queryParams.addAll(filterCategory
+          .map((category) => 'category[]=${Uri.encodeComponent(category)}'));
+    }
+
+    // Combine all query parameters
+    String queryString = queryParams.join('&');
+    print('category: ${filterCategory}');
+    print('Constructed URL: $queryString');
+
+    // Construct the full URL
+    String url = '$baseUrl/dashboard/$metric?';
+    if (queryString.isNotEmpty) {
+      url += '&$queryString';
+    }
+
+    // Debug log
+
+    return url;
   }
 }

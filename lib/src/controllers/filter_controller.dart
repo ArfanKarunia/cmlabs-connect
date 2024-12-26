@@ -1,7 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controler.dart';
-import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 
@@ -344,12 +343,10 @@ class FilterController extends GetxController {
     dashboardController.clearFilterClientSource();
 
     if (filterClientSource.value != null) {
-      String clientSourceValue =
-          filterClientSource.value!['value'].toString().toLowerCase();
+      String clientSourceValue = filterClientSource.value!['value'].toString();
 
       quotationController.addFilterClientSource(clientSourceValue);
-      dashboardController
-          .addFilterClientSource(StringUtils.toCamelCase(clientSourceValue));
+      dashboardController.addFilterClientSource(clientSourceValue);
     }
 
     clearFilterClientSource();
@@ -360,9 +357,9 @@ class FilterController extends GetxController {
     dashboardController.clearFilterPic();
 
     if (filterPic.value != null) {
-      String picValue = filterPic.value!['value'].toString().toLowerCase();
+      String picValue = filterPic.value!['value'].toString();
       quotationController.addFilterPic(picValue);
-      dashboardController.addFilterPic(StringUtils.toCamelCase(picValue));
+      dashboardController.addFilterPic(picValue);
     }
 
     clearFilterPic();
@@ -374,7 +371,7 @@ class FilterController extends GetxController {
 
     for (var data in filterCategoryList) {
       // Convert both values to lowercase to ensure case-insensitive comparison
-      String categoryValue = data['value'].toString().toLowerCase();
+      String categoryValue = data['value'].toString();
 
       quotationController.addFilterCategory(categoryValue);
       dashboardController.addFilterCategory(categoryValue);
