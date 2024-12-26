@@ -49,8 +49,6 @@ class QuotationController extends GetxController {
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
-  Box<Quotation>? quotationBox;
-
   /*
 
     Ketika aplikasi mulai berjalan (controller ini pertama kali di inisialisasi)
@@ -61,24 +59,9 @@ class QuotationController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    quotationBox = await Hive.openBox<Quotation>('quotationBox');
     await fetchTotalLeads();
     fetchQuotationData();
     checkNewQuotationsPeriodically();
-  }
-
-  /*
-  
-    Ketika controller ini tidak lagi diperlukan
-
-    akan menutup koneksi ke local storage. hal ini dapat mencegah 
-    kebocoran memori sehingga performa aplikasi tetap terjaga. 
-
-  */
-  @override
-  void dispose() {
-    quotationBox?.close();
-    super.dispose();
   }
 
   /*
@@ -94,90 +77,80 @@ class QuotationController extends GetxController {
 
   Future<void> fetchQuotationData(
       {bool isLoadMore = false, bool refreshData = false}) async {
-    print(userControler.accesToken.value);
     try {
-      // Cek apakah data sudah ada di Hive (local storage)
-      if (quotationBox!.isNotEmpty) {
-        // Jika data ada di local storage, ambil data dari Hive
-        var localData =
-            quotationBox!.values.skip(start.value).take(limit.value).toList();
-        quotationList.addAll(localData);
-        print("Data diambil dari local storage.");
-      } else {
-        // Jika data belum ada di local storage, fetch data dari API
-        String? accessToken = userControler.accesToken.value;
+      // Jika data belum ada di local storage, fetch data dari API
+      String? accessToken = userControler.accesToken.value;
 
-        if (refreshData) {
-          start.value = 0;
-          limit.value = quotationList.isNotEmpty ? quotationList.length : 10;
-        }
+      if (refreshData) {
+        start.value = 0;
+        limit.value = quotationList.isNotEmpty ? quotationList.length : 10;
+      }
 
-        if (isLoadMore == false && refreshData == false) {
-          start.value = 0;
-          limit.value = 10;
-        }
+      if (isLoadMore == false && refreshData == false) {
+        start.value = 0;
+        limit.value = 10;
+      }
 
-        String url = await constructFilteredUrl(start.value, limit.value);
+      String url = await constructFilteredUrl(start.value, limit.value);
 
-        final response = await dio.get(
-          url,
-          options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-        );
+      final response = await dio.get(
+        url,
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
 
-        if (response.statusCode == 200 && response.data != null) {
-          final rawData = response.data['data'];
+      if (response.statusCode == 200 && response.data != null) {
+        final rawData = response.data['data'];
 
-          if (rawData != null && rawData is List) {
-            List<Quotation> quotations = rawData.map<Quotation>((item) {
-              return Quotation.fromJson(item);
-            }).toList();
+        if (rawData != null && rawData is List) {
+          List<Quotation> quotations = rawData.map<Quotation>((item) {
+            return Quotation.fromJson(item);
+          }).toList();
 
-            print('jumlah Data: ${quotations.length}');
+          print('jumlah Data: ${quotations.length}');
 
-            // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
-            if (isLoadMore) {
-              quotationList.addAll(quotations); // Menambah data baru
-              for (var item in quotations) {
-                print('status : ${item.status}');
-                int index = quotationList.length;
-                quotationList.add(item);
-                listInboxKey.currentState
-                    ?.insertItem(index); // Tambahkan item baru
-              }
-            } else {
-              for (int i = quotationList.length - 1; i >= 0; i--) {
-                listInboxKey.currentState?.removeItem(
-                  i,
-                  (context, animation) {
-                    final removedItem = quotationList.removeAt(i);
-                    return SizeTransition(
-                      sizeFactor: animation,
-                      child: QuotationListTile(
-                        quotation: removedItem,
-                        onDelete: () {},
-                        onChatWA: () {},
-                      ),
-                    );
-                  },
-                  duration: const Duration(milliseconds: 300),
-                );
-              }
-              quotationList.value = quotations; // Ganti dengan data baru
-              for (int i = 0; i < quotations.length; i++) {
-                print('status : ${quotations[i].status}');
-
-                listInboxKey.currentState?.insertItem(i);
-              } // Mengganti list dengan data baru
+          // jika fetch itu untuk load more maka akan menambah quotation List. jika tidak maka akan menimpah atau mengganti dengan data baru.
+          if (isLoadMore) {
+            quotationList.addAll(quotations); // Menambah data baru
+            for (var item in quotations) {
+              print('status : ${item.status}');
+              int index = quotationList.length;
+              quotationList.add(item);
+              listInboxKey.currentState
+                  ?.insertItem(index); // Tambahkan item baru
             }
-
-            if (refreshData) {
-              limit.value = 10;
+          } else {
+            for (int i = quotationList.length - 1; i >= 0; i--) {
+              listInboxKey.currentState?.removeItem(
+                i,
+                (context, animation) {
+                  final removedItem = quotationList.removeAt(i);
+                  return SizeTransition(
+                    sizeFactor: animation,
+                    child: QuotationListTile(
+                      quotation: removedItem,
+                      onDelete: () {},
+                      onChatWA: () {},
+                    ),
+                  );
+                },
+                duration: const Duration(milliseconds: 300),
+              );
             }
+            quotationList.value = quotations; // Ganti dengan data baru
+            for (int i = 0; i < quotations.length; i++) {
+              print('status : ${quotations[i].status}');
 
-            // Simpan data baru ke Hive
-            // saveDataToHive(quotations);
-            print("Data diambil dari API dan disimpan ke local storage.");
+              listInboxKey.currentState?.insertItem(i);
+            } // Mengganti list dengan data baru
           }
+
+          if (refreshData) {
+            limit.value = 10;
+          }
+
+          // Simpan data baru ke Hive
+          // saveDataToHive(quotations);
+          print("Data diambil dari API dan disimpan ke local storage.");
         }
       }
     } catch (e) {
@@ -305,18 +278,6 @@ class QuotationController extends GetxController {
     } catch (e) {
       print('Error fetching data: $e');
     }
-  }
-
-  /*
-  
-    FUNGSI Save Data to Hive
-
-    Fungsi ini digunakan untuk menyimpan data ke dalam local Storage HIVE (quotationBox)
-
-  */
-  void saveDataToHive(List<Quotation> data) async {
-    await quotationBox!.clear();
-    await quotationBox!.addAll(data);
   }
 
   /*
@@ -720,32 +681,36 @@ class QuotationController extends GetxController {
     }
 
     // Construct query parameters
-    Map<String, String> queryParams = {};
+    List<String> queryParams = [];
 
     if (startDateString != null) {
-      queryParams['startDate'] = startDateString;
+      queryParams.add('startDate=${Uri.encodeComponent(startDateString)}');
     }
     if (endDateString != null) {
-      queryParams['endDate'] = endDateString;
-    }
-    if (filterCategory.isNotEmpty) {
-      queryParams['category'] = filterCategory.join(',');
+      queryParams.add('endDate=${Uri.encodeComponent(endDateString)}');
     }
     if (filterPic.value != null) {
-      queryParams['pic'] = StringUtils.toCamelCase(filterPic.value);
+      queryParams.add(
+          'pic=${Uri.encodeComponent(StringUtils.toCamelCase(filterPic.value))}');
     }
     if (filterClientSource.value != null) {
-      queryParams['clientSource'] =
-          StringUtils.toCamelCase(filterClientSource.value);
+      queryParams.add(
+          'clientSource=${Uri.encodeComponent(StringUtils.toCamelCase(filterClientSource.value))}');
     }
     if (statusValue != null) {
-      queryParams['status'] = statusValue;
+      queryParams.add('status=${Uri.encodeComponent(statusValue)}');
     }
 
-    // Build the query string
-    String queryString = queryParams.entries
-        .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
-        .join('&');
+    // Handle category filter with array format
+    if (filterCategory.isNotEmpty) {
+      queryParams.addAll(filterCategory
+          .map((category) => 'category[]=${Uri.encodeComponent(category)}'));
+    }
+
+    // Combine all query parameters
+    String queryString = queryParams.join('&');
+    print('category: ${filterCategory}');
+    print('Constructed URL: $queryString');
 
     // Construct the full URL
     String url =
@@ -755,7 +720,6 @@ class QuotationController extends GetxController {
     }
 
     // Debug log
-    print('Constructed URL: $url');
 
     return url;
   }
