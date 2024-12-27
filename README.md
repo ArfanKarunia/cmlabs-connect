@@ -1,6 +1,6 @@
 # CMLABS Connect App
 
-![CMLABS Connect Cover](assets/images/dokumentation/cover.png)
+![CMLABS Connect Cover](./assets/images/dokumentation/Cover.png)
 
 CMLABS Connect is a Flutter-based application designed to streamline communication and enhance productivity for users. This repository contains the source code, setup instructions, and documentation for development.
 
@@ -148,4 +148,4 @@ The following packages are integral to the functionality and design of the appli
 
 ## CMLABS Connect - Master Design
 
-https://embed.figma.com/design/4NGJ0J8Rm6UlBmlV2H6OZm/cmlabs-Connect?node-id=1-1635&t=CrPHZ8kQ1H1E9TPU-1&embed-host=notion&footer=false&theme=system
+- [Design CMLABS Connect](https://www.figma.com/design/4NGJ0J8Rm6UlBmlV2H6OZm/cmlabs-Connect?node-id=1-1635&t=jJ8bTBphXsr2EKhF-1)
