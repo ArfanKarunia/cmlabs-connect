@@ -69,7 +69,7 @@ class DetailQuotationView extends StatelessWidget {
                   var dataQuotation =
                       detailQuotationController.detailData.value;
                   return Text(
-                    dataQuotation?['company'] ?? "N/A",
+                    dataQuotation?['company_name'] ?? "N/A",
                     style: GoogleFonts.plusJakartaSans(
                       color: AppColors.text_1,
                       fontSize: 18,
