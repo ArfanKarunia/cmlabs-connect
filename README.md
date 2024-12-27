@@ -63,6 +63,8 @@ Tracking leads masuk dari berbagai channel yang dimiliki oleh cmlabs.co
 
 #### Run the Application
 
+- Open your Emulator (virtual/real device)
+- run the project app
 ```
 flutter run
 ```
