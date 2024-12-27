@@ -160,6 +160,8 @@ class DetailQuotationController extends GetxController {
     } else {
       if (additionalData['category'] != null) {
         String categoryText = "";
+
+        // Konversi category ke teks
         if (additionalData['category'] is List) {
           categoryText = (additionalData['category'] as List).map((cat) {
             return cat.replaceAll('SEO Article', 'SEO Writing');
@@ -167,12 +169,22 @@ class DetailQuotationController extends GetxController {
         } else {
           categoryText = additionalData['category'] ?? '-';
         }
-        details.addAll({
-          "service": StringUtils.toCamelCase(categoryText),
-        });
+
+        // Cek apakah section berbeda dengan categoryText
+        if (StringUtils.toCamelCase(quotation.section!.toLowerCase()) != StringUtils.toCamelCase(categoryText.toLowerCase())) {
+          details.addAll({
+            "service":
+                StringUtils.toCamelCase("${quotation.section}, $categoryText"),
+          });
+        } else {
+          details.addAll({
+            "service": StringUtils.toCamelCase(categoryText),
+          });
+        }
       } else {
+        // Jika category kosong, gunakan section
         details.addAll({
-          "service": StringUtils.toCamelCase(quotation.section),
+          "service": StringUtils.toCamelCase(quotation.section ?? '-'),
         });
       }
     }
@@ -314,8 +326,8 @@ class DetailQuotationController extends GetxController {
             additionalData.value = {
               "language": data['language'] ?? '', // "Multi langual"
               "niche": data['niche'] ?? '', // "1 Country"
-              "seo_target": data['seo_target'] ??
-                  '', // "Reach a certain ranking (target competitor) in organic market share"
+              "seo_target": data['seo_target'] ?? '',
+              "seo_team": data['seo_team'] ?? '',
               "online_asset": data['online_assets'] ?? '', // "30"
               "age_of_website": data['age_website'] ?? '', // "1 - 3 Years"
               "content_writer_team":

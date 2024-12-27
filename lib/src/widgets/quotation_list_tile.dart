@@ -230,7 +230,7 @@ class QuotationListTile extends StatelessWidget {
                             ),
                             const SizedBox(height: 6),
                             Text(
-                              quotation.data.category.isNotEmpty
+                              quotation.data.category.isNotEmpty && quotation.section != 'content-writing'
                                   ? StringUtils.toCamelCase(quotation.data.category.map((cat) {
                                       return cat == null || cat.isEmpty
                                           ? '-'
