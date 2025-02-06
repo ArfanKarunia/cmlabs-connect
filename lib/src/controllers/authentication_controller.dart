@@ -31,20 +31,16 @@ class AuthenticationController extends GetxController {
   Future<void> loadRememberedUser() async {
     try {
       isLoading(true);
-      var rememberedData = loginBox?.get('remember');
+
+      // Get remembered data
+      final rememberedData = loginBox?.get('remember');
       if (rememberedData != null) {
         String email = rememberedData['email'];
         String password = rememberedData['password'];
-        print("Data Remember me");
-        print(rememberedData);
-        print("email: $email");
-        print("password: $password");
 
         isRememberMe.value = true;
 
         await login(email, password);
-      } else {
-        print("Data Remember me");
       }
     } finally {
       isLoading(false);
@@ -63,92 +59,74 @@ class AuthenticationController extends GetxController {
     isRememberMe(value);
   }
 
-  Future<Map<String, String>?> login(String email, String password) async {
-    // isLoading.value = true;
+  Future<Map<String, String>> login(String email, String password) async {
+    isLoading(true);
 
-    print("Sedang Login");
     final apiUrl = "$baseUrl/auth/login";
     try {
-      var response = await dio.post(
+      final response = await dio.post(
         apiUrl,
         data: {'email': email, 'password': password},
       );
 
-      if (response.statusCode == 200) {
-        var data = response.data;
+      final data = response.data;
 
-        print(data);
+      userController.accesToken.value = data['access_token'];
+      userController.tokenType.value = data['token_type'];
 
-        userController.accesToken.value = data['access_token'];
-        userController.tokenType.value = data['token_type'];
+      await fetchRoleList();
 
-        await fetchRoleList();
+      var roles = roleList.value;
 
-        var roles = roleList.value;
+      var dataUser = data['data_user'];
+      String? jobPosition = dataUser['job_position'];
+      String? role = getRoleName(jobPosition, roles);
 
-        String message = data['message'];
-
-        var dataUser = data['data_user'];
-        String? jobPosition = dataUser['job_position'];
-        String? role = getRoleName(jobPosition, roles);
-
-        if (role == null) {
-          if (dataUser['role_name'] != null || dataUser['role_name'] != '') {
-            userController.roleName.value = dataUser['role_name'];
-          }
-        } else {
-          userController.roleName.value = role;
+      if (role == null) {
+        if (dataUser['role_name'] != null || dataUser['role_name'] != '') {
+          userController.roleName.value = dataUser['role_name'];
         }
-
-        User user = User.fromMap(dataUser);
-
-        userController.saveUser(user);
-        userController.password.value = password;
-
-        await storeDeviceToken(userController.deviceToken.value!,
-            userController.user.value!.id.toString());
-
-        if (isRememberMe.value) {
-          saveRememberedLogin(email, password);
-        } else {
-          clearRememberedLogin();
-        }
-
-        Get.offAndToNamed('/home');
-
-        var feedback = {
-          "status": 'Success',
-          "message": 'Login Berhasil, Selamat datang ${user.name}',
-        };
-
-        return feedback;
+      } else {
+        userController.roleName.value = role;
       }
-    } on DioException catch (e) {
-      print("error: ${e.response}");
 
-      // Default pesan error
+      User user = User.fromMap(dataUser);
+
+      userController.saveUser(user);
+      userController.password.value = password;
+
+      await storeDeviceToken(userController.deviceToken.value!, userController.user.value!.id.toString());
+
+      if (isRememberMe.value) {
+        saveRememberedLogin(email, password);
+      } else {
+        clearRememberedLogin();
+      }
+
+      Get.offAndToNamed('/home');
+
+      return {
+        "status": "Success",
+        "message": "Login Berhasil, Selamat datang ${user.name}",
+      };
+    } on DioException catch (e) {
       String message = 'The selected email or password is invalid';
 
-      // Cek apakah response berisi data dan memiliki key 'error'
-      if (e.response?.data != null &&
-          e.response!.data is Map<String, dynamic>) {
-        var errorData = e.response!.data as Map<String, dynamic>;
-        if (errorData.containsKey('error')) {
-          message = errorData['error']; // Ambil pesan dari key 'error'
+      if (e.response?.data != null) {
+        if (e.response?.data['error'] == "Password salah") {
+          message = "The password is invalid.";
+        } else {
+          message = e.response?.data['error'];
         }
       }
 
-      // Return feedback error
-      var feedback = {
-        "status": 'Error',
+      return {
+        "status": "Error",
         "message": message,
       };
-
-      return feedback;
     } finally {
       isLoading(false); // Pastikan untuk menonaktifkan loading
     }
-    return null;
   }
 
   Future<void> storeDeviceToken(String token, String userId) async {
@@ -164,16 +142,16 @@ class AuthenticationController extends GetxController {
     var body = jsonEncode(requestData);
 
     try {
-      var response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {
-          'Authorization': 'Bearer ${userController.accesToken.value}',
-          'Content-Type': 'application/json',
-        },
-        body: body,
+      var response = await dio.post(
+        apiUrl,
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${userController.accesToken.value}',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: body,
       );
-
-      print("response code: ${response.statusCode}");
 
       if (response.statusCode == 200) {
         print("Device Token berhasil di kirim");
@@ -190,9 +168,7 @@ class AuthenticationController extends GetxController {
       print(userController.accesToken.value);
       var response = await dio.post(
         '$baseUrl/auth/logout',
-        options: Options(headers: {
-          'Authorization': 'Bearer ${userController.accesToken.value}'
-        }),
+        options: Options(headers: {'Authorization': 'Bearer ${userController.accesToken.value}'}),
       );
 
       if (response.statusCode == 200) {
@@ -210,8 +186,7 @@ class AuthenticationController extends GetxController {
     }
   }
 
-  Future<void> changePassword(
-      String oldPassword, String newPassword, String confirmPassword) async {
+  Future<void> changePassword(String oldPassword, String newPassword, String confirmPassword) async {
     var requestData = {
       "id": userController.user.value?.id,
       "password_old": oldPassword,
@@ -284,7 +259,7 @@ class AuthenticationController extends GetxController {
             .toList();
       }
     } catch (e) {
-      print('Error fetching status data: $e');
+      rethrow;
     }
   }
 
