@@ -44,4 +44,5 @@ class AppColors {
   static const Color red = Color(0xFFF76162);
 
   static const Color scaffoldBgColor = Color(0xFFF1F1F1);
+  static const Color scaffoldBgColor2 = Color(0xFFF9F9F9);
 }

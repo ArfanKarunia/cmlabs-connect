@@ -1,15 +1,14 @@
-import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:cmlabs_connect/src/widgets/custom_buttom.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../constant/const.dart';
+import '../constant/fontstyle.dart';
 import '../controllers/bottom_nav_controller.dart';
 import '../controllers/quotation_controller.dart';
+import '../routes.dart';
 import '../utils/color.dart';
-import '../view/filter_view.dart';
 
 // ignore: must_be_immutable
 class SelectStatus extends StatelessWidget {
@@ -17,7 +16,7 @@ class SelectStatus extends StatelessWidget {
     super.key,
     required this.controller,
     this.isFilterButton = false,
-    this.isHistorycalLeadButton = false,
+    this.isHistoricalLeadButton = false,
     this.isNewLead = true,
     this.isFollowedUp = true,
     this.isAccepted = true,
@@ -27,7 +26,7 @@ class SelectStatus extends StatelessWidget {
 
   QuotationController controller;
   final bool isFilterButton;
-  final bool isHistorycalLeadButton;
+  final bool isHistoricalLeadButton;
   final bool isNewLead;
   final bool isFollowedUp;
   final bool isAccepted;
@@ -40,7 +39,7 @@ class SelectStatus extends StatelessWidget {
   Widget build(BuildContext context) {
     controller = Get.find();
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,8 +47,7 @@ class SelectStatus extends StatelessWidget {
           Expanded(
             child: Obx(
               () => SingleChildScrollView(
-                scrollDirection:
-                    Axis.horizontal, // Menjadikan scroll horizontal
+                scrollDirection: Axis.horizontal, // Menjadikan scroll horizontal
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -61,32 +59,19 @@ class SelectStatus extends StatelessWidget {
                           controller.fetchQuotationData(refreshData: true);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 3,
+                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color: controller.filterStatus.value == null ? AppColors.primary : AppColors.inactiveOption,
                           ),
-                          decoration: (controller.filterStatus.value == null)
-                              ? BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: AppColors.primary,
-                                )
-                              : BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  color: AppColors.inactiveOption,
-                                ),
                           child: Center(
-                            child: Text('Recently',
-                                style: (controller.filterStatus.value == null)
-                                    ? GoogleFonts.plusJakartaSans(
-                                        color: AppColors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w400,
-                                      )
-                                    : GoogleFonts.plusJakartaSans(
-                                        color: AppColors.text_3,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w400,
-                                      )),
+                            child: Text(
+                              'Recently',
+                              style: regular.copyWith(
+                                color: controller.filterStatus.value == null ? AppColors.white : AppColors.text_3,
+                                fontSize: 11,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -137,43 +122,25 @@ class SelectStatus extends StatelessWidget {
                                   child: GestureDetector(
                                     onTap: () {
                                       controller.addFilterStatus(status);
-                                      controller.fetchQuotationData(
-                                          refreshData: true);
+                                      controller.fetchQuotationData(refreshData: true);
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 7,
-                                        vertical: 3,
+                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                        color: controller.filterStatus.value == StatusLead.values[index]
+                                            ? AppColors.primary
+                                            : AppColors.inactiveOption,
                                       ),
-                                      decoration: (controller
-                                                  .filterStatus.value ==
-                                              StatusLead.values[index])
-                                          ? BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: AppColors.primary,
-                                            )
-                                          : BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              color: AppColors.inactiveOption,
-                                            ),
                                       child: Center(
                                         child: Text(
                                           label,
-                                          style: (controller
-                                                      .filterStatus.value ==
-                                                  StatusLead.values[index])
-                                              ? GoogleFonts.plusJakartaSans(
-                                                  color: AppColors.white,
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w400,
-                                                )
-                                              : GoogleFonts.plusJakartaSans(
-                                                  color: AppColors.text_3,
-                                                  fontSize: 11,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
+                                          style: regular.copyWith(
+                                            color: (controller.filterStatus.value == StatusLead.values[index])
+                                                ? AppColors.white
+                                                : AppColors.text_3,
+                                            fontSize: 11,
+                                          ),
                                         ),
                                       ),
                                     ),
@@ -195,40 +162,24 @@ class SelectStatus extends StatelessWidget {
               children: [
                 (isFilterButton)
                     ? CustomButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return FilterView();
-                              },
-                            ),
-                          );
-                        },
+                        onPressed: () => Get.toNamed(AppRoutes.filter),
                         backgroundColor: Colors.transparent,
-                        overlayColor: Color.fromARGB(33, 31, 149, 245),
-                        child: Icon(
+                        overlayColor: const Color.fromARGB(33, 31, 149, 245),
+                        child: const Icon(
                           Ionicons.options_outline,
                           color: AppColors.text_1,
                         ),
                       )
                     : Container(),
-                SizedBox(
+                const SizedBox(
                   width: 14,
                 ),
-                (isHistorycalLeadButton)
+                (isHistoricalLeadButton)
                     ? CustomButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return HistoricalLeadView();
-                              },
-                            ),
-                          );
-                        },
+                        onPressed: () => Get.toNamed(AppRoutes.historicalLead),
                         backgroundColor: Colors.transparent,
-                        overlayColor: Color.fromARGB(33, 31, 149, 245),
-                        child: Icon(
+                        overlayColor: const Color.fromARGB(33, 31, 149, 245),
+                        child: const Icon(
                           Icons.history,
                           color: AppColors.text_1,
                         ),
