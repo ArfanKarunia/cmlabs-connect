@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../constant/fontstyle.dart';
 import '../controllers/authentication_controller.dart';
+import '../routes.dart';
 import '../utils/color.dart';
 import '../widgets/custom_formfield.dart';
 import '../widgets/custom_submit_button.dart';
@@ -61,7 +62,7 @@ class _LoginViewState extends State<LoginView> {
           duration: const Duration(seconds: 4),
         );
 
-        Get.offAndToNamed('/home');
+        Get.offAndToNamed(AppRoutes.home);
       }
 
       if (status == "Error") {

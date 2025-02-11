@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 
 import '../constant/config.dart';
 import '../models/user_model.dart';
+import '../routes.dart';
 import '../utils/toast.dart';
 
 class AuthenticationController extends GetxController {
@@ -103,7 +104,7 @@ class AuthenticationController extends GetxController {
         clearRememberedLogin();
       }
 
-      Get.offAndToNamed('/home');
+      Get.offAndToNamed(AppRoutes.home);
 
       return {
         "status": "Success",
