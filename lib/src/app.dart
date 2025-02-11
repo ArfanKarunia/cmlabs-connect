@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
 
       // Routing of the app
       getPages: AppRoutes.routes,
+      defaultTransition: Transition.rightToLeft,
     );
   }
 }
