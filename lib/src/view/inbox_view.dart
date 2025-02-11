@@ -1,49 +1,40 @@
 import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
-import 'package:cmlabs_connect/src/view/filter_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
+import '../constant/fontstyle.dart';
+import '../routes.dart';
 import '../widgets/custom_buttom.dart';
 import '../widgets/quotation_list_tile.dart';
 import '../widgets/select_status.dart';
 
 class InboxView extends StatefulWidget {
-  InboxView({super.key});
+  const InboxView({super.key});
 
   @override
   State<InboxView> createState() => _InboxViewState();
 }
 
 class _InboxViewState extends State<InboxView> {
-  final QuotationController quotationController =
-      Get.put(QuotationController());
+  final QuotationController quotationController = Get.put(QuotationController());
 
   late ScrollController scrollController;
-
   final RefreshController _refreshInboxController = RefreshController();
 
   final _lastBackPressed = Rx<DateTime?>(null);
 
   void _onRefresh() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
+    await Future.delayed(const Duration(milliseconds: 1000));
     quotationController.fetchQuotationData(refreshData: true);
-
     _refreshInboxController.refreshCompleted();
   }
 
   void _onLoading() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-
+    await Future.delayed(const Duration(milliseconds: 1000));
     quotationController.loadMoreQuotations();
-
     _refreshInboxController.loadComplete();
   }
 
@@ -60,9 +51,7 @@ class _InboxViewState extends State<InboxView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       scrollController.addListener(() async {
         // Mengecek apakah sudah mencapai bagian bawah list
-        if (scrollController.position.pixels ==
-                scrollController.position.maxScrollExtent &&
-            !isLoadMoreInProgress) {
+        if (scrollController.position.pixels == scrollController.position.maxScrollExtent && !isLoadMoreInProgress) {
           // Mencegah pemanggilan load more jika masih ada proses load more sebelumnya
           if (isLoadMoreInProgress) return;
 
@@ -70,7 +59,7 @@ class _InboxViewState extends State<InboxView> {
           isLoadMoreInProgress = true;
 
           // Delay untuk mensimulasikan proses fetching data
-          await Future.delayed(Duration(milliseconds: 500));
+          await Future.delayed(const Duration(milliseconds: 500));
 
           // Panggil method untuk load lebih banyak data
           await quotationController.loadMoreQuotations();
@@ -84,8 +73,6 @@ class _InboxViewState extends State<InboxView> {
 
   @override
   void dispose() {
-    // Dispose of the controller to avoid memory leaks
-
     scrollController.dispose();
     super.dispose();
   }
@@ -93,7 +80,7 @@ class _InboxViewState extends State<InboxView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
+      backgroundColor: AppColors.scaffoldBgColor2,
       body: PopScope(
         onPopInvokedWithResult: _handlePop,
         child: SafeArea(
@@ -109,40 +96,33 @@ class _InboxViewState extends State<InboxView> {
                     children: [
                       Text(
                         "Quotation Inbox",
-                        style: GoogleFonts.plusJakartaSans(
+                        style: bold.copyWith(
                           color: AppColors.text_1,
-                          fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
                       ),
-                      SizedBox(
-                        height: 8,
-                      ),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Text(
                             "Total Leads ",
-                            style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.text_2,
+                            style: regular.copyWith(
                               fontSize: 12,
+                              color: AppColors.text_2,
                             ),
                           ),
                           Obx(
-                            () {
-                              return Text(
-                                "${quotationController.totalLeads.value}",
-                                style: GoogleFonts.plusJakartaSans(
-                                  color: AppColors.primary,
-                                  fontSize: 12,
-                                ),
-                              );
-                            },
+                            () => Text(
+                              "${quotationController.totalLeads.value}",
+                              style: regular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                              ),
+                            ),
                           ),
                         ],
                       ),
-                      SizedBox(
-                        height: 20,
-                      ),
+                      const SizedBox(height: 20),
                       Row(
                         children: [
                           // Search Field Input
@@ -151,33 +131,26 @@ class _InboxViewState extends State<InboxView> {
                               height: 40,
                               child: TextFormField(
                                 onChanged: quotationController.setSearch,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
+                                style: regular.copyWith(fontSize: 12),
                                 decoration: InputDecoration(
                                   hintText: "Company name, email, etc",
-                                  hintStyle: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_4,
+                                  hintStyle: regular.copyWith(
                                     fontSize: 12,
-                                    fontWeight: FontWeight.w400,
+                                    color: AppColors.text_4,
                                   ),
-                                  prefixIcon: Icon(
+                                  prefixIcon: const Icon(
                                     Ionicons.search_outline,
                                     size: 18,
                                   ),
                                   isDense: true,
-                                  contentPadding:
-                                      EdgeInsets.only(top: 0, bottom: 5),
+                                  contentPadding: const EdgeInsets.only(top: 0, bottom: 5),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.primary, width: 1),
+                                    borderSide: const BorderSide(color: AppColors.primary, width: 1),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                   focusColor: AppColors.primary,
                                   border: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: AppColors.text_3, width: 1),
+                                    borderSide: const BorderSide(color: AppColors.text_3, width: 1),
                                     borderRadius: BorderRadius.circular(5),
                                   ),
                                 ),
@@ -185,39 +158,25 @@ class _InboxViewState extends State<InboxView> {
                             ),
                           ),
 
-                          SizedBox(
-                            width: 14,
-                          ),
+                          const SizedBox(width: 14),
 
                           // Button Filter
-
                           SizedBox(
                             height: 40,
                             width: 40,
                             child: CustomButton(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      return FilterView();
-                                    },
-                                  ),
-                                );
-                              },
-                              child: Icon(
-                                Ionicons.options_outline,
-                                color: AppColors.text_3,
-                                size: 28,
-                              ), // Icon as child
-                              backgroundColor:
-                                  AppColors.white_1, // Button background color
-                              overlayColor: const Color.fromARGB(
-                                  100, 149, 149, 149), // Ripple effect color
+                              onPressed: () => Get.toNamed(AppRoutes.filter), // Icon as child
+                              backgroundColor: AppColors.white_1, // Button background color
+                              overlayColor: const Color.fromARGB(100, 149, 149, 149), // Ripple effect color
                               borderRadius: BorderRadius.circular(
                                 5,
                               ),
-                              side:
-                                  BorderSide(color: AppColors.text_3, width: 1),
+                              side: const BorderSide(color: AppColors.text_3, width: 1),
+                              child: const Icon(
+                                Ionicons.options_outline,
+                                color: AppColors.text_3,
+                                size: 28,
+                              ),
                             ),
                           ),
                         ],
@@ -231,79 +190,70 @@ class _InboxViewState extends State<InboxView> {
                     ],
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 25,
                 ),
                 Obx(
-                  () {
-                    return quotationController.newQuotationCount.value > 0
-                        ? Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: IntrinsicWidth(
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
+                  () => quotationController.newQuotationCount.value > 0
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: IntrinsicWidth(
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                shape: WidgetStatePropertyAll(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
-                                  backgroundColor:
-                                      WidgetStatePropertyAll(AppColors.primary),
-                                  foregroundColor:
-                                      WidgetStatePropertyAll(AppColors.white_1),
-                                  overlayColor:
-                                      WidgetStatePropertyAll(Colors.white30),
                                 ),
-                                onPressed: () {
-                                  quotationController.fetchQuotationData();
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Ionicons.arrow_up_outline,
-                                      size: 18,
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Text(
-                                      "${quotationController.newQuotationCount.value}+ New Leads",
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
+                                foregroundColor: const WidgetStatePropertyAll(AppColors.white_1),
+                                overlayColor: const WidgetStatePropertyAll(Colors.white30),
+                              ),
+                              onPressed: () {
+                                quotationController.fetchQuotationData();
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Ionicons.arrow_up_outline,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    "${quotationController.newQuotationCount.value}+ New Leads",
+                                    style: regular.copyWith(fontSize: 12),
+                                  ),
+                                ],
                               ),
                             ),
-                          )
-                        : SizedBox.shrink();
-                  },
+                          ),
+                        )
+                      : const SizedBox.shrink(),
                 ),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Obx(
                       () {
-                        List quotationList =
-                            quotationController.filteredQuotations;
+                        List quotationList = quotationController.filteredQuotations;
 
                         if (quotationList.isEmpty) {
                           return Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(
+                                const Icon(
                                   Ionicons.briefcase_outline,
                                   color: AppColors.text_4,
                                   size: 40,
                                 ),
                                 Text(
                                   'No available data',
-                                  style: GoogleFonts.plusJakartaSans(
+                                  style: bold.copyWith(
                                     fontSize: 24,
-                                    fontWeight: FontWeight.bold,
                                     color: AppColors.text_4,
                                   ),
                                 ),
@@ -314,7 +264,7 @@ class _InboxViewState extends State<InboxView> {
 
                         return SmartRefresher(
                           enablePullDown: true,
-                          header: ClassicHeader(
+                          header: const ClassicHeader(
                             refreshStyle: RefreshStyle.Follow,
                             refreshingIcon: SizedBox(
                               width: 20,
@@ -325,7 +275,7 @@ class _InboxViewState extends State<InboxView> {
                               ),
                             ),
                           ),
-                          footer: ClassicFooter(
+                          footer: const ClassicFooter(
                             loadStyle: LoadStyle.HideAlways,
                             loadingIcon: CircularProgressIndicator(
                               color: AppColors.text_4,
@@ -337,19 +287,14 @@ class _InboxViewState extends State<InboxView> {
                           controller: _refreshInboxController,
                           child: ListView.builder(
                             controller: scrollController,
-                            itemCount:
-                                quotationController.filteredQuotations.length,
+                            itemCount: quotationController.filteredQuotations.length,
                             itemBuilder: (context, index) {
-                              final quotation =
-                                  quotationController.filteredQuotations[index];
+                              final quotation = quotationController.filteredQuotations[index];
 
-                              var lengthQuotation =
-                                  quotationController.filteredQuotations.length;
+                              var lengthQuotation = quotationController.filteredQuotations.length;
 
                               // Periksa apakah item sedang dihapus
-                              final isRemoving = quotationController
-                                  .removingIndexes
-                                  .contains(index);
+                              final isRemoving = quotationController.removingIndexes.contains(index);
 
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -357,37 +302,28 @@ class _InboxViewState extends State<InboxView> {
                                   AnimatedSize(
                                     duration: const Duration(milliseconds: 500),
                                     child: AnimatedOpacity(
-                                      duration:
-                                          const Duration(milliseconds: 500),
+                                      duration: const Duration(milliseconds: 500),
                                       opacity: isRemoving ? 0 : 1,
                                       child: isRemoving
-                                          ? SizedBox
-                                              .shrink() // Kosongkan jika sedang dihapus
+                                          ? const SizedBox.shrink() // Kosongkan jika sedang dihapus
                                           : QuotationListTile(
                                               key: ValueKey(quotation.id),
                                               quotation: quotation,
                                               onDelete: () async {
                                                 Get.back();
 
-                                                await quotationController
-                                                    .deleteQuotationWithAnimation(
-                                                        index);
+                                                await quotationController.deleteQuotationWithAnimation(index);
                                               },
                                               onChatWA: () {
-                                                quotationController
-                                                    .redirectToWhatsapp(
-                                                        quotation);
+                                                quotationController.redirectToWhatsapp(quotation);
                                               },
                                             ),
                                     ),
                                   ),
-                                  (index + 1 ==
-                                              quotationController
-                                                  .filteredQuotations.length &&
+                                  (index + 1 == quotationController.filteredQuotations.length &&
                                           lengthQuotation % 10 == 0)
-                                      ? Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                      ? const Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 10),
                                           child: Center(
                                             child: CircularProgressIndicator(
                                               color: AppColors.text_4,
@@ -395,26 +331,18 @@ class _InboxViewState extends State<InboxView> {
                                             ),
                                           ),
                                         )
-                                      : (index + 1 ==
-                                              quotationController
-                                                  .filteredQuotations.length)
+                                      : (index + 1 == quotationController.filteredQuotations.length)
                                           ? Container(
                                               width: double.infinity,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 10),
+                                              padding: const EdgeInsets.symmetric(vertical: 10),
                                               child: Center(
                                                 child: Text(
                                                   "No more data",
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontSize: 14,
-                                                    color: AppColors.text_4,
-                                                  ),
+                                                  style: regular.copyWith(color: AppColors.text_4),
                                                 ),
                                               ),
                                             )
-                                          : SizedBox.shrink(),
+                                          : const SizedBox.shrink(),
                                 ],
                               );
                             },
@@ -424,7 +352,7 @@ class _InboxViewState extends State<InboxView> {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
               ],
@@ -439,8 +367,7 @@ class _InboxViewState extends State<InboxView> {
     final now = DateTime.now();
     const backPressThreshold = Duration(seconds: 2);
 
-    if (_lastBackPressed.value == null ||
-        now.difference(_lastBackPressed.value!) > backPressThreshold) {
+    if (_lastBackPressed.value == null || now.difference(_lastBackPressed.value!) > backPressThreshold) {
       _lastBackPressed.value = now;
 
       Get.snackbar(
