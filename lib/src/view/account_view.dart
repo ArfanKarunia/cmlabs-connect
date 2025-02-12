@@ -8,446 +8,220 @@ import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/utils/icons.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../constant/fontstyle.dart';
+import '../widgets/custom_avatar.dart';
+import '../widgets/custom_submit_button.dart';
+
 class AccountView extends StatefulWidget {
-  AccountView({super.key});
+  const AccountView({super.key});
 
   @override
   State<AccountView> createState() => _AccountViewState();
 }
 
 class _AccountViewState extends State<AccountView> {
-  final UserControler userController = Get.put(
-    UserControler(),
-  );
-
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
-
-  final NotificationController notificationController =
-      Get.put(NotificationController());
-
+  final AuthenticationController authenticationController = Get.put(AuthenticationController());
   final AccountController accountController = Get.put(AccountController());
+  final NotificationController notificationController = Get.put(NotificationController());
+  final UserControler userController = Get.put(UserControler());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
+      backgroundColor: AppColors.scaffoldBgColor2,
       appBar: AppBar(
-        backgroundColor: Color(0xFFF9F9F9),
+        backgroundColor: AppColors.scaffoldBgColor2,
         toolbarHeight: 100,
-        surfaceTintColor: Color(0xFFF9F9F9),
+        surfaceTintColor: AppColors.scaffoldBgColor2,
         title: Text(
           "Account Setting",
-          style: GoogleFonts.plusJakartaSans(
-            color: AppColors.text_1,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+          style: bold.copyWith(fontSize: 20),
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Container(
-                  child: Obx(
-                    () {
-                      final user = userController.user.value!;
+                child: Obx(
+                  () {
+                    final user = userController.user.value;
 
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColors.white,
-                                  image: DecorationImage(
-                                    image: (user.picUrl != null &&
-                                            user.picUrl!.isNotEmpty)
-                                        ? NetworkImage(user.picUrl!)
-                                        : const AssetImage(
-                                            "assets/icons/cmlabs_icon.png",
-                                          ) as ImageProvider,
-                                    fit: BoxFit.cover,
-                                  ),
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomAvatar(
+                              radius: 24,
+                              link: user?.picUrl,
+                            ),
+                            const SizedBox(width: 24),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  user?.name ?? 'cmlabs User',
+                                  style: bold.copyWith(fontSize: 16),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 24,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    user.name,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      color: AppColors.text_1,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                const SizedBox(
+                                  height: 2,
+                                ),
+                                Obx(
+                                  () => Text(
+                                    userController.roleName.value,
+                                    style: regular.copyWith(
+                                      fontSize: 13,
+                                      color: AppColors.text_3,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: 2,
-                                  ),
-                                  Obx(
-                                    () {
-                                      return Text(
-                                        userController.roleName.value,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          color: AppColors.text_3,
-                                          fontSize: 13,
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  SizedBox(
-                                    height: 2,
-                                  ),
-                                  Text(
-                                    user.email,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      color: AppColors.primary,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  Get.toNamed(AppRoutes.notification);
-                                },
-                                icon: const Icon(
-                                  Icons.notifications_outlined,
-                                  color: AppColors.text_1,
-                                  size: 28,
                                 ),
-                              ),
-                              Obx(
-                                () {
-                                  return notificationController
-                                              .unreadAll.value !=
-                                          0
-                                      ? Positioned(
-                                          top: 10,
-                                          right: 13,
-                                          child: Container(
-                                            height: 10,
-                                            width: 10,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: AppColors.danger,
-                                            ),
-                                          ),
-                                        )
-                                      : SizedBox.shrink();
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                height: 51,
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-                    foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                    overlayColor: WidgetStatePropertyAll(Colors.white30),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ),
-                  onPressed: () async {
-                    Get.toNamed(AppRoutes.editProfileView);
-                  },
-                  child: Text(
-                    "Edit Profile",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.summaryView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.summaryIcon),
-                ),
-                title: Text(
-                  "Summary",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.experienceView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.experienceIcon),
-                ),
-                title: Text(
-                  "Experiences",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.educationView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.educationIcon),
-                ),
-                title: Text(
-                  "Education",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.organizationView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.organizationIcon),
-                ),
-                title: Text(
-                  "Organization",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.volunteerView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.volunteerIcon),
-                ),
-                title: Text(
-                  "Volunteer",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.certificationView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.certificationIcon),
-                ),
-                title: Text(
-                  "Certification",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.achievementView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.achievementIcon),
-                ),
-                title: Text(
-                  "Achievement",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.publicationView);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.publicationIcon),
-                ),
-                title: Text(
-                  "Publication",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              ListTile(
-                splashColor: Colors.black12,
-                tileColor: AppColors.white_1,
-                onTap: () {
-                  Get.toNamed(AppRoutes.settingNotification);
-                },
-                leading: Image(
-                  image: AssetImage(AppIcons.setNotification),
-                ),
-                title: Text(
-                  "Notification Setting",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                trailing: Icon(Ionicons.chevron_forward_outline),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                height: 51,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed(AppRoutes.changePasswordView);
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(Color(0xFFF9F9F9)),
-                    foregroundColor: WidgetStatePropertyAll(AppColors.primary),
-                    overlayColor: WidgetStatePropertyAll(AppColors.bgPrimary),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        side: BorderSide(
-                          color: AppColors.primary,
-                          width: 2,
+                                const SizedBox(height: 2),
+                                Text(
+                                  user?.email ?? 'user@cmlabs.co',
+                                  style: regular.copyWith(
+                                    fontSize: 12,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    "Change Password",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                height: 51,
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    SignOutBottomSheet(
-                      context,
-                      () {
-                        authenticationController.logout();
-                      },
+                        Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () => Get.toNamed(AppRoutes.notification),
+                              icon: const Icon(
+                                Ionicons.notifications_outline,
+                                color: AppColors.text_1,
+                                size: 28,
+                              ),
+                            ),
+                            Obx(
+                              () {
+                                return notificationController.unreadAll.value != 0
+                                    ? Positioned(
+                                        top: 10,
+                                        right: 13,
+                                        child: Container(
+                                          height: 10,
+                                          width: 10,
+                                          decoration: const BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: AppColors.danger,
+                                          ),
+                                        ),
+                                      )
+                                    : const SizedBox.shrink();
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
                     );
                   },
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(AppColors.bgDanger),
-                    foregroundColor: WidgetStatePropertyAll(AppColors.danger),
-                    overlayColor: WidgetStatePropertyAll(Colors.white30),
-                    shadowColor: WidgetStatePropertyAll(Colors.transparent),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Ionicons.log_out_outline,
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Sign Out",
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
-              SizedBox(
-                height: 50,
+              const SizedBox(height: 20),
+              CustomSubmitButton(
+                title: 'Edit Profile',
+                onTap: () async => Get.toNamed(AppRoutes.editProfileView),
               ),
+              const SizedBox(height: 20),
+              AccountMenu(
+                title: 'Summary',
+                iconUrl: AppIcons.summaryIcon,
+                onTap: () => Get.toNamed(AppRoutes.summaryView),
+              ),
+              AccountMenu(
+                title: 'Experiences',
+                iconUrl: AppIcons.experienceIcon,
+                onTap: () => Get.toNamed(AppRoutes.experienceView),
+              ),
+              AccountMenu(
+                title: 'Education',
+                iconUrl: AppIcons.educationIcon,
+                onTap: () => Get.toNamed(AppRoutes.educationView),
+              ),
+              AccountMenu(
+                title: 'Volunteer',
+                iconUrl: AppIcons.volunteerIcon,
+                onTap: () => Get.toNamed(AppRoutes.volunteerView),
+              ),
+              AccountMenu(
+                title: 'Certification',
+                iconUrl: AppIcons.certificationIcon,
+                onTap: () => Get.toNamed(AppRoutes.certificationView),
+              ),
+              AccountMenu(
+                title: 'Achievement',
+                iconUrl: AppIcons.achievementIcon,
+                onTap: () => Get.toNamed(AppRoutes.achievementView),
+              ),
+              AccountMenu(
+                title: 'Publication',
+                iconUrl: AppIcons.publicationIcon,
+                onTap: () => Get.toNamed(AppRoutes.publicationView),
+              ),
+              AccountMenu(
+                title: 'Notification Setting',
+                iconUrl: AppIcons.setNotification,
+                onTap: () => Get.toNamed(AppRoutes.settingNotification),
+              ),
+              const SizedBox(height: 20),
+              CustomSubmitButton(
+                title: "Change Password",
+                onTap: () => Get.toNamed(AppRoutes.changePasswordView),
+                color: Colors.transparent,
+                borderColor: AppColors.primary,
+                textColor: AppColors.primary,
+              ),
+              const SizedBox(height: 20),
+              CustomSubmitButton(
+                icon: Ionicons.log_out_outline,
+                title: "Sign Out",
+                onTap: () => SignOutBottomSheet(context, () => authenticationController.logout()),
+                color: AppColors.bgDanger,
+                textColor: AppColors.danger,
+              ),
+              const SizedBox(height: 50),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class AccountMenu extends StatelessWidget {
+  final String title;
+  final String iconUrl;
+  final VoidCallback? onTap;
+  const AccountMenu({
+    super.key,
+    required this.title,
+    required this.iconUrl,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      splashColor: Colors.black12,
+      tileColor: AppColors.white_1,
+      onTap: onTap,
+      leading: ImageIcon(AssetImage(iconUrl)),
+      title: Text(title, style: bold),
+      trailing: const Icon(Ionicons.chevron_forward_outline),
     );
   }
 }
