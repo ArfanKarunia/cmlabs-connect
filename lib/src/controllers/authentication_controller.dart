@@ -107,21 +107,26 @@ class AuthenticationController extends GetxController {
       Get.offAndToNamed(AppRoutes.home);
 
       return {
+        "code": "400",
         "status": "Success",
         "message": "Login Berhasil, Selamat datang ${user.name}",
       };
     } on DioException catch (e) {
+      String code = '500';
       String message = 'The selected email or password is invalid';
 
-      if (e.response?.data != null) {
-        if (e.response?.data['error'] == "Password salah") {
-          message = "The password is invalid.";
-        } else {
-          message = e.response?.data['error'];
-        }
+      if (e.response?.statusCode == 404) {
+        code = '404';
+        message = 'The email is invalid';
+      } else if (e.response?.statusCode == 401) {
+        code = '401';
+        message = "The password is invalid.";
+      } else if (e.response?.data != null) {
+        message = e.response?.data['error'];
       }
 
       return {
+        "code": code,
         "status": "Error",
         "message": message,
       };
