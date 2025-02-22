@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../constant/config.dart';
-import '../models/quotation_model.dart';
-import '../utils/toast.dart';
-import 'inbox_controller.dart';
-import 'user_controler.dart';
+import '../../../constant/config.dart';
+import '../../../models/quotation_model.dart';
+import '../../../utils/toast.dart';
+import '../inbox_controller.dart';
+import '../../user_controler.dart';
 
 class QuotationController extends InboxController {
   RxList<Quotation> quotationList = <Quotation>[].obs;

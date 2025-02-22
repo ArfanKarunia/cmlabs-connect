@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
-import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

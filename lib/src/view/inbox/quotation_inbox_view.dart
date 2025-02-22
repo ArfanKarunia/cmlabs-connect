@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../../constant/fontstyle.dart';
-import '../../controllers/quotation_controller.dart';
+import '../../controllers/inbox/quotation/quotation_controller.dart';
 import '../../models/quotation_model.dart';
 import '../../utils/color.dart';
 import '../../widgets/empty_state.dart';

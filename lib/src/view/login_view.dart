@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constant/fontstyle.dart';
-import '../controllers/authentication_controller.dart';
+import '../controllers/authentication/authentication_controller.dart';
 import '../routes.dart';
 import '../utils/color.dart';
 import '../widgets/custom_formfield.dart';

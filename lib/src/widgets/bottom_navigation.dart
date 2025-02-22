@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
 import 'package:cmlabs_connect/src/view/inbox_view.dart';
 import 'package:cmlabs_connect/src/view/account_view.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../constant/fontstyle.dart';
-import '../controllers/bottom_nav_controller.dart';
+import '../controllers/bottom_nav/bottom_nav_controller.dart';
 import '../utils/color.dart';
 import '../view/home_view.dart';
 

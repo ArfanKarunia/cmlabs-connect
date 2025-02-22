@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/account_controller.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/routes.dart';

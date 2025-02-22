@@ -5,7 +5,7 @@ import 'package:ionicons/ionicons.dart';
 
 import '../constant/const.dart';
 import '../constant/fontstyle.dart';
-import '../controllers/inbox_controller.dart';
+import '../controllers/inbox/inbox_controller.dart';
 import '../routes.dart';
 import '../utils/color.dart';
 

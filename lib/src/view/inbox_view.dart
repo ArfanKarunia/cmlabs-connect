@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,8 +6,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../constant/fontstyle.dart';
-import '../controllers/case_studies/case_studies_controller.dart';
-import '../controllers/inbox_controller.dart';
+import '../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../controllers/inbox/inbox_controller.dart';
 import '../models/inbox_page_model.dart';
 import '../routes.dart';
 import '../utils/bottom_sheet.dart';

@@ -9,9 +9,9 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../constant/const.dart';
 import '../constant/fontstyle.dart';
-import '../controllers/case_studies/case_studies_controller.dart';
-import '../controllers/inbox_controller.dart';
-import '../controllers/quotation_controller.dart';
+import '../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../controllers/inbox/inbox_controller.dart';
+import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../models/case_studies_model.dart';
 import '../models/quotation_model.dart';
 import '../routes.dart';

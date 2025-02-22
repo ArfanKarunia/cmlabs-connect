@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../controllers/filter_controller.dart';
-import '../controllers/quotation_controller.dart';
+import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../utils/color.dart';
 import '../widgets/custom_buttom.dart';
 import '../widgets/tag_button.dart';

@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/activity_controller.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/general_info_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/url_tracking_controller.dart';

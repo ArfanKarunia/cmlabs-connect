@@ -1,7 +1,7 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
-import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user_controler.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';

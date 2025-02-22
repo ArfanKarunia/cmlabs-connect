@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 // import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
-import '../controllers/case_studies/case_studies_controller.dart';
+import '../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../routes.dart';
 import '../constant/fontstyle.dart';
-import '../controllers/bottom_nav_controller.dart';
+import '../controllers/bottom_nav/bottom_nav_controller.dart';
 import '../controllers/dashboard_controller.dart';
 import '../controllers/historical_lead_controller.dart';
 import '../controllers/notification_controller.dart';
-import '../controllers/quotation_controller.dart';
+import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../controllers/user_controler.dart';
 import '../models/case_studies_model.dart';
 import '../models/quotation_model.dart';
@@ -28,14 +28,15 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final BottomNavController navController = Get.put(BottomNavController());
   final DashboardController dashboardController = Get.put(DashboardController());
   final HistoricalLeadController historicalLeadController = Get.put(HistoricalLeadController());
   final NotificationController notificationController = Get.put(NotificationController());
   final UserControler userController = Get.put(UserControler());
 
-  final quotationController = Get.find<QuotationController>();
-  final caseStudiesController = Get.find<CaseStudiesController>();
+  final BottomNavController navController = Get.find<BottomNavController>();
+
+  final CaseStudiesController caseStudiesController = Get.find<CaseStudiesController>();
+  final QuotationController quotationController = Get.find<QuotationController>();
 
   @override
   void initState() {

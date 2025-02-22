@@ -2,10 +2,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../constant/config.dart';
-import '../../models/case_studies_model.dart';
+import '../../../constant/config.dart';
+import '../../../models/case_studies_model.dart';
 import '../inbox_controller.dart';
-import '../user_controler.dart';
+import '../../user_controler.dart';
 
 class CaseStudiesController extends InboxController {
   RxList<CaseStudies> caseStudiesList = <CaseStudies>[].obs;
