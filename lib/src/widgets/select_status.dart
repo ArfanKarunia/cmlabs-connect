@@ -5,40 +5,25 @@ import 'package:ionicons/ionicons.dart';
 
 import '../constant/const.dart';
 import '../constant/fontstyle.dart';
-import '../controllers/bottom_nav_controller.dart';
-import '../controllers/quotation_controller.dart';
+import '../controllers/inbox_controller.dart';
 import '../routes.dart';
 import '../utils/color.dart';
 
 // ignore: must_be_immutable
 class SelectStatus extends StatelessWidget {
-  SelectStatus({
+  final List<InboxController> controllers;
+  final bool enableFilter;
+  final bool enableHistory;
+
+  const SelectStatus({
     super.key,
-    required this.controller,
-    this.isFilterButton = false,
-    this.isHistoricalLeadButton = false,
-    this.isNewLead = true,
-    this.isFollowedUp = true,
-    this.isAccepted = true,
-    this.isRejected = true,
-    this.isOnHold = false,
+    required this.controllers,
+    this.enableFilter = false,
+    this.enableHistory = false,
   });
-
-  QuotationController controller;
-  final bool isFilterButton;
-  final bool isHistoricalLeadButton;
-  final bool isNewLead;
-  final bool isFollowedUp;
-  final bool isAccepted;
-  final bool isRejected;
-  final bool isOnHold;
-
-  final BottomNavController navController = Get.put(BottomNavController());
 
   @override
   Widget build(BuildContext context) {
-    controller = Get.find();
-
     return SizedBox(
       width: double.infinity,
       child: Row(
@@ -46,112 +31,87 @@ class SelectStatus extends StatelessWidget {
         children: [
           Expanded(
             child: Obx(
-              () => SingleChildScrollView(
-                scrollDirection: Axis.horizontal, // Menjadikan scroll horizontal
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 25,
-                      child: GestureDetector(
-                        onTap: () {
-                          controller.clearFilterStatus();
-                          controller.fetchQuotationData(refreshData: true);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color: controller.filterStatus.value == null ? AppColors.primary : AppColors.inactiveOption,
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Recently',
-                              style: regular.copyWith(
-                                color: controller.filterStatus.value == null ? AppColors.white : AppColors.text_3,
-                                fontSize: 11,
+              () {
+                String? statusSelected = controllers.firstOrNull?.filterStatus.value;
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal, // Menjadikan scroll horizontal
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 25,
+                        child: GestureDetector(
+                          onTap: () {
+                            for (InboxController controller in controllers) {
+                              controller.clearFilterStatus();
+                              controller.fetchList(refreshData: true);
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: statusSelected == null ? AppColors.primary : AppColors.inactiveOption,
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Recently',
+                                style: regular.copyWith(
+                                  color: statusSelected == null ? AppColors.white : AppColors.text_3,
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 8,
-                    ),
-                    SizedBox(
-                      height: 25,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        scrollDirection: Axis.horizontal, // Scroll horizontal
-                        itemCount: StatusLead.values.length,
-                        itemBuilder: (context, index) {
-                          final status = StatusLead.values[index];
+                      const SizedBox(width: 8),
+                      SizedBox(
+                        height: 25,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal, // Scroll horizontal
+                          itemCount: statusLead.length,
+                          itemBuilder: (context, index) {
+                            final status = statusLead[index];
+                            bool selected = statusSelected == status.query;
 
-                          String label;
-
-                          bool shouldShow = false;
-
-                          switch (status) {
-                            case StatusLead.newLead:
-                              label = 'New';
-                              shouldShow = isNewLead;
-                              break;
-                            case StatusLead.followedUp:
-                              label = 'Followed Up';
-                              shouldShow = isFollowedUp;
-                              break;
-                            case StatusLead.accepted:
-                              label = 'Accepted';
-                              shouldShow = isAccepted;
-                              break;
-                            case StatusLead.rejected:
-                              label = 'Rejected';
-                              shouldShow = isRejected;
-                              break;
-                            case StatusLead.onHold:
-                              label = 'On Hold';
-                              shouldShow = isOnHold;
-                              break;
-                          }
-
-                          return (!shouldShow)
-                              ? Container()
-                              : Container(
-                                  padding: const EdgeInsets.only(right: 8),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      controller.addFilterStatus(status);
-                                      controller.fetchQuotationData(refreshData: true);
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: controller.filterStatus.value == StatusLead.values[index]
-                                            ? AppColors.primary
-                                            : AppColors.inactiveOption,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          label,
-                                          style: regular.copyWith(
-                                            color: (controller.filterStatus.value == StatusLead.values[index])
-                                                ? AppColors.white
-                                                : AppColors.text_3,
-                                            fontSize: 11,
-                                          ),
-                                        ),
+                            if (status.isEnabled) {
+                              return GestureDetector(
+                                onTap: () {
+                                  for (InboxController controller in controllers) {
+                                    controller.addFilterStatus(status.query.toString());
+                                    controller.fetchList(refreshData: true);
+                                  }
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.only(right: 8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(5),
+                                    color: selected ? AppColors.primary : AppColors.inactiveOption,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      status.title,
+                                      style: regular.copyWith(
+                                        fontSize: 11,
+                                        color: selected ? AppColors.white : AppColors.text_3,
                                       ),
                                     ),
                                   ),
-                                );
-                        },
+                                ),
+                              );
+                            }
+
+                            return Container();
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
 
@@ -160,31 +120,27 @@ class SelectStatus extends StatelessWidget {
             padding: const EdgeInsets.only(left: 10.0),
             child: Row(
               children: [
-                (isFilterButton)
-                    ? CustomButton(
-                        onPressed: () => Get.toNamed(AppRoutes.filter),
-                        backgroundColor: Colors.transparent,
-                        overlayColor: const Color.fromARGB(33, 31, 149, 245),
-                        child: const Icon(
-                          Ionicons.options_outline,
-                          color: AppColors.text_1,
-                        ),
-                      )
-                    : Container(),
-                const SizedBox(
-                  width: 14,
-                ),
-                (isHistoricalLeadButton)
-                    ? CustomButton(
-                        onPressed: () => Get.toNamed(AppRoutes.historicalLead),
-                        backgroundColor: Colors.transparent,
-                        overlayColor: const Color.fromARGB(33, 31, 149, 245),
-                        child: const Icon(
-                          Icons.history,
-                          color: AppColors.text_1,
-                        ),
-                      )
-                    : Container(),
+                if (enableFilter)
+                  CustomButton(
+                    onPressed: () => Get.toNamed(AppRoutes.filter),
+                    backgroundColor: Colors.transparent,
+                    overlayColor: const Color.fromARGB(33, 31, 149, 245),
+                    child: const Icon(
+                      Ionicons.options_outline,
+                      color: AppColors.text_1,
+                    ),
+                  ),
+                if (enableFilter && enableHistory) const SizedBox(width: 14),
+                if (enableHistory)
+                  CustomButton(
+                    onPressed: () => Get.toNamed(AppRoutes.historicalLead),
+                    backgroundColor: Colors.transparent,
+                    overlayColor: const Color.fromARGB(33, 31, 149, 245),
+                    child: const Icon(
+                      Icons.history,
+                      color: AppColors.text_1,
+                    ),
+                  ),
               ],
             ),
           ),

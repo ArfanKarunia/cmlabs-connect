@@ -32,8 +32,8 @@ class _AccountViewState extends State<AccountView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: AppBar(
+        toolbarHeight: 70,
         backgroundColor: AppColors.scaffoldBgColor2,
-        toolbarHeight: 100,
         surfaceTintColor: AppColors.scaffoldBgColor2,
         title: Text(
           "Account Setting",
@@ -71,9 +71,7 @@ class _AccountViewState extends State<AccountView> {
                                   user?.name ?? 'cmlabs User',
                                   style: bold.copyWith(fontSize: 16),
                                 ),
-                                const SizedBox(
-                                  height: 2,
-                                ),
+                                const SizedBox(height: 2),
                                 Obx(
                                   () => Text(
                                     userController.roleName.value,

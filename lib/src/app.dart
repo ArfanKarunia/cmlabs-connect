@@ -2,6 +2,8 @@ import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'controllers/app_bindings.dart';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -17,6 +19,7 @@ class MyApp extends StatelessWidget {
 
       // Start with routing to Home View
       initialRoute: AppRoutes.loginForm,
+      initialBinding: AppBindings(),
 
       // Routing of the app
       getPages: AppRoutes.routes,

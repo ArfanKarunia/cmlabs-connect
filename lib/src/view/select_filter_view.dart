@@ -56,7 +56,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
         widget.filter != 'month' &&
         widget.filter != 'time_range' &&
         widget.filter != 'days') {
-      widget.controller.fetchList(widget.filter);
+      widget.controller.fetchFilter(widget.filter);
     }
 
     return Scaffold(
@@ -98,8 +98,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                 fontWeight: FontWeight.w400,
                               ),
                               decoration: InputDecoration(
-                                hintText:
-                                    "Search ${StringUtils.toCamelCase(widget.filter)}",
+                                hintText: "Search ${StringUtils.toCamelCase(widget.filter)}",
                                 hintStyle: GoogleFonts.plusJakartaSans(
                                   color: AppColors.text_4,
                                   fontSize: 12,
@@ -179,12 +178,9 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                       child: ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: widget.controller
-                            .searchData(widget.filter.toLowerCase())
-                            .length,
+                        itemCount: widget.controller.searchData(widget.filter.toLowerCase()).length,
                         itemBuilder: (context, index) {
-                          final data = widget.controller
-                              .searchData(widget.filter.toLowerCase())[index];
+                          final data = widget.controller.searchData(widget.filter.toLowerCase())[index];
                           print(data);
 
                           // Hanya bungkus bagian yang perlu dipantau dengan Obx
@@ -221,15 +217,12 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: (widget.isMultipleChoice)
-                                        ? (tempMapData.value.contains(data)
-                                            ? AppColors.bgPrimary
-                                            : AppColors.white_1)
+                                        ? (tempMapData.value.contains(data) ? AppColors.bgPrimary : AppColors.white_1)
                                         : (tempData.value == data)
                                             ? AppColors.bgPrimary
                                             : AppColors.white_1,
                                   ),
-                                  padding: EdgeInsetsDirectional.symmetric(
-                                      horizontal: 14, vertical: 12),
+                                  padding: EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 12),
                                   child: Text(
                                     data['label'] ?? "-",
                                     style: GoogleFonts.plusJakartaSans(
@@ -256,8 +249,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
           Obx(
             () {
               // bool isVisible = canSelect.value;
-              bool isKeyboardShow =
-                  MediaQuery.of(context).viewInsets.bottom != 0;
+              bool isKeyboardShow = MediaQuery.of(context).viewInsets.bottom != 0;
 
               // print(isVisible);
 
@@ -293,12 +285,10 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                 }
                                 Get.back();
                               } else if (widget.filter == 'pic') {
-                                widget.controller
-                                    .addFilterPic(tempData.value);
+                                widget.controller.addFilterPic(tempData.value);
                                 Get.back();
                               } else if (widget.filter == 'client_source') {
-                                widget.controller
-                                    .addFilterClientSource(tempData.value);
+                                widget.controller.addFilterClientSource(tempData.value);
                                 Get.back();
                               }
                             },
