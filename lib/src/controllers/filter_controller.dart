@@ -1,6 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
@@ -30,7 +30,7 @@ class FilterController extends GetxController {
   final Dio dio = Dio();
   final QuotationController quotationController = Get.put(QuotationController());
   final DashboardController dashboardController = Get.put(DashboardController());
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final String baseUrl = Config.baseURL;
 
@@ -61,7 +61,7 @@ class FilterController extends GetxController {
     final response = await dio.get(
       '$baseUrl/filter/status',
       options: Options(
-        headers: {'Authorization': 'Bearer ${userControler.accesToken.value}'},
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
       ),
     );
 
@@ -81,7 +81,7 @@ class FilterController extends GetxController {
     final response = await dio.get(
       '$baseUrl/filter/client_source',
       options: Options(
-        headers: {'Authorization': 'Bearer ${userControler.accesToken.value}'},
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
       ),
     );
 
@@ -101,7 +101,7 @@ class FilterController extends GetxController {
     final response = await dio.get(
       '$baseUrl/filter/pic',
       options: Options(
-        headers: {'Authorization': 'Bearer ${userControler.accesToken.value}'},
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
       ),
     );
 
@@ -124,7 +124,7 @@ class FilterController extends GetxController {
     final response = await dio.get(
       '$baseUrl/filter/data_services',
       options: Options(
-        headers: {'Authorization': 'Bearer ${userControler.accesToken.value}'},
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
       ),
     );
 

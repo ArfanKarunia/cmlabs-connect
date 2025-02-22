@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +10,7 @@ import '../../utils/color.dart';
 class ChangePasswordView extends StatelessWidget {
   ChangePasswordView({super.key});
 
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
   final TextEditingController oldPassword = TextEditingController();

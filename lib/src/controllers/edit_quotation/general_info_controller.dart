@@ -1,6 +1,6 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
@@ -8,7 +8,7 @@ class GeneralInfoController extends GetxController {
   var search = Rx<String?>(null);
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final baseUrl = Config.baseURL;
   final dio = Dio();
@@ -177,7 +177,7 @@ class GeneralInfoController extends GetxController {
 
   Future<void> fetchFilter(String search) async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // get Data PIC
       if (search.toLowerCase() == "pic") {

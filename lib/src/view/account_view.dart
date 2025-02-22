@@ -1,7 +1,7 @@
 import 'package:cmlabs_connect/src/controllers/account_controller.dart';
 import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
@@ -25,7 +25,7 @@ class _AccountViewState extends State<AccountView> {
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
   final AccountController accountController = Get.put(AccountController());
   final NotificationController notificationController = Get.put(NotificationController());
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {

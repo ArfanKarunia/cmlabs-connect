@@ -2,7 +2,7 @@ import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:dio/dio.dart';
@@ -25,7 +25,7 @@ class DetailQuotationController extends GetxController {
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final QuotationController quotationController = Get.put(QuotationController());
 
@@ -36,7 +36,7 @@ class DetailQuotationController extends GetxController {
 
   Future<void> fetchDetailQuotation(int id) async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/quotation/$id',

@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
@@ -19,7 +19,7 @@ class DashboardController extends GetxController {
   var filterStartDate = Rx<DateTime?>(null);
   var filterEndDate = Rx<DateTime?>(null);
 
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final dio = Dio();
   final baseUrl = Config.baseURL;
@@ -56,7 +56,7 @@ class DashboardController extends GetxController {
   Future<int> fetchNewLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // String? startDateString = filterStartDate.value != null
       //     ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
@@ -97,7 +97,6 @@ class DashboardController extends GetxController {
 
       String url = constructDashboardUrl('total_today');
 
-
       // Ambil data dari API
       final response = await dio.get(
         url,
@@ -118,8 +117,7 @@ class DashboardController extends GetxController {
           print("Status API tidak 'success'.");
         }
       } else {
-        print(
-            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+        print("Error: ${response.statusCode}, Message: ${response.statusMessage}");
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -130,11 +128,9 @@ class DashboardController extends GetxController {
   Future<int> fetchLast30DaysLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = userControler.accesToken.value;
-
+      String? accessToken = userController.accesToken.value;
 
       String url = constructDashboardUrl('total_30_today');
-
 
       // Ambil data dari API
       final response = await dio.get(
@@ -156,8 +152,7 @@ class DashboardController extends GetxController {
           print("Status API tidak 'success'.");
         }
       } else {
-        print(
-            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+        print("Error: ${response.statusCode}, Message: ${response.statusMessage}");
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -168,7 +163,7 @@ class DashboardController extends GetxController {
   Future<int> fetchFollowedUpLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // String? startDateString = filterStartDate.value != null
       //     ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
@@ -201,7 +196,6 @@ class DashboardController extends GetxController {
       //     .map((entry) => '${entry.key}=${Uri.encodeComponent(entry.value)}')
       //     .join('&');
 
-
       // // Construct the full URL
       // String url = '$baseUrl/dashboard/total_followed_up';
       // if (queryString.isNotEmpty) {
@@ -229,8 +223,7 @@ class DashboardController extends GetxController {
           print("Status API tidak 'success'.");
         }
       } else {
-        print(
-            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+        print("Error: ${response.statusCode}, Message: ${response.statusMessage}");
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -241,7 +234,7 @@ class DashboardController extends GetxController {
   Future<int> fetchAcceptedLeadData() async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       String url = constructDashboardUrl("total_accepted");
 
@@ -264,8 +257,7 @@ class DashboardController extends GetxController {
           print("Status API tidak 'success'.");
         }
       } else {
-        print(
-            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+        print("Error: ${response.statusCode}, Message: ${response.statusMessage}");
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -335,7 +327,7 @@ class DashboardController extends GetxController {
     filterPic.value = null;
   }
 
-  String constructDashboardUrl(String metric)  {
+  String constructDashboardUrl(String metric) {
     // Konversi filter tanggal ke format string
     String? startDateString = filterStartDate.value != null
         ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
@@ -354,18 +346,15 @@ class DashboardController extends GetxController {
       queryParams.add('endDate=${Uri.encodeComponent(endDateString)}');
     }
     if (filterPic.value != null) {
-      queryParams.add(
-          'pic=${Uri.encodeComponent(StringUtils.toCamelCase(filterPic.value))}');
+      queryParams.add('pic=${Uri.encodeComponent(StringUtils.toCamelCase(filterPic.value))}');
     }
     if (filterClientSource.value != null) {
-      queryParams.add(
-          'clientSource=${Uri.encodeComponent(StringUtils.toCamelCase(filterClientSource.value))}');
+      queryParams.add('clientSource=${Uri.encodeComponent(StringUtils.toCamelCase(filterClientSource.value))}');
     }
 
     // Handle category filter with array format
     if (filterCategory.isNotEmpty) {
-      queryParams.addAll(filterCategory
-          .map((category) => 'category[]=${Uri.encodeComponent(category)}'));
+      queryParams.addAll(filterCategory.map((category) => 'category[]=${Uri.encodeComponent(category)}'));
     }
 
     // Combine all query parameters

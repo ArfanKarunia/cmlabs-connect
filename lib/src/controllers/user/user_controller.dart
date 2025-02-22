@@ -1,9 +1,9 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:get/get.dart';
 
-import '../models/user_model.dart';
+import '../../models/user_model.dart';
 
-class UserControler extends GetxController {
+class UserController extends GetxController {
   var accesToken = Rx<String?>(null);
   var tokenType = Rx<String?>(null);
 

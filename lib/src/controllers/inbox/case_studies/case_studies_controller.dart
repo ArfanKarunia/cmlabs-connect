@@ -5,14 +5,14 @@ import 'package:get/get.dart';
 import '../../../constant/config.dart';
 import '../../../models/case_studies_model.dart';
 import '../inbox_controller.dart';
-import '../../user_controler.dart';
+import '../../user/user_controller.dart';
 
 class CaseStudiesController extends InboxController {
   RxList<CaseStudies> caseStudiesList = <CaseStudies>[].obs;
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
-  final UserControler userController = Get.find<UserControler>();
+  final UserController userController = Get.find<UserController>();
 
   @override
   Future<void> fetchList({

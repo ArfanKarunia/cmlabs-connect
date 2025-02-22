@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/notification_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -24,7 +24,7 @@ class NotificationController extends GetxController {
   final emailNotifNewQuotation = Rx<bool>(false);
   final emailNotifFollowedUpQuotation = Rx<bool>(false);
 
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
@@ -66,11 +66,10 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future<void> fetchNotification(
-      {bool isLoadMore = false, bool refreshData = false}) async {
+  Future<void> fetchNotification({bool isLoadMore = false, bool refreshData = false}) async {
     print("Fetch Notification");
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       var endDate = DateTime.now();
       var startDate = endDate.subtract(const Duration(days: 30));
@@ -88,9 +87,7 @@ class NotificationController extends GetxController {
 
       if (refreshData) {
         start.value = 0;
-        limit.value = todayNotification.value.length +
-            weekNotification.value.length +
-            monthNotification.value.length;
+        limit.value = todayNotification.value.length + weekNotification.value.length + monthNotification.value.length;
       }
 
       final response = await dio.get(
@@ -102,8 +99,7 @@ class NotificationController extends GetxController {
         final rawData = response.data['data'];
 
         if (rawData != null && rawData is List) {
-          List<NotificationModel> allNotification =
-              rawData.map<NotificationModel>((item) {
+          List<NotificationModel> allNotification = rawData.map<NotificationModel>((item) {
             return NotificationModel.fromJson(item);
           }).toList();
 
@@ -118,16 +114,13 @@ class NotificationController extends GetxController {
 
           // Categorize notifications
           for (var notification in allNotification) {
-            if (notification.createdAt
-                .isAfter(now.subtract(const Duration(days: 1)))) {
+            if (notification.createdAt.isAfter(now.subtract(const Duration(days: 1)))) {
               // Notification  today
               todayNotification.value.add(notification);
-            } else if (notification.createdAt
-                .isAfter(now.subtract(const Duration(days: 7)))) {
+            } else if (notification.createdAt.isAfter(now.subtract(const Duration(days: 7)))) {
               // Notification last week
               weekNotification.value.add(notification);
-            } else if (notification.createdAt
-                .isAfter(now.subtract(const Duration(days: 30)))) {
+            } else if (notification.createdAt.isAfter(now.subtract(const Duration(days: 30)))) {
               // Notification last month
               monthNotification.value.add(notification);
             }
@@ -149,7 +142,7 @@ class NotificationController extends GetxController {
 
   Future<void> fetchAmountUnreadNotification() async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       var endDate = DateTime.now();
       var startDate = endDate.subtract(const Duration(days: 30));
@@ -170,8 +163,7 @@ class NotificationController extends GetxController {
         final rawData = response.data['data'];
 
         if (rawData != null && rawData is List) {
-          List<NotificationModel> allNotification =
-              rawData.map<NotificationModel>((item) {
+          List<NotificationModel> allNotification = rawData.map<NotificationModel>((item) {
             return NotificationModel.fromJson(item);
           }).toList();
 
@@ -204,7 +196,7 @@ class NotificationController extends GetxController {
   }
 
   Future<void> updateReadParam(int id) async {
-    String? accessToken = userControler.accesToken.value;
+    String? accessToken = userController.accesToken.value;
 
     Map<String, dynamic> requestData = {
       "id": id,
@@ -245,12 +237,11 @@ class NotificationController extends GetxController {
     return result;
   }
 
-  Future<List<NotificationModel?>> fetchHistoryNotification(
-      DateTime startDate, DateTime endDate) async {
+  Future<List<NotificationModel?>> fetchHistoryNotification(DateTime startDate, DateTime endDate) async {
     List<NotificationModel?> filteredData = [];
 
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // Format tanggal ke dalam string dengan format YYYY-MM-DD
       String startDateString =
@@ -280,7 +271,7 @@ class NotificationController extends GetxController {
     return filteredData; // Mengembalikan daftar notifikasi
   }
 
-  void clearQuiteDay(){
+  void clearQuiteDay() {
     quiteDay.value.clear();
   }
 

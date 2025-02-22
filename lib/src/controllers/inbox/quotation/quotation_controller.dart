@@ -8,7 +8,7 @@ import '../../../constant/config.dart';
 import '../../../models/quotation_model.dart';
 import '../../../utils/toast.dart';
 import '../inbox_controller.dart';
-import '../../user_controler.dart';
+import '../../user/user_controller.dart';
 
 class QuotationController extends InboxController {
   RxList<Quotation> quotationList = <Quotation>[].obs;
@@ -19,7 +19,7 @@ class QuotationController extends InboxController {
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
-  final UserControler userController = Get.find<UserControler>();
+  final UserController userController = Get.find<UserController>();
 
   @override
   void onReady() async {

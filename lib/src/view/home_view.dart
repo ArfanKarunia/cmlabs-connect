@@ -10,7 +10,7 @@ import '../controllers/dashboard_controller.dart';
 import '../controllers/historical_lead_controller.dart';
 import '../controllers/notification_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
-import '../controllers/user_controler.dart';
+import '../controllers/user/user_controller.dart';
 import '../models/case_studies_model.dart';
 import '../models/quotation_model.dart';
 import '../utils/color.dart';
@@ -31,7 +31,7 @@ class _HomeViewState extends State<HomeView> {
   final DashboardController dashboardController = Get.put(DashboardController());
   final HistoricalLeadController historicalLeadController = Get.put(HistoricalLeadController());
   final NotificationController notificationController = Get.put(NotificationController());
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final BottomNavController navController = Get.find<BottomNavController>();
 

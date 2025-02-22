@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -21,7 +21,7 @@ class AuthenticationController extends GetxController {
   final baseUrl = Config.baseURL;
 
   Box<Map>? loginBox;
-  UserControler userController = Get.put(UserControler());
+  UserController userController = Get.put(UserController());
 
   @override
   void onInit() {

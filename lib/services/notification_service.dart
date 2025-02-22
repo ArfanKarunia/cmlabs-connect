@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -10,7 +10,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class NotificationService {
-  UserControler userController = Get.put(UserControler());
+  UserController userController = Get.put(UserController());
 
   NotificationService._();
   static final NotificationService instance = NotificationService._();
@@ -59,12 +59,10 @@ class NotificationService {
     );
 
     await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(channel);
 
-    const initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
 
     final initializationSettingsDarwin = const DarwinInitializationSettings();
 
@@ -94,14 +92,12 @@ class NotificationService {
             android: AndroidNotificationDetails(
               'high_importance_channel',
               'High Importance Notifications',
-              channelDescription:
-                  'This channel is used for important notifications.',
+              channelDescription: 'This channel is used for important notifications.',
               importance: Importance.high,
               priority: Priority.high,
               icon: '@drawable/ic_notification',
             ),
-            iOS: DarwinNotificationDetails(
-                presentAlert: true, presentBadge: true, presentSound: true)),
+            iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true)),
         payload: message.data.toString(),
       );
     }

@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/historical_lead_model.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
@@ -17,14 +17,13 @@ class HistoricalLeadController extends GetxController {
   final historicalData1 = Rx<HistoricalLeadModel?>(null);
   final historicalData2 = Rx<HistoricalLeadModel?>(null);
 
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final baseUrl = Config.baseURL;
   final Dio dio = Dio();
 
   bool isDatePairFilled() {
-    return (year1.value != null && month1.value != null) ||
-        (year2.value != null && month2.value != null);
+    return (year1.value != null && month1.value != null) || (year2.value != null && month2.value != null);
   }
 
   void submit() async {
@@ -40,7 +39,7 @@ class HistoricalLeadController extends GetxController {
   Future<void> fetchHistoricalData(int index) async {
     try {
       // Ambil access token dari AuthenticationController
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       var data = requestData(index);
 
@@ -65,8 +64,7 @@ class HistoricalLeadController extends GetxController {
           historicalData2.value = historicalData;
         }
       } else {
-        print(
-            "Error: ${response.statusCode}, Message: ${response.statusMessage}");
+        print("Error: ${response.statusCode}, Message: ${response.statusMessage}");
       }
     } catch (e) {
       print('Error fetching data: $e');
@@ -123,15 +121,11 @@ class HistoricalLeadController extends GetxController {
     String yearData = '';
 
     if (month1.value != null || month2.value != null) {
-      monthData = index == 1
-          ? month1.value!['value'] ?? ''
-          : month2.value!['value'] ?? '';
+      monthData = index == 1 ? month1.value!['value'] ?? '' : month2.value!['value'] ?? '';
     }
 
     if (year1.value != null || year2.value != null) {
-      yearData = index == 1
-          ? year1.value!['value'] ?? ''
-          : year2.value!['value'] ?? '';
+      yearData = index == 1 ? year1.value!['value'] ?? '' : year2.value!['value'] ?? '';
     }
 
     Map<String, dynamic> requestData = {
@@ -141,7 +135,6 @@ class HistoricalLeadController extends GetxController {
 
     return requestData;
   }
-
 
   final yearList = List.generate(
     10,

@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/account_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,7 +12,7 @@ import '../select_field.dart';
 class FormProfileView extends StatelessWidget {
   FormProfileView({super.key});
 
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
   final AccountController accountController = Get.put(AccountController());
 
   final TextEditingController usernameController = TextEditingController();
@@ -81,8 +81,7 @@ class FormProfileView extends StatelessWidget {
                         color: AppColors.white,
                         image: DecorationImage(
                           image: accountController.selectedImage.value != null
-                              ? FileImage(
-                                  accountController.selectedImage.value!)
+                              ? FileImage(accountController.selectedImage.value!)
                               : (user.picUrl != null && user.picUrl!.isNotEmpty)
                                   ? NetworkImage(user.picUrl!) as ImageProvider
                                   : const AssetImage(
@@ -106,8 +105,7 @@ class FormProfileView extends StatelessWidget {
                       backgroundColor: WidgetStatePropertyAll(
                         Color(0xFFF9F9F9),
                       ),
-                      foregroundColor:
-                          WidgetStatePropertyAll(AppColors.primary),
+                      foregroundColor: WidgetStatePropertyAll(AppColors.primary),
                       overlayColor: WidgetStatePropertyAll(Colors.black12),
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
@@ -182,8 +180,7 @@ class FormProfileView extends StatelessWidget {
                         )?.then(
                           (value) {
                             accountController.addRole(value);
-                            print(
-                                "role selected: ${accountController.profileRole.value}");
+                            print("role selected: ${accountController.profileRole.value}");
                             accountController.profileRole.refresh();
                           },
                         );
@@ -193,9 +190,7 @@ class FormProfileView extends StatelessWidget {
                           ? Obx(
                               () {
                                 return Text(
-                                  accountController
-                                          .profileRole.value?['name'] ??
-                                      '',
+                                  accountController.profileRole.value?['name'] ?? '',
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 13,
                                     color: AppColors.text_1,
@@ -267,8 +262,7 @@ class FormProfileView extends StatelessWidget {
                   validator: (value) {
                     // Regular expression for validating URLs
                     if (value != '') {
-                      final urlPattern =
-                          r"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$";
+                      final urlPattern = r"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$";
                       final urlRegExp = RegExp(urlPattern);
 
                       if (!urlRegExp.hasMatch(value!)) {
@@ -373,35 +367,24 @@ class FormProfileView extends StatelessWidget {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // Save the form
-                        accountController.profileUsername.value =
-                            usernameController.text;
-                        accountController.profileFullName.value =
-                            fullNameController.text;
-                        accountController.profileNumber.value =
-                            numberController.text;
+                        accountController.profileUsername.value = usernameController.text;
+                        accountController.profileFullName.value = fullNameController.text;
+                        accountController.profileNumber.value = numberController.text;
 
-                        accountController.profileLinkedin.value =
-                            linkedinController.text;
-                        accountController.profileWebsite.value =
-                            weblinkController.text;
-                        accountController.profileInstagram.value =
-                            instagramController.text;
+                        accountController.profileLinkedin.value = linkedinController.text;
+                        accountController.profileWebsite.value = weblinkController.text;
+                        accountController.profileInstagram.value = instagramController.text;
 
-                        accountController.profileMedium.value =
-                            mediumController.text;
-                        accountController.profileQuora.value =
-                            quoraController.text;
-                        accountController.profileTiktok.value =
-                            tiktokController.text;
+                        accountController.profileMedium.value = mediumController.text;
+                        accountController.profileQuora.value = quoraController.text;
+                        accountController.profileTiktok.value = tiktokController.text;
 
                         accountController.editProfile();
                       }
                     },
                     style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(AppColors.primary),
-                      foregroundColor:
-                          WidgetStatePropertyAll(AppColors.white_1),
+                      backgroundColor: WidgetStatePropertyAll(AppColors.primary),
+                      foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
                       overlayColor: WidgetStatePropertyAll(Colors.white30),
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
@@ -411,8 +394,7 @@ class FormProfileView extends StatelessWidget {
                     ),
                     child: Text(
                       "Save",
-                      style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ class HistorySection extends StatelessWidget {
 
   final EditQuotationController detailQuotationController = Get.put(EditQuotationController());
   final HistoryChangesController historyChangesController = Get.put(HistoryChangesController());
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {

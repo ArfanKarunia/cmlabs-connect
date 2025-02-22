@@ -7,7 +7,7 @@ import 'package:cmlabs_connect/src/controllers/authentication/authentication_con
 import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/general_info_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/url_tracking_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:dio/dio.dart';
@@ -49,7 +49,7 @@ class EditQuotationController extends GetxController {
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
   final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
   final GeneralInfoController generalInfoController = Get.put(GeneralInfoController());
   final ClientPicController clientPicController = Get.put(ClientPicController());
@@ -258,7 +258,7 @@ class EditQuotationController extends GetxController {
   }
 
   Future<void> updateQuotation(Quotation quotation) async {
-    String? accessToken = userControler.accesToken.value;
+    String? accessToken = userController.accesToken.value;
 
     var data = formatDataQuotation(quotation);
 
