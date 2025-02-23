@@ -5,6 +5,6 @@ import 'case_studies_controller.dart';
 class CaseStudiesBindings extends Bindings {
   @override
   void dependencies() {
-    Get.put(CaseStudiesController());
+    Get.lazyPut(() => CaseStudiesController());
   }
 }

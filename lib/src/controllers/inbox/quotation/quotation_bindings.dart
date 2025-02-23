@@ -5,6 +5,6 @@ import 'quotation_controller.dart';
 class QuotationBindings extends Bindings {
   @override
   void dependencies() {
-    Get.put(QuotationController());
+    Get.lazyPut(() => QuotationController());
   }
 }

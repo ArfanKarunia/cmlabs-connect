@@ -15,6 +15,12 @@ class CaseStudiesController extends InboxController {
   final UserController userController = Get.find<UserController>();
 
   @override
+  void onReady() async {
+    super.onReady();
+    await fetchList();
+  }
+
+  @override
   Future<void> fetchList({
     bool isLoadMore = false,
     bool refreshData = false,
