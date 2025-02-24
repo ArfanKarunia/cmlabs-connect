@@ -14,8 +14,7 @@ class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
 
   final BottomNavController navController = Get.put(BottomNavController());
-  final QuotationController quotationController =
-      Get.put(QuotationController());
+  final QuotationController quotationController = Get.put(QuotationController());
 
   final List<Widget> _pages = [
     HomeView(),
@@ -33,11 +32,13 @@ class BottomNavigation extends StatelessWidget {
       },
       child: Obx(
         () => Scaffold(
-          body: SizedBox.expand(
-            child: Stack(
-              children: [
-                _pages[navController.currentIndex.value],
-              ],
+          body: SafeArea(
+            child: SizedBox.expand(
+              child: Stack(
+                children: [
+                  _pages[navController.currentIndex.value],
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: navController.isFilterActive.value
@@ -78,20 +79,15 @@ class BottomNavigation extends StatelessWidget {
                               right: 50,
                               child: Obx(
                                 () {
-                                  return quotationController
-                                              .newQuotationCount.value !=
-                                          0
+                                  return quotationController.newQuotationCount.value != 0
                                       ? Container(
                                           width: 15,
                                           height: 15,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: AppColors.danger),
+                                          decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.danger),
                                           child: Center(
                                             child: Text(
                                               "${quotationController.newQuotationCount.value}",
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
+                                              style: GoogleFonts.plusJakartaSans(
                                                 fontSize: 8,
                                                 color: AppColors.white_1,
                                               ),
@@ -140,23 +136,17 @@ class BottomNavigation extends StatelessWidget {
           border: Border(
             bottom: BorderSide(
               width: 5,
-              color: controller.currentIndex.value == index
-                  ? AppColors.primary
-                  : Colors.transparent,
+              color: controller.currentIndex.value == index ? AppColors.primary : Colors.transparent,
             ),
           ),
-          color: controller.currentIndex.value == index
-              ? AppColors.bgNavActive
-              : Colors.transparent,
+          color: controller.currentIndex.value == index ? AppColors.bgNavActive : Colors.transparent,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
-              color: controller.currentIndex.value == index
-                  ? AppColors.primary
-                  : Colors.grey,
+              color: controller.currentIndex.value == index ? AppColors.primary : Colors.grey,
             ),
             SizedBox(height: 3),
             Text(
@@ -183,8 +173,7 @@ class BottomNavigation extends StatelessWidget {
     final now = DateTime.now();
     const backPressThreshold = Duration(seconds: 2);
 
-    if (_lastBackPressed.value == null ||
-        now.difference(_lastBackPressed.value!) > backPressThreshold) {
+    if (_lastBackPressed.value == null || now.difference(_lastBackPressed.value!) > backPressThreshold) {
       _lastBackPressed.value = now;
 
       Get.snackbar(
@@ -219,8 +208,7 @@ class BottomNavigation extends StatelessWidget {
         duration: const Duration(seconds: 3),
         animationDuration: const Duration(milliseconds: 500),
         backgroundColor: Colors.black45,
-        padding: const EdgeInsets.symmetric(
-            vertical: 0, horizontal: 10), // Mengurangi padding vertikal
+        padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10), // Mengurangi padding vertikal
         isDismissible: true,
         barBlur: 0, // Menghilangkan blur background jika tidak diperlukan
       );
@@ -241,8 +229,7 @@ class BottomNavigation extends StatelessWidget {
               left: 0,
               right: 0,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: Text(
                   'Press back again to exit the app',
                   style: GoogleFonts.plusJakartaSans(

@@ -3,16 +3,20 @@ import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../constant/const.dart';
+import '../constant/fontstyle.dart';
 import '../models/quotation_model.dart';
+import '../routes.dart';
 import '../utils/bottom_sheet.dart';
 import '../utils/color.dart';
 
 class QuotationListTile extends StatelessWidget {
+  final Quotation quotation;
+  final VoidCallback onDelete;
+  final VoidCallback onChatWA;
   QuotationListTile({
     super.key,
     required this.quotation,
@@ -20,12 +24,7 @@ class QuotationListTile extends StatelessWidget {
     required this.onChatWA,
   });
 
-  final Quotation quotation;
-  final VoidCallback onDelete;
-  final VoidCallback onChatWA;
-
-  final DetailQuotationController detailQuotationController =
-      Get.put(DetailQuotationController());
+  final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
 
   @override
   Widget build(BuildContext context) {
@@ -51,13 +50,11 @@ class QuotationListTile extends StatelessWidget {
 
     return AnimatedOpacity(
       opacity: 1.0,
-      duration: Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 300),
       child: GestureDetector(
         onTap: () {
           detailQuotationController.quotation.value = quotation;
-          Get.toNamed(
-            '/detailQuotation',
-          );
+          Get.toNamed(AppRoutes.detailQuotation);
         },
         child: Container(
           // height: 100, // Tinggi tile
@@ -105,21 +102,17 @@ class QuotationListTile extends StatelessWidget {
                                     onTap: onChatWA,
                                     splashColor: Colors.black12, // Ripple color
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           "WA",
-                                          style: GoogleFonts.plusJakartaSans(
+                                          style: regular.copyWith(
                                             fontSize: 10,
                                             color: AppColors.success,
-                                            fontWeight: FontWeight.w400,
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Icon(
+                                        const SizedBox(width: 5),
+                                        const Icon(
                                           Ionicons.logo_whatsapp,
                                           size: 18,
                                           color: AppColors.success,
@@ -141,29 +134,22 @@ class QuotationListTile extends StatelessWidget {
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(5),
                                     onTap: () {
-                                      print("Delete");
-                                      var message =
-                                          "Are you sure wanna delete this Cardbox?";
-                                      DeleteBottomSheet(
-                                          context, onDelete, message);
+                                      var message = "Are you sure wanna delete this Cardbox?";
+                                      DeleteBottomSheet(context, onDelete, message);
                                     },
                                     splashColor: Colors.black12, // Ripple color
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Text(
                                           "Delete",
-                                          style: GoogleFonts.plusJakartaSans(
+                                          style: regular.copyWith(
                                             fontSize: 10,
                                             color: AppColors.danger,
-                                            fontWeight: FontWeight.w400,
                                           ),
                                         ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
-                                        Icon(
+                                        const SizedBox(width: 5),
+                                        const Icon(
                                           Ionicons.trash_outline,
                                           size: 18,
                                           color: AppColors.danger,
@@ -177,26 +163,23 @@ class QuotationListTile extends StatelessWidget {
                           ],
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
                                 timeago.format(quotation.createdAt),
-                                style: GoogleFonts.plusJakartaSans(
+                                style: regular.copyWith(
                                   fontSize: 10,
                                   color: AppColors.text_4,
                                 ),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 7,
                               ),
                               Container(
                                 alignment: Alignment.centerRight,
-                                child: StatusLeadUI(
-                                  statusLead: status,
-                                ),
+                                child: StatusLeadUI(statusLead: status),
                               ),
                             ],
                           ),
@@ -210,22 +193,16 @@ class QuotationListTile extends StatelessWidget {
                     Expanded(
                       child: Container(
                         color: AppColors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              (quotation.data.company?.isEmpty ?? true)
-                                  ? "N/A"
-                                  : quotation.data.company!,
+                              (quotation.data.company?.isEmpty ?? true) ? "N/A" : quotation.data.company!,
                               maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: (quotation.data.company?.isEmpty ?? true)
-                                    ? AppColors.text_3
-                                    : AppColors.text_1,
+                              style: bold.copyWith(
                                 fontSize: 15,
-                                fontWeight: FontWeight.bold,
+                                color: (quotation.data.company?.isEmpty ?? true) ? AppColors.text_3 : AppColors.text_1,
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -234,45 +211,36 @@ class QuotationListTile extends StatelessWidget {
                                   ? StringUtils.toCamelCase(quotation.data.category.map((cat) {
                                       return cat == null || cat.isEmpty
                                           ? '-'
-                                          : cat.replaceAll(
-                                              'SEO Article', 'SEO Writing');
+                                          : cat.replaceAll('SEO Article', 'SEO Writing');
                                     }).join(', '))
                                   : StringUtils.toCamelCase(quotation.section),
                               // quotation.section != 'ads' ?
                               // StringUtils.toCamelCase(quotation.section) : quotation.data.category.join(','),
                               maxLines: 1, // Membatasi hanya 1 baris
-                              overflow: TextOverflow
-                                  .ellipsis, // Menambahkan ellipsis (...) jika terlalu panjang
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              overflow: TextOverflow.ellipsis, // Menambahkan ellipsis (...) jika terlalu panjang
+                              style: regular.copyWith(fontSize: 12),
                             ),
                             Text(
                               quotation.data.pic ?? "-",
                               maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_4,
+                              style: regular.copyWith(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w400,
+                                color: AppColors.text_4,
                               ),
                             ),
                             Text(
                               quotation.data.phoneNumber ?? "-",
                               maxLines: 1,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_4,
+                              style: regular.copyWith(
                                 fontSize: 11,
-                                fontWeight: FontWeight.w400,
+                                color: AppColors.text_4,
                               ),
                             ),
                             Text(
                               quotation.email,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_4,
+                              style: regular.copyWith(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w400,
+                                color: AppColors.text_4,
                               ),
                             ),
                           ],
@@ -343,8 +311,10 @@ class StatusLeadUI extends StatelessWidget {
       ),
       child: Text(
         status,
-        style: GoogleFonts.plusJakartaSans(
-            color: color, fontSize: 10, fontWeight: FontWeight.w400),
+        style: regular.copyWith(
+          fontSize: 10,
+          color: color,
+        ),
       ),
     );
   }

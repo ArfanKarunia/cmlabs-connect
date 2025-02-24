@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../constant/fontstyle.dart';
 import '../utils/color.dart';
 
 class MetricCard extends StatelessWidget {
@@ -38,10 +38,7 @@ class MetricCard extends StatelessWidget {
 
     return Expanded(
       child: Container(
-        padding: EdgeInsets.symmetric(
-          vertical: 10,
-          horizontal: 12,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
         decoration: BoxDecoration(
           color: AppColors.white,
           borderRadius: BorderRadius.circular(5),
@@ -53,24 +50,22 @@ class MetricCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${label}',
-                  style: GoogleFonts.plusJakartaSans(
+                  label,
+                  style: bold.copyWith(
                     fontSize: 20,
                     color: color,
-                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  '$nameMetric',
-                  style: GoogleFonts.plusJakartaSans(
+                  nameMetric,
+                  style: regular.copyWith(
                     fontSize: 12,
                     color: AppColors.text_3,
-                    fontWeight: FontWeight.w400,
                   ),
                 ),
               ],
             ),
-            Icon(
+            const Icon(
               Ionicons.briefcase_outline,
               color: AppColors.text_1,
               size: 35,

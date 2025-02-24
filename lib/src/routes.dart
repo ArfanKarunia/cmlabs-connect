@@ -67,8 +67,7 @@ class AppRoutes {
 
   static const String certificationView = '/certificationView';
   static const String formCertificationnView = '/certificationView/form';
-  static const String selectDataCertification =
-      '/certificationView/form/select';
+  static const String selectDataCertification = '/certificationView/form/select';
 
   static const String organizationView = '/organizationView';
   static const String formOrganizationView = '/organizationView/form';

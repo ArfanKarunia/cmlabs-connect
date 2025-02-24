@@ -6,12 +6,22 @@ import '../utils/color.dart';
 
 class CustomSubmitButton extends StatelessWidget {
   final String title;
+  final IconData? icon;
   final bool isDisabled;
+  final Color color;
+  final Color disabledColor;
+  final Color? borderColor;
+  final Color textColor;
   final VoidCallback? onTap;
   const CustomSubmitButton({
     super.key,
+    this.icon,
     required this.title,
     this.isDisabled = false,
+    this.color = AppColors.primary,
+    this.disabledColor = AppColors.lightPrimaryColor,
+    this.borderColor,
+    this.textColor = AppColors.white,
     this.onTap,
   });
 
@@ -24,12 +34,21 @@ class CustomSubmitButton extends StatelessWidget {
         padding: const EdgeInsets.all(17.5),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
-          color: !isDisabled ? AppColors.primary : AppColors.lightPrimaryColor,
+          border: borderColor != null ? Border.all(color: borderColor!) : null,
+          color: !isDisabled ? color : disabledColor,
         ),
-        child: Text(
-          title,
-          style: bold.copyWith(color: AppColors.white),
-          textAlign: TextAlign.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) ...[
+              Icon(icon, color: textColor),
+              const SizedBox(width: 10),
+            ],
+            Text(
+              title,
+              style: bold.copyWith(color: textColor),
+            ),
+          ],
         ),
       ),
     );

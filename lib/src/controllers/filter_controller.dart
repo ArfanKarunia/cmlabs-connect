@@ -6,6 +6,7 @@ import 'package:dio/dio.dart';
 
 import '../constant/config.dart';
 import '../constant/const.dart';
+import '../routes.dart';
 
 class FilterController extends GetxController {
   var search = Rx<String?>(null);
@@ -29,10 +30,8 @@ class FilterController extends GetxController {
 
   // Inisialisasi Dio dan AuthenticationController
   final Dio dio = Dio();
-  final QuotationController quotationController =
-      Get.put(QuotationController());
-  final DashboardController dashboardController =
-      Get.put(DashboardController());
+  final QuotationController quotationController = Get.put(QuotationController());
+  final DashboardController dashboardController = Get.put(DashboardController());
   final UserControler userControler = Get.put(UserControler());
 
   final String baseUrl = Config.baseURL;
@@ -76,8 +75,7 @@ class FilterController extends GetxController {
         if (response.statusCode == 200 && response.data != null) {
           var responseData = response.data['data'];
 
-          var mappedData =
-              responseData.map<Map<String, String>>((clientSource) {
+          var mappedData = responseData.map<Map<String, String>>((clientSource) {
             return {
               'value': clientSource['value']?.toString() ?? '',
               'label': clientSource['label']?.toString() ?? '',
@@ -263,8 +261,7 @@ class FilterController extends GetxController {
         final query = search.value!.toLowerCase();
         result = result.where((status) {
           // print("Checking status: ${status['value']} - ${status['label']}");
-          return status['value'].toLowerCase().contains(query) ||
-              status['label'].toLowerCase().contains(query);
+          return status['value'].toLowerCase().contains(query) || status['label'].toLowerCase().contains(query);
         }).toList();
       }
     } else if (filter.toLowerCase() == 'client_source') {
@@ -274,8 +271,7 @@ class FilterController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((clientSource) {
-          print(
-              "Checking client source: ${clientSource['value']} - ${clientSource['label']}");
+          print("Checking client source: ${clientSource['value']} - ${clientSource['label']}");
           return clientSource['value'].toLowerCase().contains(query) ||
               clientSource['label'].toLowerCase().contains(query);
         }).toList();
@@ -290,8 +286,7 @@ class FilterController extends GetxController {
         final query = search.value!.toLowerCase();
         result = result.where((pic) {
           print("Checking PIC: ${pic['value']} - ${pic['label']}");
-          return pic['value'].toLowerCase().contains(query) ||
-              pic['label'].toLowerCase().contains(query);
+          return pic['value'].toLowerCase().contains(query) || pic['label'].toLowerCase().contains(query);
         }).toList();
       }
 
@@ -303,10 +298,8 @@ class FilterController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((category) {
-          print(
-              "Checking Category: ${category['value']} - ${category['label']}");
-          return category['value'].toLowerCase().contains(query) ||
-              category['label'].toLowerCase().contains(query);
+          print("Checking Category: ${category['value']} - ${category['label']}");
+          return category['value'].toLowerCase().contains(query) || category['label'].toLowerCase().contains(query);
         }).toList();
       }
     }
@@ -426,6 +419,6 @@ class FilterController extends GetxController {
 
     dashboardController.saveDashboardData();
 
-    Get.until((route) => Get.currentRoute == '/home');
+    Get.until((route) => Get.currentRoute == AppRoutes.home);
   }
 }

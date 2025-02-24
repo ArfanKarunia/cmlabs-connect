@@ -28,42 +28,39 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  cached_network_image: ^3.4.1
+  calendar_date_picker2: ^1.1.7
+  cupertino_icons: ^1.0.8
+  dio: ^5.7.0
+  file_picker: ^5.3.2
+  firebase_core: ^3.8.1
+  firebase_messaging: ^15.1.6
   flutter:
     sdk: flutter
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.8
-  get: ^4.6.6
-  hive_flutter: ^1.1.0
-  hive: ^2.2.3
-  dio: ^5.7.0
-  sentry_flutter: ^8.9.0
-  ionicons: ^0.2.2
-  url_launcher: ^6.3.1
-  intl: ^0.19.0
-  google_fonts: ^6.2.1
-  fluttertoast: ^8.2.8
-  firebase_messaging: ^15.1.6
-  hive_generator: ^2.0.1
-  flutter_slidable: ^3.1.1
   flutter_keyboard_visibility: ^6.0.0
+  flutter_launcher_icons: ^0.14.1
+  flutter_local_notifications: ^18.0.1
+  flutter_native_splash: ^2.4.3
+  flutter_slidable: ^3.1.1
+  fluttertoast: ^8.2.8
+  get: ^4.6.6
+  google_fonts: ^6.2.1
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  hive_generator: ^2.0.1
   http: ^1.2.2
   image_picker: ^1.1.2
-  file_picker: ^5.3.2
+  intl: ^0.19.0
+  ionicons: ^0.2.2
+  loading_animation_widget: ^1.3.0
   open_filex: ^4.5.0
   pull_to_refresh_new: ^2.0.5
+  sentry_flutter: ^8.9.0
   timeago: ^3.7.0
-  flutter_launcher_icons: "^0.14.1"
-  flutter_native_splash: ^2.4.3
-  calendar_date_picker2: ^1.1.7
-  firebase_core: ^3.8.1
-  flutter_local_notifications: ^18.0.1
-  loading_animation_widget: ^1.3.0
+  url_launcher: ^6.3.1
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
+  build_runner: ^2.4.11
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -71,8 +68,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
   json_serializable: ^6.8.0
-  build_runner: ^2.4.11
 
 flutter_launcher_icons:
   android: true
@@ -83,7 +81,6 @@ flutter_launcher_icons:
   adaptive_icon_foreground: "assets/images/logos/logo_foreground.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter packages.
 flutter:
   # The following line ensures that the Material Icons font is
@@ -98,13 +95,10 @@ flutter:
     - assets/images/logos/
     - assets/icons/
   #   - images/a_dot_ham.jpeg
-
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
-
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
-
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
@@ -121,6 +115,5 @@ flutter:
           weight: 600
         - asset: assets/fonts/PlusJakartaSans-Bold.ttf
           weight: 700
-  #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
