@@ -20,7 +20,7 @@ class EditHistoryView extends StatelessWidget {
   final HistoryChangesModel historyData;
   final HistoryChangesController historyChangesController = Get.put(HistoryChangesController());
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   TextEditingController nameControllers = TextEditingController();
   TextEditingController noteController = TextEditingController();

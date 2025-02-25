@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
+import 'package:cmlabs_connect/src/controllers/dashboard/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -10,12 +10,13 @@ import '../controllers/filter_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../utils/color.dart';
 import '../widgets/custom_buttom.dart';
+import '../widgets/custom_submit_button.dart';
 import '../widgets/tag_button.dart';
 
 class FilterView extends StatelessWidget {
   FilterView({super.key});
 
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController = Get.find<QuotationController>();
   final DashboardController dashboardController = Get.put(DashboardController());
 
   final FilterController filterController = Get.put(FilterController());
@@ -45,7 +46,7 @@ class FilterView extends StatelessWidget {
     filterController.fetchFilter('pic');
     filterController.fetchFilter('client_source');
     filterController.fetchFilter('category');
-    dashboardController.clearDataRange();
+    dashboardController.clearFilterDate();
     dashboardController.clearFilterCategory();
     dashboardController.clearFilterPic();
     dashboardController.clearFilterClientSource();
@@ -448,36 +449,13 @@ class FilterView extends StatelessWidget {
             ),
 
             // Button Search
-
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  filterController.setDateRange(temporaryStartDate, temporaryEndDate);
-                  filterController.searchFilter('all');
-                  quotationController.fetchList();
-                },
-                style: ButtonStyle(
-                  fixedSize: WidgetStatePropertyAll(
-                    Size(double.infinity, 50),
-                  ),
-                  shape: WidgetStatePropertyAll(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-                  foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                  overlayColor: WidgetStatePropertyAll(Colors.white24),
-                ),
-                child: Text(
-                  "Search",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
+            CustomSubmitButton(
+              title: 'Search',
+              onTap: () {
+                filterController.setDateRange(temporaryStartDate, temporaryEndDate);
+                filterController.searchFilter('all');
+                quotationController.fetchList();
+              },
             ),
           ],
         ),

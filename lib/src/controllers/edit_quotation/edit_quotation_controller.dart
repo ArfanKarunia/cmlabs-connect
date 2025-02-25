@@ -49,7 +49,7 @@ class EditQuotationController extends GetxController {
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
   final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
   final GeneralInfoController generalInfoController = Get.put(GeneralInfoController());
   final ClientPicController clientPicController = Get.put(ClientPicController());

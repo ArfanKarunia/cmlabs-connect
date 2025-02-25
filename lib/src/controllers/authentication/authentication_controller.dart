@@ -21,7 +21,7 @@ class AuthenticationController extends GetxController {
   final baseUrl = Config.baseURL;
 
   Box<Map>? loginBox;
-  UserController userController = Get.put(UserController());
+  UserController userController = Get.find<UserController>();
 
   @override
   void onInit() {

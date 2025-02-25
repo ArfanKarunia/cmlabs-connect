@@ -8,7 +8,7 @@ class GeneralInfoController extends GetxController {
   var search = Rx<String?>(null);
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   final baseUrl = Config.baseURL;
   final dio = Dio();

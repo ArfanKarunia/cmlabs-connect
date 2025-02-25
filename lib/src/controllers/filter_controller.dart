@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
+import 'package:cmlabs_connect/src/controllers/dashboard/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +28,9 @@ class FilterController extends GetxController {
   Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
   final Dio dio = Dio();
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController = Get.find<QuotationController>();
   final DashboardController dashboardController = Get.put(DashboardController());
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   final String baseUrl = Config.baseURL;
 
@@ -143,20 +143,15 @@ class FilterController extends GetxController {
     }
   }
 
-  // ADD, DELETE, CLEAR Filter Status
   void addFilterStatus(Map<String, String> status) {
-    // Cek jika status yang dipilih adalah "all"
     if (status['value'] == "all") {
-      // Kosongkan filter status jika ada status lain
       clearFilterStatus();
       filterStatusList.add(status);
     } else {
-      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
       if (filterStatusList.any((element) => element['value'] == "all")) {
         filterStatusList.removeWhere((element) => element['value'] == "all");
       }
 
-      // Tambahkan status baru jika belum ada di dalam list
       if (!filterStatusList.contains(status)) {
         filterStatusList.add(status);
       }
@@ -175,11 +170,8 @@ class FilterController extends GetxController {
     filterClientSource.value = null;
   }
 
-  // ADD, DELETE, CLEAR CLIENT SOURCE
   void addFilterClientSource(Map<String, String> clientSource) {
-    // Cek jika status yang dipilih adalah "all"
     if (clientSource['value'] == "all") {
-      // Kosongkan filter status jika ada status lain
       clearFilterClientSource();
     } else {
       filterClientSource.value = clientSource;
@@ -191,21 +183,10 @@ class FilterController extends GetxController {
   }
 
   void addFilterPic(Map<String, String> pic) {
-    // Cek jika status yang dipilih adalah "all"
     if (pic['value'] == "all") {
-      // Kosongkan filter status jika ada status lain
       clearFilterPic();
     } else {
       filterPic.value = pic;
-      // // Jika "all" ada, hapus dari list sebelum menambahkan status baru
-      // if (filterPicList.any((element) => element['value'] == "all")) {
-      //   filterPicList.removeWhere((element) => element['value'] == "all");
-      // }
-
-      // // Tambahkan status baru jika belum ada di dalam list
-      // if (!filterPicList.contains(pic)) {
-      //   filterPicList.add(pic);
-      // }
     }
   }
 
@@ -217,20 +198,15 @@ class FilterController extends GetxController {
     filterPic.value = null;
   }
 
-  // ADD, DELETE, CLEAR Filter Category
   void addFilterCategory(Map<String, String> category) {
-    // Cek jika status yang dipilih adalah "all"
     if (category['value'] == "all") {
-      // Kosongkan filter status jika ada status lain
       clearFilterCategory();
       filterCategoryList.add(category);
     } else {
-      // Jika "all" ada, hapus dari list sebelum menambahkan status baru
       if (filterCategoryList.any((element) => element['value'] == "all")) {
         filterCategoryList.removeWhere((element) => element['value'] == "all");
       }
 
-      // Tambahkan status baru jika belum ada di dalam list
       if (!filterCategoryList.contains(category)) {
         filterCategoryList.add(category);
       }
@@ -381,7 +357,7 @@ class FilterController extends GetxController {
 
   void filterByDateRange() {
     quotationController.clearFilterDate();
-    dashboardController.clearDataRange();
+    dashboardController.clearFilterDate();
 
     quotationController.filterStartDate.value = startDate.value;
     quotationController.filterEndDate.value = endDate.value;
@@ -415,7 +391,7 @@ class FilterController extends GetxController {
       filterByCategory();
     }
 
-    dashboardController.saveDashboardData();
+    dashboardController.fetchDashboardData();
 
     Get.until((route) => Get.currentRoute == AppRoutes.home);
   }

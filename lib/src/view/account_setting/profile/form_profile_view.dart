@@ -12,7 +12,7 @@ import '../select_field.dart';
 class FormProfileView extends StatelessWidget {
   FormProfileView({super.key});
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
   final AccountController accountController = Get.put(AccountController());
 
   final TextEditingController usernameController = TextEditingController();

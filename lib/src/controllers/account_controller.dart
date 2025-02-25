@@ -19,7 +19,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class AccountController extends GetxController {
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
   final baseUrl = Config.baseURL;
   final Dio dio = Dio();
 

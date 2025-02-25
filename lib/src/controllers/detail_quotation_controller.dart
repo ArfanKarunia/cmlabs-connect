@@ -25,9 +25,9 @@ class DetailQuotationController extends GetxController {
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController = Get.find<QuotationController>();
 
   final NotificationController notificationController = Get.put(NotificationController());
 

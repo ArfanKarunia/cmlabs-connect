@@ -19,7 +19,7 @@ class DetailQuotationView extends StatelessWidget {
 
   final NotificationController notificationController = Get.put(NotificationController());
 
-  final QuotationController quotationController = Get.put(QuotationController());
+  final QuotationController quotationController = Get.find<QuotationController>();
 
   final EditQuotationController editQuotationController = Get.put(EditQuotationController());
 

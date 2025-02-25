@@ -10,7 +10,7 @@ import '../../utils/color.dart';
 class ChangePasswordView extends StatelessWidget {
   ChangePasswordView({super.key});
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
   final TextEditingController oldPassword = TextEditingController();

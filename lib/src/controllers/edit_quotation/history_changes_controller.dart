@@ -13,7 +13,7 @@ import '../../utils/toast.dart';
 class HistoryChangesController extends GetxController {
   var search = Rx<String?>(null);
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
