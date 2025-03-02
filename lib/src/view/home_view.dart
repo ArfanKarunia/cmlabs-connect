@@ -290,7 +290,7 @@ class _HomeViewState extends State<HomeView> {
           const SizedBox(height: 10),
           Obx(() {
             List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
-            return quotationController.quotationList.isNotEmpty
+            return quotationList.isNotEmpty
                 ? Column(
                     children: quotationList.map((quotation) {
                       return QuotationListTile(
@@ -332,14 +332,16 @@ class _HomeViewState extends State<HomeView> {
           const SizedBox(height: 10),
           Obx(() {
             List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
-            return Column(
-              children: caseStudiesList.map((caseStudies) {
-                return CaseStudiesListTile(
-                  caseStudies: caseStudies,
-                  caseStudiesController: caseStudiesController,
-                );
-              }).toList(),
-            );
+            return caseStudiesList.isNotEmpty
+                ? Column(
+                    children: caseStudiesList.map((caseStudies) {
+                      return CaseStudiesListTile(
+                        caseStudies: caseStudies,
+                        caseStudiesController: caseStudiesController,
+                      );
+                    }).toList(),
+                  )
+                : const SizedBox(height: 150, child: EmptyState());
           }),
           // Expanded(
           //   child: Padding(

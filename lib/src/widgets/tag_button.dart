@@ -1,52 +1,39 @@
-import 'package:cmlabs_connect/src/widgets/custom_buttom.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../constant/fontstyle.dart';
 import '../utils/color.dart';
 
 class TagButton extends StatelessWidget {
+  final String statusLabel;
+  final VoidCallback? onPressed;
   const TagButton({
     super.key,
-    required this.statusLabel, 
-    required this.onPressed,
+    required this.statusLabel,
+    this.onPressed,
   });
-
-  final String statusLabel;
-  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 5, vertical: 10),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          color: AppColors.bgPrimary,
-          borderRadius: BorderRadius.circular(5),
-        ),
-        child: Row(
-          children: [
-            CustomButton(
-              onPressed: onPressed,
-              backgroundColor: Colors.transparent,
-              child: Icon(
-                Ionicons.close_outline,
-                size: 18,
-              ),
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Text(
-              statusLabel,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: BoxDecoration(
+        color: AppColors.bgPrimary,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: onPressed,
+            child: const Icon(Ionicons.close_outline, size: 18),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            statusLabel,
+            style: regular.copyWith(fontSize: 12),
+          ),
+        ],
       ),
     );
   }

@@ -81,7 +81,7 @@ class SelectStatus extends StatelessWidget {
                                 onTap: () {
                                   for (InboxController controller in controllers) {
                                     controller.addFilterStatus(status.query.toString());
-                                    controller.fetchList(refreshData: true);
+                                    controller.fetchList();
                                   }
                                 },
                                 child: Container(

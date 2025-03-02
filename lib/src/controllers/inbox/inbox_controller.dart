@@ -17,6 +17,16 @@ abstract class InboxController extends GetxController {
 
   Rx<String?> search = Rx<String?>(null);
 
+  Rx<int> totalLeads = Rx<int>(0);
+
+  @override
+  void onReady() async {
+    super.onReady();
+    await fetchTotalLeads();
+    await fetchList();
+    // checkNewQuotationsPeriodically();
+  }
+
   // Inbox Data List
   Future<void> fetchList({
     bool isLoadMore = false,
@@ -30,7 +40,7 @@ abstract class InboxController extends GetxController {
   }
 
   // Total Leads
-  // Future<void> fetchTotalLeads();
+  Future<void> fetchTotalLeads();
 
   // Filter
   void addFilterStatus(String status) {

@@ -68,6 +68,26 @@ class CaseStudiesController extends InboxController {
   }
 
   @override
+  Future<void> fetchTotalLeads() async {
+    // try {
+    //   String? accessToken = userController.accesToken.value;
+
+    //   final response = await dio.get(
+    //     '$baseUrl/dashboard/total_all',
+    //     options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+    //   );
+
+    //   if (response.statusCode == 200 && response.data != null) {
+    //     if (response.data['status'] == 'success') totalLeads.value = response.data['data'];
+    //   }
+    // } catch (e) {
+    //   debugPrint('Error fetching data: $e');
+    // }
+
+    return;
+  }
+
+  @override
   Future<void> resetList() async {
     start.value = 0;
     caseStudiesList.clear();

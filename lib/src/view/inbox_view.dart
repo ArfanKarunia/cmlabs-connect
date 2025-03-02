@@ -146,16 +146,15 @@ class _InboxViewState extends State<InboxView> {
                         color: AppColors.text_2,
                       ),
                     ),
-                    // Obx(
-                    //   () => Text(
-                    //     // "${quotationController.totalLeads.value}",
-                    //     "-",
-                    //     style: regular.copyWith(
-                    //       fontSize: 12,
-                    //       color: AppColors.primary,
-                    //     ),
-                    //   ),
-                    // ),
+                    Obx(
+                      () => Text(
+                        "${controller[index].totalLeads.value}",
+                        style: regular.copyWith(
+                          fontSize: 12,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -204,9 +203,7 @@ class _InboxViewState extends State<InboxView> {
                         onPressed: () => Get.toNamed(AppRoutes.filter), // Icon as child
                         backgroundColor: AppColors.white_1, // Button background color
                         overlayColor: const Color.fromARGB(100, 149, 149, 149), // Ripple effect color
-                        borderRadius: BorderRadius.circular(
-                          5,
-                        ),
+                        borderRadius: BorderRadius.circular(5),
                         side: const BorderSide(color: AppColors.text_3, width: 1),
                         child: const Icon(
                           Ionicons.options_outline,
