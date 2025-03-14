@@ -1,49 +1,39 @@
 import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
-import 'package:cmlabs_connect/src/controllers/edit_quotation/contactPIC_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_contact_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../../../constant/fontstyle.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_buttom.dart';
 
-class AddContactView extends StatelessWidget {
-  AddContactView({super.key, required this.indexClientPIC});
-
+class AddContactView extends StatefulWidget {
   final int indexClientPIC;
+  const AddContactView({super.key, required this.indexClientPIC});
 
-  final TextEditingController infoController = TextEditingController();
-  final TextEditingController noteController = TextEditingController();
+  @override
+  State<AddContactView> createState() => _AddContactViewState();
+}
 
-  final ContactpicController contactpicController =
-      Get.put(ContactpicController());
-
-  final ClientPicController clientPicController =
-      Get.put(ClientPicController());
+class _AddContactViewState extends State<AddContactView> {
+  final ClientPicContactController contactpicController = Get.put(ClientPicContactController());
+  final ClientPicController clientPicController = Get.put(ClientPicController());
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "isi dari contact value : ${contactpicController.selectedContactType.value}");
-    var lenghtContact =
-        clientPicController.selectedContactType.value[indexClientPIC].length;
-    print("Banyak Contact: $lenghtContact");
+    var lenghtContact = clientPicController.selectedContactType.value[widget.indexClientPIC].length;
 
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
+      backgroundColor: AppColors.scaffoldBgColor2,
       appBar: AppBar(
         toolbarHeight: 100,
-        backgroundColor: Color(0xFFF9F9F9),
-        surfaceTintColor: Color(0xFFF9F9F9),
+        backgroundColor: AppColors.scaffoldBgColor2,
+        surfaceTintColor: AppColors.scaffoldBgColor2,
         title: Text(
           "Detail Leads",
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppColors.text_1,
-          ),
+          style: bold.copyWith(fontSize: 20),
         ),
       ),
       body: Padding(
@@ -54,38 +44,23 @@ class AddContactView extends StatelessWidget {
             children: [
               Text(
                 "Contact ${lenghtContact + 1}",
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.text_1,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: bold.copyWith(fontSize: 16),
               ),
-              SizedBox(
-                height: 15,
-              ),
+              const SizedBox(height: 15),
               Obx(
                 () {
                   return SelectField(
                     name: "Type",
                     child: Container(
-                      child:
-                          contactpicController.selectedContactType.value == null
-                              ? Text(
-                                  "Select Contact Type",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_3,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                )
-                              : Text(
-                                  "${contactpicController.selectedContactType.value!['label']}",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_1,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
+                      child: contactpicController.selectedContactType.value == null
+                          ? Text(
+                              "Select Contact Type",
+                              style: regular.copyWith(fontSize: 13, color: AppColors.text_3),
+                            )
+                          : Text(
+                              "${contactpicController.selectedContactType.value!['label']}",
+                              style: regular.copyWith(fontSize: 13),
+                            ),
                     ),
                     onPressed: () {
                       Get.toNamed(
@@ -106,27 +81,17 @@ class AddContactView extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Text(
                 "Contact Info",
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.text_2,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: bold.copyWith(color: AppColors.text_2),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               TextFormField(
-                controller: infoController,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  color: AppColors.text_1,
-                  fontWeight: FontWeight.w400,
-                ),
+                controller: contactpicController.contactInfo.value,
+                style: regular,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   focusedBorder: const OutlineInputBorder(
@@ -135,42 +100,25 @@ class AddContactView extends StatelessWidget {
                       color: AppColors.primary,
                     ),
                   ),
-                  hintStyle: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.text_4),
+                  hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
                   hintText: "Fill the contact based on type above",
-                  errorStyle: GoogleFonts.plusJakartaSans(
-                      color: AppColors.danger,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400),
+                  errorStyle: regular.copyWith(fontSize: 12, color: AppColors.danger),
                 ),
               ),
-              SizedBox(
-                height: 20,
-              ),
+              const SizedBox(height: 20),
               Obx(
                 () {
                   return SelectField(
                     name: "Status",
                     child: Container(
-                      child: contactpicController.selectedContactStatus.value ==
-                              null
+                      child: contactpicController.selectedContactStatus.value == null
                           ? Text(
                               "Select Status",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_3,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              style: regular.copyWith(fontSize: 13, color: AppColors.text_3),
                             )
                           : Text(
                               "${contactpicController.selectedContactStatus.value!['label']}",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              style: regular.copyWith(fontSize: 13),
                             ),
                     ),
                     onPressed: () {
@@ -185,7 +133,7 @@ class AddContactView extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Obx(
@@ -193,23 +141,14 @@ class AddContactView extends StatelessWidget {
                   return SelectField(
                     name: "Detail Status",
                     child: Container(
-                      child: contactpicController.selectedDetailStatus.value ==
-                              null
+                      child: contactpicController.selectedContactDetailStatus.value == null
                           ? Text(
                               "Select Detail Status",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_3,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              style: regular.copyWith(fontSize: 13, color: AppColors.text_3),
                             )
                           : Text(
-                              "${contactpicController.selectedDetailStatus.value!['label']}",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              "${contactpicController.selectedContactDetailStatus.value!['label']}",
+                              style: regular.copyWith(fontSize: 13),
                             ),
                     ),
                     onPressed: () {
@@ -224,27 +163,17 @@ class AddContactView extends StatelessWidget {
                   );
                 },
               ),
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Text(
                 "Note",
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.text_2,
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: bold.copyWith(color: AppColors.text_2),
               ),
-              SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
               TextFormField(
-                controller: noteController,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  color: AppColors.text_1,
-                  fontWeight: FontWeight.w400,
-                ),
+                controller: contactpicController.contactNote.value,
+                style: regular,
                 decoration: InputDecoration(
                   border: const OutlineInputBorder(),
                   focusedBorder: const OutlineInputBorder(
@@ -253,61 +182,42 @@ class AddContactView extends StatelessWidget {
                       color: AppColors.primary,
                     ),
                   ),
-                  hintStyle: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.text_4),
+                  hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
                   hintText: "Note",
-                  errorStyle: GoogleFonts.plusJakartaSans(
-                      color: AppColors.danger,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400),
+                  errorStyle: regular.copyWith(fontSize: 12, color: AppColors.danger),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Container(
                 height: 51,
                 child: ElevatedButton(
                   onPressed: () {
-                    var dataContactPIC = contactpicController.createContactPIC(
-                        infoController.text, noteController.text);
+                    var dataContactPIC = contactpicController.createContactPIC();
 
                     Get.back(result: dataContactPIC);
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        const WidgetStatePropertyAll(AppColors.primary),
-                    foregroundColor:
-                        const WidgetStatePropertyAll(AppColors.white_1),
+                    backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
+                    foregroundColor: const WidgetStatePropertyAll(AppColors.white_1),
                     overlayColor: const WidgetStatePropertyAll(Colors.white30),
-                    shadowColor: WidgetStatePropertyAll(Colors.transparent),
+                    shadowColor: const WidgetStatePropertyAll(Colors.transparent),
                     shape: WidgetStatePropertyAll(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Ionicons.add_outline),
-                      const SizedBox(
-                        width: 10,
-                      ),
-                      Text(
-                        "Add Contact",
-                        style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
+                      Icon(Ionicons.add_outline),
+                      SizedBox(width: 10),
+                      Text("Add Contact", style: bold),
                     ],
                   ),
                 ),
               ),
-              SizedBox(
-                height: 50,
-              ),
+              const SizedBox(height: 50),
             ],
           ),
         ),
@@ -338,20 +248,12 @@ class SelectField extends StatelessWidget {
           children: [
             Text(
               name,
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: AppColors.text_3,
-              ),
+              style: bold.copyWith(color: AppColors.text_3),
             ),
             (isMandatory)
                 ? Text(
                     "*",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.danger,
-                    ),
+                    style: bold.copyWith(color: AppColors.danger),
                   )
                 : Container(),
           ],

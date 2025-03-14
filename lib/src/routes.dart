@@ -28,6 +28,10 @@ import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
 import 'view/filter_view.dart';
+import 'view/inbox/quotation/quotation_add_pic_contact_view.dart';
+import 'view/inbox/quotation/quotation_add_select_new_view.dart';
+import 'view/inbox/quotation/quotation_add_select_view.dart';
+import 'view/inbox/quotation/quotation_add_view.dart';
 import 'view/login_view.dart';
 import 'view/select_filter_view.dart';
 import 'widgets/bottom_navigation.dart';
@@ -36,6 +40,10 @@ class AppRoutes {
   // initialization url of route
   static const String home = '/';
   static const String loginForm = '/login';
+  static const String addQuotation = '/addQuotation';
+  static const String addQuotationSelect = '/addQuotationSelect';
+  static const String addQuotationSelectNew = '/addQuotationSelectNew';
+  static const String addQuotationContact = '/addQuotationContact';
   static const String detailQuotation = '/detailQuotation';
   static const String editQuotation = '/editQuotation';
   static const String addContactClientPIC = '/addContactClientPIC';
@@ -133,6 +141,53 @@ class AppRoutes {
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
 
     GetPage(name: notification, page: () => const LayoutNotification()),
+
+    GetPage(
+      name: addQuotation,
+      page: () => const QuotationAddView(),
+    ),
+    GetPage(
+      name: addQuotationSelect,
+      page: () {
+        final String title = Get.arguments['title'];
+        final String data = Get.arguments['data'];
+        final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? false;
+        final bool isContactForm = Get.arguments['isContactForm'] ?? false;
+        final bool canAdd = Get.arguments['canAdd'] ?? false;
+
+        return QuotationAddSelectView(
+          title: title,
+          data: data,
+          isMultipleChoice: isMultipleChoice,
+          isContactForm: isContactForm,
+          canAdd: canAdd,
+        );
+      },
+    ),
+    GetPage(
+      name: addQuotationSelectNew,
+      page: () {
+        final String title = Get.arguments['title'];
+        final String data = Get.arguments['data'];
+        final int maxDigit = Get.arguments['maxDigit'] ?? 50;
+
+        return QuotationAddSelectNewView(
+          title: title,
+          data: data,
+          maxDigit: maxDigit,
+        );
+      },
+    ),
+    GetPage(
+      name: addQuotationContact,
+      page: () {
+        final int contactIndex = Get.arguments['contactIndex'];
+
+        return QuotationAddPicContactView(
+          contactIndex: contactIndex,
+        );
+      },
+    ),
 
     GetPage(
       name: detailQuotation,

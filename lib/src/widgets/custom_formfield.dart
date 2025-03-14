@@ -4,28 +4,24 @@ import 'package:ionicons/ionicons.dart';
 import '../constant/fontstyle.dart';
 import '../utils/color.dart';
 
-class FormInputWidget extends StatefulWidget {
-  final TextEditingController controller;
+class FormInputWidget extends StatelessWidget {
   final String title;
+  final TextEditingController? controller;
+  final TextInputType? keyboardType;
+  final String? hintText;
   final bool isPassword;
   final String? errorText;
   final String? Function(String?)? validator;
-
   const FormInputWidget({
     super.key,
-    required this.controller,
     required this.title,
+    this.controller,
+    this.keyboardType,
+    this.hintText,
     this.isPassword = false,
     this.errorText,
     this.validator,
   });
-
-  @override
-  State<FormInputWidget> createState() => _FormInputWidgetState();
-}
-
-class _FormInputWidgetState extends State<FormInputWidget> {
-  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -33,35 +29,84 @@ class _FormInputWidgetState extends State<FormInputWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          widget.title,
+          title,
           textAlign: TextAlign.left,
           style: bold.copyWith(color: AppColors.text_2),
         ),
         const SizedBox(height: 10),
-        TextFormField(
-          controller: widget.controller,
-          keyboardType: widget.isPassword ? TextInputType.text : TextInputType.emailAddress,
-          style: regular,
-          obscureText: widget.isPassword ? _obscureText : false,
-          decoration: InputDecoration(
-            border: const OutlineInputBorder(),
-            focusedBorder: const OutlineInputBorder(
-              borderSide: BorderSide(width: 2, color: AppColors.primary),
-            ),
-            hintText: "Enter your ${widget.title.toLowerCase()}",
-            hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
-            errorText: widget.errorText,
-            errorStyle: regular.copyWith(fontSize: 12, color: AppColors.danger),
-            suffixIcon: widget.isPassword
-                ? IconButton(
-                    icon: Icon(_obscureText ? Ionicons.eye_off_outline : Ionicons.eye_outline),
-                    onPressed: () => setState(() => _obscureText = !_obscureText),
-                  )
-                : null,
-          ),
-          validator: widget.validator,
+        CustomFormField(
+          controller: controller,
+          hintText: "Enter your ${title.toLowerCase()}",
+          isPassword: isPassword,
+          errorText: errorText,
+          validator: validator,
         ),
       ],
+    );
+  }
+}
+
+class CustomFormField extends StatefulWidget {
+  final TextEditingController? controller;
+  final TextInputType? keyboardType;
+  final String? hintText;
+  final bool isPassword;
+  final String? errorText;
+  final String? Function(String?)? validator;
+  const CustomFormField({
+    super.key,
+    this.controller,
+    this.keyboardType,
+    this.hintText,
+    this.isPassword = false,
+    this.errorText,
+    this.validator,
+  });
+
+  @override
+  State<CustomFormField> createState() => _CustomFormFieldState();
+}
+
+class _CustomFormFieldState extends State<CustomFormField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: widget.controller,
+      keyboardType: widget.keyboardType,
+      style: regular,
+      obscureText: widget.isPassword ? _obscureText : false,
+      decoration: InputDecoration(
+        border: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderSide: BorderSide(width: 1, color: AppColors.primaryText),
+        ),
+        enabledBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderSide: BorderSide(width: 1, color: AppColors.primaryText),
+        ),
+        focusedBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderSide: BorderSide(width: 2, color: AppColors.primary),
+        ),
+        errorBorder: const OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          borderSide: BorderSide(width: 1, color: AppColors.danger),
+        ),
+        hintText: widget.hintText,
+        hintStyle: regular.copyWith(color: AppColors.text_4),
+        errorText: widget.errorText,
+        errorStyle: regular.copyWith(color: AppColors.danger),
+        errorMaxLines: 2,
+        suffixIcon: widget.isPassword
+            ? IconButton(
+                icon: Icon(_obscureText ? Ionicons.eye_off_outline : Ionicons.eye_outline),
+                onPressed: () => setState(() => _obscureText = !_obscureText),
+              )
+            : null,
+      ),
+      validator: widget.validator,
     );
   }
 }

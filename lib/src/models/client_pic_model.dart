@@ -1,17 +1,7 @@
-import 'package:hive/hive.dart';
-
-part 'client_pic_model.g.dart';
-
-@HiveType(typeId: 4)
 class ClientPic {
-  @HiveField(0)
   final String? name;
-
-  @HiveField(1)
   final String? position;
-
-  @HiveField(2)
-  final List<ContactClientPic?> contacts;
+  final List<ContactClientPic> contacts;
 
   ClientPic({
     this.name,
@@ -21,10 +11,7 @@ class ClientPic {
 
   factory ClientPic.fromJson(Map<String, dynamic> json) {
     final List<ContactClientPic> contactList =
-        (json['contacts'] as List<dynamic>?)
-                ?.map((contact) => ContactClientPic.fromJson(contact))
-                .toList() ??
-            [];
+        (json['contacts'] as List<dynamic>?)?.map((contact) => ContactClientPic.fromJson(contact)).toList() ?? [];
 
     return ClientPic(
       name: json['name'],
@@ -37,17 +24,14 @@ class ClientPic {
     return {
       'name': name,
       'position': position,
-      'contacts': contacts
-          .where((contact) => contact?.toJson() != null)
-          .map((contact) => contact?.toJson())
-          .toList(),
+      'contacts': contacts.map((contact) => contact.toJson()).toList(),
     };
   }
 
   ClientPic copyWith({
     String? name,
     String? position,
-    List<ContactClientPic?>? contacts,
+    List<ContactClientPic>? contacts,
   }) {
     return ClientPic(
       name: name ?? this.name,
@@ -57,21 +41,11 @@ class ClientPic {
   }
 }
 
-@HiveType(typeId: 7)
 class ContactClientPic {
-  @HiveField(0)
   String? type;
-
-  @HiveField(1)
   String? info;
-
-  @HiveField(2)
   String? status;
-
-  @HiveField(3)
   String? detail;
-
-  @HiveField(4)
   String? note;
 
   ContactClientPic({
@@ -92,15 +66,7 @@ class ContactClientPic {
     );
   }
 
-  Map<String, dynamic>? toJson() {
-    if (type == null &&
-        info == "" &&
-        status == null &&
-        detail == null &&
-        note == "") {
-      return null;
-    }
-
+  Map<String, dynamic> toJson() {
     return {
       'type': type,
       'info': info,

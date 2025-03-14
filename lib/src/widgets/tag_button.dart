@@ -16,7 +16,7 @@ class TagButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+      margin: const EdgeInsets.only(right: 4, top: 8, bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
         color: AppColors.bgPrimary,

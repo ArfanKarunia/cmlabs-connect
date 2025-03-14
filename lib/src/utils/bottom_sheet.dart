@@ -13,6 +13,7 @@ import '../widgets/custom_submit_button.dart';
 Future<void> showCustomBottomSheet(
   BuildContext context, {
   required List<Widget> children,
+  CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
 }) {
   return showModalBottomSheet(
     context: context,
@@ -24,7 +25,7 @@ Future<void> showCustomBottomSheet(
         padding: const EdgeInsets.all(14),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: crossAxisAlignment,
           children: [
             ...children,
             Center(
@@ -44,24 +45,29 @@ Future<void> deleteBottomSheet(
   BuildContext context, {
   VoidCallback? onDelete,
   required String message,
+  CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
 }) {
-  return showCustomBottomSheet(context, children: [
-    const Text(
-      "Delete",
-      style: bold,
-    ),
-    const SizedBox(height: 10),
-    Text(
-      message,
-      style: regular,
-    ),
-    const SizedBox(height: 10),
-    CustomSubmitButton(
-      title: 'Yes, Delete it',
-      onTap: onDelete,
-    ),
-    const SizedBox(height: 10),
-  ]);
+  return showCustomBottomSheet(
+    context,
+    crossAxisAlignment: crossAxisAlignment,
+    children: [
+      const Text(
+        "Delete",
+        style: bold,
+      ),
+      const SizedBox(height: 10),
+      Text(
+        message,
+        style: regular,
+      ),
+      const SizedBox(height: 10),
+      CustomSubmitButton(
+        title: 'Yes, Delete it',
+        onTap: onDelete,
+      ),
+      const SizedBox(height: 10),
+    ],
+  );
 }
 
 Future<dynamic> DeleteBottomSheet(BuildContext context, VoidCallback onDelete, String message) {

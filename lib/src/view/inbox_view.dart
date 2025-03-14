@@ -14,7 +14,7 @@ import '../utils/bottom_sheet.dart';
 import '../widgets/custom_buttom.dart';
 import '../widgets/select_status.dart';
 import 'inbox/case_studies_inbox_view.dart';
-import 'inbox/quotation_inbox_view.dart';
+import 'inbox/quotation/quotation_inbox_view.dart';
 
 class InboxView extends StatefulWidget {
   const InboxView({super.key});
@@ -148,7 +148,7 @@ class _InboxViewState extends State<InboxView> {
                     ),
                     Obx(
                       () => Text(
-                        "${controller[index].totalLeads.value}",
+                        index < 1 ? "${controller[index].totalLeads.value}" : "0",
                         style: regular.copyWith(
                           fontSize: 12,
                           color: AppColors.primary,
@@ -218,7 +218,7 @@ class _InboxViewState extends State<InboxView> {
 
                 SelectStatus(controllers: controller),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
 
                 // Obx(
                 //   () => quotationController.newQuotationCount.value > 0
@@ -261,11 +261,39 @@ class _InboxViewState extends State<InboxView> {
                 //       : const SizedBox.shrink(),
                 // ),
 
+                if (index == 0) ...[
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: InkWell(
+                      onTap: () => Get.toNamed(AppRoutes.addQuotation),
+                      borderRadius: BorderRadius.circular(5),
+                      // overlayColor: const WidgetStatePropertyAll(AppColors.lightPrimaryColor),
+                      child: Ink(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: AppColors.primary,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Ionicons.add, size: 20, color: AppColors.white),
+                            const SizedBox(width: 6),
+                            Text(
+                              'New Quotation',
+                              style: regular.copyWith(fontSize: 12, color: AppColors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 10),
+
                 Expanded(
                   child: Container(child: pages[index].child),
                 ),
-
-                const SizedBox(height: 10),
               ],
             ),
           ),

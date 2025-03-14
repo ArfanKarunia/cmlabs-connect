@@ -1,19 +1,7 @@
-import 'package:hive/hive.dart';
-
-part 'client_source_model.g.dart';
-
-@HiveType(typeId: 5)
-class ClientSource extends HiveObject {
-  @HiveField(0)
+class ClientSource {
   final String? value;
-
-  @HiveField(1)
   final String? vendor;
-
-  @HiveField(2)
   final String? name;
-
-  @HiveField(3)
   final String? contact;
 
   ClientSource({
@@ -37,7 +25,6 @@ class ClientSource extends HiveObject {
     );
   }
 
-  // Serialisasi dari JSON
   factory ClientSource.fromJson(Map<String, dynamic> json) {
     return ClientSource(
       value: json['client_source'],
@@ -47,7 +34,6 @@ class ClientSource extends HiveObject {
     );
   }
 
-  // Serialisasi ke JSON
   Map<String, dynamic> toJson() {
     return {
       'value': value,
