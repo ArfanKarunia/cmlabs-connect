@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/history_changes_model.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation/select_field_edit_quotation.dart';
 import 'package:file_picker/file_picker.dart';
@@ -18,10 +18,9 @@ class EditHistoryView extends StatelessWidget {
   EditHistoryView({super.key, required this.historyData});
 
   final HistoryChangesModel historyData;
-  final HistoryChangesController historyChangesController =
-      Get.put(HistoryChangesController());
+  final HistoryChangesController historyChangesController = Get.put(HistoryChangesController());
 
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   TextEditingController nameControllers = TextEditingController();
   TextEditingController noteController = TextEditingController();
@@ -33,8 +32,7 @@ class EditHistoryView extends StatelessWidget {
   var typeHistory = Rx<List<String?>>([]);
   var selectedFile = Rx<File?>(null);
 
-  Future<void> _selectDateTime(
-      BuildContext context, TextEditingController controller) async {
+  Future<void> _selectDateTime(BuildContext context, TextEditingController controller) async {
     // Show date picker
     DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -61,8 +59,7 @@ class EditHistoryView extends StatelessWidget {
         );
 
         // Format the DateTime to the desired string format
-        final formattedDateTime =
-            "${combinedDateTime.day.toString().padLeft(2, '0')}/"
+        final formattedDateTime = "${combinedDateTime.day.toString().padLeft(2, '0')}/"
             "${combinedDateTime.month.toString().padLeft(2, '0')}/"
             "${combinedDateTime.year} "
             "${pickedTime.format(context)}";
@@ -97,8 +94,7 @@ class EditHistoryView extends StatelessWidget {
           "Failed to open file.",
           backgroundColor: Colors.white,
           boxShadows: [
-            BoxShadow(
-                color: Colors.black12, offset: Offset(0, 2), blurRadius: 10),
+            BoxShadow(color: Colors.black12, offset: Offset(0, 2), blurRadius: 10),
           ],
         );
       }
@@ -131,8 +127,7 @@ class EditHistoryView extends StatelessWidget {
     typeHistory.value = historyData.type;
     noteController.text = historyData.note ?? "";
     createdAtController.text = historyData.createdAtLabel;
-    isAvailableToUser.value =
-        historyData.availableToUser.contains(userController.user.value?.id);
+    isAvailableToUser.value = historyData.availableToUser.contains(userController.user.value?.id);
 
     return Scaffold(
       backgroundColor: Color(0xFFF9F9F9),
@@ -204,15 +199,11 @@ class EditHistoryView extends StatelessWidget {
                       color: AppColors.primary,
                     ),
                   ),
-                  hintStyle: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.text_4),
+                  hintStyle:
+                      GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.text_4),
                   hintText: "Activity Name",
-                  errorStyle: GoogleFonts.plusJakartaSans(
-                      color: AppColors.danger,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400),
+                  errorStyle:
+                      GoogleFonts.plusJakartaSans(color: AppColors.danger, fontSize: 12, fontWeight: FontWeight.w400),
                 ),
               ),
               SizedBox(
@@ -305,15 +296,11 @@ class EditHistoryView extends StatelessWidget {
                       color: AppColors.primary,
                     ),
                   ),
-                  hintStyle: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.text_4),
+                  hintStyle:
+                      GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.text_4),
                   hintText: "Note",
-                  errorStyle: GoogleFonts.plusJakartaSans(
-                      color: AppColors.danger,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400),
+                  errorStyle:
+                      GoogleFonts.plusJakartaSans(color: AppColors.danger, fontSize: 12, fontWeight: FontWeight.w400),
                 ),
               ),
               SizedBox(
@@ -323,8 +310,7 @@ class EditHistoryView extends StatelessWidget {
                 children: [
                   Text(
                     "Available to User",
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14, color: AppColors.text_1),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 14, color: AppColors.text_1),
                   ),
                   SizedBox(
                     width: 10,
@@ -336,11 +322,9 @@ class EditHistoryView extends StatelessWidget {
                         child: FittedBox(
                           fit: BoxFit.fill,
                           child: Switch(
-                            thumbColor:
-                                WidgetStatePropertyAll(AppColors.white_1),
+                            thumbColor: WidgetStatePropertyAll(AppColors.white_1),
                             trackOutlineWidth: WidgetStatePropertyAll(0),
-                            trackOutlineColor:
-                                WidgetStatePropertyAll(Colors.transparent),
+                            trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
                             trackColor: (!isAvailableToUser.value)
                                 ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
                                 : WidgetStatePropertyAll(AppColors.primary),
@@ -478,24 +462,19 @@ class EditHistoryView extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    historyChangesController.nameActivity.value =
-                        nameControllers.text;
+                    historyChangesController.nameActivity.value = nameControllers.text;
                     historyChangesController.status.value = historyData.status;
                     historyChangesController.type.value = typeHistory.value;
                     historyChangesController.note.value = noteController.text;
-                    historyChangesController.availableToUser.value =
-                        isAvailableToUser.value ? 1 : 0;
-                    historyChangesController.createdAt.value =
-                        createdAtController.text;
+                    historyChangesController.availableToUser.value = isAvailableToUser.value ? 1 : 0;
+                    historyChangesController.createdAt.value = createdAtController.text;
                     historyChangesController.file.value = selectedFile.value;
 
                     historyChangesController.updateHistory(historyData.id);
                   },
                   style: ButtonStyle(
-                    backgroundColor:
-                        const WidgetStatePropertyAll(AppColors.primary),
-                    foregroundColor:
-                        const WidgetStatePropertyAll(AppColors.white_1),
+                    backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
+                    foregroundColor: const WidgetStatePropertyAll(AppColors.white_1),
                     overlayColor: const WidgetStatePropertyAll(Colors.white30),
                     shadowColor: WidgetStatePropertyAll(Colors.transparent),
                     shape: WidgetStatePropertyAll(

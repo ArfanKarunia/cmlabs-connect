@@ -1,6 +1,6 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
@@ -8,7 +8,7 @@ class GeneralInfoController extends GetxController {
   var search = Rx<String?>(null);
 
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final baseUrl = Config.baseURL;
   final dio = Dio();
@@ -131,8 +131,7 @@ class GeneralInfoController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((pic) {
-          return pic['value'].toLowerCase().contains(query) ||
-              pic['label'].toLowerCase().contains(query);
+          return pic['value'].toLowerCase().contains(query) || pic['label'].toLowerCase().contains(query);
         }).toList();
       }
     }
@@ -144,8 +143,7 @@ class GeneralInfoController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((priority) {
-          return priority['value'].toLowerCase().contains(query) ||
-              priority['label'].toLowerCase().contains(query);
+          return priority['value'].toLowerCase().contains(query) || priority['label'].toLowerCase().contains(query);
         }).toList();
       }
     }
@@ -157,8 +155,7 @@ class GeneralInfoController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((status) {
-          return status['value'].toLowerCase().contains(query) ||
-              status['label'].toLowerCase().contains(query);
+          return status['value'].toLowerCase().contains(query) || status['label'].toLowerCase().contains(query);
         }).toList();
       }
     }
@@ -170,8 +167,7 @@ class GeneralInfoController extends GetxController {
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((type) {
-          return type['value'].toLowerCase().contains(query) ||
-              type['label'].toLowerCase().contains(query);
+          return type['value'].toLowerCase().contains(query) || type['label'].toLowerCase().contains(query);
         }).toList();
       }
     }
@@ -179,9 +175,9 @@ class GeneralInfoController extends GetxController {
     return result;
   }
 
-  Future<void> fetchList(String search) async {
+  Future<void> fetchFilter(String search) async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // get Data PIC
       if (search.toLowerCase() == "pic") {
@@ -272,10 +268,7 @@ class GeneralInfoController extends GetxController {
       {"value": "Ghosting", "label": "Ghosting"},
       {"value": "Email Invalid", "label": "Email Invalid"},
       {"value": "No response via Email", "label": "No response via Email"},
-      {
-        "value": "No response via WhatsApp",
-        "label": "No response via WhatsApp"
-      },
+      {"value": "No response via WhatsApp", "label": "No response via WhatsApp"},
       {"value": "Need another service", "label": "Need another service"},
       {"value": "WhatsApp Invalid", "label": "WhatsApp Invalid"},
     ], // Rejected/

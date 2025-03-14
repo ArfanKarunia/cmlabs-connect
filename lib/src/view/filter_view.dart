@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../controllers/filter_controller.dart';
-import '../controllers/quotation_controller.dart';
+import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../utils/color.dart';
 import '../widgets/custom_buttom.dart';
 import '../widgets/tag_button.dart';
@@ -15,10 +15,8 @@ import '../widgets/tag_button.dart';
 class FilterView extends StatelessWidget {
   FilterView({super.key});
 
-  final QuotationController quotationController =
-      Get.put(QuotationController());
-  final DashboardController dashboardController =
-      Get.put(DashboardController());
+  final QuotationController quotationController = Get.put(QuotationController());
+  final DashboardController dashboardController = Get.put(DashboardController());
 
   final FilterController filterController = Get.put(FilterController());
 
@@ -44,9 +42,9 @@ class FilterView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    filterController.fetchList('pic');
-    filterController.fetchList('client_source');
-    filterController.fetchList('category');
+    filterController.fetchFilter('pic');
+    filterController.fetchFilter('client_source');
+    filterController.fetchFilter('category');
     dashboardController.clearDataRange();
     dashboardController.clearFilterCategory();
     dashboardController.clearFilterPic();
@@ -96,7 +94,7 @@ class FilterView extends StatelessWidget {
                     ),
                     onPressed: () {
                       filterController.searchFilter('all');
-                      quotationController.fetchQuotationData(refreshData: true);
+                      quotationController.fetchList(refreshData: true);
                     },
                     child: Text(
                       "Clear filter",
@@ -139,27 +137,22 @@ class FilterView extends StatelessWidget {
                         hintText: "Select date",
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: AppColors.primary, width: 2),
+                          borderSide: BorderSide(color: AppColors.primary, width: 2),
                         ),
-                        errorText: startDateError.value.isNotEmpty
-                            ? startDateError.value
-                            : null,
+                        errorText: startDateError.value.isNotEmpty ? startDateError.value : null,
                       ),
                       readOnly: true,
                       controller: startDateController,
                       onTap: () async {
                         DateTime? pickedDate = await showDatePicker(
                           context: context,
-                          initialDate: filterController.startDate.value ??
-                              DateTime.now(),
+                          initialDate: filterController.startDate.value ?? DateTime.now(),
                           firstDate: DateTime(2000),
                           lastDate: DateTime(2100),
                         );
                         if (pickedDate != null) {
                           temporaryStartDate = pickedDate;
-                          startDateController.text =
-                              DateFormat('dd MMM yyyy').format(pickedDate);
+                          startDateController.text = DateFormat('dd MMM yyyy').format(pickedDate);
                           validateDateFields();
                         }
                       },
@@ -186,12 +179,9 @@ class FilterView extends StatelessWidget {
                           hintText: "Select date",
                           border: OutlineInputBorder(),
                           focusedBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: AppColors.primary, width: 2),
+                            borderSide: BorderSide(color: AppColors.primary, width: 2),
                           ),
-                          errorText: endDateError.value.isNotEmpty
-                              ? endDateError.value
-                              : null,
+                          errorText: endDateError.value.isNotEmpty ? endDateError.value : null,
                         ),
                         readOnly: true,
                         controller: endDateController,
@@ -204,8 +194,7 @@ class FilterView extends StatelessWidget {
                           );
                           if (pickedDate != null) {
                             temporaryEndDate = pickedDate;
-                            endDateController.text =
-                                DateFormat('dd MMM yyyy').format(pickedDate);
+                            endDateController.text = DateFormat('dd MMM yyyy').format(pickedDate);
                             validateDateFields();
                           }
                         },
@@ -259,8 +248,7 @@ class FilterView extends StatelessWidget {
                         scrollDirection: Axis.horizontal,
                         itemCount: filterController.filterCategoryList.length,
                         itemBuilder: (context, index) {
-                          final category =
-                              filterController.filterCategoryList[index];
+                          final category = filterController.filterCategoryList[index];
                           return TagButton(
                             statusLabel: category['label'] ?? '-',
                             onPressed: () {
@@ -403,8 +391,7 @@ class FilterView extends StatelessWidget {
                 children: [
                   Obx(
                     () {
-                      var clientSource =
-                          filterController.filterClientSource.value;
+                      var clientSource = filterController.filterClientSource.value;
                       if (clientSource == null) {
                         return Container(
                           padding: EdgeInsets.only(left: 10),
@@ -466,10 +453,9 @@ class FilterView extends StatelessWidget {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  filterController.setDateRange(
-                      temporaryStartDate, temporaryEndDate);
+                  filterController.setDateRange(temporaryStartDate, temporaryEndDate);
                   filterController.searchFilter('all');
-                  quotationController.fetchQuotationData();
+                  quotationController.fetchList();
                 },
                 style: ButtonStyle(
                   fixedSize: WidgetStatePropertyAll(

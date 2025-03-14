@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,15 +15,13 @@ class UrlTrackingController extends GetxController {
   final TextEditingController urlController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   var selectedValidity = Rx<Map<String, String>?>(null);
 
   final baseUrl = Config.baseURL;
 
   final Dio dio = Dio();
-
-
 
   void changeStatusTracking(int id, value) {
     isTracking.value = value;
@@ -38,7 +36,7 @@ class UrlTrackingController extends GetxController {
 
   Future<void> fetchUrl(int id) async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // get Data PIC
       final response = await dio.get(
@@ -60,7 +58,7 @@ class UrlTrackingController extends GetxController {
 
   Future<void> fetchValidity() async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // get Data PIC
       final response = await dio.get(
@@ -111,8 +109,7 @@ class UrlTrackingController extends GetxController {
       final query = search.value!.toLowerCase();
       result = result.where((type) {
         // print("Checking status: ${status['value']} - ${status['label']}");
-        return type['value'].toLowerCase().contains(query) ||
-            type['label'].toLowerCase().contains(query);
+        return type['value'].toLowerCase().contains(query) || type['label'].toLowerCase().contains(query);
       }).toList();
     }
 

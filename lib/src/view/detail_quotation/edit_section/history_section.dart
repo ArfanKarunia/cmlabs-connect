@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/edit_quotation/history_changes_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
 import 'package:flutter/material.dart';
@@ -10,18 +10,16 @@ import 'package:ionicons/ionicons.dart';
 import '../../../constant/const.dart';
 import '../../../controllers/edit_quotation/edit_quotation_controller.dart';
 import '../../../utils/color.dart';
-import '../../../widgets/quotation_list_tile.dart';
+import '../../../widgets/inbox_list_tile.dart';
 
 class HistorySection extends StatelessWidget {
   HistorySection({
     super.key,
   });
 
-  final EditQuotationController detailQuotationController =
-      Get.put(EditQuotationController());
-  final HistoryChangesController historyChangesController =
-      Get.put(HistoryChangesController());
-  final UserControler userController = Get.put(UserControler());
+  final EditQuotationController detailQuotationController = Get.put(EditQuotationController());
+  final HistoryChangesController historyChangesController = Get.put(HistoryChangesController());
+  final UserController userController = Get.put(UserController());
 
   @override
   Widget build(BuildContext context) {
@@ -71,30 +69,9 @@ class HistorySection extends StatelessWidget {
               itemCount: historyChangesController.historyList.value.length,
               itemBuilder: (context, index) {
                 var data = historyChangesController.historyList.value[index];
-                var isAvailableToUser = (data?.availableToUser
-                            .contains(userController.user.value!.id) ??
-                        false)
-                    .obs;
+                var isAvailableToUser = (data?.availableToUser.contains(userController.user.value!.id) ?? false).obs;
                 var status = data?.status ?? 0;
-                var tagStatus = StatusLead.newLead;
-
-                switch (status) {
-                  case 0:
-                    tagStatus = StatusLead.newLead;
-                    break;
-                  case 1:
-                    tagStatus = StatusLead.followedUp;
-                    break;
-                  case 2:
-                    tagStatus = StatusLead.accepted;
-                    break;
-                  case 3:
-                    tagStatus = StatusLead.rejected;
-                    break;
-                  case 4:
-                    tagStatus = StatusLead.onHold;
-                    break;
-                }
+                var tagStatus = statusLead[status];
 
                 return Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -169,7 +146,7 @@ class HistorySection extends StatelessWidget {
                         SizedBox(
                           height: 8,
                         ),
-                        StatusLeadUI(statusLead: tagStatus),
+                        StatusLeadTag(status: tagStatus),
                         SizedBox(
                           height: 10,
                         ),
@@ -177,8 +154,7 @@ class HistorySection extends StatelessWidget {
                           children: [
                             Text(
                               "Available to User",
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14, color: AppColors.text_1),
+                              style: GoogleFonts.plusJakartaSans(fontSize: 14, color: AppColors.text_1),
                             ),
                             SizedBox(
                               width: 10,
@@ -190,17 +166,12 @@ class HistorySection extends StatelessWidget {
                                   child: FittedBox(
                                     fit: BoxFit.fill,
                                     child: Switch(
-                                      thumbColor: WidgetStatePropertyAll(
-                                          AppColors.white_1),
-                                      trackOutlineWidth:
-                                          WidgetStatePropertyAll(0),
-                                      trackOutlineColor: WidgetStatePropertyAll(
-                                          Colors.transparent),
+                                      thumbColor: WidgetStatePropertyAll(AppColors.white_1),
+                                      trackOutlineWidth: WidgetStatePropertyAll(0),
+                                      trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
                                       trackColor: (!isAvailableToUser.value)
-                                          ? WidgetStatePropertyAll(
-                                              Color(0xFFD8DAE5))
-                                          : WidgetStatePropertyAll(
-                                              AppColors.primary),
+                                          ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
+                                          : WidgetStatePropertyAll(AppColors.primary),
                                       value: isAvailableToUser.value,
                                       onChanged: (bool value) {
                                         isAvailableToUser.value = value;
@@ -222,19 +193,13 @@ class HistorySection extends StatelessWidget {
                                 height: 51,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Get.toNamed(
-                                        AppRoutes.editHistoryChangesData,
-                                        arguments: {'history': data});
+                                    Get.toNamed(AppRoutes.editHistoryChangesData, arguments: {'history': data});
                                   },
                                   style: ButtonStyle(
-                                    shadowColor: WidgetStatePropertyAll(
-                                        Colors.transparent),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        AppColors.bgInfo),
-                                    foregroundColor:
-                                        WidgetStatePropertyAll(AppColors.info),
-                                    overlayColor:
-                                        WidgetStatePropertyAll(Colors.black12),
+                                    shadowColor: WidgetStatePropertyAll(Colors.transparent),
+                                    backgroundColor: WidgetStatePropertyAll(AppColors.bgInfo),
+                                    foregroundColor: WidgetStatePropertyAll(AppColors.info),
+                                    overlayColor: WidgetStatePropertyAll(Colors.black12),
                                     shape: WidgetStatePropertyAll(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(5),
@@ -249,8 +214,7 @@ class HistorySection extends StatelessWidget {
                                         children: [
                                           Icon(Icons.chat_bubble_outline),
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 4),
+                                            padding: const EdgeInsets.only(bottom: 4),
                                             child: Icon(
                                               Icons.edit,
                                               size: 10,
@@ -281,22 +245,16 @@ class HistorySection extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     DeleteBottomSheet(context, () {
-                                      historyChangesController
-                                          .deleteHistory(data!.id);
-                                      historyChangesController.historyList
-                                          .refresh();
+                                      historyChangesController.deleteHistory(data!.id);
+                                      historyChangesController.historyList.refresh();
                                       Get.back();
                                     }, 'Are you sure wanna delete this History?');
                                   },
                                   style: ButtonStyle(
-                                    shadowColor: WidgetStatePropertyAll(
-                                        Colors.transparent),
-                                    backgroundColor: WidgetStatePropertyAll(
-                                        AppColors.bgDanger),
-                                    foregroundColor: WidgetStatePropertyAll(
-                                        AppColors.danger),
-                                    overlayColor:
-                                        WidgetStatePropertyAll(Colors.black12),
+                                    shadowColor: WidgetStatePropertyAll(Colors.transparent),
+                                    backgroundColor: WidgetStatePropertyAll(AppColors.bgDanger),
+                                    foregroundColor: WidgetStatePropertyAll(AppColors.danger),
+                                    overlayColor: WidgetStatePropertyAll(Colors.black12),
                                     shape: WidgetStatePropertyAll(
                                       RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(5),

@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/activity_controller.dart';
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/general_info_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/url_tracking_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/models/quotation_model.dart';
 import 'package:dio/dio.dart';
@@ -44,24 +44,17 @@ class EditQuotationController extends GetxController {
   late String? initialRemarksMeeting;
   late String? initialAdditionalNoteMeeting;
 
-
-
   // Activity
   late bool initialUrlTrackingStatus;
 
+  final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
-  final AuthenticationController authenticationController =
-      Get.put(AuthenticationController());
-
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
   final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
-  final GeneralInfoController generalInfoController =
-      Get.put(GeneralInfoController());
-  final ClientPicController clientPicController =
-      Get.put(ClientPicController());
+  final GeneralInfoController generalInfoController = Get.put(GeneralInfoController());
+  final ClientPicController clientPicController = Get.put(ClientPicController());
   final ActivityController activityController = Get.put(ActivityController());
-  final UrlTrackingController urlTrackingController =
-      Get.put(UrlTrackingController());
+  final UrlTrackingController urlTrackingController = Get.put(UrlTrackingController());
 
   final baseUrl = Config.baseURL;
   final dio = Dio();
@@ -77,17 +70,16 @@ class EditQuotationController extends GetxController {
   */
 
   void loadExistingData() async {
-    await generalInfoController.fetchList("pic");
-    await generalInfoController.fetchList("priority");
-    await generalInfoController.fetchList("status");
+    await generalInfoController.fetchFilter("pic");
+    await generalInfoController.fetchFilter("priority");
+    await generalInfoController.fetchFilter("status");
 
     var quotation = detailQuotationController.quotation.value!;
 
     // print("${quotation.data.pic}");
     print("${quotation.data.clientPIC}");
 
-    await generalInfoController.loadData(quotation.data.pic,
-        quotation.priority, quotation.status, quotation.data.type);
+    await generalInfoController.loadData(quotation.data.pic, quotation.priority, quotation.status, quotation.data.type);
     await clientPicController.loadData(quotation.data.clientPIC);
 
     activityController.loadData(
@@ -114,7 +106,6 @@ class EditQuotationController extends GetxController {
   }
 
   void checkForChanges() {
-
     List<List<Map<String, String>?>> currentContactType = clientPicController.selectedContactType.value
         .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
         .toList();
@@ -135,26 +126,24 @@ class EditQuotationController extends GetxController {
         .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
         .toList();
 
-    List<String?> currentMeetingTopic = activityController.meetingTopic.value
-        .map((controller) => controller.text)
-        .toList();
+    List<String?> currentMeetingTopic =
+        activityController.meetingTopic.value.map((controller) => controller.text).toList();
 
-    List<String?> currentMeetingSchedules = activityController.meetingSchedule.value
-        .map((controller) => controller.text)
-        .toList();
+    List<String?> currentMeetingSchedules =
+        activityController.meetingSchedule.value.map((controller) => controller.text).toList();
 
-    List<bool?> currentAvailableToUser =  List.from(activityController.isAvailableToUser);
+    List<bool?> currentAvailableToUser = List.from(activityController.isAvailableToUser);
 
-    List<Map<String, String>?> currentSelectedStatusActivity = List.from(activityController.selectedStatusActivity.value);
-    List<List<Map<String, String>?>> currentSelectedTypeActivity = List.from(activityController.selectedTypeActivity.value);
-    List<String?> currentMeetingNotes = activityController.meetingNote.value
-        .map((controller) => controller.text)
-        .toList();
+    List<Map<String, String>?> currentSelectedStatusActivity =
+        List.from(activityController.selectedStatusActivity.value);
+    List<List<Map<String, String>?>> currentSelectedTypeActivity =
+        List.from(activityController.selectedTypeActivity.value);
+    List<String?> currentMeetingNotes =
+        activityController.meetingNote.value.map((controller) => controller.text).toList();
     String? currentRemarksMeeting = activityController.remarksMeeting.text;
     String? currentAdditionalNoteMeeting = activityController.addtionalNoteMeeting.text;
 
     bool currentUrlTrackingStatus = urlTrackingController.isTracking.value;
-
 
     if (generalInfoController.selectPic.value != initialPic ||
         generalInfoController.selectPriority.value != initialPriority ||
@@ -173,15 +162,12 @@ class EditQuotationController extends GetxController {
         !listEquals(currentSelectedTypeActivity, initialSelectedTypeActivity) ||
         !listEquals(currentMeetingNotes, initialMeetingNotes) ||
         currentRemarksMeeting != initialRemarksMeeting ||
-        currentAdditionalNoteMeeting != initialAdditionalNoteMeeting || 
-        currentUrlTrackingStatus != initialUrlTrackingStatus
-        ) {
+        currentAdditionalNoteMeeting != initialAdditionalNoteMeeting ||
+        currentUrlTrackingStatus != initialUrlTrackingStatus) {
       isChanged.value = true;
     } else {
       isChanged.value = false;
     }
-
-    
   }
 
   void onFieldChanged() {
@@ -189,7 +175,7 @@ class EditQuotationController extends GetxController {
   }
 
   void setInitialValues() {
-  // Simpan data awal General Information
+    // Simpan data awal General Information
     initialPic = generalInfoController.selectPic.value;
     initialPriority = generalInfoController.selectPriority.value;
     initialStatus = generalInfoController.selectStatus.value;
@@ -199,25 +185,25 @@ class EditQuotationController extends GetxController {
     initialClientPics = List.from(clientPicController.selectedPICClient);
 
     // initialContactData = clientPicController.getContactData();
-      initialContactType = clientPicController.selectedContactType.value
-          .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
-          .toList();
+    initialContactType = clientPicController.selectedContactType.value
+        .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+        .toList();
 
-      initialContactStatus = clientPicController.selectedContactStatus.value
-          .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
-          .toList();
+    initialContactStatus = clientPicController.selectedContactStatus.value
+        .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+        .toList();
 
-      initialContactDetail = clientPicController.selectedDetailStatus.value
-          .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
-          .toList();
+    initialContactDetail = clientPicController.selectedDetailStatus.value
+        .map((innerList) => innerList.map((map) => Map<String, String>.from(map!)).toList())
+        .toList();
 
-      initialContactInfo = clientPicController.infoContact.value
-          .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
-          .toList();
+    initialContactInfo = clientPicController.infoContact.value
+        .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+        .toList();
 
-      initialContactNote = clientPicController.noteContact.value
-          .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
-          .toList();
+    initialContactNote = clientPicController.noteContact.value
+        .map((innerList) => innerList?.map((controller) => controller?.text).toList() ?? [])
+        .toList();
 
     initialContactStatus = List.from(clientPicController.selectedContactStatus.value);
     initialContactDetail = List.from(clientPicController.selectedDetailStatus.value);
@@ -227,26 +213,19 @@ class EditQuotationController extends GetxController {
     initialContactNote = clientPicController.noteContact.value
         .map((list) => list?.map((controller) => controller?.text).toList() ?? [])
         .toList();
-    
 
     // Simpan data awal activity
-    initialMeetingTopics = activityController.meetingTopic.value
-        .map((controller) => controller.text)
-        .toList();
+    initialMeetingTopics = activityController.meetingTopic.value.map((controller) => controller.text).toList();
 
-    initialMeetingSchedules = activityController.meetingSchedule.value
-        .map((controller) => controller.text)
-        .toList();
-    
+    initialMeetingSchedules = activityController.meetingSchedule.value.map((controller) => controller.text).toList();
+
     initialAvailabletoUser = List.from(activityController.isAvailableToUser);
 
     initialSelectedStatusActivity = List.from(activityController.selectedStatusActivity.value);
 
     initialSelectedTypeActivity = List.from(activityController.selectedTypeActivity.value);
 
-    initialMeetingNotes = activityController.meetingNote.value
-        .map((controller) => controller.text)
-        .toList();
+    initialMeetingNotes = activityController.meetingNote.value.map((controller) => controller.text).toList();
 
     initialRemarksMeeting = activityController.remarksMeeting.text;
     initialAdditionalNoteMeeting = activityController.addtionalNoteMeeting.text;
@@ -276,11 +255,10 @@ class EditQuotationController extends GetxController {
     urlTrackingController.isTracking.value = false;
 
     isChanged.value = false;
-
   }
 
   Future<void> updateQuotation(Quotation quotation) async {
-    String? accessToken = userControler.accesToken.value;
+    String? accessToken = userController.accesToken.value;
 
     var data = formatDataQuotation(quotation);
 
@@ -299,13 +277,11 @@ class EditQuotationController extends GetxController {
 
       if (response.statusCode == 200) {
         print('Data berhasil diupdate: ${response.data}');
-        showSuccessToast(
-            "Success: Update Quotation dengan id : ${quotation.id}");
+        showSuccessToast("Success: Update Quotation dengan id : ${quotation.id}");
         Get.back();
       } else {
         print('Gagal mengupdate data. Status code: ${response.statusCode}');
-        showErrorToast(
-            "Failed: Update Quotation dengan id : ${quotation.id}, karena");
+        showErrorToast("Failed: Update Quotation dengan id : ${quotation.id}, karena");
       }
     } catch (e) {
       print("Error: $e");
@@ -314,15 +290,13 @@ class EditQuotationController extends GetxController {
   }
 
   String formatDataQuotation(Quotation quotation) {
-    UrlTrackingController urlTrackingController =
-        Get.put(UrlTrackingController());
+    UrlTrackingController urlTrackingController = Get.put(UrlTrackingController());
 
     ActivityController activityController = Get.put(ActivityController());
 
     ClientPicController clientPicController = Get.put(ClientPicController());
 
-    GeneralInfoController generalInfoController =
-        Get.put(GeneralInfoController());
+    GeneralInfoController generalInfoController = Get.put(GeneralInfoController());
 
     var pic = generalInfoController.selectPic.value?["value"];
     var priority = generalInfoController.selectPriority.value?["value"];
@@ -332,50 +306,48 @@ class EditQuotationController extends GetxController {
     // Mengonversi list ClientPic ke dalam format JSON
     var clientPic = {};
     if (clientPicController.selectedPICClient.isNotEmpty) {
-        for (var i = 0; i < clientPicController.selectedPICClient.length; i++) {
-            var client = clientPicController.selectedPICClient[i];
-            var contacts = [];
+      for (var i = 0; i < clientPicController.selectedPICClient.length; i++) {
+        var client = clientPicController.selectedPICClient[i];
+        var contacts = [];
 
-            // Mengumpulkan informasi kontak untuk setiap PIC
-            if (clientPicController.selectedContactType.value.isNotEmpty) {
-                for (var j = 0; j < clientPicController.selectedContactType.value[i].length; j++) {
-                    var contactType = clientPicController.selectedContactType.value[i][j];
-                    var contactStatus = clientPicController.selectedContactStatus.value[i][j];
-                    var contactDetailStatus = clientPicController.selectedDetailStatus.value[i][j];
-                    var contactInfo = clientPicController.infoContact.value[i]?[j];
-                    var contactNote = clientPicController.noteContact.value[i]?[j];
+        // Mengumpulkan informasi kontak untuk setiap PIC
+        if (clientPicController.selectedContactType.value.isNotEmpty) {
+          for (var j = 0; j < clientPicController.selectedContactType.value[i].length; j++) {
+            var contactType = clientPicController.selectedContactType.value[i][j];
+            var contactStatus = clientPicController.selectedContactStatus.value[i][j];
+            var contactDetailStatus = clientPicController.selectedDetailStatus.value[i][j];
+            var contactInfo = clientPicController.infoContact.value[i]?[j];
+            var contactNote = clientPicController.noteContact.value[i]?[j];
 
-                    // Pastikan semua data ada sebelum menambahkannya ke daftar kontak
-                    if (contactType != null && contactInfo != null) {
-                        contacts.add({
-                            "type": contactType['value'],
-                            "info": contactInfo.text,
-                            "status": contactStatus?['value'] ?? '',
-                            "detail": contactDetailStatus?['value'] ?? '',
-                            "note": contactNote?.text,
-                        });
-                    }
-                }
+            // Pastikan semua data ada sebelum menambahkannya ke daftar kontak
+            if (contactType != null && contactInfo != null) {
+              contacts.add({
+                "type": contactType['value'],
+                "info": contactInfo.text,
+                "status": contactStatus?['value'] ?? '',
+                "detail": contactDetailStatus?['value'] ?? '',
+                "note": contactNote?.text,
+              });
             }
-
-            // Menambahkan informasi PIC ke dalam clientPic
-            clientPic[i.toString()] = {
-                "name": client.name,
-                "position": client.position,
-                "contacts": contacts,
-            };
+          }
         }
-    }
 
+        // Menambahkan informasi PIC ke dalam clientPic
+        clientPic[i.toString()] = {
+          "name": client.name,
+          "position": client.position,
+          "contacts": contacts,
+        };
+      }
+    }
 
     var meetingTopic = [];
     var meetingSchedule = [];
     var meetingStatus = [];
     var meetingType = [];
     var meetingNote = [];
-    var meetingAvailableToUser = activityController.isAvailableToUser
-        .map((available) => available ? "1" : "0")
-        .toList();
+    var meetingAvailableToUser =
+        activityController.isAvailableToUser.map((available) => available ? "1" : "0").toList();
 
     var remarks = activityController.remarksMeeting.text;
     var notes = activityController.addtionalNoteMeeting.text;
@@ -450,7 +422,7 @@ class EditQuotationController extends GetxController {
 
     return jsonEncode(requestData);
   }
-  
+
   bool deepListEquals(List<List<Map<String, String>?>>? list1, List<List<Map<String, String>?>>? list2) {
     if (list1 == null || list2 == null) return list1 == list2;
     if (list1.length != list2.length) return false;
@@ -464,7 +436,7 @@ class EditQuotationController extends GetxController {
         if (map1 == null || map2 == null) {
           if (map1 != map2) return false;
         } else {
-          if (!mapEquals(map1, map2)) return false; 
+          if (!mapEquals(map1, map2)) return false;
         }
       }
     }

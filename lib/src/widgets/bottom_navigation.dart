@@ -1,25 +1,25 @@
-import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
 import 'package:cmlabs_connect/src/view/inbox_view.dart';
 import 'package:cmlabs_connect/src/view/account_view.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../controllers/bottom_nav_controller.dart';
+import '../constant/fontstyle.dart';
+import '../controllers/bottom_nav/bottom_nav_controller.dart';
 import '../utils/color.dart';
 import '../view/home_view.dart';
 
 class BottomNavigation extends StatelessWidget {
   BottomNavigation({super.key});
 
-  final BottomNavController navController = Get.put(BottomNavController());
-  final QuotationController quotationController = Get.put(QuotationController());
+  final BottomNavController navController = Get.find<BottomNavController>();
+  final QuotationController quotationController = Get.find<QuotationController>();
 
   final List<Widget> _pages = [
-    HomeView(),
-    InboxView(),
-    AccountView(),
+    const HomeView(),
+    const InboxView(),
+    const AccountView(),
   ];
 
   final Rx<DateTime?> _lastBackPressed = Rx<DateTime?>(null);
@@ -27,9 +27,7 @@ class BottomNavigation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return _handleBackPress();
-      },
+      onWillPop: () async => _handleBackPress(),
       child: Obx(
         () => Scaffold(
           body: SafeArea(
@@ -42,9 +40,9 @@ class BottomNavigation extends StatelessWidget {
             ),
           ),
           bottomNavigationBar: navController.isFilterActive.value
-              ? SizedBox.shrink()
+              ? const SizedBox.shrink()
               : Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     boxShadow: [
                       BoxShadow(
                         offset: Offset(0, -4),
@@ -78,24 +76,20 @@ class BottomNavigation extends StatelessWidget {
                               top: 10,
                               right: 50,
                               child: Obx(
-                                () {
-                                  return quotationController.newQuotationCount.value != 0
-                                      ? Container(
-                                          width: 15,
-                                          height: 15,
-                                          decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.danger),
-                                          child: Center(
-                                            child: Text(
-                                              "${quotationController.newQuotationCount.value}",
-                                              style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 8,
-                                                color: AppColors.white_1,
-                                              ),
-                                            ),
+                                () => quotationController.newQuotationCount.value != 0
+                                    ? Container(
+                                        width: 15,
+                                        height: 15,
+                                        decoration:
+                                            const BoxDecoration(shape: BoxShape.circle, color: AppColors.danger),
+                                        child: Center(
+                                          child: Text(
+                                            "${quotationController.newQuotationCount.value}",
+                                            style: regular.copyWith(fontSize: 8, color: AppColors.white_1),
                                           ),
-                                        )
-                                      : SizedBox.shrink();
-                                },
+                                        ),
+                                      )
+                                    : const SizedBox.shrink(),
                               ),
                             ),
                           ],
@@ -124,14 +118,10 @@ class BottomNavigation extends StatelessWidget {
     required BottomNavController controller,
   }) {
     return GestureDetector(
-      onTap: () {
-        quotationController.resetQuotatioinData();
-        quotationController.fetchCheckNewData();
-        controller.changePage(index);
-      },
+      onTap: () => controller.changePage(index),
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 15),
+        padding: const EdgeInsets.symmetric(vertical: 15),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
@@ -148,20 +138,12 @@ class BottomNavigation extends StatelessWidget {
               icon,
               color: controller.currentIndex.value == index ? AppColors.primary : Colors.grey,
             ),
-            SizedBox(height: 3),
+            const SizedBox(height: 3),
             Text(
               label,
               style: controller.currentIndex.value == index
-                  ? GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                    )
-                  : GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      color: AppColors.text_3,
-                      fontWeight: FontWeight.w400,
-                    ),
+                  ? bold.copyWith(fontSize: 12, color: AppColors.primary)
+                  : regular.copyWith(fontSize: 12, color: AppColors.text_3),
             ),
           ],
         ),
@@ -192,10 +174,7 @@ class BottomNavigation extends StatelessWidget {
                 'Press back again to exit the app', // Gunakan hanya titleText
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.white_1,
-                  fontSize: 14,
-                ),
+                style: regular.copyWith(color: AppColors.white_1),
               ),
             ),
           ],
@@ -232,10 +211,7 @@ class BottomNavigation extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                 child: Text(
                   'Press back again to exit the app',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.white_1,
-                    fontSize: 12,
-                  ),
+                  style: regular.copyWith(fontSize: 12, color: AppColors.white_1),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),

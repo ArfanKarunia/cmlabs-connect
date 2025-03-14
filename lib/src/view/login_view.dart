@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../constant/fontstyle.dart';
-import '../controllers/authentication_controller.dart';
+import '../controllers/authentication/authentication_controller.dart';
 import '../routes.dart';
 import '../utils/color.dart';
 import '../widgets/custom_formfield.dart';
@@ -51,6 +51,7 @@ class _LoginViewState extends State<LoginView> {
         passwordController.text,
       );
 
+      final code = response['code'];
       final status = response['status'];
       final message = response['message'];
 
@@ -67,19 +68,16 @@ class _LoginViewState extends State<LoginView> {
 
       if (status == "Error") {
         setState(() {
-          if (message?.contains('email') ?? false) {
+          if (code == "404") {
             emailError = message;
+          } else if (code == "401") {
+            passwordError = message;
+          } else {
+            emailError = message;
+            passwordError = message;
           }
-          passwordError = message;
           isFormValid = false;
         });
-
-        Get.snackbar(
-          'Login Failed',
-          message ?? 'An error occured',
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 4),
-        );
       }
     } catch (e) {
       // Tampilkan snackbar untuk kegagalan login

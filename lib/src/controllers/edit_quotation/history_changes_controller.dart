@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/history_changes_model.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/dio.dart' as dioPkg;
@@ -13,7 +13,7 @@ import '../../utils/toast.dart';
 class HistoryChangesController extends GetxController {
   var search = Rx<String?>(null);
 
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
@@ -60,9 +60,7 @@ class HistoryChangesController extends GetxController {
         "note": note.value ?? "",
         "available_to_user": availableToUser.value ?? 0,
         "created_at": formattedDate ?? '',
-        "file": file.value != null
-            ? await dioPkg.MultipartFile.fromFile(file.value!.path)
-            : null,
+        "file": file.value != null ? await dioPkg.MultipartFile.fromFile(file.value!.path) : null,
         ...typeFields, // Tambahkan field dinamis untuk `type`
       });
 
@@ -73,16 +71,14 @@ class HistoryChangesController extends GetxController {
         "note": note.value ?? "",
         "available_to_user": availableToUser.value ?? 0,
         "created_at": formattedDate ?? '',
-        "file": file.value != null
-            ? await dioPkg.MultipartFile.fromFile(file.value!.path)
-            : null,
+        "file": file.value != null ? await dioPkg.MultipartFile.fromFile(file.value!.path) : null,
         ...typeFields, // Tambahkan field dinamis untuk `type`
       };
       print(data);
 
       // Set headers untuk dio request
       dio.options.headers = {
-        'Authorization': 'Bearer ${userControler.accesToken.value}',
+        'Authorization': 'Bearer ${userController.accesToken.value}',
         'Content-Type': 'multipart/form-data',
       };
 
@@ -115,15 +111,14 @@ class HistoryChangesController extends GetxController {
 
   Future<void> deleteHistory(int idHistory) async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       // untuk Filter Status
-      final response =
-          await dio.delete('$baseUrl/quotation/delete_history_byId',
-              options: Options(
-                headers: {'Authorization': 'Bearer $accessToken'},
-              ),
-              data: {"id": idHistory});
+      final response = await dio.delete('$baseUrl/quotation/delete_history_byId',
+          options: Options(
+            headers: {'Authorization': 'Bearer $accessToken'},
+          ),
+          data: {"id": idHistory});
 
       if (response.statusCode == 200 && response.data != null) {
         showSuccessToast("Success: Delete History");
@@ -139,7 +134,7 @@ class HistoryChangesController extends GetxController {
 
   Future<void> fetchHistoryChanges(int idQuotation) async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/quotation/get_history',
@@ -165,7 +160,7 @@ class HistoryChangesController extends GetxController {
 
   Future<void> fetchTypeHistory(int idHistory) async {
     try {
-      String? accessToken = userControler.accesToken.value;
+      String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
         '$baseUrl/quotation/get_history_byId',
@@ -207,8 +202,7 @@ class HistoryChangesController extends GetxController {
     if (search.value != null && search.value!.isNotEmpty) {
       final query = search.value!.toLowerCase();
       result = result.where((type) {
-        return type['value'].toLowerCase().contains(query) ||
-            type['label'].toLowerCase().contains(query);
+        return type['value'].toLowerCase().contains(query) || type['label'].toLowerCase().contains(query);
       }).toList();
     }
 

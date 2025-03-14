@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
 import 'package:http/http.dart' as http;
 
-import '../constant/config.dart';
-import '../models/user_model.dart';
-import '../routes.dart';
-import '../utils/toast.dart';
+import '../../constant/config.dart';
+import '../../models/user_model.dart';
+import '../../routes.dart';
+import '../../utils/toast.dart';
 
 class AuthenticationController extends GetxController {
   var isLoading = false.obs;
@@ -21,7 +21,7 @@ class AuthenticationController extends GetxController {
   final baseUrl = Config.baseURL;
 
   Box<Map>? loginBox;
-  UserControler userController = Get.put(UserControler());
+  UserController userController = Get.put(UserController());
 
   @override
   void onInit() {
@@ -107,21 +107,26 @@ class AuthenticationController extends GetxController {
       Get.offAndToNamed(AppRoutes.home);
 
       return {
+        "code": "400",
         "status": "Success",
         "message": "Login Berhasil, Selamat datang ${user.name}",
       };
     } on DioException catch (e) {
+      String code = '500';
       String message = 'The selected email or password is invalid';
 
-      if (e.response?.data != null) {
-        if (e.response?.data['error'] == "Password salah") {
-          message = "The password is invalid.";
-        } else {
-          message = e.response?.data['error'];
-        }
+      if (e.response?.statusCode == 404) {
+        code = '404';
+        message = 'The email is invalid';
+      } else if (e.response?.statusCode == 401) {
+        code = '401';
+        message = "The password is invalid.";
+      } else if (e.response?.data != null) {
+        message = e.response?.data['error'];
       }
 
       return {
+        "code": code,
         "status": "Error",
         "message": message,
       };

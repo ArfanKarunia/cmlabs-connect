@@ -1,6 +1,7 @@
 import 'package:cmlabs_connect/src/controllers/dashboard_controller.dart';
-import 'package:cmlabs_connect/src/controllers/quotation_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 
@@ -9,130 +10,136 @@ import '../constant/const.dart';
 import '../routes.dart';
 
 class FilterController extends GetxController {
-  var search = Rx<String?>(null);
+  // Fetched Filter List
+  RxList<Map<String, String>> statusList = <Map<String, String>>[].obs;
+  RxList<Map<String, String>> clientSourceList = <Map<String, String>>[].obs;
+  RxList<Map<String, String>> picList = <Map<String, String>>[].obs;
+  RxList<Map<String, String>> categoryList = <Map<String, String>>[].obs;
 
-  // Menyimpan list status
-  var statusList = <Map<String, String>>[].obs;
-  var clientSourceList = <Map<String, String>>[].obs;
-  var picList = <Map<String, String>>[].obs;
-  var categoryList = <Map<String, String>>[].obs;
+  // Choosed Filter List
+  Rx<String?> search = Rx<String?>(null);
+  RxList<Map<String, String>> filterStatusList = <Map<String, String>>[].obs;
+  Rx<Map<String, String>?> filterClientSource = Rx<Map<String, String>?>(null);
+  Rx<Map<String, String>?> filterPic = Rx<Map<String, String>?>(null);
+  RxList<Map<String, String>> filterCategoryList = <Map<String, String>>[].obs;
 
-  // Menyimpan Filter
-  var filterStatusList = <Map<String, String>>[].obs;
-  // var filterClientSourceList = <Map<String, String>>[].obs;
-  var filterClientSource = Rx<Map<String, String>?>(null);
-  var filterPic = Rx<Map<String, String>?>(null);
-  var filterCategoryList = <Map<String, String>>[].obs;
+  // Date Filter
+  Rx<DateTime?> startDate = Rx<DateTime?>(null);
+  Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
-  // Menyimpan Filter Tanggal
-  var startDate = Rx<DateTime?>(null);
-  var endDate = Rx<DateTime?>(null);
-
-  // Inisialisasi Dio dan AuthenticationController
   final Dio dio = Dio();
   final QuotationController quotationController = Get.put(QuotationController());
   final DashboardController dashboardController = Get.put(DashboardController());
-  final UserControler userControler = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
 
   final String baseUrl = Config.baseURL;
 
-  // Fetch data status dari API
-  Future<void> fetchList(String filter) async {
+  Future<void> fetchFilter(String filter) async {
     try {
-      String? accessToken = userControler.accesToken.value;
-
-      // untuk Filter Status
-      if (filter.toLowerCase() == "status") {
-        final response = await dio.get(
-          '$baseUrl/filter/status',
-          options: Options(
-            headers: {'Authorization': 'Bearer $accessToken'},
-          ),
-        );
-
-        if (response.statusCode == 200 && response.data != null) {
-          var responseData = response.data['data'];
-
-          var mappedData = responseData.map<Map<String, String>>((status) {
-            return {
-              'value': status['value']?.toString() ?? '',
-              'label': status['label']?.toString() ?? '',
-            };
-          }).toList();
-
-          statusList.assignAll(mappedData);
-        }
-
-        // Untuk Filter Client Source
-      } else if (filter.toLowerCase() == 'client_source') {
-        final response = await dio.get(
-          '$baseUrl/filter/client_source',
-          options: Options(
-            headers: {'Authorization': 'Bearer $accessToken'},
-          ),
-        );
-
-        if (response.statusCode == 200 && response.data != null) {
-          var responseData = response.data['data'];
-
-          var mappedData = responseData.map<Map<String, String>>((clientSource) {
-            return {
-              'value': clientSource['value']?.toString() ?? '',
-              'label': clientSource['label']?.toString() ?? '',
-            };
-          }).toList();
-
-          clientSourceList.assignAll(mappedData);
-        }
-      } else if (filter.toLowerCase() == 'pic') {
-        final response = await dio.get(
-          '$baseUrl/filter/pic',
-          options: Options(
-            headers: {'Authorization': 'Bearer $accessToken'},
-          ),
-        );
-
-        if (response.statusCode == 200 && response.data != null) {
-          var responseData = response.data['data'];
-
-          var mappedData = responseData.map<Map<String, String>>((pic) {
-            return {
-              'value': pic['value']?.toString() ?? '',
-              'label': pic['label']?.toString() ?? '',
-            };
-          }).toList();
-
-          picList.clear();
-
-          picList.add({'value': 'all', 'label': 'All'});
-          picList.addAll(mappedData);
-        }
-      } else if (filter.toLowerCase() == 'category') {
-        final response = await dio.get(
-          '$baseUrl/filter/data_services',
-          options: Options(
-            headers: {'Authorization': 'Bearer $accessToken'},
-          ),
-        );
-
-        if (response.statusCode == 200 && response.data != null) {
-          var responseData = response.data['data'];
-
-          var mappedData = responseData.map<Map<String, String>>((category) {
-            return {
-              'value': category['id']?.toString() ?? '',
-              'label': category['text']?.toString() ?? '',
-            };
-          }).toList();
-
-          categoryList.clear();
-
-          categoryList.add({'value': 'all', 'label': 'All'});
-          categoryList.addAll(mappedData);
-        }
+      switch (filter.toLowerCase()) {
+        case 'status':
+          await fetchStatusFilter();
+          break;
+        case 'client_source':
+          await fetchClientSourceFilter();
+          break;
+        case 'pic':
+          await fetchPicFilter();
+          break;
+        case 'category':
+          await fetchCategoryFilter();
+          break;
+        default:
+          break;
       }
     } catch (e) {
-      print('Error fetching status data: $e');
+      debugPrint('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> fetchStatusFilter() async {
+    final response = await dio.get(
+      '$baseUrl/filter/status',
+      options: Options(
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      final data = response.data['data'].map<Map<String, String>>((status) {
+        return {
+          'value': status['value']?.toString() ?? '',
+          'label': status['label']?.toString() ?? '',
+        };
+      }).toList();
+
+      statusList.assignAll(data);
+    }
+  }
+
+  Future<void> fetchClientSourceFilter() async {
+    final response = await dio.get(
+      '$baseUrl/filter/client_source',
+      options: Options(
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      final data = response.data['data'].map<Map<String, String>>((clientSource) {
+        return {
+          'value': clientSource['value']?.toString() ?? '',
+          'label': clientSource['label']?.toString() ?? '',
+        };
+      }).toList();
+
+      clientSourceList.assignAll(data);
+    }
+  }
+
+  Future<void> fetchPicFilter() async {
+    final response = await dio.get(
+      '$baseUrl/filter/pic',
+      options: Options(
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      final data = response.data['data'].map<Map<String, String>>((pic) {
+        return {
+          'value': pic['value']?.toString() ?? '',
+          'label': pic['label']?.toString() ?? '',
+        };
+      }).toList();
+
+      picList.clear();
+
+      picList.add({'value': 'all', 'label': 'All'});
+      picList.addAll(data);
+    }
+  }
+
+  Future<void> fetchCategoryFilter() async {
+    final response = await dio.get(
+      '$baseUrl/filter/data_services',
+      options: Options(
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      final data = response.data['data'].map<Map<String, String>>((category) {
+        return {
+          'value': category['id']?.toString() ?? '',
+          'label': category['text']?.toString() ?? '',
+        };
+      }).toList();
+
+      categoryList.clear();
+
+      categoryList.add({'value': 'all', 'label': 'All'});
+      categoryList.addAll(data);
     }
   }
 
@@ -244,7 +251,7 @@ class FilterController extends GetxController {
 
   List<dynamic> searchData(String filter) {
     List result = [];
-    // fetchList();
+    // fetchFilter();
 
     // Debugging
     print("Current Filter: $filter");
@@ -309,22 +316,13 @@ class FilterController extends GetxController {
 
   void filterByStatus() {
     quotationController.clearFilterStatus();
-    for (var data in filterStatusList) {
+    for (final data in filterStatusList) {
       switch (data['value']) {
         case 'all':
           quotationController.clearFilterStatus();
           break;
-        case 'new':
-          quotationController.addFilterStatus(StatusLead.newLead);
-          break;
-        case 'followed-up':
-          quotationController.addFilterStatus(StatusLead.followedUp);
-          break;
-        case 'accepted':
-          quotationController.addFilterStatus(StatusLead.accepted);
-          break;
-        case 'rejected':
-          quotationController.addFilterStatus(StatusLead.rejected);
+        default:
+          quotationController.addFilterStatus(data['value'].toString());
           break;
       }
     }
@@ -382,7 +380,7 @@ class FilterController extends GetxController {
   }
 
   void filterByDateRange() {
-    quotationController.clearDataRange();
+    quotationController.clearFilterDate();
     dashboardController.clearDataRange();
 
     quotationController.filterStartDate.value = startDate.value;

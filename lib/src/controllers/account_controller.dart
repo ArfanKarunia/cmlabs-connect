@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/achievement_model.dart';
 import 'package:cmlabs_connect/src/models/certification_model.dart';
 import 'package:cmlabs_connect/src/models/education_model.dart';
@@ -19,8 +19,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class AccountController extends GetxController {
-
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
   final baseUrl = Config.baseURL;
   final Dio dio = Dio();
 
@@ -62,14 +61,12 @@ class AccountController extends GetxController {
         about.value = responseData['about'];
 
         // Check if 'specialization' is null or not a List, then assign an empty list if needed
-        if (responseData['specialization'] != null &&
-            responseData['specialization'] is List) {
+        if (responseData['specialization'] != null && responseData['specialization'] is List) {
           var specList = List<String>.from(responseData['specialization']);
           specialization.value = specList;
 
           // Reset the isChecked list to match the specializationList length
-          isChecked.value =
-              List<bool>.filled(specializationList.value.length, false);
+          isChecked.value = List<bool>.filled(specializationList.value.length, false);
 
           // Iterate over the specialization data and match with specializationList
           for (var i = 0; i < specialization.value.length; i++) {
@@ -84,8 +81,7 @@ class AccountController extends GetxController {
           }
         } else {
           specialization.value = [];
-          isChecked.value =
-              List<bool>.filled(specializationList.value.length, false);
+          isChecked.value = List<bool>.filled(specializationList.value.length, false);
         }
       }
     } catch (e) {
@@ -117,8 +113,7 @@ class AccountController extends GetxController {
             .toList();
 
         // Atur panjang isChecked sesuai dengan jumlah item dalam specialization
-        isChecked.value =
-            List<bool>.filled(specializationList.value.length, false);
+        isChecked.value = List<bool>.filled(specializationList.value.length, false);
       }
     } catch (e) {
       print('Error fetching status data: $e');
@@ -219,9 +214,7 @@ class AccountController extends GetxController {
         print("data: $responseData");
 
         // Map each JSON item to an ExperienceModel using fromJson
-        experienceList.value = responseData
-            .map<ExperienceModel?>((item) => ExperienceModel.fromJson(item))
-            .toList();
+        experienceList.value = responseData.map<ExperienceModel?>((item) => ExperienceModel.fromJson(item)).toList();
 
         // Update the Rx variable
         experienceList.refresh();
@@ -250,8 +243,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -306,8 +298,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -433,9 +424,7 @@ class AccountController extends GetxController {
         print("data: $responseData");
 
         // Map each JSON item to an ExperienceModel using fromJson
-        educationList.value = responseData
-            .map<EducationModel?>((item) => EducationModel.fromJson(item))
-            .toList();
+        educationList.value = responseData.map<EducationModel?>((item) => EducationModel.fromJson(item)).toList();
 
         // Update the Rx variable
         educationList.refresh();
@@ -465,8 +454,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -522,8 +510,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -618,10 +605,8 @@ class AccountController extends GetxController {
         print("data: $responseData");
 
         // Map each JSON item to an ExperienceModel using fromJson
-        certificationList.value = responseData
-            .map<CertificationModel?>(
-                (item) => CertificationModel.fromJson(item))
-            .toList();
+        certificationList.value =
+            responseData.map<CertificationModel?>((item) => CertificationModel.fromJson(item)).toList();
 
         // Update the Rx variable
         certificationList.refresh();
@@ -650,8 +635,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -706,8 +690,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -801,9 +784,8 @@ class AccountController extends GetxController {
         print("data: $responseData");
 
         // Map each JSON item to an ExperienceModel using fromJson
-        organizationList.value = responseData
-            .map<OrganizationModel?>((item) => OrganizationModel.fromJson(item))
-            .toList();
+        organizationList.value =
+            responseData.map<OrganizationModel?>((item) => OrganizationModel.fromJson(item)).toList();
 
         // Update the Rx variable
         organizationList.refresh();
@@ -831,8 +813,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -886,8 +867,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -979,9 +959,7 @@ class AccountController extends GetxController {
         print("data: $responseData");
 
         // Map each JSON item to an ExperienceModel using fromJson
-        achievementList.value = responseData
-            .map<AchievementModel?>((item) => AchievementModel.fromJson(item))
-            .toList();
+        achievementList.value = responseData.map<AchievementModel?>((item) => AchievementModel.fromJson(item)).toList();
 
         // Update the Rx variable
         organizationList.refresh();
@@ -1007,8 +985,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -1060,8 +1037,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       // Perform the POST request
       var response = await http.post(
@@ -1156,9 +1132,7 @@ class AccountController extends GetxController {
         print("data: $responseData");
 
         // Map each JSON item to an ExperienceModel using fromJson
-        volunteerList.value = responseData
-            .map<VolunteerModel?>((item) => VolunteerModel.fromJson(item))
-            .toList();
+        volunteerList.value = responseData.map<VolunteerModel?>((item) => VolunteerModel.fromJson(item)).toList();
 
         // Update the Rx variable
         volunteerList.refresh();
@@ -1186,8 +1160,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/add-volunteer'),
@@ -1236,8 +1209,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/update-volunteer'),
@@ -1321,9 +1293,7 @@ class AccountController extends GetxController {
         print("data: $responseData");
 
         // Map each JSON item to an ExperienceModel using fromJson
-        publicationList.value = responseData
-            .map<PublicationModel?>((item) => PublicationModel.fromJson(item))
-            .toList();
+        publicationList.value = responseData.map<PublicationModel?>((item) => PublicationModel.fromJson(item)).toList();
 
         // Update the Rx variable
         publicationList.refresh();
@@ -1348,8 +1318,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/add-publication'),
@@ -1395,8 +1364,7 @@ class AccountController extends GetxController {
 
     print(body);
     try {
-      String? accessToken =
-          userController.accesToken.value.toString();
+      String? accessToken = userController.accesToken.value.toString();
 
       var response = await http.post(
         Uri.parse('$baseUrl/profile/update-publication'),
@@ -1492,8 +1460,7 @@ class AccountController extends GetxController {
           String? role = getRoleName(jobPosition, roleList.value);
 
           if (role == null) {
-            if (responseData['role_name'] != null &&
-                responseData['role_name'].isNotEmpty) {
+            if (responseData['role_name'] != null && responseData['role_name'].isNotEmpty) {
               userController.roleName.value = responseData['role_name'];
             }
           } else {
@@ -1506,7 +1473,7 @@ class AccountController extends GetxController {
             orElse: () => {},
           );
           profileRole.value = matchedRole;
-                } else if (userController.roleName.value != 'User') {
+        } else if (userController.roleName.value != 'User') {
           // Jika job_position null atau kosong, cek roleName
           String roleName = userController.roleName.value;
           Map<String, dynamic>? matchedRole = roleList.value.firstWhere(
@@ -1514,8 +1481,7 @@ class AccountController extends GetxController {
             orElse: () => {},
           );
           profileRole.value = matchedRole;
-                }
-
+        }
 
         profileUsername.value = responseData['username'] ?? '';
         profileFullName.value = responseData['name'] ?? '';
@@ -1530,7 +1496,6 @@ class AccountController extends GetxController {
         // Simpan data user dan profil lainnya
         User userData = User.fromMap(responseData);
         userController.saveUser(userData);
-
       }
     } catch (e) {
       print('Error fetching status data: $e');
@@ -1577,7 +1542,7 @@ class AccountController extends GetxController {
 
       if (response.statusCode == 200) {
         await fetchProfile();
-        
+
         showSuccessToast("Success: update basic information in profile");
 
         Get.back();

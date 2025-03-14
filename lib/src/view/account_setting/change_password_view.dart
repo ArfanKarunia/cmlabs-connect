@@ -1,5 +1,5 @@
-import 'package:cmlabs_connect/src/controllers/authentication_controller.dart';
-import 'package:cmlabs_connect/src/controllers/user_controler.dart';
+import 'package:cmlabs_connect/src/controllers/authentication/authentication_controller.dart';
+import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +10,7 @@ import '../../utils/color.dart';
 class ChangePasswordView extends StatelessWidget {
   ChangePasswordView({super.key});
 
-  final UserControler userController = Get.put(UserControler());
+  final UserController userController = Get.put(UserController());
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
 
   final TextEditingController oldPassword = TextEditingController();
@@ -123,8 +123,7 @@ class ChangePasswordView extends StatelessWidget {
                               icon: Icon(
                                 _obscureOld.value
                                     ? Ionicons.eye_off_outline
-                                    : Ionicons
-                                        .eye_outline, // Mengubah icon berdasarkan state
+                                    : Ionicons.eye_outline, // Mengubah icon berdasarkan state
                               ),
                               onPressed: () {
                                 _obscureOld.value = !_obscureOld.value;
@@ -214,8 +213,7 @@ class ChangePasswordView extends StatelessWidget {
                               icon: Icon(
                                 _obscureNew.value
                                     ? Ionicons.eye_off_outline
-                                    : Ionicons
-                                        .eye_outline, // Mengubah icon berdasarkan state
+                                    : Ionicons.eye_outline, // Mengubah icon berdasarkan state
                               ),
                               onPressed: () {
                                 _obscureNew.value = !_obscureNew.value;
@@ -313,8 +311,7 @@ class ChangePasswordView extends StatelessWidget {
                               icon: Icon(
                                 _obscureConfirm.value
                                     ? Ionicons.eye_off_outline
-                                    : Ionicons
-                                        .eye_outline, // Mengubah icon berdasarkan state
+                                    : Ionicons.eye_outline, // Mengubah icon berdasarkan state
                               ),
                               onPressed: () {
                                 _obscureConfirm.value = !_obscureConfirm.value;
@@ -347,14 +344,13 @@ class ChangePasswordView extends StatelessWidget {
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         // Save the form
-                        authenticationController.changePassword(oldPassword.text, newPassword.text, confirmPassword.text);
+                        authenticationController.changePassword(
+                            oldPassword.text, newPassword.text, confirmPassword.text);
                       }
                     },
                     style: ButtonStyle(
-                      backgroundColor:
-                          WidgetStatePropertyAll(AppColors.primary),
-                      foregroundColor:
-                          WidgetStatePropertyAll(AppColors.white_1),
+                      backgroundColor: WidgetStatePropertyAll(AppColors.primary),
+                      foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
                       overlayColor: WidgetStatePropertyAll(Colors.white30),
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
@@ -364,8 +360,7 @@ class ChangePasswordView extends StatelessWidget {
                     ),
                     child: Text(
                       "Save",
-                      style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14, fontWeight: FontWeight.bold),
+                      style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

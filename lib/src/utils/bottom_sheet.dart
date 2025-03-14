@@ -7,8 +7,64 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Future<dynamic> DeleteBottomSheet(
-    BuildContext context, VoidCallback onDelete, String message) {
+import '../constant/fontstyle.dart';
+import '../widgets/custom_submit_button.dart';
+
+Future<void> showCustomBottomSheet(
+  BuildContext context, {
+  required List<Widget> children,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (context) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...children,
+            Center(
+              child: Text(
+                "Swipe down or Tap the screen to close",
+                style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Future<void> deleteBottomSheet(
+  BuildContext context, {
+  VoidCallback? onDelete,
+  required String message,
+}) {
+  return showCustomBottomSheet(context, children: [
+    const Text(
+      "Delete",
+      style: bold,
+    ),
+    const SizedBox(height: 10),
+    Text(
+      message,
+      style: regular,
+    ),
+    const SizedBox(height: 10),
+    CustomSubmitButton(
+      title: 'Yes, Delete it',
+      onTap: onDelete,
+    ),
+    const SizedBox(height: 10),
+  ]);
+}
+
+Future<dynamic> DeleteBottomSheet(BuildContext context, VoidCallback onDelete, String message) {
   return showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
@@ -31,8 +87,7 @@ Future<dynamic> DeleteBottomSheet(
           Wrap(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.only(left: 15, right: 15, bottom: 50, top: 25),
+                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 50, top: 25),
                 decoration: const BoxDecoration(
                   color: AppColors.white_1,
                   borderRadius: BorderRadius.vertical(
@@ -82,8 +137,7 @@ Future<dynamic> DeleteBottomSheet(
                       child: ElevatedButton(
                         onPressed: onDelete,
                         style: ButtonStyle(
-                          backgroundColor:
-                              const WidgetStatePropertyAll(AppColors.primary),
+                          backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
                           shape: WidgetStatePropertyAll(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -122,8 +176,7 @@ Future<dynamic> DeleteBottomSheet(
   );
 }
 
-Future<dynamic> SignOutBottomSheet(
-    BuildContext context, VoidCallback onPressed) {
+Future<dynamic> SignOutBottomSheet(BuildContext context, VoidCallback onPressed) {
   return showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
@@ -146,8 +199,7 @@ Future<dynamic> SignOutBottomSheet(
           Wrap(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.only(left: 15, right: 15, bottom: 40, top: 25),
+                padding: const EdgeInsets.only(left: 15, right: 15, bottom: 40, top: 25),
                 width: double.infinity,
                 decoration: const BoxDecoration(
                   color: AppColors.white_1,
@@ -203,14 +255,10 @@ Future<dynamic> SignOutBottomSheet(
                       child: ElevatedButton(
                         onPressed: onPressed,
                         style: ButtonStyle(
-                          backgroundColor:
-                              WidgetStateProperty.all(AppColors.bgDanger),
-                          foregroundColor:
-                              WidgetStateProperty.all(AppColors.danger),
-                          overlayColor: WidgetStateProperty.all(
-                              const Color.fromRGBO(253, 208, 208, 0.7)),
-                          shadowColor:
-                              WidgetStateProperty.all(Colors.transparent),
+                          backgroundColor: WidgetStateProperty.all(AppColors.bgDanger),
+                          foregroundColor: WidgetStateProperty.all(AppColors.danger),
+                          overlayColor: WidgetStateProperty.all(const Color.fromRGBO(253, 208, 208, 0.7)),
+                          shadowColor: WidgetStateProperty.all(Colors.transparent),
                           shape: WidgetStateProperty.all(
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
@@ -246,7 +294,6 @@ Future<dynamic> SignOutBottomSheet(
   );
 }
 
-
 class BottomSheetSaveChanges extends StatefulWidget {
   BottomSheetSaveChanges({super.key, this.quotation, required this.onPressed, this.name});
 
@@ -260,8 +307,7 @@ class BottomSheetSaveChanges extends StatefulWidget {
 }
 
 class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
-  EditQuotationController detailQuotationController =
-      Get.put(EditQuotationController());
+  EditQuotationController detailQuotationController = Get.put(EditQuotationController());
 
   @override
   Widget build(BuildContext context) {
@@ -307,8 +353,7 @@ class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
                 child: ElevatedButton(
                   onPressed: widget.onPressed,
                   style: ButtonStyle(
-                    backgroundColor:
-                        WidgetStateProperty.all(AppColors.primary),
+                    backgroundColor: WidgetStateProperty.all(AppColors.primary),
                     shape: WidgetStateProperty.all(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5),
