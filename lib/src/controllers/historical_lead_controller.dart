@@ -17,7 +17,7 @@ class HistoricalLeadController extends GetxController {
   final historicalData1 = Rx<HistoricalLeadModel?>(null);
   final historicalData2 = Rx<HistoricalLeadModel?>(null);
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   final baseUrl = Config.baseURL;
   final Dio dio = Dio();

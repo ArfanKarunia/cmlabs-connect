@@ -15,7 +15,7 @@ class UrlTrackingController extends GetxController {
   final TextEditingController urlController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   var selectedValidity = Rx<Map<String, String>?>(null);
 

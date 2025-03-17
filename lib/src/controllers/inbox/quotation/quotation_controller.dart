@@ -12,7 +12,6 @@ import '../../user/user_controller.dart';
 
 class QuotationController extends InboxController {
   RxList<Quotation> quotationList = <Quotation>[].obs;
-  Rx<int> totalLeads = Rx<int>(0);
 
   Rx<int> newestIdQuotation = Rx<int>(0);
   Rx<int> newQuotationCount = Rx<int>(0);
@@ -20,14 +19,6 @@ class QuotationController extends InboxController {
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
   final UserController userController = Get.find<UserController>();
-
-  @override
-  void onReady() async {
-    super.onReady();
-    await fetchTotalLeads();
-    await fetchList();
-    // checkNewQuotationsPeriodically();
-  }
 
   @override
   Future<void> fetchList({
@@ -76,6 +67,7 @@ class QuotationController extends InboxController {
     }
   }
 
+  @override
   Future<void> fetchTotalLeads() async {
     try {
       String? accessToken = userController.accesToken.value;

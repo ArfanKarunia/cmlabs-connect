@@ -1,16 +1,16 @@
-class Category {
+class Pic {
   final String value;
   final String label;
 
-  Category({
+  Pic({
     required this.value,
     required this.label,
   });
 
-  factory Category.fromJson(Map<String, String> json) {
-    return Category(
-      value: json['id'].toString(),
-      label: json['text'].toString(),
+  factory Pic.fromJson(Map<String, String> json) {
+    return Pic(
+      value: json['value']?.toString() ?? '',
+      label: json['label']?.toString() ?? '',
     );
   }
 

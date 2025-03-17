@@ -25,7 +25,7 @@ class _AccountViewState extends State<AccountView> {
   final AuthenticationController authenticationController = Get.put(AuthenticationController());
   final AccountController accountController = Get.put(AccountController());
   final NotificationController notificationController = Get.put(NotificationController());
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {

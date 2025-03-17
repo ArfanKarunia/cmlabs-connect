@@ -1,5 +1,5 @@
 import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_controller.dart';
-import 'package:cmlabs_connect/src/controllers/edit_quotation/contactPIC_controller.dart';
+import 'package:cmlabs_connect/src/controllers/edit_quotation/client_pic_contact_controller.dart';
 import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:cmlabs_connect/src/view/detail_quotation/select_field_edit_quotation.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +16,9 @@ class ClientSidePICSection extends StatelessWidget {
     super.key,
   });
 
-  final ClientPicController clientPicController =
-      Get.put(ClientPicController());
-  final ContactpicController contactpicController =
-      Get.put(ContactpicController());
-  final EditQuotationController editQuotationController =
-      Get.put(EditQuotationController());
+  final ClientPicController clientPicController = Get.put(ClientPicController());
+  final ClientPicContactController contactpicController = Get.put(ClientPicContactController());
+  final EditQuotationController editQuotationController = Get.put(EditQuotationController());
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +51,7 @@ class ClientSidePICSection extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            (clientPicController.selectedPICClient.length > 1)
-                                ? "PIC ${index + 1} Name"
-                                : "PIC Name",
+                            (clientPicController.selectedPICClient.length > 1) ? "PIC ${index + 1} Name" : "PIC Name",
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
@@ -65,13 +60,11 @@ class ClientSidePICSection extends StatelessWidget {
                           ),
                           (clientPicController.selectedPICClient.length > 1)
                               ? Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
                                   child: CustomButton(
                                     backgroundColor: Colors.transparent,
                                     onPressed: () {
-                                      clientPicController
-                                          .removePICClient(index);
+                                      clientPicController.removePICClient(index);
                                       editQuotationController.onFieldChanged();
                                     },
                                     child: Icon(
@@ -107,14 +100,10 @@ class ClientSidePICSection extends StatelessWidget {
                             ),
                           ),
                           hintStyle: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.text_4),
+                              fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.text_4),
                           hintText: "PIC Name",
                           errorStyle: GoogleFonts.plusJakartaSans(
-                              color: AppColors.danger,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400),
+                              color: AppColors.danger, fontSize: 12, fontWeight: FontWeight.w400),
                         ),
                       ),
                       const SizedBox(
@@ -132,8 +121,7 @@ class ClientSidePICSection extends StatelessWidget {
                         height: 10,
                       ),
                       TextFormField(
-                        controller:
-                            clientPicController.positionControllers[index],
+                        controller: clientPicController.positionControllers[index],
                         onChanged: (value) {
                           clientPicController.onPositionChanged(index);
                           editQuotationController.onFieldChanged();
@@ -152,14 +140,10 @@ class ClientSidePICSection extends StatelessWidget {
                             ),
                           ),
                           hintStyle: GoogleFonts.plusJakartaSans(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: AppColors.text_4),
+                              fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.text_4),
                           hintText: "Position",
                           errorStyle: GoogleFonts.plusJakartaSans(
-                              color: AppColors.danger,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400),
+                              color: AppColors.danger, fontSize: 12, fontWeight: FontWeight.w400),
                         ),
                       ),
                       const SizedBox(
@@ -179,8 +163,7 @@ class ClientSidePICSection extends StatelessWidget {
                       ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: clientPicController
-                            .selectedContactType.value[index].length,
+                        itemCount: clientPicController.selectedContactType.value[index].length,
                         itemBuilder: (context, index2) {
                           return clientPic.contacts.isNotEmpty
                               ? Column(
@@ -202,36 +185,25 @@ class ClientSidePICSection extends StatelessWidget {
                                       child: Container(
                                         child: Obx(
                                           () {
-                                            return clientPicController
-                                                                .selectedContactType
-                                                                .value[index]
-                                                            [index2] ==
+                                            return clientPicController.selectedContactType.value[index][index2] ==
                                                         null ||
-                                                    clientPicController
-                                                            .selectedContactType
-                                                            .value[index][index2] ==
-                                                        ''
+                                                    clientPicController.selectedContactType.value[index][index2] == ''
                                                 ? Text(
                                                     "Select type contact",
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
+                                                    style: GoogleFonts.plusJakartaSans(
                                                       color: AppColors.text_3,
                                                       fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   )
                                                 : Text(
-                                                    clientPicController
-                                                            .selectedContactType
-                                                            .value[index][index2]?['label'] ??
+                                                    clientPicController.selectedContactType.value[index][index2]
+                                                            ?['label'] ??
                                                         '-',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
+                                                    style: GoogleFonts.plusJakartaSans(
                                                       color: AppColors.text_1,
                                                       fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   );
                                           },
@@ -249,7 +221,6 @@ class ClientSidePICSection extends StatelessWidget {
                                             // print(value);
 
                                             if (value != null) {
-
                                               clientPicController.addContactType(index, index2, value);
 
                                               clientPicController.selectedContactStatus.value[index][index2]?.clear();
@@ -259,8 +230,7 @@ class ClientSidePICSection extends StatelessWidget {
                                               clientPicController.selectedContactStatus.refresh();
                                               clientPicController.selectedDetailStatus.refresh();
 
-                                              editQuotationController
-                                                  .onFieldChanged();
+                                              editQuotationController.onFieldChanged();
                                             }
                                           },
                                         );
@@ -281,8 +251,7 @@ class ClientSidePICSection extends StatelessWidget {
                                       height: 10,
                                     ),
                                     TextFormField(
-                                      controller: clientPicController
-                                          .infoContact.value[index]?[index2],
+                                      controller: clientPicController.infoContact.value[index]?[index2],
                                       onChanged: (value) => editQuotationController.onFieldChanged(),
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
@@ -298,14 +267,10 @@ class ClientSidePICSection extends StatelessWidget {
                                           ),
                                         ),
                                         hintStyle: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.text_4),
+                                            fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.text_4),
                                         hintText: "Contact Info",
                                         errorStyle: GoogleFonts.plusJakartaSans(
-                                            color: AppColors.danger,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w400),
+                                            color: AppColors.danger, fontSize: 12, fontWeight: FontWeight.w400),
                                       ),
                                     ),
                                     SizedBox(
@@ -316,36 +281,25 @@ class ClientSidePICSection extends StatelessWidget {
                                       child: Container(
                                         child: Obx(
                                           () {
-                                            return clientPicController
-                                                                .selectedContactStatus
-                                                                .value[index]
-                                                            [index2] ==
+                                            return clientPicController.selectedContactStatus.value[index][index2] ==
                                                         null ||
-                                                    clientPicController
-                                                            .selectedContactStatus
-                                                            .value[index][index2] ==
-                                                        ''
+                                                    clientPicController.selectedContactStatus.value[index][index2] == ''
                                                 ? Text(
                                                     "Select status",
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
+                                                    style: GoogleFonts.plusJakartaSans(
                                                       color: AppColors.text_3,
                                                       fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   )
                                                 : Text(
-                                                    clientPicController
-                                                            .selectedContactStatus
-                                                            .value[index][index2]?['label'] ??
+                                                    clientPicController.selectedContactStatus.value[index][index2]
+                                                            ?['label'] ??
                                                         '-',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
+                                                    style: GoogleFonts.plusJakartaSans(
                                                       color: AppColors.text_1,
                                                       fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   );
                                           },
@@ -361,22 +315,12 @@ class ClientSidePICSection extends StatelessWidget {
                                         )?.then(
                                           (value) {
                                             if (value != null) {
-                                              clientPicController
-                                                      .selectedContactStatus
-                                                      .value[index][index2] =
-                                                  value;
-                                              clientPicController
-                                                  .selectedDetailStatus
-                                                  .value[index][index2]?.clear();
-                                              clientPicController
-                                                  .selectedContactStatus
-                                                  .refresh();
-                                              clientPicController
-                                                  .selectedDetailStatus
-                                                  .refresh();
+                                              clientPicController.selectedContactStatus.value[index][index2] = value;
+                                              clientPicController.selectedDetailStatus.value[index][index2]?.clear();
+                                              clientPicController.selectedContactStatus.refresh();
+                                              clientPicController.selectedDetailStatus.refresh();
 
-                                              editQuotationController
-                                                  .onFieldChanged();
+                                              editQuotationController.onFieldChanged();
                                             }
                                           },
                                         );
@@ -390,36 +334,25 @@ class ClientSidePICSection extends StatelessWidget {
                                       child: Container(
                                         child: Obx(
                                           () {
-                                            return clientPicController
-                                                                .selectedDetailStatus
-                                                                .value[index]
-                                                            [index2] ==
+                                            return clientPicController.selectedDetailStatus.value[index][index2] ==
                                                         null ||
-                                                    clientPicController
-                                                            .selectedDetailStatus
-                                                            .value[index][index2] ==
-                                                        ''
+                                                    clientPicController.selectedDetailStatus.value[index][index2] == ''
                                                 ? Text(
                                                     "Select Detail Status",
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
+                                                    style: GoogleFonts.plusJakartaSans(
                                                       color: AppColors.text_3,
                                                       fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   )
                                                 : Text(
-                                                    clientPicController
-                                                            .selectedDetailStatus
-                                                            .value[index][index2]?['label'] ??
+                                                    clientPicController.selectedDetailStatus.value[index][index2]
+                                                            ?['label'] ??
                                                         '-',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
+                                                    style: GoogleFonts.plusJakartaSans(
                                                       color: AppColors.text_1,
                                                       fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w400,
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   );
                                           },
@@ -436,15 +369,9 @@ class ClientSidePICSection extends StatelessWidget {
                                           (value) {
                                             // print(value);
                                             if (value != null) {
-                                              clientPicController
-                                                      .selectedDetailStatus
-                                                      .value[index][index2] =
-                                                  value;
-                                              clientPicController
-                                                  .selectedDetailStatus
-                                                  .refresh();
-                                              editQuotationController
-                                                  .onFieldChanged();
+                                              clientPicController.selectedDetailStatus.value[index][index2] = value;
+                                              clientPicController.selectedDetailStatus.refresh();
+                                              editQuotationController.onFieldChanged();
                                             }
                                           },
                                         );
@@ -465,8 +392,7 @@ class ClientSidePICSection extends StatelessWidget {
                                       height: 10,
                                     ),
                                     TextFormField(
-                                      controller: clientPicController
-                                          .noteContact.value[index]?[index2],
+                                      controller: clientPicController.noteContact.value[index]?[index2],
                                       onChanged: (value) => editQuotationController.onFieldChanged(),
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
@@ -482,14 +408,10 @@ class ClientSidePICSection extends StatelessWidget {
                                           ),
                                         ),
                                         hintStyle: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColors.text_4),
+                                            fontSize: 12, fontWeight: FontWeight.w400, color: AppColors.text_4),
                                         hintText: "Note",
                                         errorStyle: GoogleFonts.plusJakartaSans(
-                                            color: AppColors.danger,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w400),
+                                            color: AppColors.danger, fontSize: 12, fontWeight: FontWeight.w400),
                                       ),
                                     ),
                                     SizedBox(height: 10),
@@ -497,35 +419,23 @@ class ClientSidePICSection extends StatelessWidget {
                                       height: 51,
                                       child: ElevatedButton(
                                         onPressed: () {
-                                          clientPicController.removeContactPIC(
-                                              index, index2);
-                                          clientPicController.selectedPICClient
-                                              .refresh();
-                                          editQuotationController
-                                              .onFieldChanged();
+                                          clientPicController.removeContactPIC(index, index2);
+                                          clientPicController.selectedPICClient.refresh();
+                                          editQuotationController.onFieldChanged();
                                         },
                                         style: ButtonStyle(
-                                          backgroundColor:
-                                              const WidgetStatePropertyAll(
-                                                  AppColors.bgDanger),
-                                          foregroundColor:
-                                              const WidgetStatePropertyAll(
-                                                  AppColors.danger),
-                                          overlayColor:
-                                              const WidgetStatePropertyAll(
-                                                  Colors.black12),
-                                          shadowColor: WidgetStatePropertyAll(
-                                              Colors.transparent),
+                                          backgroundColor: const WidgetStatePropertyAll(AppColors.bgDanger),
+                                          foregroundColor: const WidgetStatePropertyAll(AppColors.danger),
+                                          overlayColor: const WidgetStatePropertyAll(Colors.black12),
+                                          shadowColor: WidgetStatePropertyAll(Colors.transparent),
                                           shape: WidgetStatePropertyAll(
                                             RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
+                                              borderRadius: BorderRadius.circular(5),
                                             ),
                                           ),
                                         ),
                                         child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             const Icon(
                                               Ionicons.trash_outline,
@@ -536,8 +446,7 @@ class ClientSidePICSection extends StatelessWidget {
                                             ),
                                             Text(
                                               "Delete Contact ${index2 + 1}",
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
+                                              style: GoogleFonts.plusJakartaSans(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14,
                                               ),
@@ -559,10 +468,7 @@ class ClientSidePICSection extends StatelessWidget {
                         height: 51,
                         child: ElevatedButton(
                           onPressed: () {
-                            Get.toNamed(
-                              AppRoutes.addContactClientPIC,
-                              arguments: index
-                            )?.then(
+                            Get.toNamed(AppRoutes.addContactClientPIC, arguments: index)?.then(
                               (value) {
                                 clientPicController.addContactPIC(index, value);
                                 clientPicController.selectedPICClient.refresh();
@@ -571,12 +477,9 @@ class ClientSidePICSection extends StatelessWidget {
                             );
                           },
                           style: ButtonStyle(
-                            backgroundColor:
-                                const WidgetStatePropertyAll(AppColors.primary),
-                            foregroundColor:
-                                const WidgetStatePropertyAll(AppColors.white_1),
-                            overlayColor:
-                                const WidgetStatePropertyAll(Colors.white30),
+                            backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
+                            foregroundColor: const WidgetStatePropertyAll(AppColors.white_1),
+                            overlayColor: const WidgetStatePropertyAll(Colors.white30),
                             shape: WidgetStatePropertyAll(
                               RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5),
@@ -602,8 +505,7 @@ class ClientSidePICSection extends StatelessWidget {
                         ),
                       ),
                       (clientPicController.selectedPICClient.length > 0 &&
-                              clientPicController.selectedPICClient.length !=
-                                  index + 1)
+                              clientPicController.selectedPICClient.length != index + 1)
                           ? SizedBox(
                               height: 20,
                             )
@@ -625,15 +527,12 @@ class ClientSidePICSection extends StatelessWidget {
                   editQuotationController.onFieldChanged();
                 },
                 style: ButtonStyle(
-                  backgroundColor:
-                      const WidgetStatePropertyAll(AppColors.white_1),
-                  foregroundColor:
-                      const WidgetStatePropertyAll(AppColors.primary),
+                  backgroundColor: const WidgetStatePropertyAll(AppColors.white_1),
+                  foregroundColor: const WidgetStatePropertyAll(AppColors.primary),
                   overlayColor: const WidgetStatePropertyAll(Colors.white30),
                   shape: WidgetStatePropertyAll(
                     RoundedRectangleBorder(
-                      side:
-                          const BorderSide(color: AppColors.primary, width: 1),
+                      side: const BorderSide(color: AppColors.primary, width: 1),
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),

@@ -19,7 +19,7 @@ class HistorySection extends StatelessWidget {
 
   final EditQuotationController detailQuotationController = Get.put(EditQuotationController());
   final HistoryChangesController historyChangesController = Get.put(HistoryChangesController());
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   @override
   Widget build(BuildContext context) {

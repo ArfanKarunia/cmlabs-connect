@@ -24,7 +24,7 @@ class NotificationController extends GetxController {
   final emailNotifNewQuotation = Rx<bool>(false);
   final emailNotifFollowedUpQuotation = Rx<bool>(false);
 
-  final UserController userController = Get.put(UserController());
+  final UserController userController = Get.find<UserController>();
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;

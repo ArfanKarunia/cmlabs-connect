@@ -6,7 +6,7 @@ import '../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../routes.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/bottom_nav/bottom_nav_controller.dart';
-import '../controllers/dashboard_controller.dart';
+import '../controllers/dashboard/dashboard_controller.dart';
 import '../controllers/historical_lead_controller.dart';
 import '../controllers/notification_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
@@ -28,12 +28,12 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  final DashboardController dashboardController = Get.put(DashboardController());
   final HistoricalLeadController historicalLeadController = Get.put(HistoricalLeadController());
   final NotificationController notificationController = Get.put(NotificationController());
-  final UserController userController = Get.put(UserController());
 
   final BottomNavController navController = Get.find<BottomNavController>();
+  final DashboardController dashboardController = Get.find<DashboardController>();
+  final UserController userController = Get.find<UserController>();
 
   final CaseStudiesController caseStudiesController = Get.find<CaseStudiesController>();
   final QuotationController quotationController = Get.find<QuotationController>();
@@ -47,8 +47,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     notificationController.fetchAmountUnreadNotification();
-    dashboardController.saveDashboardData();
-
     final user = userController.user.value;
 
     return Scaffold(
@@ -134,13 +132,13 @@ class _HomeViewState extends State<HomeView> {
                       Row(
                         children: [
                           MetricCard(
-                            count: dashboardController.amount_newLeads.value,
+                            count: dashboardController.newLeads.value,
                             nameMetric: "New Leads",
                             color: AppColors.primary,
                           ),
                           const SizedBox(width: 10),
                           MetricCard(
-                            count: dashboardController.amount_last30Day.value,
+                            count: dashboardController.last30Day.value,
                             nameMetric: "Last 30 Day",
                             color: AppColors.purple,
                           ),
@@ -150,13 +148,13 @@ class _HomeViewState extends State<HomeView> {
                       Row(
                         children: [
                           MetricCard(
-                            count: dashboardController.amount_acceptedLeads.value,
+                            count: dashboardController.acceptedLeads.value,
                             nameMetric: "Accepted",
                             color: AppColors.success,
                           ),
                           const SizedBox(width: 10),
                           MetricCard(
-                            count: dashboardController.amount_followedUpLeads.value,
+                            count: dashboardController.followedUpLeads.value,
                             nameMetric: "Followed Up",
                             color: AppColors.info,
                           ),
@@ -292,7 +290,7 @@ class _HomeViewState extends State<HomeView> {
           const SizedBox(height: 10),
           Obx(() {
             List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
-            return quotationController.quotationList.isNotEmpty
+            return quotationList.isNotEmpty
                 ? Column(
                     children: quotationList.map((quotation) {
                       return QuotationListTile(
@@ -334,14 +332,16 @@ class _HomeViewState extends State<HomeView> {
           const SizedBox(height: 10),
           Obx(() {
             List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
-            return Column(
-              children: caseStudiesList.map((caseStudies) {
-                return CaseStudiesListTile(
-                  caseStudies: caseStudies,
-                  caseStudiesController: caseStudiesController,
-                );
-              }).toList(),
-            );
+            return caseStudiesList.isNotEmpty
+                ? Column(
+                    children: caseStudiesList.map((caseStudies) {
+                      return CaseStudiesListTile(
+                        caseStudies: caseStudies,
+                        caseStudiesController: caseStudiesController,
+                      );
+                    }).toList(),
+                  )
+                : const SizedBox(height: 150, child: EmptyState());
           }),
           // Expanded(
           //   child: Padding(

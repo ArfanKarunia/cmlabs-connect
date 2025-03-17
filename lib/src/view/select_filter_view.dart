@@ -1,15 +1,19 @@
-import 'package:cmlabs_connect/src/utils/bottom_sheet.dart';
-import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
+import '../constant/fontstyle.dart';
+import '../utils/bottom_sheet.dart';
 import '../utils/color.dart';
+import '../utils/string_utils.dart';
 import '../widgets/tag_button.dart';
 
 class SelectFilterView extends StatefulWidget {
-  SelectFilterView({
+  final String filter;
+  final dynamic controller;
+  final bool isMultipleChoice;
+  final bool canSearch;
+  const SelectFilterView({
     super.key,
     required this.filter,
     required this.controller,
@@ -17,61 +21,39 @@ class SelectFilterView extends StatefulWidget {
     this.isMultipleChoice = true,
   });
 
-  final String filter;
-  final dynamic controller;
-  final bool isMultipleChoice;
-
-  final bool canSearch;
-
   @override
   State<SelectFilterView> createState() => _SelectFilterViewState();
 }
 
 class _SelectFilterViewState extends State<SelectFilterView> {
-  var tempData = Rx<Map<String, String>?>(null);
-  var tempMapData = Rx<List<Map<String, String>?>>([]);
-  var canSelect = Rx<bool>(false);
+  Rx<Map<String, String>?> tempData = Rx<Map<String, String>?>(null);
+  Rx<List<Map<String, String>?>> tempMapData = Rx<List<Map<String, String>?>>([]);
+  Rx<bool> canSelect = Rx<bool>(false);
 
   final allData = {'value': 'all', 'label': 'All'};
 
   @override
   void initState() {
     super.initState();
-
-    // Listen to changes in tempData and tempMapData
     ever(tempData, (_) => _updateCanSelect());
     ever(tempMapData, (_) => _updateCanSelect());
   }
 
   void _updateCanSelect() {
-    // Update canSelect based on tempData and tempMapData
     canSelect.value = tempData.value != null || tempMapData.value.isNotEmpty;
   }
 
   @override
   Widget build(BuildContext context) {
-    tempMapData.value.clear();
-    tempData.value = null;
-    if (widget.filter != 'year' &&
-        widget.filter != 'month' &&
-        widget.filter != 'time_range' &&
-        widget.filter != 'days') {
-      widget.controller.fetchFilter(widget.filter);
-    }
-
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
+      backgroundColor: AppColors.scaffoldBgColor2,
       appBar: AppBar(
         toolbarHeight: 100,
-        backgroundColor: Color(0xFFF9F9F9),
-        surfaceTintColor: Color(0xFFF9F9F9),
+        backgroundColor: AppColors.scaffoldBgColor2,
+        surfaceTintColor: AppColors.scaffoldBgColor2,
         title: Text(
           "Filter ${StringUtils.toCamelCase(widget.filter)}",
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 20,
-            color: AppColors.text_1,
-            fontWeight: FontWeight.bold,
-          ),
+          style: bold.copyWith(fontSize: 20),
         ),
       ),
       body: Stack(
@@ -92,33 +74,22 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                             child: TextFormField(
                               onChanged: widget.controller.setSearch,
                               textAlignVertical: TextAlignVertical.center,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
+                              style: regular.copyWith(fontSize: 12),
                               decoration: InputDecoration(
                                 hintText: "Search ${StringUtils.toCamelCase(widget.filter)}",
-                                hintStyle: GoogleFonts.plusJakartaSans(
-                                  color: AppColors.text_4,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                suffixIcon: Icon(
-                                  Ionicons.search_outline,
-                                  size: 24,
-                                ),
+                                hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
+                                suffixIcon: const Icon(Ionicons.search_outline, size: 24),
                                 focusColor: AppColors.primary,
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: AppColors.primary,
                                     width: 2,
                                   ),
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
+                                  borderSide: const BorderSide(
                                     color: AppColors.text_3,
                                     width: 1,
                                   ),
@@ -162,11 +133,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                       padding: const EdgeInsets.only(top: 10, bottom: 10),
                       child: Text(
                         "Select ${StringUtils.toCamelCase(widget.filter)}",
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 10,
-                          color: AppColors.text_4,
-                          fontWeight: FontWeight.w400,
-                        ),
+                        style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
                       ),
                     ),
                     Container(
@@ -176,12 +143,11 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: widget.controller.searchData(widget.filter.toLowerCase()).length,
                         itemBuilder: (context, index) {
                           final data = widget.controller.searchData(widget.filter.toLowerCase())[index];
-                          print(data);
 
                           // Hanya bungkus bagian yang perlu dipantau dengan Obx
                           return GestureDetector(
@@ -207,7 +173,6 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                 } else {
                                   tempData.value = data;
                                 }
-                                print(tempData.value);
                               }
                             },
                             child: Obx(
@@ -222,14 +187,10 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                             ? AppColors.bgPrimary
                                             : AppColors.white_1,
                                   ),
-                                  padding: EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                                   child: Text(
                                     data['label'] ?? "-",
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 13,
-                                      color: AppColors.text_1,
-                                      fontWeight: FontWeight.w400,
-                                    ),
+                                    style: regular.copyWith(fontSize: 13),
                                   ),
                                 );
                               },
@@ -238,9 +199,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                         },
                       ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -248,10 +207,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
           ),
           Obx(
             () {
-              // bool isVisible = canSelect.value;
               bool isKeyboardShow = MediaQuery.of(context).viewInsets.bottom != 0;
-
-              // print(isVisible);
 
               return TweenAnimationBuilder<double>(
                 tween: Tween(
@@ -261,36 +217,58 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 builder: (context, value, child) {
-                  print(value);
+                  // print(value);
                   return Positioned(
                     bottom: value,
                     left: 0,
                     right: 0,
                     child: (isKeyboardShow)
-                        ? SizedBox.shrink()
+                        ? const SizedBox.shrink()
                         : BottomSheetSaveChanges(
                             name: "Select",
                             onPressed: () {
-                              if (widget.filter == 'year') {
-                                Get.back(result: tempData.value);
-                              } else if (widget.filter == 'month') {
-                                Get.back(result: tempData.value);
-                              } else if (widget.filter == 'time_range') {
-                                Get.back(result: tempData.value!['value']);
-                              } else if (widget.filter == 'days') {
-                                Get.back(result: tempMapData.value);
-                              } else if (widget.filter == 'category') {
-                                for (var data in tempMapData.value) {
-                                  widget.controller.addFilterCategory(data);
-                                }
-                                Get.back();
-                              } else if (widget.filter == 'pic') {
-                                widget.controller.addFilterPic(tempData.value);
-                                Get.back();
-                              } else if (widget.filter == 'client_source') {
-                                widget.controller.addFilterClientSource(tempData.value);
-                                Get.back();
+                              switch (widget.filter) {
+                                case 'year' || 'month' || 'days':
+                                  Get.back(result: tempData.value);
+                                  break;
+                                case 'time_range':
+                                  Get.back(result: tempData.value?['value']);
+                                  break;
+                                case 'category':
+                                  for (Map<String, String>? data in tempMapData.value) {
+                                    widget.controller.addFilterCategory(data);
+                                  }
+                                  Get.back();
+                                  break;
+                                case 'pic':
+                                  widget.controller.addFilterPic(tempData.value);
+                                  Get.back();
+                                case 'client_source':
+                                  widget.controller.addFilterClientSource(tempData.value);
+                                  Get.back();
+                                default:
+                                  break;
                               }
+                              // if (widget.filter == 'year') {
+                              // Get.back(result: tempData.value);
+                              // } else if (widget.filter == 'month') {
+                              // Get.back(result: tempData.value);
+                              // } else if (widget.filter == 'time_range') {
+                              //   Get.back(result: tempData.value!['value']);
+                              // } else if (widget.filter == 'days') {
+                              // Get.back(result: tempMapData.value);
+                              // } else if (widget.filter == 'category') {
+                              //   for (var data in tempMapData.value) {
+                              //     widget.controller.addFilterCategory(data);
+                              //   }
+                              //   Get.back();
+                              // } else if (widget.filter == 'pic') {
+                              //   widget.controller.addFilterPic(tempData.value);
+                              //   Get.back();
+                              // } else if (widget.filter == 'client_source') {
+                              //   widget.controller.addFilterClientSource(tempData.value);
+                              //   Get.back();
+                              // }
                             },
                           ),
                   );

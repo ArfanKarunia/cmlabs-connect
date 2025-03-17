@@ -1,16 +1,16 @@
-class Category {
+class Priority {
   final String value;
   final String label;
 
-  Category({
+  Priority({
     required this.value,
     required this.label,
   });
 
-  factory Category.fromJson(Map<String, String> json) {
-    return Category(
-      value: json['id'].toString(),
-      label: json['text'].toString(),
+  factory Priority.fromJson(Map<String, String> json) {
+    return Priority(
+      value: json['value']?.toString() ?? '',
+      label: json['label']?.toString() ?? '',
     );
   }
 

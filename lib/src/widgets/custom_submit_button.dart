@@ -7,6 +7,7 @@ import '../utils/color.dart';
 class CustomSubmitButton extends StatelessWidget {
   final String title;
   final IconData? icon;
+  final double? iconSize;
   final bool isDisabled;
   final Color color;
   final Color disabledColor;
@@ -16,6 +17,7 @@ class CustomSubmitButton extends StatelessWidget {
   const CustomSubmitButton({
     super.key,
     this.icon,
+    this.iconSize,
     required this.title,
     this.isDisabled = false,
     this.color = AppColors.primary,
@@ -41,7 +43,7 @@ class CustomSubmitButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null) ...[
-              Icon(icon, color: textColor),
+              Icon(icon, color: textColor, size: iconSize),
               const SizedBox(width: 10),
             ],
             Text(
