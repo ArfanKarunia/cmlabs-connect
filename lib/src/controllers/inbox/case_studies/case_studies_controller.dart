@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
 import '../../../models/case_studies_model.dart';
+import '../../../utils/toast.dart';
 import '../inbox_controller.dart';
 import '../../user/user_controller.dart';
 
@@ -15,9 +16,10 @@ class CaseStudiesController extends InboxController {
   final UserController userController = Get.find<UserController>();
 
   @override
-  void onReady() async {
+  void onReady() {
     super.onReady();
-    await fetchList();
+    fetchList();
+    fetchTotalLeads();
   }
 
   @override
@@ -69,22 +71,20 @@ class CaseStudiesController extends InboxController {
 
   @override
   Future<void> fetchTotalLeads() async {
-    // try {
-    //   String? accessToken = userController.accesToken.value;
+    try {
+      String? accessToken = userController.accesToken.value;
 
-    //   final response = await dio.get(
-    //     '$baseUrl/dashboard/total_all',
-    //     options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-    //   );
+      final response = await dio.get(
+        '$baseUrl/case-studies/count-all-case-study',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
 
-    //   if (response.statusCode == 200 && response.data != null) {
-    //     if (response.data['status'] == 'success') totalLeads.value = response.data['data'];
-    //   }
-    // } catch (e) {
-    //   debugPrint('Error fetching data: $e');
-    // }
-
-    return;
+      if (response.statusCode == 200 && response.data != null) {
+        totalLeads.value = response.data['data'];
+      }
+    } catch (e) {
+      debugPrint('Error fetching data: $e');
+    }
   }
 
   @override
@@ -98,7 +98,29 @@ class CaseStudiesController extends InboxController {
 
   @override
   Future<void> deleteData(int? id) async {
-    if (id == null) return;
+    try {
+      final accessToken = userController.accesToken.value;
+      if (accessToken == null || accessToken.isEmpty || id == null) {
+        showErrorToast('Gagal menghapus Case Study');
+      }
+
+      final response = await dio.delete(
+        '$baseUrl/case-studies/delete-case-study/$id',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        caseStudiesList.removeWhere((caseStudies) => caseStudies.id == id);
+        totalLeads.value -= 1;
+        showSuccessToast('Berhasil menghapus Case Study');
+      } else {
+        showErrorToast('Gagal menghapus Case Study');
+        // debugPrint("Error: ${response.statusCode}, Message: ${response.statusMessage}");
+      }
+    } catch (e) {
+      // debugPrint('Error fetching data: $e');
+      showErrorToast('Terjadi kesalahan saat menghapus data');
+    }
   }
 
   List<CaseStudies> get filteredCaseStudies {
@@ -114,7 +136,7 @@ class CaseStudiesController extends InboxController {
             (caseStudies.section?.toLowerCase().contains(query) ?? false) ||
             (caseStudies.data?.company?.toLowerCase().contains(query) ?? false) ||
             (caseStudies.data?.name?.toLowerCase().contains(query) ?? false) ||
-            (caseStudies.data?.category?.toLowerCase().contains(query) ?? false);
+            (caseStudies.data?.category?.any((e) => e.contains(query)) ?? false);
         // || (caseStudies.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();
     }

@@ -47,6 +47,7 @@ class FormInputWidget extends StatelessWidget {
 }
 
 class CustomFormField extends StatefulWidget {
+  final bool isEnabled;
   final TextEditingController? controller;
   final TextInputType? keyboardType;
   final String? hintText;
@@ -55,6 +56,7 @@ class CustomFormField extends StatefulWidget {
   final String? Function(String?)? validator;
   const CustomFormField({
     super.key,
+    this.isEnabled = true,
     this.controller,
     this.keyboardType,
     this.hintText,
@@ -73,6 +75,7 @@ class _CustomFormFieldState extends State<CustomFormField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      enabled: widget.isEnabled,
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       style: regular,

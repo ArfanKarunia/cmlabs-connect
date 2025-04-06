@@ -13,7 +13,7 @@ import '../routes.dart';
 import '../utils/bottom_sheet.dart';
 import '../widgets/custom_buttom.dart';
 import '../widgets/select_status.dart';
-import 'inbox/case_studies_inbox_view.dart';
+import 'inbox/case_studies/case_studies_inbox_view.dart';
 import 'inbox/quotation/quotation_inbox_view.dart';
 
 class InboxView extends StatefulWidget {
@@ -148,7 +148,7 @@ class _InboxViewState extends State<InboxView> {
                     ),
                     Obx(
                       () => Text(
-                        index < 1 ? "${controller[index].totalLeads.value}" : "0",
+                        index < 2 ? controller[index].totalLeads.value.toString() : "0",
                         style: regular.copyWith(
                           fontSize: 12,
                           color: AppColors.primary,

@@ -223,4 +223,27 @@ class ClientPicContactController extends GetxController {
         break;
     }
   }
+
+  void setExistingValue(ContactClientPic contact) {
+    if (contact.type != null) {
+      selectedContactType.value = {
+        'value': '${contact.type}',
+        'label': '${contact.type}',
+      };
+    }
+    contactInfo.value.text = contact.info ?? '';
+    if (contact.status != null) {
+      selectedContactStatus.value = {
+        'value': '${contact.status}',
+        'label': '${contact.status}',
+      };
+    }
+    if (contact.detail != null) {
+      selectedContactDetailStatus.value = {
+        'value': '${contact.detail}',
+        'label': '${contact.detail}',
+      };
+    }
+    contactNote.value.text = contact.note ?? '';
+  }
 }

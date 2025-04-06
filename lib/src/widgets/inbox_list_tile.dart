@@ -215,10 +215,9 @@ class CaseStudiesListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        // detailQuotationController.quotation.value = quotation;
-        // Get.toNamed(AppRoutes.detailQuotation);
-      },
+      onTap: () => Get.toNamed(AppRoutes.detailCaseStudies, arguments: {
+        'caseStudies': caseStudies,
+      }),
       child: Container(
         // height: 100, // Tinggi tile
         margin: const EdgeInsets.only(bottom: 10),

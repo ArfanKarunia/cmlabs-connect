@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
-import '../../constant/fontstyle.dart';
-import '../../controllers/inbox/case_studies/case_studies_controller.dart';
-import '../../models/case_studies_model.dart';
-import '../../utils/color.dart';
-import '../../widgets/empty_state.dart';
-import '../../widgets/inbox_list_tile.dart';
+import '../../../constant/fontstyle.dart';
+import '../../../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../../../models/case_studies_model.dart';
+import '../../../utils/color.dart';
+import '../../../widgets/empty_state.dart';
+import '../../../widgets/inbox_list_tile.dart';
 
 class CaseStudiesInbox extends StatelessWidget {
   final RefreshController refreshController;

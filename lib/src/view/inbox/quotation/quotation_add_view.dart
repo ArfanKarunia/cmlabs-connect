@@ -14,6 +14,8 @@ import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
+import '../../../widgets/inbox_add_field.dart';
+import '../../../widgets/inbox_add_section.dart';
 import '../../../widgets/tag_button.dart';
 
 class QuotationAddView extends StatefulWidget {
@@ -139,11 +141,11 @@ class _QuotationAddViewState extends State<QuotationAddView> {
     );
   }
 
-  QuotationAddSection quotationFormSection() {
-    return QuotationAddSection(
+  InboxAddSection quotationFormSection() {
+    return InboxAddSection(
       title: 'Quotation Form',
       children: [
-        QuotationAddField(
+        InboxAddField(
           title: 'Company Name',
           isRequired: true,
           child: Obx(
@@ -157,7 +159,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                 },
               ),
               errorText: controller.companyNameError.value,
-              child: QuotationTextOnField(
+              child: InboxTextOnField(
                 title: 'Select Company Name',
                 selected: controller.companyName.value,
               ),
@@ -165,7 +167,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Company Website',
           isRequired: true,
           child: Obx(
@@ -179,7 +181,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                 },
               ),
               errorText: controller.companyWebsiteError.value,
-              child: QuotationTextOnField(
+              child: InboxTextOnField(
                 title: 'Select Company Website',
                 selected: controller.companyWebsite.value,
               ),
@@ -187,7 +189,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Phone Number',
           isRequired: true,
           child: Obx(
@@ -204,7 +206,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                         'data': 'countryCode',
                       },
                     ),
-                    child: QuotationTextOnField(
+                    child: InboxTextOnField(
                       title: (controller.countryCode.value?['label'] ?? 'IDN (+62)'),
                       selected: controller.countryCode.value,
                     ),
@@ -227,11 +229,11 @@ class _QuotationAddViewState extends State<QuotationAddView> {
     );
   }
 
-  QuotationAddSection projectInformationSection() {
-    return QuotationAddSection(
+  InboxAddSection projectInformationSection() {
+    return InboxAddSection(
       title: 'Project Information',
       children: [
-        QuotationAddField(
+        InboxAddField(
           title: 'Service Category',
           isRequired: true,
           child: Obx(
@@ -247,7 +249,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
               ),
               errorText: controller.projectServiceError.value,
               child: controller.projectService.isEmpty
-                  ? const QuotationTextOnField(title: 'Select Service', selected: null)
+                  ? const InboxTextOnField(title: 'Select Service', selected: null)
                   : Wrap(
                       clipBehavior: Clip.antiAlias,
                       children: List.generate(
@@ -268,7 +270,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'CMLABS PIC',
           isRequired: true,
           child: Obx(
@@ -281,7 +283,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                 },
               ),
               errorText: controller.projectPicError.value,
-              child: QuotationTextOnField(
+              child: InboxTextOnField(
                 title: 'Select Project Pic',
                 selected: controller.projectPic.value,
               ),
@@ -289,7 +291,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Priority',
           isRequired: true,
           child: Obx(
@@ -302,7 +304,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                 },
               ),
               errorText: controller.projectPriorityError.value,
-              child: QuotationTextOnField(
+              child: InboxTextOnField(
                 title: 'Select Priority',
                 selected: controller.projectPriority.value,
               ),
@@ -310,7 +312,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Client Source',
           isRequired: true,
           child: Obx(
@@ -324,7 +326,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                 },
               ),
               errorText: controller.projectClientSourceError.value,
-              child: QuotationTextOnField(
+              child: InboxTextOnField(
                 title: 'Select Client Source',
                 selected: controller.projectClientSource.value,
               ),
@@ -332,7 +334,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Status',
           isRequired: true,
           child: Obx(
@@ -345,7 +347,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                 },
               ),
               errorText: controller.projectStatusError.value,
-              child: QuotationTextOnField(
+              child: InboxTextOnField(
                 title: 'Select Status',
                 selected: controller.projectStatus.value,
               ),
@@ -353,7 +355,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Type',
           isRequired: true,
           child: Obx(
@@ -368,7 +370,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
               ),
               errorText: controller.projectTypeError.value,
               child: controller.projectType.isEmpty
-                  ? const QuotationTextOnField(title: 'Select Project Type', selected: null)
+                  ? const InboxTextOnField(title: 'Select Project Type', selected: null)
                   : Wrap(
                       clipBehavior: Clip.antiAlias,
                       children: List.generate(
@@ -392,11 +394,11 @@ class _QuotationAddViewState extends State<QuotationAddView> {
     );
   }
 
-  QuotationAddSection activitySection() {
-    return QuotationAddSection(
+  InboxAddSection activitySection() {
+    return InboxAddSection(
       title: 'Activity',
       children: [
-        QuotationAddField(
+        InboxAddField(
           title: 'Activity Name',
           isRequired: true,
           child: Obx(
@@ -408,7 +410,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Type',
           isRequired: true,
           child: Obx(
@@ -424,7 +426,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
               ),
               errorText: controller.activityTypeError.value,
               child: controller.activityType.isEmpty
-                  ? const QuotationTextOnField(title: 'Select Activity Type', selected: null)
+                  ? const InboxTextOnField(title: 'Select Activity Type', selected: null)
                   : Wrap(
                       clipBehavior: Clip.antiAlias,
                       children: List.generate(
@@ -445,7 +447,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Note',
           child: CustomFormField(
             hintText: 'Note',
@@ -478,12 +480,12 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ],
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Upload File',
           child: CustomSelectField(
             onTap: () async => await _selectFile(),
             icon: Ionicons.folder_open_outline,
-            child: QuotationTextOnField(
+            child: InboxTextOnField(
               title: fileNameController.text.isNotEmpty ? fileNameController.text : 'Choose File',
               selected: null,
             ),
@@ -493,11 +495,11 @@ class _QuotationAddViewState extends State<QuotationAddView> {
     );
   }
 
-  QuotationAddSection picSection(int index) {
-    return QuotationAddSection(
+  InboxAddSection picSection(int index) {
+    return InboxAddSection(
       title: 'PIC (Client Side)',
       children: [
-        QuotationAddField(
+        InboxAddField(
           title: 'PIC Name',
           isRequired: true,
           child: CustomFormField(
@@ -507,7 +509,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
           ),
         ),
         const SizedBox(height: 11),
-        QuotationAddField(
+        InboxAddField(
           title: 'Position',
           child: CustomFormField(
             controller: controller.picPositionControllers[index],
@@ -518,7 +520,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
         const SizedBox(height: 11),
         Obx(
           () {
-            return QuotationAddField(
+            return InboxAddField(
               title: 'Contact',
               isRequired: true,
               child: Column(
@@ -537,55 +539,55 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                     const SizedBox(height: 10),
                   ],
                   ...List.generate(controller.picClients[index].contacts.length, (i) {
-                    return QuotationAddField(
+                    return InboxAddField(
                       title: 'Contact ${i + 1}',
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          QuotationAddField(
+                          InboxAddField(
                             title: 'Type',
                             child: CustomSelectField(
-                              child: QuotationTextOnField(
+                              child: InboxTextOnField(
                                 title: controller.picClients[index].contacts[i].type.toString(),
                                 selected: null,
                               ),
                             ),
                           ),
                           const SizedBox(height: 11),
-                          QuotationAddField(
+                          InboxAddField(
                             title: 'Contact Info',
                             child: CustomSelectField(
-                              child: QuotationTextOnField(
+                              child: InboxTextOnField(
                                 title: controller.picClients[index].contacts[i].info.toString(),
                                 selected: null,
                               ),
                             ),
                           ),
                           const SizedBox(height: 11),
-                          QuotationAddField(
+                          InboxAddField(
                             title: 'Status',
                             child: CustomSelectField(
-                              child: QuotationTextOnField(
+                              child: InboxTextOnField(
                                 title: controller.picClients[index].contacts[i].status.toString(),
                                 selected: null,
                               ),
                             ),
                           ),
                           const SizedBox(height: 11),
-                          QuotationAddField(
+                          InboxAddField(
                             title: 'Detail Status',
                             child: CustomSelectField(
-                              child: QuotationTextOnField(
+                              child: InboxTextOnField(
                                 title: controller.picClients[index].contacts[i].detail.toString(),
                                 selected: null,
                               ),
                             ),
                           ),
                           const SizedBox(height: 11),
-                          QuotationAddField(
+                          InboxAddField(
                             title: 'Note',
                             child: CustomSelectField(
-                              child: QuotationTextOnField(
+                              child: InboxTextOnField(
                                 title: controller.picClients[index].contacts[i].note.toString(),
                                 selected: null,
                               ),
@@ -647,83 +649,6 @@ class _QuotationAddViewState extends State<QuotationAddView> {
         ),
         const SizedBox(height: 10),
       ],
-    );
-  }
-}
-
-class QuotationAddSection extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-  const QuotationAddSection({super.key, required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: bold.copyWith(fontSize: 16),
-        ),
-        const SizedBox(height: 16),
-        ...children,
-      ],
-    );
-  }
-}
-
-class QuotationAddField extends StatelessWidget {
-  final String title;
-  final bool isRequired;
-  final Widget child;
-  const QuotationAddField({
-    super.key,
-    required this.title,
-    this.isRequired = false,
-    required this.child,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text.rich(
-          TextSpan(
-            text: title,
-            children: isRequired
-                ? [
-                    TextSpan(
-                      text: '*',
-                      style: bold.copyWith(color: AppColors.danger),
-                    ),
-                  ]
-                : null,
-          ),
-          style: bold,
-        ),
-        const SizedBox(height: 10),
-        child,
-      ],
-    );
-  }
-}
-
-class QuotationTextOnField extends StatelessWidget {
-  final String title;
-  final Map<String, String>? selected;
-  const QuotationTextOnField({super.key, required this.title, required this.selected});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 7, horizontal: 4),
-      child: Text(
-        selected?['label'] ?? title,
-        style: regular.copyWith(color: selected != null ? AppColors.text_1 : AppColors.text_3),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
     );
   }
 }

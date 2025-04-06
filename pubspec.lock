@@ -1013,6 +1013,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  safe_password_generator:
+    dependency: "direct main"
+    description:
+      name: safe_password_generator
+      sha256: fbdede37dfbb21fd45221f1a88fb0d04273021fea8585ad9b670075b0a38f840
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   sentry:
     dependency: transitive
     description:

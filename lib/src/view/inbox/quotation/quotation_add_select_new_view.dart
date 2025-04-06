@@ -1,3 +1,4 @@
+import 'package:cmlabs_connect/src/widgets/inbox_add_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,7 +7,6 @@ import '../../../utils/color.dart';
 import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import 'quotation_add_view.dart';
 
 class QuotationAddSelectNewView extends StatefulWidget {
   final String title;
@@ -63,7 +63,7 @@ class _QuotationAddSelectNewViewState extends State<QuotationAddSelectNewView> {
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          QuotationAddField(
+          InboxAddField(
             title: widget.title,
             child: CustomFormField(
               controller: fieldController,
