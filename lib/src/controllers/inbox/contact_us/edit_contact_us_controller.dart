@@ -1,12 +1,13 @@
 import 'package:dio/dio.dart' as http;
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/inbox_edit_form_model.dart';
 import '../../../utils/toast.dart';
 import '../edit_form_controller.dart';
 
-class EditCaseStudiesController extends EditFormController {
-  int caseStudiesId = 0;
+class EditContactUsController extends EditFormController {
+  int contactUsId = 0;
 
   @override
   Future<void> fetchData(int id) async {
@@ -14,7 +15,7 @@ class EditCaseStudiesController extends EditFormController {
       isLoading(true);
 
       final response = await dio.get(
-        '$baseUrl/case-studies/view-form-case-study-detail/$id',
+        '$baseUrl/contact-us/view-detail-form-contact-us/$id',
         options: http.Options(
           headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
         ),
@@ -24,9 +25,9 @@ class EditCaseStudiesController extends EditFormController {
         final rawData = response.data['data'];
 
         if (rawData != null) {
-          final formCaseStudies = InboxEditForm.fromJson(rawData);
-          setInitialValue(formCaseStudies);
-          caseStudiesId = id;
+          final formContactUs = InboxEditForm.fromJson(rawData);
+          setInitialValue(formContactUs);
+          contactUsId = id;
         }
       }
     } finally {
@@ -43,7 +44,7 @@ class EditCaseStudiesController extends EditFormController {
       }
 
       final response = await dio.delete(
-        '$baseUrl/case-studies/delete-history-activity/$id',
+        '$baseUrl/contact-us/delete-history-activity/$id',
         options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
@@ -88,8 +89,10 @@ class EditCaseStudiesController extends EditFormController {
         "validity": selectedValidity.value?['value'],
       };
 
+      debugPrint(data.toString());
+
       final response = await dio.post(
-        '$baseUrl/case-studies/save-form-case-study-detail/$caseStudiesId',
+        '$baseUrl/contact-us/save-form-detail-contact-us/$contactUsId',
         data: data,
         options: http.Options(
           headers: {
@@ -98,6 +101,8 @@ class EditCaseStudiesController extends EditFormController {
           },
         ),
       );
+
+      debugPrint(response.toString());
 
       isLoading(false);
 

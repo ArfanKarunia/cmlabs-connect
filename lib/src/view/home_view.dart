@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 // import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../controllers/inbox/contact_us/contact_us_controller.dart';
+import '../models/contact_us_model.dart';
 import '../routes.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/bottom_nav/bottom_nav_controller.dart';
@@ -35,8 +37,9 @@ class _HomeViewState extends State<HomeView> {
   final DashboardController dashboardController = Get.find<DashboardController>();
   final UserController userController = Get.find<UserController>();
 
-  final CaseStudiesController caseStudiesController = Get.find<CaseStudiesController>();
   final QuotationController quotationController = Get.find<QuotationController>();
+  final CaseStudiesController caseStudiesController = Get.find<CaseStudiesController>();
+  final ContactUsController contactUsController = Get.find<ContactUsController>();
 
   @override
   void initState() {
@@ -343,113 +346,48 @@ class _HomeViewState extends State<HomeView> {
                   )
                 : const SizedBox(height: 150, child: EmptyState());
           }),
-          // Expanded(
-          //   child: Padding(
-          //     padding: const EdgeInsets.symmetric(horizontal: 20),
-          //     child: Obx(
-          //       () {
-          //         List quotationList = quotationController.quotationList;
+          const SizedBox(height: 20),
 
-          //         return quotationList.isEmpty
-          //             ? SizedBox(
-          //                 height: 300,
-          //                 width: double.infinity,
-          //                 child: Center(
-          //                   child: Column(
-          //                     mainAxisAlignment: MainAxisAlignment.center,
-          //                     children: [
-          //                       const Icon(
-          //                         Ionicons.briefcase_outline,
-          //                         color: AppColors.text_4,
-          //                         size: 40,
-          //                       ),
-          //                       Text(
-          //                         'No available data',
-          //                         style: bold.copyWith(
-          //                           fontSize: 24,
-          //                           color: AppColors.text_4,
-          //                         ),
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               )
-          //             : SizedBox(
-          //                 width: double.infinity,
-          //                 child: SmartRefresher(
-          //                   enablePullDown: true,
-          //                   header: const ClassicHeader(
-          //                     refreshStyle: RefreshStyle.Follow,
-          //                     refreshingIcon: SizedBox(
-          //                       width: 20,
-          //                       height: 20,
-          //                       child: CircularProgressIndicator(
-          //                         color: AppColors.text_4,
-          //                         strokeWidth: 2,
-          //                       ),
-          //                     ),
-          //                   ),
-          //                   onRefresh: _onRefresh,
-          //                   onLoading: _onLoading,
-          //                   controller: _refreshController,
-          //                   child: ListView.builder(
-          //                     controller: scrollController,
-          //                     shrinkWrap: true,
-          //                     physics: const AlwaysScrollableScrollPhysics(),
-          //                     padding: const EdgeInsets.symmetric(vertical: 0),
-          //                     itemCount: quotationController.quotationList.length,
-          //                     itemBuilder: (context, index) {
-          //                       final quotation = quotationList[index];
+          // CONTACT US LIST
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Contact Us',
+                style: bold.copyWith(
+                  fontSize: 16,
+                  color: AppColors.primaryText,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => navController.changePage(1),
+                child: Text(
+                  "View all",
+                  style: regular.copyWith(
+                    fontSize: 12,
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Obx(() {
+            List<ContactUs> contactUsList = contactUsController.contactUsList.take(3).toList();
+            return contactUsList.isNotEmpty
+                ? Column(
+                    children: contactUsList.map((contactUs) {
+                      return ContactUsListTile(
+                        contactUs: contactUs,
+                        contactUsController: contactUsController,
+                      );
+                    }).toList(),
+                  )
+                : const SizedBox(height: 150, child: EmptyState());
+          }),
 
-          //                       var lengthQuotation = quotationController.quotationList.length;
-
-          //                       return Column(
-          //                         children: [
-          //                           QuotationListTile(
-          //                             quotation: quotation,
-          //                             onDelete: () async {
-          //                               Get.back();
-
-          //                               await quotationController.deleteQuotation(index);
-          //                             },
-          //                             onChatWA: () {
-          //                               // print(quotation);
-
-          //                               quotationController.redirectToWhatsapp(quotation);
-          //                             },
-          //                           ),
-          //                           (index + 1 == quotationController.quotationList.length && lengthQuotation % 10 == 0)
-          //                               ? const Padding(
-          //                                   padding: EdgeInsets.symmetric(vertical: 10),
-          //                                   child: Center(
-          //                                     child: CircularProgressIndicator(
-          //                                       color: AppColors.text_4,
-          //                                       strokeWidth: 2,
-          //                                     ),
-          //                                   ),
-          //                                 )
-          //                               : (index + 1 == quotationController.quotationList.length)
-          //                                   ? Container(
-          //                                       width: double.infinity,
-          //                                       padding: const EdgeInsets.symmetric(vertical: 10),
-          //                                       child: Center(
-          //                                         child: Text(
-          //                                           "No more data",
-          //                                           style: regular.copyWith(color: AppColors.text_4),
-          //                                         ),
-          //                                       ),
-          //                                     )
-          //                                   : const SizedBox.shrink(),
-          //                         ],
-          //                       );
-          //                     },
-          //                   ),
-          //                 ),
-          //               );
-          //       },
-          //     ),
-          //   ),
-          // ),
           const SizedBox(height: 10)
         ],
       ),

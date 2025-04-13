@@ -6,8 +6,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:safe_password_generator/safe_password_generator.dart';
 
 import '../../../constant/fontstyle.dart';
-import '../../../controllers/inbox/case_studies/edit_case_studies_controller.dart';
-import '../../../models/case_studies_model.dart';
+import '../../../controllers/inbox/contact_us/edit_contact_us_controller.dart';
+import '../../../models/contact_us_model.dart';
 import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';
@@ -21,16 +21,17 @@ import '../../../widgets/inbox_add_section.dart';
 import '../../../widgets/inbox_history_tile.dart';
 import '../../../widgets/tag_button.dart';
 
-class CaseStudiesEditView extends StatefulWidget {
-  final CaseStudies caseStudies;
-  const CaseStudiesEditView({super.key, required this.caseStudies});
+class ContactUsEditView extends StatefulWidget {
+  final ContactUs contactUs;
+
+  const ContactUsEditView({super.key, required this.contactUs});
 
   @override
-  State<CaseStudiesEditView> createState() => _CaseStudiesEditViewState();
+  State<ContactUsEditView> createState() => _ContactUsEditViewState();
 }
 
-class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
-  final controller = Get.find<EditCaseStudiesController>();
+class _ContactUsEditViewState extends State<ContactUsEditView> {
+  final controller = Get.find<EditContactUsController>();
 
   int historyLength = 10;
   bool isValidityEnabled = true;
@@ -38,7 +39,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
   @override
   void initState() {
     super.initState();
-    controller.fetchData(widget.caseStudies.id ?? 0).then((_) => updateValidity());
+    controller.fetchData(widget.contactUs.id ?? 0).then((_) => updateValidity());
     controller.urlTrackingPassword.value.addListener(updateValidity);
   }
 
@@ -57,7 +58,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: defaultAppBar('Edit Case Studies'),
+      appBar: defaultAppBar('Edit Contact Us'),
       backgroundColor: AppColors.scaffoldBgColor2,
       body: Stack(
         children: [
@@ -110,7 +111,6 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                         ? const CustomLoadingButton()
                         : CustomSubmitButton(
                             title: 'Save',
-                            isDisabled: controller.selectedPic.value == null,
                             onTap: () => controller.submitForm(),
                           ),
                   ),
@@ -137,7 +137,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
           child: Obx(
             () => CustomSelectField(
               onTap: () => Get.toNamed(
-                AppRoutes.editCaseStudiesSelect,
+                AppRoutes.editContactUsSelect,
                 arguments: {
                   'title': 'PIC',
                   'data': 'pic',
@@ -157,7 +157,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
               onTap: () => Get.toNamed(
-                AppRoutes.editCaseStudiesSelect,
+                AppRoutes.editContactUsSelect,
                 arguments: {
                   'title': 'Priority',
                   'data': 'priority',
@@ -177,7 +177,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
               onTap: () => Get.toNamed(
-                AppRoutes.editCaseStudiesSelect,
+                AppRoutes.editContactUsSelect,
                 arguments: {
                   'title': 'Status',
                   'data': 'status',
@@ -197,7 +197,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
               onTap: () => Get.toNamed(
-                AppRoutes.editCaseStudiesSelect,
+                AppRoutes.editContactUsSelect,
                 arguments: {
                   'title': 'Type',
                   'data': 'type',
@@ -283,11 +283,14 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                               title: controller.picClients[index].contacts[i].type.toString(),
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                              'clientIndex': index,
-                                              'currentContact': controller.picClients[index].contacts[i],
-                                              'currentContactIndex': i,
-                                            }),
+                                            onTap: () => Get.toNamed(
+                                              AppRoutes.editContactUsContact,
+                                              arguments: {
+                                                'clientIndex': index,
+                                                'currentContact': controller.picClients[index].contacts[i],
+                                                'currentContactIndex': i,
+                                              },
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -299,11 +302,14 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                               title: controller.picClients[index].contacts[i].info.toString(),
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                              'clientIndex': index,
-                                              'currentContact': controller.picClients[index].contacts[i],
-                                              'currentContactIndex': i,
-                                            }),
+                                            onTap: () => Get.toNamed(
+                                              AppRoutes.editContactUsContact,
+                                              arguments: {
+                                                'clientIndex': index,
+                                                'currentContact': controller.picClients[index].contacts[i],
+                                                'currentContactIndex': i,
+                                              },
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -315,11 +321,14 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                               title: controller.picClients[index].contacts[i].status.toString(),
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                              'clientIndex': index,
-                                              'currentContact': controller.picClients[index].contacts[i],
-                                              'currentContactIndex': i,
-                                            }),
+                                            onTap: () => Get.toNamed(
+                                              AppRoutes.editContactUsContact,
+                                              arguments: {
+                                                'clientIndex': index,
+                                                'currentContact': controller.picClients[index].contacts[i],
+                                                'currentContactIndex': i,
+                                              },
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -331,11 +340,14 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                               title: controller.picClients[index].contacts[i].detail.toString(),
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                              'clientIndex': index,
-                                              'currentContact': controller.picClients[index].contacts[i],
-                                              'currentContactIndex': i,
-                                            }),
+                                            onTap: () => Get.toNamed(
+                                              AppRoutes.editContactUsContact,
+                                              arguments: {
+                                                'clientIndex': index,
+                                                'currentContact': controller.picClients[index].contacts[i],
+                                                'currentContactIndex': i,
+                                              },
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -347,11 +359,14 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                               title: controller.picClients[index].contacts[i].note.toString(),
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                              'clientIndex': index,
-                                              'currentContact': controller.picClients[index].contacts[i],
-                                              'currentContactIndex': i,
-                                            }),
+                                            onTap: () => Get.toNamed(
+                                              AppRoutes.editContactUsContact,
+                                              arguments: {
+                                                'clientIndex': index,
+                                                'currentContact': controller.picClients[index].contacts[i],
+                                                'currentContactIndex': i,
+                                              },
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -382,9 +397,10 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                               CustomSubmitButton(
                                 title: 'Add More Contact',
                                 icon: Ionicons.add,
-                                onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                  'clientIndex': index,
-                                }),
+                                onTap: () => Get.toNamed(
+                                  AppRoutes.editContactUsContact,
+                                  arguments: {'clientIndex': index},
+                                ),
                               ),
                               const SizedBox(height: 10),
                               CustomSubmitButton(
@@ -494,7 +510,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                             () => CustomSelectField(
                               isEnabled: controller.selectedPic.value != null,
                               onTap: () => Get.toNamed(
-                                AppRoutes.editCaseStudiesSelect,
+                                AppRoutes.editContactUsSelect,
                                 arguments: {
                                   'title': 'Activity Status',
                                   'data': 'activityStatus',
@@ -516,7 +532,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                             () => CustomSelectField(
                               isEnabled: controller.selectedPic.value != null,
                               onTap: () => Get.toNamed(
-                                AppRoutes.editCaseStudiesSelect,
+                                AppRoutes.editContactUsSelect,
                                 arguments: {
                                   'title': 'Activity Type',
                                   'data': 'activityType',
@@ -543,8 +559,9 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                   fit: BoxFit.fill,
                                   child: Switch(
                                     value: controller.activityAvailableToUser[index],
-                                    onChanged: (value) =>
-                                        setState(() => controller.activityAvailableToUser[index] = value),
+                                    onChanged: (value) {
+                                      setState(() => controller.activityAvailableToUser[index] = value);
+                                    },
                                     activeTrackColor: AppColors.primary,
                                     inactiveTrackColor: const Color(0xFFD8DAE5),
                                     trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -699,10 +716,13 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
             () => CustomSelectField(
               isEnabled:
                   controller.selectedPic.value != null && controller.urlTrackingEnabled.value && isValidityEnabled,
-              onTap: () => Get.toNamed(AppRoutes.editCaseStudiesSelect, arguments: {
-                'title': 'Validity',
-                'data': 'validity',
-              }),
+              onTap: () => Get.toNamed(
+                AppRoutes.editContactUsSelect,
+                arguments: {
+                  'title': 'Validity',
+                  'data': 'validity',
+                },
+              ),
               child: InboxTextOnField(
                 title: 'Select Validity',
                 selected: controller.selectedValidity.value,
@@ -724,7 +744,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                   (index) => HistoryTile(
                     controller: controller,
                     index: index,
-                    onEditRoute: AppRoutes.editCaseStudiesHistory,
+                    onEditRoute: AppRoutes.editContactUsHistory,
                   ),
                 ),
                 if (historyLength < controller.historyList.length)

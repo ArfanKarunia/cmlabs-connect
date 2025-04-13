@@ -6,10 +6,10 @@ import 'package:get/get.dart';
 import '../../../models/project_history_model.dart';
 import '../../../utils/toast.dart';
 import '../edit_history_controller.dart';
-import 'edit_case_studies_controller.dart';
+import 'edit_contact_us_controller.dart';
 
-class EditHistoryCaseStudiesController extends EditHistoryController {
-  final parentController = Get.find<EditCaseStudiesController>();
+class EditHistoryContactUsController extends EditHistoryController {
+  final parentController = Get.find<EditContactUsController>();
 
   @override
   Future<void> submitHistory({required int id, File? file}) async {
@@ -22,19 +22,18 @@ class EditHistoryCaseStudiesController extends EditHistoryController {
         return;
       }
 
-      final fields = {
+      final data = {
         "name": activityName.value.text,
         "type": activityType.map((type) => type['value']).toList(),
         "note": activityNote.value.text,
         "available_to_user": availableToUser.value == true ? 1 : 0,
         if (file != null) "file": await http.MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
       };
-
-      http.FormData data = http.FormData.fromMap(fields);
+      http.FormData body = http.FormData.fromMap(data);
 
       final response = await dio.post(
-        '$baseUrl/case-studies/update-history-activity/$id',
-        data: data,
+        '$baseUrl/contact-us/update-history-activity/$id',
+        data: body,
         options: http.Options(
           headers: {
             'Content-Type': 'multipart/form-data',

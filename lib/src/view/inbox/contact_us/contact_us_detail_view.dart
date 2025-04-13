@@ -4,45 +4,45 @@ import 'package:intl/intl.dart';
 
 import '../../../constant/const.dart';
 import '../../../constant/fontstyle.dart';
-import '../../../controllers/inbox/case_studies/detail_case_studies_controller.dart';
-import '../../../models/case_studies_model.dart';
+import '../../../controllers/inbox/contact_us/detail_contact_us_controller.dart';
+import '../../../models/contact_us_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
 import '../../../widgets/inbox_detail_tile.dart';
 
-class CaseStudiesDetailView extends StatefulWidget {
-  final CaseStudies caseStudies;
-  const CaseStudiesDetailView({super.key, required this.caseStudies});
+class ContactUsDetailView extends StatefulWidget {
+  final ContactUs contactUs;
+  const ContactUsDetailView({super.key, required this.contactUs});
 
   @override
-  State<CaseStudiesDetailView> createState() => _CaseStudiesDetailViewState();
+  State<ContactUsDetailView> createState() => _ContactUsDetailViewState();
 }
 
-class _CaseStudiesDetailViewState extends State<CaseStudiesDetailView> {
-  final controller = Get.find<DetailCaseStudiesController>();
+class _ContactUsDetailViewState extends State<ContactUsDetailView> {
+  final controller = Get.find<DetailContactUsController>();
 
   bool isShowMore = false;
 
   @override
   void initState() {
     super.initState();
-    controller.caseStudies.value = widget.caseStudies;
-    controller.fetchDetails(widget.caseStudies.id ?? 0);
+    controller.contactUs.value = widget.contactUs;
+    controller.fetchDetails(widget.contactUs.id ?? 0);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: defaultAppBar('Detail Case Studies'),
+      appBar: defaultAppBar('Detail Contact Us'),
       backgroundColor: AppColors.scaffoldBgColor2,
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         children: [
           Center(
             child: Text(
-              '${widget.caseStudies.data?.company}',
+              widget.contactUs.data?.company?.name ?? '-',
               style: bold.copyWith(fontSize: 18),
             ),
           ),
@@ -54,55 +54,53 @@ class _CaseStudiesDetailViewState extends State<CaseStudiesDetailView> {
               children: [
                 InboxDetailTile(
                   title: 'ID',
-                  content: '${widget.caseStudies.id}',
+                  content: '${(widget.contactUs.id ?? '-')}',
                 ),
                 InboxDetailTile(
                   title: 'Joined at',
                   content: DateFormat('d MMMM yyyy, HH:mm:ss')
-                      .format((widget.caseStudies.createdAt ?? DateTime.now()).toLocal()),
+                      .format((widget.contactUs.createdAt ?? DateTime.now()).toLocal()),
                 ),
                 InboxDetailTile(
                   title: 'Status',
-                  content: statusLead[widget.caseStudies.status ?? 0].title,
+                  content: statusLead[widget.contactUs.status ?? 0].title,
                 ),
                 InboxDetailTile(
                   title: 'Category',
-                  content: '${widget.caseStudies.data?.category?.join(', ')}',
+                  content: '${widget.contactUs.data?.category?.join(', ')}',
                 ),
                 InboxDetailTile(
                   title: 'Name',
-                  content: '${widget.caseStudies.data?.name}',
+                  content: (widget.contactUs.data?.name ?? '-'),
                 ),
                 InboxDetailTile(
                   title: 'Email',
-                  content: '${widget.caseStudies.email}',
+                  content: (widget.contactUs.email ?? '-'),
                 ),
                 InboxDetailTile(
                   title: 'Whatsapp',
-                  content: '${widget.caseStudies.data?.phoneNumber}',
+                  content: (widget.contactUs.data?.phoneNumber ?? '-'),
                 ),
                 if (isShowMore) ...[
                   InboxDetailTile(
                     title: 'Company Website',
-                    content: '${widget.caseStudies.data?.website}',
+                    content: (widget.contactUs.data?.website ?? '-'),
                   ),
                   InboxDetailTile(
                     title: 'Company Name',
-                    content: '${widget.caseStudies.data?.company}',
+                    content: (widget.contactUs.data?.company?.name ?? '-'),
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Company Profile',
-                      content: '${controller.caseStudies.value?.data?.companyProfile}',
-                    ),
+                  InboxDetailTile(
+                    title: 'Company Profile',
+                    content: (controller.contactUs.value?.data?.portfolio ?? '-'),
                   ),
                   InboxDetailTile(
                     title: 'Messages/Notes',
-                    content: '${widget.caseStudies.data?.message}',
+                    content: (widget.contactUs.data?.message ?? '-'),
                   ),
                   InboxDetailTile(
                     title: 'Page Source',
-                    content: '${widget.caseStudies.url}',
+                    content: (widget.contactUs.url ?? '-'),
                   ),
                   Obx(
                     () => InboxDetailTile(
@@ -137,8 +135,8 @@ class _CaseStudiesDetailViewState extends State<CaseStudiesDetailView> {
             child: CustomSubmitButton(
               title: 'Edit Data',
               onTap: () => Get.toNamed(
-                AppRoutes.editCaseStudies,
-                arguments: {'caseStudies': widget.caseStudies},
+                AppRoutes.editContactUs,
+                arguments: {'contactUs': widget.contactUs},
               ),
             ),
           ),

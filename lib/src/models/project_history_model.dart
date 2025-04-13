@@ -82,9 +82,8 @@ class ProjectHistory {
       createdBy: json['created_by'] == 1 ? 'Super Admin' : null,
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
       updatedAt: json['updated_at'] != null ? DateTime.tryParse(json['updated_at']) : null,
-      availableToUser: json['available_to_user'] == 1
-          ? true
-          : json['available_to_user'] == true
+      availableToUser:
+          json['available_to_user'] == "1" || json['available_to_user'] == 1 || json['available_to_user'] == true
               ? true
               : false,
       file: json['file'],

@@ -20,10 +20,10 @@ abstract class InboxController extends GetxController {
   Rx<int> totalLeads = Rx<int>(0);
 
   @override
-  void onReady() async {
+  void onReady() {
     super.onReady();
-    await fetchTotalLeads();
-    await fetchList();
+    fetchTotalLeads();
+    fetchList();
     // checkNewQuotationsPeriodically();
   }
 
@@ -161,7 +161,11 @@ abstract class InboxController extends GetxController {
       return;
     }
 
-    final url = Uri.parse("https://wa.me/$phoneNumber");
+    phoneCode.replaceAll('+', '');
+    String modifiedNumber = phoneNumber;
+    if (!(phoneNumber.startsWith(phoneCode))) modifiedNumber = '$phoneCode$phoneNumber';
+
+    final url = Uri.parse("https://wa.me/$modifiedNumber");
 
     await launchUrl(url, mode: LaunchMode.externalApplication);
   }

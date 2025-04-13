@@ -2,7 +2,7 @@ import 'project_activity_model.dart';
 import 'project_history_model.dart';
 import 'client_pic_model.dart';
 
-class FormCaseStudies {
+class InboxEditForm {
   final String? pic;
   final int? priority;
   final int? status;
@@ -14,7 +14,7 @@ class FormCaseStudies {
   final UrlTracking? urlTracking;
   final List<ProjectHistory>? projectHistory;
 
-  FormCaseStudies({
+  InboxEditForm({
     this.pic,
     this.priority,
     this.status,
@@ -27,7 +27,7 @@ class FormCaseStudies {
     this.projectHistory,
   });
 
-  factory FormCaseStudies.fromJson(Map<String, dynamic> json) {
+  factory InboxEditForm.fromJson(Map<String, dynamic> json) {
     final List<ClientPic> picClientSide =
         (json['pic_client_side'] as List<dynamic>?)?.map((contact) => ClientPic.fromJson(contact)).toList() ?? [];
     final List<ProjectActivity> projectActivity =
@@ -35,7 +35,7 @@ class FormCaseStudies {
     final List<ProjectHistory> projectHistory =
         (json['project_activity'] as List<dynamic>?)?.map((history) => ProjectHistory.fromJson(history)).toList() ?? [];
 
-    return FormCaseStudies(
+    return InboxEditForm(
       pic: json['pic'],
       priority: json['priority'],
       status: json['status'],
@@ -87,10 +87,12 @@ class UrlTracking {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        "URL": url,
-        "password": password,
-        "validity": validity?.toIso8601String(),
-        "Expired_at": expiredAt?.toIso8601String(),
-      };
+  Map<String, dynamic> toJson() {
+    return {
+      "URL": url,
+      "password": password,
+      "validity": validity?.toIso8601String(),
+      "Expired_at": expiredAt?.toIso8601String(),
+    };
+  }
 }
