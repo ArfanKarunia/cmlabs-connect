@@ -6,6 +6,7 @@ import 'dashboard/dashboard_bindings.dart';
 import 'filter/filter_bindings.dart';
 import 'inbox/case_studies/case_studies_bindings.dart';
 import 'inbox/contact_us/contact_us_bindings.dart';
+import 'inbox/faq/faq_bindings.dart';
 import 'inbox/quotation/quotation_bindings.dart';
 import 'user/user_bindings.dart';
 
@@ -21,5 +22,6 @@ class AppBindings extends Bindings {
     QuotationBindings().dependencies();
     CaseStudiesBindings().dependencies();
     ContactUsBindings().dependencies();
+    FaqBindings().dependencies();
   }
 }

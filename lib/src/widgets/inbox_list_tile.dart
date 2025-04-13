@@ -11,10 +11,12 @@ import '../constant/const.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../controllers/inbox/contact_us/contact_us_controller.dart';
+import '../controllers/inbox/faq/faq_controller.dart';
 import '../controllers/inbox/inbox_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../models/case_studies_model.dart';
 import '../models/contact_us_model.dart';
+import '../models/faq_model.dart';
 import '../models/quotation_model.dart';
 import '../routes.dart';
 import '../utils/bottom_sheet.dart';
@@ -260,6 +262,7 @@ class ContactUsListTile extends StatelessWidget {
       phoneNumber: contactUs.data?.phoneNumber.toString() ?? '-',
       email: contactUs.email ?? '-',
       createdAt: contactUs.createdAt ?? DateTime.now(),
+      status: contactUs.status,
       onTap: () => Get.toNamed(
         AppRoutes.detailContactUs,
         arguments: {'contactUs': contactUs},
@@ -272,6 +275,38 @@ class ContactUsListTile extends StatelessWidget {
         context,
         controller: contactUsController,
         id: contactUs.id,
+      ),
+    );
+  }
+}
+
+class FaqListTile extends StatelessWidget {
+  final Faq faq;
+  final FaqController faqController;
+
+  const FaqListTile({super.key, required this.faq, required this.faqController});
+
+  @override
+  Widget build(BuildContext context) {
+    return InboxListTile(
+      title: faq.companyName ?? 'N/A',
+      subtitle: faq.name ?? '-',
+      phoneNumber: faq.whatsappNumber ?? '-',
+      email: faq.shortQuestion ?? '-',
+      createdAt: faq.createdAt ?? DateTime.now(),
+      status: faq.status,
+      onTap: () => Get.toNamed(
+        AppRoutes.detailFaq,
+        arguments: {'faq': faq},
+      ),
+      onWhatsapp: () => faqController.redirectToWhatsapp(
+        phoneCode: faq.data?.phoneCode,
+        phoneNumber: faq.data?.phoneNumber,
+      ),
+      onDelete: () => handleDeleteQuotation(
+        context,
+        controller: faqController,
+        id: faq.id,
       ),
     );
   }

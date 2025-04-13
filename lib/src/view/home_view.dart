@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 
 import '../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../controllers/inbox/contact_us/contact_us_controller.dart';
+import '../controllers/inbox/faq/faq_controller.dart';
 import '../models/contact_us_model.dart';
+import '../models/faq_model.dart';
 import '../routes.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/bottom_nav/bottom_nav_controller.dart';
@@ -40,6 +42,7 @@ class _HomeViewState extends State<HomeView> {
   final QuotationController quotationController = Get.find<QuotationController>();
   final CaseStudiesController caseStudiesController = Get.find<CaseStudiesController>();
   final ContactUsController contactUsController = Get.find<ContactUsController>();
+  final FaqController faqController = Get.find<FaqController>();
 
   @override
   void initState() {
@@ -382,6 +385,47 @@ class _HomeViewState extends State<HomeView> {
                       return ContactUsListTile(
                         contactUs: contactUs,
                         contactUsController: contactUsController,
+                      );
+                    }).toList(),
+                  )
+                : const SizedBox(height: 150, child: EmptyState());
+          }),
+          const SizedBox(height: 20),
+
+          // FAQ LIST
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'FAQ',
+                style: bold.copyWith(
+                  fontSize: 16,
+                  color: AppColors.primaryText,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => navController.changePage(1),
+                child: Text(
+                  "View all",
+                  style: regular.copyWith(
+                    fontSize: 12,
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Obx(() {
+            List<Faq> faqList = faqController.faqList.take(3).toList();
+            return faqList.isNotEmpty
+                ? Column(
+                    children: faqList.map((faq) {
+                      return FaqListTile(
+                        faq: faq,
+                        faqController: faqController,
                       );
                     }).toList(),
                   )
