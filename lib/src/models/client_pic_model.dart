@@ -10,8 +10,13 @@ class ClientPic {
   });
 
   factory ClientPic.fromJson(Map<String, dynamic> json) {
-    final List<ContactClientPic> contactList =
-        (json['contacts'] as List<dynamic>?)?.map((contact) => ContactClientPic.fromJson(contact)).toList() ?? [];
+    final List<ContactClientPic> contactList = json['contacts'] != null
+        ? json['contacts'] is List<dynamic>
+            ? (json['contacts'] as List<dynamic>?)?.map((contact) => ContactClientPic.fromJson(contact)).toList() ?? []
+            : json['contacts'] is Map<String, dynamic>
+                ? [ContactClientPic.fromJson(json['contacts'])]
+                : []
+        : [];
 
     return ClientPic(
       name: json['name'],

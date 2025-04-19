@@ -5,12 +5,14 @@ import '../constant/fontstyle.dart';
 import '../utils/color.dart';
 
 class CustomSelectField extends StatelessWidget {
+  final bool isEnabled;
   final VoidCallback? onTap;
-  final IconData icon;
+  final IconData? icon;
   final Widget child;
   final String? errorText;
   const CustomSelectField({
     super.key,
+    this.isEnabled = true,
     this.onTap,
     this.icon = Ionicons.chevron_down_outline,
     required this.child,
@@ -23,11 +25,17 @@ class CustomSelectField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         InkWell(
-          onTap: onTap,
+          onTap: isEnabled ? onTap : null,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              border: Border.all(color: errorText != null ? AppColors.danger : AppColors.primaryText),
+              border: Border.all(
+                color: errorText != null
+                    ? AppColors.danger
+                    : isEnabled
+                        ? AppColors.primaryText
+                        : AppColors.text_4.withOpacity(0.4),
+              ),
               borderRadius: BorderRadius.circular(5),
             ),
             child: Row(
@@ -35,7 +43,11 @@ class CustomSelectField extends StatelessWidget {
                 Expanded(
                   child: child,
                 ),
-                Icon(icon),
+                if (icon != null)
+                  Icon(
+                    icon,
+                    color: isEnabled ? AppColors.primaryText : AppColors.text_4.withOpacity(0.4),
+                  ),
               ],
             ),
           ),

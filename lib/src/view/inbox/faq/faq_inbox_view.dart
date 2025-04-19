@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
-import '../../constant/fontstyle.dart';
-import '../../controllers/inbox/case_studies/case_studies_controller.dart';
-import '../../models/case_studies_model.dart';
-import '../../utils/color.dart';
-import '../../widgets/empty_state.dart';
-import '../../widgets/inbox_list_tile.dart';
+import '../../../constant/fontstyle.dart';
+import '../../../controllers/inbox/faq/faq_controller.dart';
+import '../../../models/faq_model.dart';
+import '../../../utils/color.dart';
+import '../../../widgets/empty_state.dart';
+import '../../../widgets/inbox_list_tile.dart';
 
-class CaseStudiesInbox extends StatelessWidget {
+class FaqInbox extends StatelessWidget {
   final RefreshController refreshController;
   final ScrollController scrollController;
-  const CaseStudiesInbox({
+  const FaqInbox({
     super.key,
     required this.refreshController,
     required this.scrollController,
@@ -20,10 +20,10 @@ class CaseStudiesInbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final caseStudiesController = Get.find<CaseStudiesController>();
+    final faqController = Get.find<FaqController>();
     return Obx(
       () {
-        List<CaseStudies> caseStudiesList = caseStudiesController.filteredCaseStudies;
+        List<Faq> faqList = faqController.filteredFaq;
 
         return SmartRefresher(
           enablePullDown: true,
@@ -47,27 +47,27 @@ class CaseStudiesInbox extends StatelessWidget {
           ),
           onRefresh: () async {
             await Future.delayed(const Duration(milliseconds: 1000));
-            await caseStudiesController.fetchList(refreshData: true);
+            await faqController.fetchList(refreshData: true);
             refreshController.refreshCompleted();
           },
           onLoading: () async {
             await Future.delayed(const Duration(milliseconds: 1000));
-            await caseStudiesController.loadMore();
+            await faqController.loadMore();
             refreshController.loadComplete();
           },
           controller: refreshController,
-          child: caseStudiesList.isEmpty
+          child: faqList.isEmpty
               ? const EmptyState()
               : ListView(
                   controller: scrollController,
                   children: [
-                    ...caseStudiesList.map((caseStudies) {
-                      return CaseStudiesListTile(
-                        caseStudies: caseStudies,
-                        caseStudiesController: caseStudiesController,
+                    ...faqList.map((faq) {
+                      return FaqListTile(
+                        faq: faq,
+                        faqController: faqController,
                       );
                     }),
-                    if (caseStudiesList.length % 10 == 0)
+                    if (faqList.length % 10 == 0)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 10),
                         child: Center(
@@ -77,7 +77,7 @@ class CaseStudiesInbox extends StatelessWidget {
                           ),
                         ),
                       )
-                    else if (caseStudiesList.isNotEmpty)
+                    else if (faqList.isNotEmpty)
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 10),

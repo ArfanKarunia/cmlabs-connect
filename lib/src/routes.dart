@@ -27,7 +27,26 @@ import 'package:cmlabs_connect/src/view/notification/layout_notification.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
+import 'models/case_studies_model.dart';
+import 'models/client_pic_model.dart';
+import 'models/contact_us_model.dart';
+import 'models/faq_model.dart';
+import 'models/project_history_model.dart';
+import 'models/quotation_model.dart';
 import 'view/filter_view.dart';
+import 'view/inbox/case_studies/case_studies_detail_view.dart';
+import 'view/inbox/case_studies/case_studies_edit_history_view.dart';
+import 'view/inbox/case_studies/case_studies_edit_pic_contact_view.dart';
+import 'view/inbox/case_studies/case_studies_edit_select_view.dart';
+import 'view/inbox/case_studies/case_studies_edit_view.dart';
+import 'view/inbox/contact_us/contact_us_detail_view.dart';
+import 'view/inbox/contact_us/contact_us_edit_history_view.dart';
+import 'view/inbox/contact_us/contact_us_edit_pic_contact_view.dart';
+import 'view/inbox/contact_us/contact_us_edit_select_view.dart';
+import 'view/inbox/contact_us/contact_us_edit_view.dart';
+import 'view/inbox/faq/faq_detail_view.dart';
+import 'view/inbox/faq/faq_edit_select_view.dart';
+import 'view/inbox/faq/faq_edit_status_view.dart';
 import 'view/inbox/quotation/quotation_add_pic_contact_view.dart';
 import 'view/inbox/quotation/quotation_add_select_new_view.dart';
 import 'view/inbox/quotation/quotation_add_select_view.dart';
@@ -45,7 +64,20 @@ class AppRoutes {
   static const String addQuotationSelectNew = '/addQuotationSelectNew';
   static const String addQuotationContact = '/addQuotationContact';
   static const String detailQuotation = '/detailQuotation';
+  static const String detailCaseStudies = '/detailCaseStudies';
+  static const String detailContactUs = '/detailContactUs';
+  static const String detailFaq = '/detailFaq';
   static const String editQuotation = '/editQuotation';
+  static const String editCaseStudies = '/editCaseStudies';
+  static const String editCaseStudiesSelect = '/editCaseStudiesSelect';
+  static const String editCaseStudiesContact = '/editCaseStudiesContact';
+  static const String editCaseStudiesHistory = '/editCaseStudiesHistory';
+  static const String editContactUs = '/editContactUs';
+  static const String editContactUsSelect = '/editContactUsSelect';
+  static const String editContactUsContact = '/editCaseStudiesContact';
+  static const String editContactUsHistory = '/editContactUsHistory';
+  static const String editFaqStatus = '/editFaqStatus';
+  static const String editFaqSelect = '/editFaqSelect';
   static const String addContactClientPIC = '/addContactClientPIC';
   static const String editHistoryChangesData = '/editHistoryChangesData';
   // static const String profile = '/profile';
@@ -191,8 +223,27 @@ class AppRoutes {
 
     GetPage(
       name: detailQuotation,
+      page: () => DetailQuotationView(),
+    ),
+    GetPage(
+      name: detailCaseStudies,
       page: () {
-        return DetailQuotationView();
+        final CaseStudies caseStudies = Get.arguments['caseStudies'];
+        return CaseStudiesDetailView(caseStudies: caseStudies);
+      },
+    ),
+    GetPage(
+      name: detailContactUs,
+      page: () {
+        final ContactUs contactUs = Get.arguments['contactUs'];
+        return ContactUsDetailView(contactUs: contactUs);
+      },
+    ),
+    GetPage(
+      name: detailFaq,
+      page: () {
+        final Faq faq = Get.arguments['faq'];
+        return FaqDetailView(faq: faq);
       },
     ),
 
@@ -217,8 +268,137 @@ class AppRoutes {
     GetPage(
       name: editQuotation,
       page: () {
-        final args = Get.arguments as Map<String, dynamic>;
-        return EditQuotationView(quotation: args['quotation']);
+        final Quotation quotation = Get.arguments['quotation'];
+        return EditQuotationView(quotation: quotation);
+      },
+    ),
+    GetPage(
+      name: editCaseStudies,
+      page: () {
+        final CaseStudies caseStudies = Get.arguments['caseStudies'];
+        return CaseStudiesEditView(caseStudies: caseStudies);
+      },
+    ),
+    GetPage(
+      name: editContactUs,
+      page: () {
+        final ContactUs contactUs = Get.arguments['contactUs'];
+        return ContactUsEditView(contactUs: contactUs);
+      },
+    ),
+    GetPage(
+      name: editFaqStatus,
+      page: () {
+        final Faq faq = Get.arguments['faq'];
+        return FaqEditStatusView(faq: faq);
+      },
+    ),
+    GetPage(
+      name: editCaseStudiesSelect,
+      page: () {
+        final String title = Get.arguments['title'];
+        final String data = Get.arguments['data'];
+        final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? false;
+        final bool isActivity = Get.arguments['isActivity'] ?? false;
+        final bool isHistory = Get.arguments['isHistory'] ?? false;
+        final bool isContactForm = Get.arguments['isContactForm'] ?? false;
+        final int? index = Get.arguments['index'];
+
+        return CaseStudiesEditSelectView(
+          title: title,
+          data: data,
+          isMultipleChoice: isMultipleChoice,
+          isActivity: isActivity,
+          isHistory: isHistory,
+          isContactForm: isContactForm,
+          index: index,
+        );
+      },
+    ),
+    GetPage(
+      name: editContactUsSelect,
+      page: () {
+        final String title = Get.arguments['title'];
+        final String data = Get.arguments['data'];
+        final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? false;
+        final bool isActivity = Get.arguments['isActivity'] ?? false;
+        final bool isHistory = Get.arguments['isHistory'] ?? false;
+        final bool isContactForm = Get.arguments['isContactForm'] ?? false;
+        final int? index = Get.arguments['index'];
+
+        return ContactUsEditSelectView(
+          title: title,
+          data: data,
+          isMultipleChoice: isMultipleChoice,
+          isActivity: isActivity,
+          isHistory: isHistory,
+          isContactForm: isContactForm,
+          index: index,
+        );
+      },
+    ),
+    GetPage(
+      name: editFaqSelect,
+      page: () {
+        final String title = Get.arguments['title'];
+        final String data = Get.arguments['data'];
+        final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? false;
+        // final bool isActivity = Get.arguments['isActivity'] ?? false;
+        // final bool isHistory = Get.arguments['isHistory'] ?? false;
+        // final bool isContactForm = Get.arguments['isContactForm'] ?? false;
+        // final int? index = Get.arguments['index'];
+
+        return FaqEditSelectView(
+          title: title,
+          data: data,
+          isMultipleChoice: isMultipleChoice,
+          // isActivity: isActivity,
+          // isHistory: isHistory,
+          // isContactForm: isContactForm,
+          // index: index,
+        );
+      },
+    ),
+    GetPage(
+      name: editCaseStudiesContact,
+      page: () {
+        final int clientIndex = Get.arguments['clientIndex'];
+        final ContactClientPic? currentContact = Get.arguments['currentContact'];
+        final int? currentContactIndex = Get.arguments['currentContactIndex'];
+
+        return CaseStudiesEditPicContactView(
+          clientIndex: clientIndex,
+          currentContact: currentContact,
+          currentContactIndex: currentContactIndex,
+        );
+      },
+    ),
+    GetPage(
+      name: editContactUsContact,
+      page: () {
+        final int clientIndex = Get.arguments['clientIndex'];
+        final ContactClientPic? currentContact = Get.arguments['currentContact'];
+        final int? currentContactIndex = Get.arguments['currentContactIndex'];
+
+        return ContactUsEditPicContactView(
+          clientIndex: clientIndex,
+          currentContact: currentContact,
+          currentContactIndex: currentContactIndex,
+        );
+      },
+    ),
+    GetPage(
+      name: editCaseStudiesHistory,
+      page: () {
+        final ProjectHistory history = Get.arguments['history'];
+        return CaseStudiesEditHistoryView(history: history);
+      },
+    ),
+    GetPage(
+      name: editContactUsHistory,
+      page: () {
+        final ProjectHistory history = Get.arguments['history'];
+        return ContactUsEditHistoryView(history: history);
       },
     ),
 

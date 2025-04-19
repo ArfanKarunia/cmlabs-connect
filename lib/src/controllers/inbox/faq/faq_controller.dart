@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
-import '../../../models/case_studies_model.dart';
+import '../../../models/faq_model.dart';
 import '../../../utils/toast.dart';
-import '../inbox_controller.dart';
 import '../../user/user_controller.dart';
+import '../inbox_controller.dart';
 
-class CaseStudiesController extends InboxController {
-  RxList<CaseStudies> caseStudiesList = <CaseStudies>[].obs;
+class FaqController extends InboxController {
+  RxList<Faq> faqList = <Faq>[].obs;
+
+  Rx<int> newestIdQuotation = Rx<int>(0);
+  Rx<int> newQuotationCount = Rx<int>(0);
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
@@ -25,7 +28,7 @@ class CaseStudiesController extends InboxController {
 
       if (refreshData) {
         start.value = 0;
-        limit.value = caseStudiesList.isNotEmpty ? caseStudiesList.length : 10;
+        limit.value = faqList.isNotEmpty ? faqList.length : 10;
       }
 
       if (!isLoadMore && !refreshData) {
@@ -33,7 +36,7 @@ class CaseStudiesController extends InboxController {
         limit.value = 10;
       }
 
-      String url = constructFilteredUrl('$baseUrl/case-studies/index');
+      String url = constructFilteredUrl('$baseUrl/faq/index');
 
       final response = await dio.get(
         url,
@@ -44,14 +47,14 @@ class CaseStudiesController extends InboxController {
         final rawData = response.data['data'];
 
         if (rawData != null && rawData is List) {
-          List<CaseStudies> caseStudies = rawData.map<CaseStudies>((item) {
-            return CaseStudies.fromJson(item);
+          List<Faq> faq = rawData.map<Faq>((item) {
+            return Faq.fromJson(item);
           }).toList();
 
           if (isLoadMore) {
-            caseStudiesList.addAll(caseStudies);
+            faqList.addAll(faq);
           } else {
-            caseStudiesList.value = caseStudies;
+            faqList.value = faq;
           }
 
           if (refreshData) limit.value = 10;
@@ -63,12 +66,21 @@ class CaseStudiesController extends InboxController {
   }
 
   @override
+  Future<void> resetList() async {
+    start.value = 0;
+    faqList.clear();
+
+    clearAll();
+    await fetchList();
+  }
+
+  @override
   Future<void> fetchTotalLeads() async {
     try {
       String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
-        '$baseUrl/case-studies/count-all-case-study',
+        '$baseUrl/faq/count-all-faq',
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
@@ -81,33 +93,24 @@ class CaseStudiesController extends InboxController {
   }
 
   @override
-  Future<void> resetList() async {
-    start.value = 0;
-    caseStudiesList.clear();
-
-    clearAll();
-    await fetchList();
-  }
-
-  @override
   Future<void> deleteData(int? id) async {
     try {
       final accessToken = userController.accesToken.value;
       if (accessToken == null || accessToken.isEmpty || id == null) {
-        showErrorToast('Gagal menghapus Case Study');
+        showErrorToast('Gagal menghapus Contact Us');
       }
 
       final response = await dio.delete(
-        '$baseUrl/case-studies/delete-case-study/$id',
+        '$baseUrl/faq/$id',
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        caseStudiesList.removeWhere((caseStudies) => caseStudies.id == id);
-        totalLeads.value -= 1;
-        showSuccessToast('Berhasil menghapus Case Study');
+        faqList.removeWhere((faq) => faq.id == id);
+        // totalLeads.value -= 1;
+        showSuccessToast('Berhasil menghapus FAQ');
       } else {
-        showErrorToast('Gagal menghapus Case Study');
+        showErrorToast('Gagal menghapus FAQ');
         // debugPrint("Error: ${response.statusCode}, Message: ${response.statusMessage}");
       }
     } catch (e) {
@@ -116,21 +119,23 @@ class CaseStudiesController extends InboxController {
     }
   }
 
-  List<CaseStudies> get filteredCaseStudies {
-    List<CaseStudies> result = List.from(caseStudiesList);
+  List<Faq> get filteredFaq {
+    List<Faq> result = List.from(faqList);
 
     // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
     // Filter berdasarkan pencarian (search) jika search tidak kosong
     if (search.value != null && search.value!.isNotEmpty) {
       final query = search.value!.toLowerCase();
 
-      result = result.where((caseStudies) {
-        return ((caseStudies.email ?? '').toLowerCase().contains(query)) ||
-            (caseStudies.section?.toLowerCase().contains(query) ?? false) ||
-            (caseStudies.data?.company?.toLowerCase().contains(query) ?? false) ||
-            (caseStudies.data?.name?.toLowerCase().contains(query) ?? false) ||
-            (caseStudies.data?.category?.any((e) => e.contains(query)) ?? false);
-        // || (caseStudies.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
+      result = result.where((faq) {
+        return (faq.email?.toLowerCase().contains(query) ?? false) ||
+            (faq.section?.toLowerCase().contains(query) ?? false) ||
+            (faq.question?.toLowerCase().contains(query) ?? false) ||
+            (faq.shortQuestion?.toLowerCase().contains(query) ?? false) ||
+            (faq.data?.companyName?.toLowerCase().contains(query) ?? false) ||
+            (faq.data?.name?.toLowerCase().contains(query) ?? false);
+        // (faq.data.category.any((cat) => cat!.toLowerCase().contains(query))) ||
+        // (faq.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();
     }
 

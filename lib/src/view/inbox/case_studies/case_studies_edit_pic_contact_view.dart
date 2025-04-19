@@ -4,7 +4,8 @@ import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/edit_quotation/client_pic_contact_controller.dart';
-import '../../../controllers/inbox/quotation/add_quotation_controller.dart';
+import '../../../controllers/inbox/case_studies/edit_case_studies_controller.dart';
+import '../../../models/client_pic_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_formfield.dart';
@@ -13,17 +14,32 @@ import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
 import '../../../widgets/inbox_add_field.dart';
 
-class QuotationAddPicContactView extends StatefulWidget {
-  final int contactIndex;
-  const QuotationAddPicContactView({super.key, required this.contactIndex});
+class CaseStudiesEditPicContactView extends StatefulWidget {
+  final int clientIndex;
+  final ContactClientPic? currentContact;
+  final int? currentContactIndex;
+  const CaseStudiesEditPicContactView({
+    super.key,
+    required this.clientIndex,
+    this.currentContact,
+    this.currentContactIndex,
+  });
 
   @override
-  State<QuotationAddPicContactView> createState() => _QuotationAddPicContactViewState();
+  State<CaseStudiesEditPicContactView> createState() => _CaseStudiesEditPicContactViewState();
 }
 
-class _QuotationAddPicContactViewState extends State<QuotationAddPicContactView> {
+class _CaseStudiesEditPicContactViewState extends State<CaseStudiesEditPicContactView> {
   final controller = Get.find<ClientPicContactController>();
-  final addQuotationController = Get.find<AddQuotationController>();
+  final editCaseStudiesController = Get.find<EditCaseStudiesController>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.currentContact != null) {
+      controller.setExistingValue(widget.currentContact!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +49,7 @@ class _QuotationAddPicContactViewState extends State<QuotationAddPicContactView>
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         children: [
-          Text('Contact ${widget.contactIndex + 1}', style: bold),
+          Text('Contact ${widget.clientIndex + 1}', style: bold),
           const SizedBox(height: 7),
           InboxAddField(
             title: 'Type',
@@ -41,7 +57,7 @@ class _QuotationAddPicContactViewState extends State<QuotationAddPicContactView>
             child: Obx(
               () => CustomSelectField(
                 onTap: () => Get.toNamed(
-                  AppRoutes.addQuotationSelect,
+                  AppRoutes.editCaseStudiesSelect,
                   arguments: {
                     'title': 'Type',
                     'data': 'contactType',
@@ -75,7 +91,7 @@ class _QuotationAddPicContactViewState extends State<QuotationAddPicContactView>
             child: Obx(
               () => CustomSelectField(
                 onTap: () => Get.toNamed(
-                  AppRoutes.addQuotationSelect,
+                  AppRoutes.editCaseStudiesSelect,
                   arguments: {
                     'title': 'Status',
                     'data': 'contactStatus',
@@ -97,7 +113,7 @@ class _QuotationAddPicContactViewState extends State<QuotationAddPicContactView>
             child: Obx(
               () => CustomSelectField(
                 onTap: () => Get.toNamed(
-                  AppRoutes.addQuotationSelect,
+                  AppRoutes.editCaseStudiesSelect,
                   arguments: {
                     'title': 'Detail Status',
                     'data': 'contactDetailStatus',
@@ -127,8 +143,19 @@ class _QuotationAddPicContactViewState extends State<QuotationAddPicContactView>
             onTap: () {
               if (controller.validateForm()) {
                 final contact = controller.createContactPIC();
-                addQuotationController.addClientPicContact(index: widget.contactIndex, contact: contact);
-                addQuotationController.picClients.refresh();
+                if (widget.currentContact != null) {
+                  editCaseStudiesController.editClientPicContact(
+                    clientIndex: widget.clientIndex,
+                    contactIndex: widget.currentContactIndex!,
+                    contact: contact,
+                  );
+                } else {
+                  editCaseStudiesController.addClientPicContact(
+                    index: widget.clientIndex,
+                    contact: contact,
+                  );
+                }
+                editCaseStudiesController.picClients.refresh();
                 Get.back();
               }
             },

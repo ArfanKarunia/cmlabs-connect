@@ -64,6 +64,38 @@ class CaseStudies {
       'deleted_at': deletedAt?.toIso8601String(),
     };
   }
+
+  CaseStudies copyWith({
+    int? id,
+    String? userId,
+    String? feature,
+    String? url,
+    String? email,
+    CaseStudiesData? data,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    String? section,
+    int? priority,
+    int? status,
+    int? isRead,
+    DateTime? deletedAt,
+  }) {
+    return CaseStudies(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      feature: feature ?? this.feature,
+      url: url ?? this.url,
+      email: email ?? this.email,
+      data: data ?? this.data,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      section: section ?? this.section,
+      priority: priority ?? this.priority,
+      status: status ?? this.status,
+      isRead: isRead ?? this.isRead,
+      deletedAt: deletedAt ?? this.deletedAt,
+    );
+  }
 }
 
 class CaseStudiesData {
@@ -72,7 +104,8 @@ class CaseStudiesData {
   final String? phoneNumber;
   final String? website;
   final String? company;
-  final String? category;
+  final String? companyProfile;
+  final List<String>? category;
   final String? message;
 
   CaseStudiesData({
@@ -81,18 +114,28 @@ class CaseStudiesData {
     this.phoneNumber,
     this.website,
     this.company,
+    this.companyProfile,
     this.category,
     this.message,
   });
 
   factory CaseStudiesData.fromJson(Map<String, dynamic> json) {
+    List<String>? categoryList;
+    if (json['category'] != null) {
+      if (json['category'] is String) {
+        categoryList = [json['category'] as String];
+      } else if (json['category'] is List) {
+        categoryList = List<String>.from(json['category'].map((item) => item.toString()));
+      }
+    }
+
     return CaseStudiesData(
       name: json['name'],
       phoneCode: json['phone_code'],
       phoneNumber: json['phone_number'],
       website: json['website'],
       company: json['company'],
-      category: json['category'],
+      category: categoryList ?? [],
       message: json['message'],
     );
   }
@@ -107,5 +150,27 @@ class CaseStudiesData {
       'category': category,
       'message': message,
     };
+  }
+
+  CaseStudiesData copyWith({
+    String? name,
+    String? phoneCode,
+    String? phoneNumber,
+    String? website,
+    String? company,
+    String? companyProfile,
+    List<String>? category,
+    String? message,
+  }) {
+    return CaseStudiesData(
+      name: name ?? this.name,
+      phoneCode: phoneCode ?? this.phoneCode,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      website: website ?? this.website,
+      company: company ?? this.company,
+      companyProfile: companyProfile ?? this.companyProfile,
+      category: category ?? this.category,
+      message: message ?? this.message,
+    );
   }
 }

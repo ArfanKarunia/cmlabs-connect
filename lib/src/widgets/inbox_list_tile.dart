@@ -10,34 +10,47 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../constant/const.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../controllers/inbox/contact_us/contact_us_controller.dart';
+import '../controllers/inbox/faq/faq_controller.dart';
 import '../controllers/inbox/inbox_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../models/case_studies_model.dart';
+import '../models/contact_us_model.dart';
+import '../models/faq_model.dart';
 import '../models/quotation_model.dart';
 import '../routes.dart';
 import '../utils/bottom_sheet.dart';
 import '../utils/color.dart';
 
-class QuotationListTile extends StatelessWidget {
-  final Quotation quotation;
-  final QuotationController quotationController;
-  QuotationListTile({
+class InboxListTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String? name;
+  final String phoneNumber;
+  final String email;
+  final DateTime createdAt;
+  final int? status;
+  final VoidCallback? onTap;
+  final VoidCallback? onWhatsapp;
+  final VoidCallback? onDelete;
+  const InboxListTile({
     super.key,
-    required this.quotation,
-    required this.quotationController,
+    required this.title,
+    required this.subtitle,
+    this.name,
+    required this.phoneNumber,
+    required this.email,
+    required this.createdAt,
+    this.status,
+    this.onTap,
+    this.onWhatsapp,
+    this.onDelete,
   });
-
-  final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
 
   @override
   Widget build(BuildContext context) {
-    final status = statusLead[quotation.status];
-
     return GestureDetector(
-      onTap: () {
-        detailQuotationController.quotation.value = quotation;
-        Get.toNamed(AppRoutes.detailQuotation);
-      },
+      onTap: onTap,
       child: Container(
         // height: 100, // Tinggi tile
         margin: const EdgeInsets.only(bottom: 10),
@@ -53,7 +66,7 @@ class QuotationListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
         ),
         child: SizedBox(
-          height: 110,
+          height: name != null ? 110 : 100,
           child: Stack(
             children: [
               Row(
@@ -72,21 +85,14 @@ class QuotationListTile extends StatelessWidget {
                         extentRatio: 1, // Memunculkan tombol saat slide
                         children: [
                           ButtonBehindSlideable(
-                            onTap: () => quotationController.redirectToWhatsapp(
-                              phoneCode: quotation.data.phoneCode,
-                              phoneNumber: quotation.data.phoneNumber,
-                            ),
+                            onTap: onWhatsapp,
                             bgColor: AppColors.bgSuccess,
                             color: AppColors.success,
                             title: 'WA',
                             icon: Ionicons.logo_whatsapp,
                           ),
                           ButtonBehindSlideable(
-                            onTap: () => handleDeleteQuotation(
-                              context,
-                              controller: quotationController,
-                              id: quotation.id,
-                            ),
+                            onTap: onDelete,
                             bgColor: AppColors.bgDanger,
                             color: AppColors.danger,
                             title: 'Delete',
@@ -100,11 +106,11 @@ class QuotationListTile extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              timeago.format(quotation.createdAt),
+                              timeago.format(createdAt),
                               style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
                             ),
                             const SizedBox(height: 7),
-                            StatusLeadTag(status: status),
+                            status != null ? StatusLeadTag(status: statusLead[status ?? 0]) : Container(),
                           ],
                         ),
                       ),
@@ -122,42 +128,35 @@ class QuotationListTile extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            (quotation.data.company?.isEmpty ?? true) ? "N/A" : quotation.data.company!,
+                            title,
                             maxLines: 1,
                             style: bold.copyWith(
                               fontSize: 15,
-                              color: (quotation.data.company?.isEmpty ?? true) ? AppColors.text_3 : AppColors.text_1,
+                              color: AppColors.text_1,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            quotation.data.category.isNotEmpty && quotation.section != 'content-writing'
-                                ? StringUtils.toCamelCase(quotation.data.category.map((cat) {
-                                    return cat == null || cat.isEmpty
-                                        ? '-'
-                                        : cat.replaceAll('SEO Article', 'SEO Writing');
-                                  }).join(', '))
-                                : StringUtils.toCamelCase(quotation.section),
-                            // quotation.section != 'ads' ?
-                            // StringUtils.toCamelCase(quotation.section) : quotation.data.category.join(','),
+                            subtitle,
                             style: regular.copyWith(fontSize: 12),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
+                          if (name != null)
+                            Text(
+                              name ?? '-',
+                              style: regular.copyWith(fontSize: 11, color: AppColors.text_4),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           Text(
-                            quotation.data.pic ?? "-",
+                            phoneNumber,
                             style: regular.copyWith(fontSize: 11, color: AppColors.text_4),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                           Text(
-                            quotation.data.phoneNumber ?? "-",
-                            style: regular.copyWith(fontSize: 11, color: AppColors.text_4),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            quotation.email,
+                            email,
                             style: regular.copyWith(fontSize: 11, color: AppColors.text_4),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -174,6 +173,140 @@ class QuotationListTile extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class QuotationListTile extends StatelessWidget {
+  final Quotation quotation;
+  final QuotationController quotationController;
+
+  const QuotationListTile({super.key, required this.quotation, required this.quotationController});
+
+  @override
+  Widget build(BuildContext context) {
+    final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
+
+    return InboxListTile(
+      title: quotation.data.company ?? 'N/A',
+      subtitle: quotation.data.category.isNotEmpty && quotation.section != 'content-writing'
+          ? StringUtils.toCamelCase(quotation.data.category.map((cat) {
+              return cat == null || cat.isEmpty ? '-' : cat.replaceAll('SEO Article', 'SEO Writing');
+            }).join(', '))
+          : StringUtils.toCamelCase(quotation.section),
+      name: quotation.data.pic ?? '-',
+      phoneNumber: quotation.data.phoneNumber ?? '-',
+      email: quotation.email,
+      createdAt: quotation.createdAt,
+      status: quotation.status,
+      onTap: () {
+        detailQuotationController.quotation.value = quotation;
+        Get.toNamed(AppRoutes.detailQuotation);
+      },
+      onWhatsapp: () => quotationController.redirectToWhatsapp(
+        phoneCode: quotation.data.phoneCode,
+        phoneNumber: quotation.data.phoneNumber,
+      ),
+      onDelete: () => handleDeleteQuotation(
+        context,
+        controller: quotationController,
+        id: quotation.id,
+      ),
+    );
+  }
+}
+
+class CaseStudiesListTile extends StatelessWidget {
+  final CaseStudies caseStudies;
+  final CaseStudiesController caseStudiesController;
+
+  const CaseStudiesListTile({super.key, required this.caseStudies, required this.caseStudiesController});
+
+  @override
+  Widget build(BuildContext context) {
+    return InboxListTile(
+      title: caseStudies.data?.company ?? 'N/A',
+      subtitle: caseStudies.data?.name ?? '-',
+      phoneNumber: caseStudies.data?.phoneNumber ?? '-',
+      email: caseStudies.email ?? '-',
+      createdAt: caseStudies.createdAt ?? DateTime.now(),
+      onTap: () => Get.toNamed(
+        AppRoutes.detailCaseStudies,
+        arguments: {'caseStudies': caseStudies},
+      ),
+      onWhatsapp: () => caseStudiesController.redirectToWhatsapp(
+        phoneCode: caseStudies.data?.phoneCode,
+        phoneNumber: caseStudies.data?.phoneNumber,
+      ),
+      onDelete: () => handleDeleteQuotation(
+        context,
+        controller: caseStudiesController,
+        id: caseStudies.id,
+      ),
+    );
+  }
+}
+
+class ContactUsListTile extends StatelessWidget {
+  final ContactUs contactUs;
+  final ContactUsController contactUsController;
+
+  const ContactUsListTile({super.key, required this.contactUs, required this.contactUsController});
+
+  @override
+  Widget build(BuildContext context) {
+    return InboxListTile(
+      title: contactUs.data?.company?.name ?? 'N/A',
+      subtitle: contactUs.data?.name ?? '-',
+      phoneNumber: contactUs.data?.phoneNumber.toString() ?? '-',
+      email: contactUs.email ?? '-',
+      createdAt: contactUs.createdAt ?? DateTime.now(),
+      status: contactUs.status,
+      onTap: () => Get.toNamed(
+        AppRoutes.detailContactUs,
+        arguments: {'contactUs': contactUs},
+      ),
+      onWhatsapp: () => contactUsController.redirectToWhatsapp(
+        phoneCode: contactUs.data?.phoneCode,
+        phoneNumber: contactUs.data?.phoneNumber,
+      ),
+      onDelete: () => handleDeleteQuotation(
+        context,
+        controller: contactUsController,
+        id: contactUs.id,
+      ),
+    );
+  }
+}
+
+class FaqListTile extends StatelessWidget {
+  final Faq faq;
+  final FaqController faqController;
+
+  const FaqListTile({super.key, required this.faq, required this.faqController});
+
+  @override
+  Widget build(BuildContext context) {
+    return InboxListTile(
+      title: faq.companyName ?? 'N/A',
+      subtitle: faq.name ?? '-',
+      phoneNumber: faq.whatsappNumber ?? '-',
+      email: faq.shortQuestion ?? '-',
+      createdAt: faq.createdAt ?? DateTime.now(),
+      status: faq.status,
+      onTap: () => Get.toNamed(
+        AppRoutes.detailFaq,
+        arguments: {'faq': faq},
+      ),
+      onWhatsapp: () => faqController.redirectToWhatsapp(
+        phoneCode: faq.data?.phoneCode,
+        phoneNumber: faq.data?.phoneNumber,
+      ),
+      onDelete: () => handleDeleteQuotation(
+        context,
+        controller: faqController,
+        id: faq.id,
       ),
     );
   }
@@ -196,152 +329,6 @@ class StatusLeadTag extends StatelessWidget {
         child: Text(
           status.title,
           style: regular.copyWith(fontSize: 12, color: status.color),
-        ),
-      ),
-    );
-  }
-}
-
-class CaseStudiesListTile extends StatelessWidget {
-  final CaseStudies caseStudies;
-  final CaseStudiesController caseStudiesController;
-
-  const CaseStudiesListTile({
-    super.key,
-    required this.caseStudies,
-    required this.caseStudiesController,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // detailQuotationController.quotation.value = quotation;
-        // Get.toNamed(AppRoutes.detailQuotation);
-      },
-      child: Container(
-        // height: 100, // Tinggi tile
-        margin: const EdgeInsets.only(bottom: 10),
-        decoration: BoxDecoration(
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromARGB(20, 0, 0, 0),
-              offset: Offset(2, 2),
-              blurRadius: 10,
-            ),
-          ],
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: SizedBox(
-          height: 100,
-          child: Stack(
-            children: [
-              Row(
-                // mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Expanded(
-                    flex: 1,
-                    child: Container(),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: SizedBox(
-                      child: Slidable(
-                        closeOnScroll: true,
-                        endActionPane: ActionPane(
-                          motion: const BehindMotion(),
-                          extentRatio: 1,
-                          children: [
-                            ButtonBehindSlideable(
-                              onTap: () => caseStudiesController.redirectToWhatsapp(
-                                phoneCode: caseStudies.data?.phoneCode,
-                                phoneNumber: caseStudies.data?.phoneNumber,
-                              ),
-                              bgColor: AppColors.bgSuccess,
-                              color: AppColors.success,
-                              title: 'WA',
-                              icon: Ionicons.logo_whatsapp,
-                            ),
-                            ButtonBehindSlideable(
-                              onTap: () => handleDeleteQuotation(
-                                context,
-                                controller: caseStudiesController,
-                                id: caseStudies.id,
-                              ),
-                              bgColor: AppColors.bgDanger,
-                              color: AppColors.danger,
-                              title: 'Delete',
-                              icon: Ionicons.trash_outline,
-                            )
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                timeago.format(caseStudies.createdAt ?? DateTime.now()),
-                                style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
-                              ),
-                              const SizedBox(height: 7),
-                              Container(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      color: AppColors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            caseStudies.data?.company ?? 'N/A',
-                            maxLines: 1,
-                            style: bold.copyWith(
-                              fontSize: 15,
-                              color: (caseStudies.data?.company?.isEmpty ?? true) ? AppColors.text_3 : AppColors.text_1,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            caseStudies.data?.name ?? '-',
-                            style: regular.copyWith(fontSize: 12),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            caseStudies.data?.phoneNumber ?? "-",
-                            style: regular.copyWith(fontSize: 11, color: AppColors.text_4),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          Text(
-                            caseStudies.email.toString(),
-                            style: regular.copyWith(fontSize: 11, color: AppColors.text_4),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // Berfungsi agar informasi quotation hanya setengah tile
-                  Expanded(child: Container()),
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

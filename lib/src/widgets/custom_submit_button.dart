@@ -6,6 +6,7 @@ import '../utils/color.dart';
 
 class CustomSubmitButton extends StatelessWidget {
   final String title;
+  final bool isTitleBold;
   final IconData? icon;
   final double? iconSize;
   final bool isDisabled;
@@ -14,17 +15,20 @@ class CustomSubmitButton extends StatelessWidget {
   final Color? borderColor;
   final Color textColor;
   final VoidCallback? onTap;
+  final double padding;
   const CustomSubmitButton({
     super.key,
     this.icon,
     this.iconSize,
     required this.title,
+    this.isTitleBold = true,
     this.isDisabled = false,
     this.color = AppColors.primary,
     this.disabledColor = AppColors.lightPrimaryColor,
     this.borderColor,
     this.textColor = AppColors.white,
     this.onTap,
+    this.padding = 17.5,
   });
 
   @override
@@ -33,7 +37,7 @@ class CustomSubmitButton extends StatelessWidget {
       onTap: !isDisabled ? onTap : null,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.all(17.5),
+        padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           border: borderColor != null ? Border.all(color: borderColor!) : null,
@@ -48,7 +52,7 @@ class CustomSubmitButton extends StatelessWidget {
             ],
             Text(
               title,
-              style: bold.copyWith(color: textColor),
+              style: isTitleBold ? bold.copyWith(color: textColor) : regular.copyWith(color: textColor),
             ),
           ],
         ),

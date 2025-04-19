@@ -7,13 +7,17 @@ import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../constant/fontstyle.dart';
 import '../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../controllers/inbox/contact_us/contact_us_controller.dart';
+import '../controllers/inbox/faq/faq_controller.dart';
 import '../controllers/inbox/inbox_controller.dart';
 import '../models/inbox_page_model.dart';
 import '../routes.dart';
 import '../utils/bottom_sheet.dart';
 import '../widgets/custom_buttom.dart';
 import '../widgets/select_status.dart';
-import 'inbox/case_studies_inbox_view.dart';
+import 'inbox/case_studies/case_studies_inbox_view.dart';
+import 'inbox/contact_us/contact_us_inbox_view.dart';
+import 'inbox/faq/faq_inbox_view.dart';
 import 'inbox/quotation/quotation_inbox_view.dart';
 
 class InboxView extends StatefulWidget {
@@ -34,6 +38,8 @@ class _InboxViewState extends State<InboxView> {
   final List<InboxController> controller = [
     Get.find<QuotationController>(),
     Get.find<CaseStudiesController>(),
+    Get.find<ContactUsController>(),
+    Get.find<FaqController>(),
   ];
 
   int index = 0;
@@ -53,11 +59,11 @@ class _InboxViewState extends State<InboxView> {
       ),
       InboxPage(
         title: 'Contact Us',
-        child: Container(),
+        child: ContactUsInbox(refreshController: RefreshController(), scrollController: scrollController),
       ),
       InboxPage(
         title: 'FAQ',
-        child: Container(),
+        child: FaqInbox(refreshController: RefreshController(), scrollController: scrollController),
       ),
     ];
 
@@ -148,7 +154,7 @@ class _InboxViewState extends State<InboxView> {
                     ),
                     Obx(
                       () => Text(
-                        index < 1 ? "${controller[index].totalLeads.value}" : "0",
+                        controller[index].totalLeads.value.toString(),
                         style: regular.copyWith(
                           fontSize: 12,
                           color: AppColors.primary,
