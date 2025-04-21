@@ -56,15 +56,15 @@ class _HomeViewState extends State<HomeView> {
     final user = userController.user.value;
 
     return Scaffold(
-      backgroundColor: AppColors.scaffoldBgColor2,
+      backgroundColor: AppColors.primary,
       body: ListView(
-        padding: const EdgeInsets.all(18),
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+            margin: const EdgeInsets.all(28),
+            padding: const EdgeInsets.all(23),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: AppColors.dashboardContainer,
+              color: AppColors.white,
             ),
             child: Column(
               children: [
@@ -150,7 +150,7 @@ class _HomeViewState extends State<HomeView> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           MetricCard(
@@ -173,57 +173,242 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
 
           // Body (Qoutation List)
-          Column(
+          Stack(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Inbox Leads",
-                    style: bold.copyWith(
-                      fontSize: 20,
-                      color: AppColors.primaryText,
-                    ),
-                  ),
-                  const SizedBox(height: 7),
-                  Row(
-                    children: [
-                      Obx(
-                        () => Text(
-                          "${quotationController.totalLeads.value} ",
-                          style: regular.copyWith(
-                            fontSize: 12,
-                            color: AppColors.primary,
+              Container(
+                color: AppColors.primary,
+              ),
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10),
+
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Inbox Leads",
+                          style: bold.copyWith(
+                            fontSize: 20,
+                            color: AppColors.primaryText,
                           ),
                         ),
-                      ),
-                      Text(
-                        "Leads",
-                        style: regular.copyWith(
-                          fontSize: 12,
-                          color: AppColors.primaryText,
+                        const SizedBox(height: 7),
+                        Row(
+                          children: [
+                            Obx(
+                              () => Text(
+                                "${quotationController.totalLeads.value} ",
+                                style: regular.copyWith(
+                                  fontSize: 12,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              "Leads",
+                              style: regular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.primaryText,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+
+                    const SizedBox(height: 7),
+
+                    // Select Status, Filter Section, & Historical Lead History
+                    SelectStatus(
+                      controllers: [
+                        quotationController,
+                        caseStudiesController,
+                        contactUsController,
+                        faqController,
+                      ],
+                      enableFilter: true,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Quotations',
+                          style: bold.copyWith(
+                            fontSize: 20,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => navController.changePage(1),
+                          child: Text(
+                            "View all",
+                            style: regular.copyWith(
+                              fontSize: 12,
+                              color: AppColors.primary,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Obx(() {
+                      List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
+                      return quotationList.isNotEmpty
+                          ? Column(
+                              children: quotationList.map((quotation) {
+                                return QuotationListTile(
+                                  quotation: quotation,
+                                  quotationController: quotationController,
+                                );
+                              }).toList(),
+                            )
+                          : const SizedBox(height: 150, child: EmptyState());
+                    }),
+
+                    const SizedBox(height: 20),
+
+                    // CASE STUDIES LIST
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Case Studies',
+                          style: bold.copyWith(
+                            fontSize: 20,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => navController.changePage(1),
+                          child: Text(
+                            "View all",
+                            style: regular.copyWith(
+                              fontSize: 12,
+                              color: AppColors.primary,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Obx(() {
+                      List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
+                      return caseStudiesList.isNotEmpty
+                          ? Column(
+                              children: caseStudiesList.map((caseStudies) {
+                                return CaseStudiesListTile(
+                                  caseStudies: caseStudies,
+                                  caseStudiesController: caseStudiesController,
+                                );
+                              }).toList(),
+                            )
+                          : const SizedBox(height: 150, child: EmptyState());
+                    }),
+                    const SizedBox(height: 20),
+
+                    // CONTACT US LIST
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Contact Us',
+                          style: bold.copyWith(
+                            fontSize: 20,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => navController.changePage(1),
+                          child: Text(
+                            "View all",
+                            style: regular.copyWith(
+                              fontSize: 12,
+                              color: AppColors.primary,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Obx(() {
+                      List<ContactUs> contactUsList = contactUsController.contactUsList.take(3).toList();
+                      return contactUsList.isNotEmpty
+                          ? Column(
+                              children: contactUsList.map((contactUs) {
+                                return ContactUsListTile(
+                                  contactUs: contactUs,
+                                  contactUsController: contactUsController,
+                                );
+                              }).toList(),
+                            )
+                          : const SizedBox(height: 150, child: EmptyState());
+                    }),
+                    const SizedBox(height: 20),
+
+                    // FAQ LIST
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'FAQ',
+                          style: bold.copyWith(
+                            fontSize: 20,
+                            color: AppColors.primaryText,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => navController.changePage(1),
+                          child: Text(
+                            "View all",
+                            style: regular.copyWith(
+                              fontSize: 12,
+                              color: AppColors.primary,
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Obx(() {
+                      List<Faq> faqList = faqController.faqList.take(3).toList();
+                      return faqList.isNotEmpty
+                          ? Column(
+                              children: faqList.map((faq) {
+                                return FaqListTile(
+                                  faq: faq,
+                                  faqController: faqController,
+                                );
+                              }).toList(),
+                            )
+                          : const SizedBox(height: 150, child: EmptyState());
+                    }),
+
+                    const SizedBox(height: 10),
+                  ],
+                ),
               ),
-
-              const SizedBox(height: 7),
-
-              // Select Status, Filter Section, & Historical Lead History
-              SelectStatus(
-                controllers: [quotationController, caseStudiesController],
-                enableFilter: true,
-                enableHistory: true,
-              )
             ],
           ),
-
-          const SizedBox(height: 20),
 
           // Obx(
           //   () => quotationController.newQuotationCount.value > 0
@@ -267,172 +452,6 @@ class _HomeViewState extends State<HomeView> {
           //         )
           //       : const SizedBox.shrink(),
           // ),
-
-          // QOUTATION LIST
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Quotations',
-                style: bold.copyWith(
-                  fontSize: 16,
-                  color: AppColors.primaryText,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => navController.changePage(1),
-                child: Text(
-                  "View all",
-                  style: regular.copyWith(
-                    fontSize: 12,
-                    color: AppColors.primary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Obx(() {
-            List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
-            return quotationList.isNotEmpty
-                ? Column(
-                    children: quotationList.map((quotation) {
-                      return QuotationListTile(
-                        quotation: quotation,
-                        quotationController: quotationController,
-                      );
-                    }).toList(),
-                  )
-                : const SizedBox(height: 150, child: EmptyState());
-          }),
-
-          const SizedBox(height: 20),
-
-          // CASE STUDIES LIST
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Case Studies',
-                style: bold.copyWith(
-                  fontSize: 16,
-                  color: AppColors.primaryText,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => navController.changePage(1),
-                child: Text(
-                  "View all",
-                  style: regular.copyWith(
-                    fontSize: 12,
-                    color: AppColors.primary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Obx(() {
-            List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
-            return caseStudiesList.isNotEmpty
-                ? Column(
-                    children: caseStudiesList.map((caseStudies) {
-                      return CaseStudiesListTile(
-                        caseStudies: caseStudies,
-                        caseStudiesController: caseStudiesController,
-                      );
-                    }).toList(),
-                  )
-                : const SizedBox(height: 150, child: EmptyState());
-          }),
-          const SizedBox(height: 20),
-
-          // CONTACT US LIST
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Contact Us',
-                style: bold.copyWith(
-                  fontSize: 16,
-                  color: AppColors.primaryText,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => navController.changePage(1),
-                child: Text(
-                  "View all",
-                  style: regular.copyWith(
-                    fontSize: 12,
-                    color: AppColors.primary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Obx(() {
-            List<ContactUs> contactUsList = contactUsController.contactUsList.take(3).toList();
-            return contactUsList.isNotEmpty
-                ? Column(
-                    children: contactUsList.map((contactUs) {
-                      return ContactUsListTile(
-                        contactUs: contactUs,
-                        contactUsController: contactUsController,
-                      );
-                    }).toList(),
-                  )
-                : const SizedBox(height: 150, child: EmptyState());
-          }),
-          const SizedBox(height: 20),
-
-          // FAQ LIST
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'FAQ',
-                style: bold.copyWith(
-                  fontSize: 16,
-                  color: AppColors.primaryText,
-                ),
-              ),
-              GestureDetector(
-                onTap: () => navController.changePage(1),
-                child: Text(
-                  "View all",
-                  style: regular.copyWith(
-                    fontSize: 12,
-                    color: AppColors.primary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Obx(() {
-            List<Faq> faqList = faqController.faqList.take(3).toList();
-            return faqList.isNotEmpty
-                ? Column(
-                    children: faqList.map((faq) {
-                      return FaqListTile(
-                        faq: faq,
-                        faqController: faqController,
-                      );
-                    }).toList(),
-                  )
-                : const SizedBox(height: 150, child: EmptyState());
-          }),
-
-          const SizedBox(height: 10)
         ],
       ),
     );

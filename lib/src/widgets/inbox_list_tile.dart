@@ -55,15 +55,9 @@ class InboxListTile extends StatelessWidget {
         // height: 100, // Tinggi tile
         margin: const EdgeInsets.only(bottom: 10),
         decoration: BoxDecoration(
-          boxShadow: const [
-            BoxShadow(
-              color: Color.fromARGB(20, 0, 0, 0),
-              offset: Offset(2, 2),
-              blurRadius: 10,
-            ),
-          ],
           color: AppColors.white,
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: const Color(0xFFF3F3F3), width: 1.2),
         ),
         child: SizedBox(
           height: name != null ? 110 : 100,

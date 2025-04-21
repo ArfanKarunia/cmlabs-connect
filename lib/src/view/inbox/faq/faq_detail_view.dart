@@ -35,7 +35,7 @@ class _FaqDetailViewState extends State<FaqDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: defaultAppBar('Detail Contact Us'),
+      appBar: defaultAppBar('Detail FAQ'),
       backgroundColor: AppColors.scaffoldBgColor2,
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -46,11 +46,15 @@ class _FaqDetailViewState extends State<FaqDetailView> {
               style: bold.copyWith(fontSize: 18),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 26),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            color: Colors.white,
+            margin: const EdgeInsets.symmetric(horizontal: 37),
+            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 32),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InboxDetailTile(
                   title: 'ID',

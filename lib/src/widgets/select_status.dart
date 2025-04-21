@@ -44,13 +44,13 @@ class SelectStatus extends StatelessWidget {
                           onTap: () {
                             for (InboxController controller in controllers) {
                               controller.clearFilterStatus();
-                              controller.fetchList(refreshData: true);
+                              controller.fetchList();
                             }
                           },
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
+                              borderRadius: BorderRadius.circular(10),
                               color: statusSelected == null ? AppColors.primary : AppColors.inactiveOption,
                             ),
                             child: Center(
@@ -88,7 +88,7 @@ class SelectStatus extends StatelessWidget {
                                   margin: const EdgeInsets.only(right: 8),
                                   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(5),
+                                    borderRadius: BorderRadius.circular(10),
                                     color: selected ? AppColors.primary : AppColors.inactiveOption,
                                   ),
                                   child: Center(
@@ -115,34 +115,33 @@ class SelectStatus extends StatelessWidget {
             ),
           ),
 
+          if (enableFilter) const SizedBox(width: 10),
+
           // Filter Section button & Historical Lead Button
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: Row(
-              children: [
-                if (enableFilter)
-                  CustomButton(
-                    onPressed: () => Get.toNamed(AppRoutes.filter),
-                    backgroundColor: Colors.transparent,
-                    overlayColor: const Color.fromARGB(33, 31, 149, 245),
-                    child: const Icon(
-                      Ionicons.options_outline,
-                      color: AppColors.text_1,
-                    ),
+          Row(
+            children: [
+              if (enableFilter)
+                CustomButton(
+                  onPressed: () => Get.toNamed(AppRoutes.filter),
+                  backgroundColor: Colors.transparent,
+                  overlayColor: const Color.fromARGB(33, 31, 149, 245),
+                  child: const Icon(
+                    Ionicons.options_outline,
+                    color: AppColors.text_1,
                   ),
-                if (enableFilter && enableHistory) const SizedBox(width: 14),
-                if (enableHistory)
-                  CustomButton(
-                    onPressed: () => Get.toNamed(AppRoutes.historicalLead),
-                    backgroundColor: Colors.transparent,
-                    overlayColor: const Color.fromARGB(33, 31, 149, 245),
-                    child: const Icon(
-                      Icons.history,
-                      color: AppColors.text_1,
-                    ),
-                  ),
-              ],
-            ),
+                ),
+              // if (enableFilter && enableHistory) const SizedBox(width: 14),
+              // if (enableHistory)
+              //   CustomButton(
+              //     onPressed: () => Get.toNamed(AppRoutes.historicalLead),
+              //     backgroundColor: Colors.transparent,
+              //     overlayColor: const Color.fromARGB(33, 31, 149, 245),
+              //     child: const Icon(
+              //       Icons.history,
+              //       color: AppColors.text_1,
+              //     ),
+              //   ),
+            ],
           ),
         ],
       ),

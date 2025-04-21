@@ -46,11 +46,15 @@ class _CaseStudiesDetailViewState extends State<CaseStudiesDetailView> {
               style: bold.copyWith(fontSize: 18),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 26),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            color: Colors.white,
+            margin: const EdgeInsets.symmetric(horizontal: 37),
+            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 32),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InboxDetailTile(
                   title: 'ID',
@@ -111,23 +115,23 @@ class _CaseStudiesDetailViewState extends State<CaseStudiesDetailView> {
                     ),
                   ),
                 ],
-                InkWell(
-                  onTap: () => setState(() => isShowMore = !isShowMore),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        isShowMore ? 'Show Less' : 'Show More',
-                        style: bold.copyWith(color: AppColors.primary),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        isShowMore ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ),
-                )
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () => setState(() => isShowMore = !isShowMore),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isShowMore ? 'Show Less' : 'Show More',
+                  style: bold.copyWith(color: AppColors.primary),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  isShowMore ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  color: AppColors.primary,
+                ),
               ],
             ),
           ),

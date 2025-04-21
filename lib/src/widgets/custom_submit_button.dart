@@ -39,7 +39,7 @@ class CustomSubmitButton extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(10),
           border: borderColor != null ? Border.all(color: borderColor!) : null,
           color: !isDisabled ? color : disabledColor,
         ),
