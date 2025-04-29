@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:get/get.dart';
 // import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
@@ -57,358 +58,618 @@ class _HomeViewState extends State<HomeView> {
 
     return Scaffold(
       backgroundColor: AppColors.primary,
-      body: ListView(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(28),
-            padding: const EdgeInsets.all(23),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: AppColors.white,
-            ),
-            child: Column(
-              children: [
-                // User details and notif icon
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CustomAvatar(
-                          radius: 24,
-                          link: user?.picUrl,
-                        ),
-                        const SizedBox(width: 15),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              user?.name ?? 'cmlabs User',
-                              style: bold.copyWith(fontSize: 16),
-                            ),
-                            Text(
-                              userController.roleName.value,
-                              style: regular.copyWith(
-                                fontSize: 12,
-                                color: AppColors.text_2,
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                    Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        IconButton(
-                          onPressed: () => Get.toNamed(AppRoutes.notification),
-                          icon: const Icon(
-                            Icons.notifications_outlined,
-                            color: AppColors.text_1,
-                            size: 28,
-                          ),
-                        ),
-                        Obx(
-                          () => notificationController.unreadAll.value != 0
-                              ? Positioned(
-                                  top: 10,
-                                  right: 13,
-                                  child: Container(
-                                    height: 10,
-                                    width: 10,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.danger,
-                                    ),
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                Obx(
-                  () => Column(
+      body: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Container(
+              margin: const EdgeInsets.all(28),
+              padding: const EdgeInsets.all(23),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: AppColors.white,
+              ),
+              child: Column(
+                children: [
+                  // User details and notif icon
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          MetricCard(
-                            count: dashboardController.newLeads.value,
-                            nameMetric: "New Leads",
-                            color: AppColors.primary,
+                          CustomAvatar(
+                            radius: 24,
+                            link: user?.picUrl,
                           ),
-                          const SizedBox(width: 10),
-                          MetricCard(
-                            count: dashboardController.last30Day.value,
-                            nameMetric: "Last 30 Day",
-                            color: AppColors.purple,
-                          ),
+                          const SizedBox(width: 15),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user?.name ?? 'cmlabs User',
+                                style: bold.copyWith(fontSize: 16),
+                              ),
+                              Text(
+                                userController.roleName.value,
+                                style: regular.copyWith(
+                                  fontSize: 12,
+                                  color: AppColors.text_2,
+                                ),
+                              )
+                            ],
+                          )
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      Row(
+                      Stack(
+                        alignment: Alignment.center,
                         children: [
-                          MetricCard(
-                            count: dashboardController.acceptedLeads.value,
-                            nameMetric: "Accepted",
-                            color: AppColors.success,
+                          IconButton(
+                            onPressed: () => Get.toNamed(AppRoutes.notification),
+                            icon: const Icon(
+                              Icons.notifications_outlined,
+                              color: AppColors.text_1,
+                              size: 28,
+                            ),
                           ),
-                          const SizedBox(width: 10),
-                          MetricCard(
-                            count: dashboardController.followedUpLeads.value,
-                            nameMetric: "Followed Up",
-                            color: AppColors.info,
+                          Obx(
+                            () => notificationController.unreadAll.value != 0
+                                ? Positioned(
+                                    top: 10,
+                                    right: 13,
+                                    child: Container(
+                                      height: 10,
+                                      width: 10,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppColors.danger,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                           ),
                         ],
                       ),
                     ],
                   ),
-                )
-              ],
-            ),
-          ),
 
-          const SizedBox(height: 12),
+                  const SizedBox(height: 20),
 
-          // Body (Qoutation List)
-          Stack(
-            children: [
-              Container(
-                color: AppColors.primary,
-              ),
-              Container(
-                padding: const EdgeInsets.all(18),
-                decoration: const BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
-
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  Obx(
+                    () => Column(
                       children: [
-                        Text(
-                          "Inbox Leads",
-                          style: bold.copyWith(
-                            fontSize: 20,
-                            color: AppColors.primaryText,
-                          ),
-                        ),
-                        const SizedBox(height: 7),
                         Row(
                           children: [
-                            Obx(
-                              () => Text(
-                                "${quotationController.totalLeads.value} ",
-                                style: regular.copyWith(
-                                  fontSize: 12,
-                                  color: AppColors.primary,
-                                ),
-                              ),
+                            MetricCard(
+                              count: dashboardController.newLeads.value,
+                              nameMetric: "New Leads",
+                              color: AppColors.primary,
                             ),
-                            Text(
-                              "Leads",
-                              style: regular.copyWith(
-                                fontSize: 12,
-                                color: AppColors.primaryText,
-                              ),
+                            const SizedBox(width: 10),
+                            MetricCard(
+                              count: dashboardController.last30Day.value,
+                              nameMetric: "Last 30 Day",
+                              color: AppColors.purple,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            MetricCard(
+                              count: dashboardController.acceptedLeads.value,
+                              nameMetric: "Accepted",
+                              color: AppColors.success,
+                            ),
+                            const SizedBox(width: 10),
+                            MetricCard(
+                              count: dashboardController.followedUpLeads.value,
+                              nameMetric: "Followed Up",
+                              color: AppColors.info,
                             ),
                           ],
                         ),
                       ],
                     ),
-
-                    const SizedBox(height: 7),
-
-                    // Select Status, Filter Section, & Historical Lead History
-                    SelectStatus(
-                      controllers: [
-                        quotationController,
-                        caseStudiesController,
-                        contactUsController,
-                        faqController,
-                      ],
-                      enableFilter: true,
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Quotations',
-                          style: bold.copyWith(
-                            fontSize: 20,
-                            color: AppColors.primaryText,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => navController.changePage(1),
-                          child: Text(
-                            "View all",
-                            style: regular.copyWith(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Obx(() {
-                      List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
-                      return quotationList.isNotEmpty
-                          ? Column(
-                              children: quotationList.map((quotation) {
-                                return QuotationListTile(
-                                  quotation: quotation,
-                                  quotationController: quotationController,
-                                );
-                              }).toList(),
-                            )
-                          : const SizedBox(height: 150, child: EmptyState());
-                    }),
-
-                    const SizedBox(height: 20),
-
-                    // CASE STUDIES LIST
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Case Studies',
-                          style: bold.copyWith(
-                            fontSize: 20,
-                            color: AppColors.primaryText,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => navController.changePage(1),
-                          child: Text(
-                            "View all",
-                            style: regular.copyWith(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Obx(() {
-                      List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
-                      return caseStudiesList.isNotEmpty
-                          ? Column(
-                              children: caseStudiesList.map((caseStudies) {
-                                return CaseStudiesListTile(
-                                  caseStudies: caseStudies,
-                                  caseStudiesController: caseStudiesController,
-                                );
-                              }).toList(),
-                            )
-                          : const SizedBox(height: 150, child: EmptyState());
-                    }),
-                    const SizedBox(height: 20),
-
-                    // CONTACT US LIST
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Contact Us',
-                          style: bold.copyWith(
-                            fontSize: 20,
-                            color: AppColors.primaryText,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => navController.changePage(1),
-                          child: Text(
-                            "View all",
-                            style: regular.copyWith(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Obx(() {
-                      List<ContactUs> contactUsList = contactUsController.contactUsList.take(3).toList();
-                      return contactUsList.isNotEmpty
-                          ? Column(
-                              children: contactUsList.map((contactUs) {
-                                return ContactUsListTile(
-                                  contactUs: contactUs,
-                                  contactUsController: contactUsController,
-                                );
-                              }).toList(),
-                            )
-                          : const SizedBox(height: 150, child: EmptyState());
-                    }),
-                    const SizedBox(height: 20),
-
-                    // FAQ LIST
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'FAQ',
-                          style: bold.copyWith(
-                            fontSize: 20,
-                            color: AppColors.primaryText,
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () => navController.changePage(1),
-                          child: Text(
-                            "View all",
-                            style: regular.copyWith(
-                              fontSize: 12,
-                              color: AppColors.primary,
-                              decoration: TextDecoration.underline,
-                              decorationColor: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Obx(() {
-                      List<Faq> faqList = faqController.faqList.take(3).toList();
-                      return faqList.isNotEmpty
-                          ? Column(
-                              children: faqList.map((faq) {
-                                return FaqListTile(
-                                  faq: faq,
-                                  faqController: faqController,
-                                );
-                              }).toList(),
-                            )
-                          : const SizedBox(height: 150, child: EmptyState());
-                    }),
-
-                    const SizedBox(height: 10),
-                  ],
-                ),
+                  )
+                ],
               ),
-            ],
+            ),
           ),
+
+          SliverStickyHeader(
+            header: Stack(
+              children: [
+                Container(
+                  color: AppColors.primary,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: const BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Inbox Leads",
+                        style: bold.copyWith(
+                          fontSize: 20,
+                          color: AppColors.primaryText,
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      Row(
+                        children: [
+                          Obx(
+                            () => Text(
+                              "${quotationController.totalLeads.value} ",
+                              style: regular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "Leads",
+                            style: regular.copyWith(
+                              fontSize: 12,
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 7),
+
+                      // Select Status, Filter Section, & Historical Lead History
+                      SelectStatus(
+                        controllers: [
+                          quotationController,
+                          caseStudiesController,
+                          contactUsController,
+                          faqController,
+                        ],
+                        enableFilter: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  color: AppColors.white,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 20),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Quotations',
+                            style: bold.copyWith(
+                              fontSize: 20,
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => navController.changePage(1),
+                            child: Text(
+                              "View all",
+                              style: regular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Obx(() {
+                        List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
+                        return quotationList.isNotEmpty
+                            ? Column(
+                                children: quotationList.map((quotation) {
+                                  return QuotationListTile(
+                                    quotation: quotation,
+                                    quotationController: quotationController,
+                                  );
+                                }).toList(),
+                              )
+                            : const SizedBox(height: 150, child: EmptyState());
+                      }),
+
+                      const SizedBox(height: 20),
+
+                      // CASE STUDIES LIST
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Case Studies',
+                            style: bold.copyWith(
+                              fontSize: 20,
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => navController.changePage(1),
+                            child: Text(
+                              "View all",
+                              style: regular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Obx(() {
+                        List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
+                        return caseStudiesList.isNotEmpty
+                            ? Column(
+                                children: caseStudiesList.map((caseStudies) {
+                                  return CaseStudiesListTile(
+                                    caseStudies: caseStudies,
+                                    caseStudiesController: caseStudiesController,
+                                  );
+                                }).toList(),
+                              )
+                            : const SizedBox(height: 150, child: EmptyState());
+                      }),
+                      const SizedBox(height: 20),
+
+                      // CONTACT US LIST
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Contact Us',
+                            style: bold.copyWith(
+                              fontSize: 20,
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => navController.changePage(1),
+                            child: Text(
+                              "View all",
+                              style: regular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Obx(() {
+                        List<ContactUs> contactUsList = contactUsController.contactUsList.take(3).toList();
+                        return contactUsList.isNotEmpty
+                            ? Column(
+                                children: contactUsList.map((contactUs) {
+                                  return ContactUsListTile(
+                                    contactUs: contactUs,
+                                    contactUsController: contactUsController,
+                                  );
+                                }).toList(),
+                              )
+                            : const SizedBox(height: 150, child: EmptyState());
+                      }),
+                      const SizedBox(height: 20),
+
+                      // FAQ LIST
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'FAQ',
+                            style: bold.copyWith(
+                              fontSize: 20,
+                              color: AppColors.primaryText,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => navController.changePage(1),
+                            child: Text(
+                              "View all",
+                              style: regular.copyWith(
+                                fontSize: 12,
+                                color: AppColors.primary,
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.primary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Obx(() {
+                        List<Faq> faqList = faqController.faqList.take(3).toList();
+                        return faqList.isNotEmpty
+                            ? Column(
+                                children: faqList.map((faq) {
+                                  return FaqListTile(
+                                    faq: faq,
+                                    faqController: faqController,
+                                  );
+                                }).toList(),
+                              )
+                            : const SizedBox(height: 150, child: EmptyState());
+                      }),
+
+                      const SizedBox(height: 10),
+                    ],
+                  ),
+                ),
+              ]),
+            ),
+          ),
+
+          // Stack(
+          //   children: [
+          //     Container(
+          //       color: AppColors.primary,
+          //     ),
+          //     Container(
+          //       padding: const EdgeInsets.all(18),
+          //       decoration: const BoxDecoration(
+          //         color: AppColors.white,
+          //         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+          //       ),
+          //       child: Column(
+          //         children: [
+          //           const SizedBox(height: 10),
+
+          // SliverStickyHeader(
+          //   header: Text(
+          //     "Inbox Leads",
+          //     style: bold.copyWith(
+          //       fontSize: 20,
+          //       color: AppColors.primaryText,
+          //     ),
+          //   ),
+          //   sliver: SliverList(
+          //     delegate: SliverChildBuilderDelegate(
+          //       (context, i) => ListTile(
+          //         leading: CircleAvatar(
+          //           child: Text('0'),
+          //         ),
+          //         title: Text('List tile #$i'),
+          //       ),
+          //       childCount: 4,
+          //     ),
+          //   ),
+          // ),
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: [
+          //     Text(
+          //       "Inbox Leads",
+          //       style: bold.copyWith(
+          //         fontSize: 20,
+          //         color: AppColors.primaryText,
+          //       ),
+          //     ),
+          //     const SizedBox(height: 7),
+          //     Row(
+          //       children: [
+          //         Obx(
+          //           () => Text(
+          //             "${quotationController.totalLeads.value} ",
+          //             style: regular.copyWith(
+          //               fontSize: 12,
+          //               color: AppColors.primary,
+          //             ),
+          //           ),
+          //         ),
+          //         Text(
+          //           "Leads",
+          //           style: regular.copyWith(
+          //             fontSize: 12,
+          //             color: AppColors.primaryText,
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   ],
+          // ),
+
+          // const SizedBox(height: 7),
+
+          // // Select Status, Filter Section, & Historical Lead History
+          // SelectStatus(
+          //   controllers: [
+          //     quotationController,
+          //     caseStudiesController,
+          //     contactUsController,
+          //     faqController,
+          //   ],
+          //   enableFilter: true,
+          // ),
+
+          // const SizedBox(height: 20),
+
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       'Quotations',
+          //       style: bold.copyWith(
+          //         fontSize: 20,
+          //         color: AppColors.primaryText,
+          //       ),
+          //     ),
+          //     GestureDetector(
+          //       onTap: () => navController.changePage(1),
+          //       child: Text(
+          //         "View all",
+          //         style: regular.copyWith(
+          //           fontSize: 12,
+          //           color: AppColors.primary,
+          //           decoration: TextDecoration.underline,
+          //           decorationColor: AppColors.primary,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // const SizedBox(height: 10),
+          // Obx(() {
+          //   List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
+          //   return quotationList.isNotEmpty
+          //       ? Column(
+          //           children: quotationList.map((quotation) {
+          //             return QuotationListTile(
+          //               quotation: quotation,
+          //               quotationController: quotationController,
+          //             );
+          //           }).toList(),
+          //         )
+          //       : const SizedBox(height: 150, child: EmptyState());
+          // }),
+
+          // const SizedBox(height: 20),
+
+          // // CASE STUDIES LIST
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       'Case Studies',
+          //       style: bold.copyWith(
+          //         fontSize: 20,
+          //         color: AppColors.primaryText,
+          //       ),
+          //     ),
+          //     GestureDetector(
+          //       onTap: () => navController.changePage(1),
+          //       child: Text(
+          //         "View all",
+          //         style: regular.copyWith(
+          //           fontSize: 12,
+          //           color: AppColors.primary,
+          //           decoration: TextDecoration.underline,
+          //           decorationColor: AppColors.primary,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // const SizedBox(height: 10),
+          // Obx(() {
+          //   List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
+          //   return caseStudiesList.isNotEmpty
+          //       ? Column(
+          //           children: caseStudiesList.map((caseStudies) {
+          //             return CaseStudiesListTile(
+          //               caseStudies: caseStudies,
+          //               caseStudiesController: caseStudiesController,
+          //             );
+          //           }).toList(),
+          //         )
+          //       : const SizedBox(height: 150, child: EmptyState());
+          // }),
+          // const SizedBox(height: 20),
+
+          // // CONTACT US LIST
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       'Contact Us',
+          //       style: bold.copyWith(
+          //         fontSize: 20,
+          //         color: AppColors.primaryText,
+          //       ),
+          //     ),
+          //     GestureDetector(
+          //       onTap: () => navController.changePage(1),
+          //       child: Text(
+          //         "View all",
+          //         style: regular.copyWith(
+          //           fontSize: 12,
+          //           color: AppColors.primary,
+          //           decoration: TextDecoration.underline,
+          //           decorationColor: AppColors.primary,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // const SizedBox(height: 10),
+          // Obx(() {
+          //   List<ContactUs> contactUsList = contactUsController.contactUsList.take(3).toList();
+          //   return contactUsList.isNotEmpty
+          //       ? Column(
+          //           children: contactUsList.map((contactUs) {
+          //             return ContactUsListTile(
+          //               contactUs: contactUs,
+          //               contactUsController: contactUsController,
+          //             );
+          //           }).toList(),
+          //         )
+          //       : const SizedBox(height: 150, child: EmptyState());
+          // }),
+          // const SizedBox(height: 20),
+
+          // // FAQ LIST
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       'FAQ',
+          //       style: bold.copyWith(
+          //         fontSize: 20,
+          //         color: AppColors.primaryText,
+          //       ),
+          //     ),
+          //     GestureDetector(
+          //       onTap: () => navController.changePage(1),
+          //       child: Text(
+          //         "View all",
+          //         style: regular.copyWith(
+          //           fontSize: 12,
+          //           color: AppColors.primary,
+          //           decoration: TextDecoration.underline,
+          //           decorationColor: AppColors.primary,
+          //         ),
+          //       ),
+          //     ),
+          //   ],
+          // ),
+          // const SizedBox(height: 10),
+          // Obx(() {
+          //   List<Faq> faqList = faqController.faqList.take(3).toList();
+          //   return faqList.isNotEmpty
+          //       ? Column(
+          //           children: faqList.map((faq) {
+          //             return FaqListTile(
+          //               faq: faq,
+          //               faqController: faqController,
+          //             );
+          //           }).toList(),
+          //         )
+          //       : const SizedBox(height: 150, child: EmptyState());
+          // }),
+
+          // const SizedBox(height: 10),
+          //         ],
+          //       ),
+          //     ),
+          //   ],
+          // ),
 
           // Obx(
           //   () => quotationController.newQuotationCount.value > 0

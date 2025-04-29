@@ -48,22 +48,10 @@ class DetailQuotationView extends StatelessWidget {
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Detail Leads'),
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.all(16),
         children: [
-          Center(
-            child: Obx(
-              () => Text(
-                detailQuotationController.detailData.value?['company_name'] ?? "N/A",
-                style: bold.copyWith(
-                  fontSize: 18,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 26),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 37),
-            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
             ),
@@ -74,6 +62,17 @@ class DetailQuotationView extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text(
+                      dataQuotation?['company_name'] ?? "N/A",
+                      style: bold.copyWith(
+                        fontSize: 18,
+                      ),
+                    ),
+                    const Divider(
+                      color: AppColors.text_2,
+                      thickness: 0.25,
+                      height: 18,
+                    ),
                     ...List.generate(
                       detailQuotationController.isShowAll.value
                           ? dataQuotation?.length ?? 0
@@ -169,7 +168,7 @@ class DetailQuotationView extends StatelessWidget {
           ),
           const SizedBox(height: 21),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: CustomSubmitButton(
               title: 'Edit Data',
               onTap: () => Get.toNamed("/editQuotation", arguments: {'quotation': quotation}),

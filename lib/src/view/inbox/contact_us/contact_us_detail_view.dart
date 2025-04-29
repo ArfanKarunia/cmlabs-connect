@@ -38,24 +38,25 @@ class _ContactUsDetailViewState extends State<ContactUsDetailView> {
       appBar: defaultAppBar('Detail Contact Us'),
       backgroundColor: AppColors.scaffoldBgColor2,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.all(16),
         children: [
-          Center(
-            child: Text(
-              widget.contactUs.data?.company?.name ?? '-',
-              style: bold.copyWith(fontSize: 18),
-            ),
-          ),
-          const SizedBox(height: 26),
           Container(
-            margin: const EdgeInsets.symmetric(horizontal: 37),
-            padding: const EdgeInsets.symmetric(horizontal: 17, vertical: 32),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  '${widget.contactUs.data?.company?.name}',
+                  style: bold.copyWith(fontSize: 18),
+                ),
+                const Divider(
+                  color: AppColors.text_2,
+                  thickness: 0.25,
+                  height: 18,
+                ),
                 InboxDetailTile(
                   title: 'ID',
                   content: '${(widget.contactUs.id ?? '-')}',
@@ -135,7 +136,7 @@ class _ContactUsDetailViewState extends State<ContactUsDetailView> {
           ),
           const SizedBox(height: 21),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: CustomSubmitButton(
               title: 'Edit Data',
               onTap: () => Get.toNamed(
