@@ -38,20 +38,25 @@ class _CaseStudiesDetailViewState extends State<CaseStudiesDetailView> {
       appBar: defaultAppBar('Detail Case Studies'),
       backgroundColor: AppColors.scaffoldBgColor2,
       body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.all(16),
         children: [
-          Center(
-            child: Text(
-              '${widget.caseStudies.data?.company}',
-              style: bold.copyWith(fontSize: 18),
-            ),
-          ),
-          const SizedBox(height: 12),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Text(
+                  '${widget.caseStudies.data?.company}',
+                  style: bold.copyWith(fontSize: 18),
+                ),
+                const Divider(
+                  color: AppColors.text_2,
+                  thickness: 0.25,
+                  height: 18,
+                ),
                 InboxDetailTile(
                   title: 'ID',
                   content: '${widget.caseStudies.id}',
@@ -111,29 +116,29 @@ class _CaseStudiesDetailViewState extends State<CaseStudiesDetailView> {
                     ),
                   ),
                 ],
-                InkWell(
-                  onTap: () => setState(() => isShowMore = !isShowMore),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        isShowMore ? 'Show Less' : 'Show More',
-                        style: bold.copyWith(color: AppColors.primary),
-                      ),
-                      const SizedBox(width: 8),
-                      Icon(
-                        isShowMore ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                        color: AppColors.primary,
-                      ),
-                    ],
-                  ),
-                )
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () => setState(() => isShowMore = !isShowMore),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isShowMore ? 'Show Less' : 'Show More',
+                  style: bold.copyWith(color: AppColors.primary),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  isShowMore ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                  color: AppColors.primary,
+                ),
               ],
             ),
           ),
           const SizedBox(height: 21),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: CustomSubmitButton(
               title: 'Edit Data',
               onTap: () => Get.toNamed(

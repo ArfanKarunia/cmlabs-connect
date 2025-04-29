@@ -10,7 +10,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../constant/fontstyle.dart';
 import '../../utils/color.dart';
+import '../../widgets/custom_submit_button.dart';
+import '../../widgets/default_appbar.dart';
+import '../../widgets/inbox_detail_tile.dart';
 
 class DetailQuotationView extends StatelessWidget {
   DetailQuotationView({super.key});
@@ -41,258 +45,137 @@ class DetailQuotationView extends StatelessWidget {
     detailQuotationController.isShowAll.value = false;
 
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
-      appBar: AppBar(
-        toolbarHeight: 100,
-        backgroundColor: Color(0xFFF9F9F9),
-        surfaceTintColor: Color(0xFFF9F9F9),
-        title: Text(
-          "Detail Leads",
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppColors.text_1,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-          child: Column(
-            children: [
-              Obx(
-                () {
-                  var dataQuotation = detailQuotationController.detailData.value;
-                  return Text(
-                    dataQuotation?['company_name'] ?? "N/A",
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_1,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+      backgroundColor: AppColors.scaffoldBgColor2,
+      appBar: defaultAppBar('Detail Leads'),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Obx(
+              () {
+                Map<String, dynamic>? dataQuotation = detailQuotationController.detailData.value;
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      dataQuotation?['company_name'] ?? "N/A",
+                      style: bold.copyWith(
+                        fontSize: 18,
+                      ),
                     ),
-                  );
-                },
-              ),
-              SizedBox(
-                height: 12,
-              ),
-              Container(
-                color: AppColors.white_1,
-                padding: const EdgeInsets.only(right: 10, left: 10, top: 12),
-                width: double.infinity,
-                child: Obx(
-                  () {
-                    // Ambil data detailQuotation, pastikan null check
-                    var dataQuotation = detailQuotationController.detailData.value;
-
-                    // Jika dataQuotation null, kembalikan widget kosong
-                    if (dataQuotation == null) {
-                      return Container();
-                    }
-
-                    return ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: (detailQuotationController.isShowAll.value)
-                          ? dataQuotation.length // Menampilkan semua data jika isShowAll true
-                          : dataQuotation.length > 8
+                    const Divider(
+                      color: AppColors.text_2,
+                      thickness: 0.25,
+                      height: 18,
+                    ),
+                    ...List.generate(
+                      detailQuotationController.isShowAll.value
+                          ? dataQuotation?.length ?? 0
+                          : (dataQuotation?.length ?? 0) > 8
                               ? 8
-                              : dataQuotation.length, // Menampilkan hanya 8 data pertama jika isShowAll false
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        // Ambil key berdasarkan index
-                        final title = dataQuotation.keys.elementAt(index);
-                        // Ambil value terkait key
-                        final value = dataQuotation[title];
+                              : dataQuotation?.length ?? 0,
+                      (index) {
+                        final title = dataQuotation?.keys.elementAt(index);
+                        final value = dataQuotation?[title];
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              StringUtils.toCamelCase(title),
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 6,
-                            ),
-                            Text(
-                              value ?? "-", // Menampilkan '-' jika value null
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            Divider(
-                              color: AppColors.text_4,
-                            ),
-                          ],
+                        return InboxDetailTile(
+                          title: (title ?? "")
+                              .split('_')
+                              .map((word) => word.isEmpty ? '' : '${word[0].toUpperCase()}${word.substring(1)}')
+                              .join(' '),
+                          content: value ?? "",
                         );
                       },
-                    );
-                  },
-                ),
-              ),
-              Obx(
-                () {
-                  return detailQuotationController.isShowAll.value
-                      ? Container(
-                          color: AppColors.white_1,
-                          padding: const EdgeInsets.only(
-                            right: 12,
-                            left: 12,
-                            bottom: 12,
-                          ),
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
+                    ),
+                    Obx(
+                      () {
+                        return detailQuotationController.isShowAll.value
+                            ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  detailQuotationController.serviceQuotation.value == 'social-media-copywriting' ||
-                                          detailQuotationController.serviceQuotation.value == 'expert-writing' ||
-                                          detailQuotationController.serviceQuotation.value == "website-copywriting" ||
-                                          detailQuotationController.serviceQuotation.value == "content-writing" ||
-                                          detailQuotationController.serviceQuotation.value == "press-release" ||
-                                          detailQuotationController.serviceQuotation.value == "seo-writing" ||
-                                          detailQuotationController.serviceQuotation.value == "seo-services" ||
-                                          (detailQuotationController.serviceQuotation.value == 'ads' &&
-                                              detailQuotationController.additionalData.value?['proposal'] == null)
-                                      ? AdditionalDataWithBottomSheet(
-                                          detailQuotationController: detailQuotationController, quotation: quotation)
-                                      : SizedBox.shrink(),
-                                  detailQuotationController.serviceQuotation.value == 'visuwisu' ||
-                                          detailQuotationController.serviceQuotation.value == "development-service" ||
-                                          (detailQuotationController.serviceQuotation.value == 'ads' &&
-                                              detailQuotationController.additionalData.value?['proposal'] != null)
-                                      ? AddtionalDataDirect(
-                                          detailQuotationController: detailQuotationController,
-                                          quotation: quotation,
-                                        )
-                                      : SizedBox.shrink(),
-                                  detailQuotationController.serviceQuotation.value == 'aso-services'
-                                      ? AddtionalDataAso(
-                                          detailQuotationController: detailQuotationController, quotation: quotation)
-                                      : SizedBox.shrink()
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      detailQuotationController.serviceQuotation.value == 'social-media-copywriting' ||
+                                              detailQuotationController.serviceQuotation.value == 'expert-writing' ||
+                                              detailQuotationController.serviceQuotation.value ==
+                                                  "website-copywriting" ||
+                                              detailQuotationController.serviceQuotation.value == "content-writing" ||
+                                              detailQuotationController.serviceQuotation.value == "press-release" ||
+                                              detailQuotationController.serviceQuotation.value == "seo-writing" ||
+                                              detailQuotationController.serviceQuotation.value == "seo-services" ||
+                                              (detailQuotationController.serviceQuotation.value == 'ads' &&
+                                                  detailQuotationController.additionalData.value?['proposal'] == null)
+                                          ? AdditionalDataWithBottomSheet(
+                                              detailQuotationController: detailQuotationController,
+                                              quotation: quotation)
+                                          : SizedBox.shrink(),
+                                      detailQuotationController.serviceQuotation.value == 'visuwisu' ||
+                                              detailQuotationController.serviceQuotation.value ==
+                                                  "development-service" ||
+                                              (detailQuotationController.serviceQuotation.value == 'ads' &&
+                                                  detailQuotationController.additionalData.value?['proposal'] != null)
+                                          ? AddtionalDataDirect(
+                                              detailQuotationController: detailQuotationController,
+                                              quotation: quotation,
+                                            )
+                                          : SizedBox.shrink(),
+                                      detailQuotationController.serviceQuotation.value == 'aso-services'
+                                          ? AddtionalDataAso(
+                                              detailQuotationController: detailQuotationController,
+                                              quotation: quotation)
+                                          : SizedBox.shrink()
+                                    ],
+                                  ),
+                                  InboxDetailTile(
+                                    title: 'Pitching Duration',
+                                    content:
+                                        detailQuotationController.additionalData.value?['pitching_duration'] ?? "-",
+                                  ),
                                 ],
-                              ),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                margin: EdgeInsets.only(
-                                  right: 8,
-                                  left: 8,
-                                  bottom: 8,
-                                  top: 8,
-                                ),
-                                width: double.infinity,
-                                decoration:
-                                    BoxDecoration(color: AppColors.bgPrimary, borderRadius: BorderRadius.circular(5)),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Pitching Duration",
-                                      style: GoogleFonts.plusJakartaSans(
-                                        color: AppColors.text_1,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 6,
-                                    ),
-                                    Text(
-                                      detailQuotationController.pitchDuration.value ?? '-',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        color: AppColors.text_1,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : SizedBox.shrink();
-                },
-              ),
-              Obx(
-                () {
-                  return Container(
-                    width: 200,
-                    child: TextButton(
-                      onPressed: () {
-                        detailQuotationController.changeShowValue();
+                              )
+                            : SizedBox.shrink();
                       },
-                      style: ButtonStyle(
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                        overlayColor: WidgetStatePropertyAll(Colors.white60),
-                        foregroundColor: WidgetStatePropertyAll(AppColors.primary),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          (!detailQuotationController.isShowAll.value) ? Text("Show more") : Text("Show less"),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Icon(
-                            (!detailQuotationController.isShowAll.value)
-                                ? Ionicons.chevron_down_outline
-                                : Ionicons.chevron_up_outline,
-                          ),
-                        ],
-                      ),
                     ),
-                  );
-                },
-              ),
-              SizedBox(
-                height: 14,
-              ),
-              Container(
-                height: 51,
-                width: double.infinity,
-                margin: EdgeInsets.symmetric(horizontal: 42),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed("/editQuotation", arguments: {'quotation': quotation});
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-                    foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                    overlayColor: WidgetStatePropertyAll(Colors.white30),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                    ),
-                  ),
-                  child: Text(
-                    "Edit Data",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 80,
-              ),
-            ],
+                  ],
+                );
+              },
+            ),
           ),
-        ),
+          Obx(
+            () => InkWell(
+              onTap: () => detailQuotationController.changeShowValue(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    detailQuotationController.isShowAll.value ? 'Show Less' : 'Show More',
+                    style: bold.copyWith(color: AppColors.primary),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(
+                    detailQuotationController.isShowAll.value ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    color: AppColors.primary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 21),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: CustomSubmitButton(
+              title: 'Edit Data',
+              onTap: () => Get.toNamed("/editQuotation", arguments: {'quotation': quotation}),
+            ),
+          ),
+          const SizedBox(height: 80),
+        ],
       ),
     );
   }

@@ -17,11 +17,23 @@ class InboxDetailTile extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: bold.copyWith(color: AppColors.primaryText)),
+        Text(
+          title,
+          style: bold.copyWith(
+            fontSize: 15,
+            color: AppColors.primaryText,
+          ),
+        ),
         const SizedBox(height: 5),
-        Text(content, style: regular.copyWith(fontSize: 12, letterSpacing: 0)),
-        const Divider(thickness: 0.5),
-        const SizedBox(height: 5),
+        Text(
+          content,
+          style: regular.copyWith(
+            fontSize: 13,
+            letterSpacing: 0,
+          ),
+        ),
+        // const Divider(thickness: 0.5),
+        const SizedBox(height: 6),
       ],
     );
   }
