@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/contact_us_model.dart';
+import '../../../utils/file_utils.dart';
+import '../../../utils/permission_utils.dart';
 import '../../../utils/toast.dart';
 import '../../user/user_controller.dart';
 import '../inbox_controller.dart';
@@ -89,6 +91,43 @@ class ContactUsController extends InboxController {
       }
     } catch (e) {
       debugPrint('Error fetching data: $e');
+    }
+  }
+
+  @override
+  Future<void> exportData() async {
+    try {
+      String? accessToken = userController.accesToken.value;
+
+      if (!await PermissionUtils().hasStoragePermission()) {
+        showErrorToast('Failed to export data: Permission denied');
+        return;
+      }
+
+      isExportLoading(true);
+
+      final response = await dio.get(
+        constructExportUrl('$baseUrl/contact-us/export-excel', feature: 'contact'),
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+          responseType: ResponseType.bytes,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final fileName = FileUtils.getFilenameFromResponse(response);
+        final filePath = await FileUtils.saveFile(response.data, fileName);
+
+        showSuccessToast('Data tersimpan di $filePath');
+      }
+    } on DioException catch (e) {
+      showErrorToast('Failed to export data: ${e.message}');
+      debugPrint('Error fetching data: $e');
+    } catch (e) {
+      showErrorToast('Failed to export data: ${e.toString()}');
+      debugPrint('Error fetching data: $e');
+    } finally {
+      isExportLoading(false);
     }
   }
 

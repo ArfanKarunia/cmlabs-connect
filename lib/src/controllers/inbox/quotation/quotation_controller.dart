@@ -85,6 +85,9 @@ class QuotationController extends InboxController {
     }
   }
 
+  // Quotation cannot be exported
+  @override
+  Future<void> exportData() async {}
   /*
   
     FUNGSI Check new Data Quotation

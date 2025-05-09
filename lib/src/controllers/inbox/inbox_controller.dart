@@ -19,6 +19,8 @@ abstract class InboxController extends GetxController {
 
   Rx<int> totalLeads = Rx<int>(0);
 
+  Rx<bool> isExportLoading = false.obs;
+
   @override
   void onReady() {
     super.onReady();
@@ -38,6 +40,8 @@ abstract class InboxController extends GetxController {
     start.value += limit.value;
     await fetchList(isLoadMore: true);
   }
+
+  Future<void> exportData();
 
   // Total Leads
   Future<void> fetchTotalLeads();
@@ -106,7 +110,7 @@ abstract class InboxController extends GetxController {
     clearSearch();
   }
 
-  String constructFilteredUrl(String url) {
+  String filterQueryString(String url) {
     // Konversi filter tanggal ke format string
     String? startDateString = filterStartDate.value != null
         ? "${filterStartDate.value!.year}-${filterStartDate.value!.month.toString().padLeft(2, '0')}-${filterStartDate.value!.day.toString().padLeft(2, '0')}"
@@ -141,13 +145,22 @@ abstract class InboxController extends GetxController {
     }
 
     // Combine all query parameters
-    String queryString = queryParams.join('&');
+    return queryParams.join('&');
+  }
 
-    // Construct the full URL
+  String constructFilteredUrl(String url) {
+    String queryString = filterQueryString(url);
     String finalUrl = '$url?start=${start.value}&limit=${limit.value}';
     if (queryString.isNotEmpty) {
       finalUrl += '&$queryString';
     }
+
+    return finalUrl;
+  }
+
+  String constructExportUrl(String url, {required String feature}) {
+    String queryString = filterQueryString(url);
+    final finalUrl = queryString.isEmpty ? '$url?feature=$feature' : '$url?$queryString&feature=$feature';
 
     return finalUrl;
   }
