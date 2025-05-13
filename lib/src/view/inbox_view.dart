@@ -14,6 +14,7 @@ import '../models/inbox_page_model.dart';
 import '../routes.dart';
 import '../utils/bottom_sheet.dart';
 import '../widgets/custom_buttom.dart';
+import '../widgets/inbox_action_button.dart';
 import '../widgets/select_status.dart';
 import 'inbox/case_studies/case_studies_inbox_view.dart';
 import 'inbox/contact_us/contact_us_inbox_view.dart';
@@ -267,34 +268,18 @@ class _InboxViewState extends State<InboxView> {
                 //       : const SizedBox.shrink(),
                 // ),
 
-                if (index == 0) ...[
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: InkWell(
-                      onTap: () => Get.toNamed(AppRoutes.addQuotation),
-                      borderRadius: BorderRadius.circular(5),
-                      // overlayColor: const WidgetStatePropertyAll(AppColors.lightPrimaryColor),
-                      child: Ink(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
-                          color: AppColors.primary,
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: index == 0
+                      ? const InboxAddQuotationButton()
+                      : Obx(
+                          () => controller[index].isExportLoading.value
+                              ? const InboxActionLoadingButton()
+                              : InboxExportDataButton(
+                                  onTap: () => controller[index].exportData(),
+                                ),
                         ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Ionicons.add, size: 20, color: AppColors.white),
-                            const SizedBox(width: 6),
-                            Text(
-                              'New Quotation',
-                              style: regular.copyWith(fontSize: 12, color: AppColors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
                 const SizedBox(height: 10),
 
                 Expanded(

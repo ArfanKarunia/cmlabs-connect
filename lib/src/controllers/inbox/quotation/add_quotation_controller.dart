@@ -7,6 +7,7 @@ import 'package:dio/dio.dart' as http;
 import '../../../constant/config.dart';
 import '../../../constant/const.dart';
 import '../../../models/client_pic_model.dart';
+import '../../../utils/agent_utils.dart';
 import '../../../utils/toast.dart';
 import '../../user/user_controller.dart';
 
@@ -471,6 +472,19 @@ class AddQuotationController extends GetxController {
         return;
       }
 
+      // For agent
+      String platform = AgentUtils.getPlatform();
+      String deviceModel = await AgentUtils.getDevice();
+      String ipAddress = await AgentUtils.getIp();
+      Map<String, dynamic> agent = {
+        "browser": "Cmlabs Connect App",
+        "device": deviceModel,
+        "ip": ipAddress,
+        "language": ["en-us", "en", "id"],
+        "platform": platform,
+        "devices": "mobile"
+      };
+
       http.FormData data = http.FormData.fromMap({
         "project_tracker": "true",
 
@@ -493,6 +507,8 @@ class AddQuotationController extends GetxController {
         "available_to_user": availableToUser.value ? "1" : "0",
 
         "client_pic": picClients.map((picClient) => picClient.toJson()).toList(),
+
+        "agent": agent,
 
         if (file != null) "file": await http.MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
       });
