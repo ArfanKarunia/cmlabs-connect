@@ -1,54 +1,9 @@
 import 'package:flutter/material.dart';
-import 'src/widgets/charts_card.dart';
 
+import '../widgets/charts_card.dart';
 
-void main() {
-  runApp(const AnalyticsApp());
-}
-
-class AnalyticsApp extends StatelessWidget {
-  const AnalyticsApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Analytics Dashboard',
-      theme: ThemeData(
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontFamily: 'Poppins'),
-        ),
-        primarySwatch: Colors.blue,
-      ),
-      home: const MainNavigation(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class MainNavigation extends StatefulWidget {
-  const MainNavigation({super.key});
-
-  @override
-  State<MainNavigation> createState() => _MainNavigationState();
-}
-
-class _MainNavigationState extends State<MainNavigation> {
-  int _selectedIndex = 2; // Analytics default aktif
-
-  final List<Widget> _pages = [
-    const AnalyticsPage(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-    );
-  }
-}
-
-class AnalyticsPage extends StatelessWidget {
-  const AnalyticsPage({super.key});
+class AnalyticsView extends StatelessWidget {
+  const AnalyticsView({super.key});
 
   @override
   Widget build(BuildContext context) {
