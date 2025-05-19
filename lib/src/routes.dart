@@ -34,6 +34,7 @@ import 'models/faq_model.dart';
 import 'models/project_history_model.dart';
 import 'models/quotation_model.dart';
 import 'view/filter_view.dart';
+import 'view/home_view.dart';
 import 'view/inbox/case_studies/case_studies_detail_view.dart';
 import 'view/inbox/case_studies/case_studies_edit_history_view.dart';
 import 'view/inbox/case_studies/case_studies_edit_pic_contact_view.dart';
@@ -53,7 +54,6 @@ import 'view/inbox/quotation/quotation_add_select_view.dart';
 import 'view/inbox/quotation/quotation_add_view.dart';
 import 'view/login_view.dart';
 import 'view/select_filter_view.dart';
-import 'widgets/bottom_navigation.dart';
 
 class AppRoutes {
   // initialization url of route
@@ -137,9 +137,12 @@ class AppRoutes {
     ),
     GetPage(
       name: home,
-      page: () => BottomNavigation(),
+      page: () => const HomeView(),
     ),
-    GetPage(name: filter, page: () => FilterView()),
+    GetPage(
+      name: filter,
+      page: () => const FilterView(),
+    ),
     GetPage(
       name: filterSelect,
       page: () {

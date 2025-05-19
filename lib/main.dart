@@ -1,12 +1,13 @@
 import 'dart:io';
 
-import 'package:cmlabs_connect/services/notification_service.dart';
-import 'package:cmlabs_connect/src/app.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'services/notification_service.dart';
+import 'src/controllers/app_bindings.dart';
+import 'src/routes.dart';
 import 'src/utils/custom_http_overrides.dart';
 
 Future<void> main() async {
@@ -15,22 +16,33 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await NotificationService.instance.initialize();
 
-  // initialization HIVE
   await Hive.initFlutter();
-
-  // membuka box (tempat penyimpanan) untuk Quotation
   await Hive.openBox<Map>('login');
 
   HttpOverrides.global = CustomHttpOverrides();
 
-  await SentryFlutter.init((options) {
-    // add the sentry proeject link
-    options.dsn = 'https://examplePublicKey@o0.ingest.sentry.io/0';
+  runApp(const MyApp());
+}
 
-    // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-    // We recommend adjusting this value in production.
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
-    options.tracesSampleRate = 1.0;
-    options.profilesSampleRate = 1.0;
-  }, appRunner: () => runApp(const MyApp()));
+  @override
+  Widget build(BuildContext context) {
+    return GetMaterialApp(
+      title: "CMLABS CONNECT",
+      theme: ThemeData(
+        primaryColor: Colors.blueGrey,
+        primarySwatch: Colors.blueGrey,
+      ),
+
+      // Start with routing to Home View
+      initialRoute: AppRoutes.loginForm,
+      initialBinding: AppBindings(),
+
+      // Routing of the app
+      getPages: AppRoutes.routes,
+      defaultTransition: Transition.rightToLeft,
+    );
+  }
 }
