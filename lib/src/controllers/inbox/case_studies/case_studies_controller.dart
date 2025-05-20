@@ -69,10 +69,7 @@ class CaseStudiesController extends InboxController {
     try {
       String? accessToken = userController.accesToken.value;
 
-      if (!await PermissionUtils().hasStoragePermission()) {
-        showErrorToast('Failed to export data: Permission denied');
-        return;
-      }
+      await PermissionUtils().requestStoragePermission();
 
       isExportLoading(true);
 
