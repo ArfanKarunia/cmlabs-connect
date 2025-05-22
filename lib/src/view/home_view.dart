@@ -5,7 +5,7 @@ import 'package:double_tap_to_exit/double_tap_to_exit.dart';
 import '../constant/fontstyle.dart';
 import '../utils/color.dart';
 import 'account_view.dart';
-import 'analytics_view.dart';
+import 'analytics/analytics_view.dart';
 import 'dashboard_view.dart';
 import 'inbox_view.dart';
 

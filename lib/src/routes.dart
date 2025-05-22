@@ -33,6 +33,8 @@ import 'models/contact_us_model.dart';
 import 'models/faq_model.dart';
 import 'models/project_history_model.dart';
 import 'models/quotation_model.dart';
+import 'view/analytics/analytics_view.dart';
+import 'view/analytics/quotation_overview_page.dart';
 import 'view/filter_view.dart';
 import 'view/home_view.dart';
 import 'view/inbox/case_studies/case_studies_detail_view.dart';
@@ -128,6 +130,9 @@ class AppRoutes {
   static const String settingNotification = '/settingNotification';
 
   static const String changePasswordView = '/changePasswordView';
+
+  static const String analyticsView = '/analyticsView';
+  static const String analyticsDetailView = '/analyticsDetailView';
 
   // List of Route
   static List<GetPage> routes = [
@@ -626,6 +631,16 @@ class AppRoutes {
     GetPage(
       name: settingNotification,
       page: () => SettingNotificationView(),
+    ),
+
+    // ANALYTICS
+    GetPage(
+      name: analyticsView,
+      page: () => const AnalyticsView(),
+    ),
+    GetPage(
+      name: analyticsDetailView,
+      page: () => const QuotationOverviewPage(),
     ),
   ];
 }
