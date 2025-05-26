@@ -1,40 +1,14 @@
-import 'package:hive/hive.dart';
-
-part 'certification_model.g.dart';
-
-@HiveType(typeId: 9)
 class CertificationModel {
-  @HiveField(0)
   final int id;
-
-  @HiveField(1)
   final String name;
-
-  @HiveField(2)
   final String url;
-
-  @HiveField(3)
   final String institutionName;
-
-  @HiveField(4)
   final String? description;
-
-  @HiveField(5)
   final String? pic;
-
-  @HiveField(6)
   final DateTime startTime;
-
-  @HiveField(7)
   final DateTime? finishTime;
-  
-  @HiveField(8)
   final int adminId;
-
-  @HiveField(9)
   final DateTime createdAt;
-
-  @HiveField(10)
   final DateTime updatedAt;
 
   CertificationModel({
@@ -66,12 +40,8 @@ class CertificationModel {
           : null, // Parse the finish_time if it's not null
       description: json['description'] ?? "",
       adminId: json['admin_id'] ?? 0,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : DateTime.now(),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : DateTime.now(),
     );
   }
 

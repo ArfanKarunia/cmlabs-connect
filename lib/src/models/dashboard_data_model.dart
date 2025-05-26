@@ -1,19 +1,7 @@
-import 'package:hive/hive.dart';
-
-part 'dashboard_data_model.g.dart';
-
-@HiveType(typeId: 4)
-class DashboardData extends HiveObject {
-  @HiveField(0)
+class DashboardData {
   final int amountNewLeads;
-
-  @HiveField(1)
   final int amountLast30Days;
-
-  @HiveField(2)
   final int amountAcceptedLeads;
-
-  @HiveField(3)
   final int amountFollowedupLeads;
 
   DashboardData({

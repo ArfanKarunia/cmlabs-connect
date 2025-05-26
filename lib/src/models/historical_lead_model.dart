@@ -1,25 +1,9 @@
-import 'package:hive/hive.dart';
-
-part 'historical_lead_model.g.dart';
-
-@HiveType(typeId: 7)
 class HistoricalLeadModel {
-  @HiveField(0)
   final int total;
-
-  @HiveField(1)
   final int formUser;
-
-  @HiveField(2)
   final int googleAds;
-
-  @HiveField(3)
   final int metaAds;
-
-  @HiveField(4)
   final int marketing;
-
-  @HiveField(5)
   final List? id;
 
   HistoricalLeadModel({
@@ -33,10 +17,7 @@ class HistoricalLeadModel {
 
   factory HistoricalLeadModel.fromJson(Map<String, dynamic> json) {
     // Pastikan `id` diperlakukan sebagai List<String>
-    List<String> id = (json['id'] as List<dynamic>?)
-            ?.map((data) => data.toString())
-            .toList() ??
-        [];
+    List<String> id = (json['id'] as List<dynamic>?)?.map((data) => data.toString()).toList() ?? [];
 
     return HistoricalLeadModel(
       total: json['total_data'] ?? 0,

@@ -1,34 +1,12 @@
-import 'package:hive/hive.dart';
-
-part 'organization_model.g.dart';
-
-@HiveType(typeId: 11)
 class OrganizationModel {
-  @HiveField(0)
   final int id;
-
-  @HiveField(1)
   final String name;
-
-  @HiveField(2)
   final String? description;
-
-  @HiveField(3)
   final String position;
-
-  @HiveField(4)
   final DateTime startTime;
-
-  @HiveField(5)
   final DateTime? finishTime;
-
-  @HiveField(6)
   final int adminId;
-
-  @HiveField(7)
   final DateTime createdAt;
-
-  @HiveField(8)
   final DateTime updatedAt;
 
   OrganizationModel({
@@ -56,12 +34,8 @@ class OrganizationModel {
           : null, // Parse the finish_time if it's not null
       description: json['description'] ?? "",
       adminId: json['admin_id'] ?? 0,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : DateTime.now(),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : DateTime.now(),
     );
   }
 

@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
-
-import 'package:http/http.dart' as http;
 
 import '../../constant/config.dart';
 import '../../models/user_model.dart';
@@ -19,41 +18,48 @@ class AuthenticationController extends GetxController {
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
+  final storage = const FlutterSecureStorage(
+    iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
-  Box<Map>? loginBox;
   UserController userController = Get.find<UserController>();
 
-  @override
-  void onInit() {
-    super.onInit();
-    loginBox = Hive.box<Map>('login'); // Inisialisasi Box remember me
+  Future<void> setEmail(String email) async {
+    await storage.write(key: 'email', value: email);
+  }
+
+  Future<String?> getEmail() async {
+    return await storage.read(key: 'email');
+  }
+
+  Future<void> clearEmail() async {
+    await storage.delete(key: 'email');
+  }
+
+  Future<void> setPassword(String password) async {
+    await storage.write(key: 'password', value: password);
+  }
+
+  Future<String?> getPassword() async {
+    return await storage.read(key: 'password');
+  }
+
+  Future<void> clearPassword() async {
+    await storage.delete(key: 'password');
   }
 
   Future<void> loadRememberedUser() async {
     try {
       isLoading(true);
 
-      // Get remembered data
-      final rememberedData = loginBox?.get('remember');
-      if (rememberedData != null) {
-        String email = rememberedData['email'];
-        String password = rememberedData['password'];
+      final email = await getEmail();
+      final password = await getPassword();
 
-        isRememberMe.value = true;
-
-        await login(email, password);
-      }
+      if (email != null && password != null) await login(email, password);
     } finally {
       isLoading(false);
     }
-  }
-
-  void saveRememberedLogin(String email, String password) {
-    loginBox?.put('remember', {'email': email, 'password': password});
-  }
-
-  void clearRememberedLogin() {
-    loginBox?.delete('remember');
   }
 
   void toggleRememberMe(bool value) {
@@ -99,9 +105,11 @@ class AuthenticationController extends GetxController {
       await storeDeviceToken(userController.deviceToken.value!, userController.user.value!.id.toString());
 
       if (isRememberMe.value) {
-        saveRememberedLogin(email, password);
+        await setEmail(email);
+        await setPassword(password);
       } else {
-        clearRememberedLogin();
+        await clearEmail();
+        await clearPassword();
       }
 
       Get.offAndToNamed(AppRoutes.home);
@@ -160,25 +168,23 @@ class AuthenticationController extends GetxController {
       );
 
       if (response.statusCode == 200) {
-        print("Device Token berhasil di kirim");
+        debugPrint("Device Token berhasil di kirim");
       }
     } catch (e) {
-      print(e);
+      debugPrint(e.toString());
     }
   }
 
   Future<void> logout() async {
     try {
-      // Make the POST request
-      print(baseUrl);
-      print(userController.accesToken.value);
       var response = await dio.post(
         '$baseUrl/auth/logout',
         options: Options(headers: {'Authorization': 'Bearer ${userController.accesToken.value}'}),
       );
 
       if (response.statusCode == 200) {
-        clearRememberedLogin();
+        await clearEmail();
+        await clearPassword();
 
         showSuccessToast('Succses: Logout');
         Get.offAllNamed('/login');
@@ -188,7 +194,7 @@ class AuthenticationController extends GetxController {
       }
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      print('Error fetching status data: $e');
+      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -203,13 +209,15 @@ class AuthenticationController extends GetxController {
     var body = jsonEncode(requestData);
 
     try {
-      var response = await http.post(
-        Uri.parse('$baseUrl/profile/change-password'),
-        headers: {
-          'Authorization': 'Bearer ${userController.accesToken.value}',
-          'Content-Type': 'application/json',
-        },
-        body: body,
+      var response = await dio.post(
+        '$baseUrl/profile/change-password',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer ${userController.accesToken.value}',
+            'Content-Type': 'application/json',
+          },
+        ),
+        data: body,
       );
 
       if (response.statusCode == 200) {
@@ -219,11 +227,11 @@ class AuthenticationController extends GetxController {
         String errorMessage = "Failed to change password";
 
         showErrorToast(errorMessage);
-        print('Response body: ${response.body}');
+        debugPrint('Response body: ${response.data}');
       }
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      print('Error fetching status data: $e');
+      debugPrint('Error fetching status data: $e');
     }
   }
 

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 import 'services/notification_service.dart';
@@ -15,9 +14,6 @@ Future<void> main() async {
 
   await Firebase.initializeApp();
   await NotificationService.instance.initialize();
-
-  await Hive.initFlutter();
-  await Hive.openBox<Map>('login');
 
   HttpOverrides.global = CustomHttpOverrides();
 

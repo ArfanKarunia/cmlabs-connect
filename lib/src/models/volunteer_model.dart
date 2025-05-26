@@ -1,37 +1,13 @@
-import 'package:hive/hive.dart';
-
-part 'volunteer_model.g.dart';
-
-@HiveType(typeId: 13)
 class VolunteerModel {
-  @HiveField(0)
   final int id;
-
-  @HiveField(1)
   final String name;
-
-  @HiveField(2)
   final String position;
-
-  @HiveField(3)
   final String division;
-
-  @HiveField(4)
   final String? description;
-
-  @HiveField(5)
   final DateTime startTime;
-
-  @HiveField(6)
   final DateTime? finishTime;
-
-  @HiveField(7)
   final int adminId;
-
-  @HiveField(8)
   final DateTime createdAt;
-
-  @HiveField(9)
   final DateTime updatedAt;
 
   VolunteerModel({
@@ -61,12 +37,8 @@ class VolunteerModel {
           : null, // Parse the finish_time if it's not null
       description: json['description'] ?? "",
       adminId: json['admin_id'] ?? 0,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : DateTime.now(),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : DateTime.now(),
     );
   }
 

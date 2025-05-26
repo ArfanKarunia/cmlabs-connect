@@ -1,40 +1,14 @@
-import 'package:hive/hive.dart';
-
-part 'experience_model.g.dart';
-
-@HiveType(typeId: 8)
-class ExperienceModel extends HiveObject {
-  @HiveField(0)
+class ExperienceModel {
   final int id;
-
-  @HiveField(1)
   final String position;
-
-  @HiveField(2)
   final String company;
-
-  @HiveField(3)
   final String type;
-
-  @HiveField(4)
   final DateTime startTime;
-
-  @HiveField(5)
   final DateTime? finishTime;
-
-  @HiveField(6)
   final String description;
-
-  @HiveField(7)
   final int adminId;
-
-  @HiveField(8)
   final int? projectId;
-
-  @HiveField(9)
   final DateTime createdAt;
-
-  @HiveField(10)
   final DateTime updatedAt;
 
   ExperienceModel({
@@ -66,12 +40,8 @@ class ExperienceModel extends HiveObject {
       description: json['description'] ?? "",
       adminId: json['admin_id'] ?? 0,
       projectId: json['project_id'], // Handle nullable field
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'])
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : DateTime.now(),
+      createdAt: json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now(),
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : DateTime.now(),
     );
   }
 
