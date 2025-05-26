@@ -25,7 +25,9 @@ class AnalyticsView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          QuotationTrafficCard(data: controller.quotationTraffic.value!),
+          QuotationTrafficCard(
+            data: controller.quotationTraffic.value,
+          ),
           const SizedBox(height: 20),
           TopServicesCard(
             data: TopServices.fromJson(topServicesExample),
