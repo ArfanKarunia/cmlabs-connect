@@ -107,9 +107,6 @@ class AuthenticationController extends GetxController {
       if (isRememberMe.value) {
         await setEmail(email);
         await setPassword(password);
-      } else {
-        await clearEmail();
-        await clearPassword();
       }
 
       Get.offAndToNamed(AppRoutes.home);
