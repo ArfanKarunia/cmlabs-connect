@@ -40,7 +40,7 @@ class _TopPICsCardState extends State<TopPICsCard> {
   @override
   Widget build(BuildContext context) {
     return ChartCard(
-      title: 'Top Services',
+      title: 'Top Pics',
       subtitle: 'This Week',
       chart: SfCircularChart(
         tooltipBehavior: TooltipBehavior(enable: true),
