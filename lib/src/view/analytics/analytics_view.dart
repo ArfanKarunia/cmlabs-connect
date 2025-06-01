@@ -12,9 +12,14 @@ import '../../widgets/analytics/top_pics_card.dart';
 import '../../widgets/analytics/top_services_card.dart';
 import '../../widgets/default_appbar.dart';
 
-class AnalyticsView extends StatelessWidget {
+class AnalyticsView extends StatefulWidget {
   const AnalyticsView({super.key});
 
+  @override
+  State<AnalyticsView> createState() => _AnalyticsViewState();
+}
+
+class _AnalyticsViewState extends State<AnalyticsView> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<AnalyticsController>();
@@ -25,8 +30,8 @@ class AnalyticsView extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: [
-          QuotationTrafficCard(
-            data: controller.quotationTraffic.value,
+          Obx(
+            () => QuotationTrafficCard(data: controller.quotationTraffic.value),
           ),
           const SizedBox(height: 20),
           TopServicesCard(

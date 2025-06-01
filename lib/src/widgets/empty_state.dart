@@ -18,9 +18,10 @@ class EmptyState extends StatelessWidget {
             color: AppColors.text_4,
             size: 35,
           ),
+          const SizedBox(height: 10),
           Text(
             'No available data',
-            style: bold.copyWith(fontSize: 24, color: AppColors.text_4),
+            style: bold.copyWith(fontSize: 22, color: AppColors.text_4),
           ),
         ],
       ),

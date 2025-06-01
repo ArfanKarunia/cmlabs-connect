@@ -5,7 +5,6 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../models/analytics/quotation_traffic_model.dart';
 import '../../routes.dart';
 import '../../utils/color.dart';
-import '../empty_state.dart';
 import 'charts_card.dart';
 
 class QuotationTrafficCard extends StatefulWidget {
@@ -38,11 +37,9 @@ class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
     List<String> sources = _extractAllSources(chartData);
 
     return widget.data == null
-        ? const ChartCard(
+        ? const EmptyChartCard(
             title: 'Quotation Traffic',
             subtitle: 'This Week',
-            chart: EmptyState(),
-            chartDescriptions: [],
           )
         : ChartCard(
             title: 'Quotation Traffic',

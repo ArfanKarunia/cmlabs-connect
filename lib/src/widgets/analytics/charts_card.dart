@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../constant/fontstyle.dart';
 import '../../utils/color.dart';
+import '../empty_state.dart';
 
 class ChartCard extends StatefulWidget {
   final String title;
@@ -136,6 +137,22 @@ class ChartDataDescription extends StatelessWidget {
           Text(label, style: isSelected ? bold.copyWith(fontSize: 12) : regular.copyWith(fontSize: 12)),
         ],
       ),
+    );
+  }
+}
+
+class EmptyChartCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  const EmptyChartCard({super.key, required this.title, required this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChartCard(
+      title: title,
+      subtitle: subtitle,
+      chart: const SizedBox(height: 200, child: EmptyState()),
+      chartDescriptions: const [],
     );
   }
 }
