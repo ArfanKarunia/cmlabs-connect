@@ -1,15 +1,3 @@
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        // Update Android Gradle Plugin ke versi yang lebih baru
-        classpath 'com.android.tools.build:gradle:8.2.1'
-        // Jika kamu menggunakan plugin lain, pastikan mereka juga ter-update
-    }
-}
-
 allprojects {
     repositories {
         google()
