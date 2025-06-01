@@ -9,8 +9,8 @@ import '../../utils/color.dart';
 import 'charts_card.dart';
 
 class TopPICsCard extends StatefulWidget {
-  final TopPICs data;
-  const TopPICsCard({super.key, required this.data});
+  final TopPICs? data;
+  const TopPICsCard({super.key, this.data});
 
   @override
   State<TopPICsCard> createState() => _TopPICsCardState();
@@ -34,58 +34,73 @@ class _TopPICsCardState extends State<TopPICsCard> {
   @override
   void initState() {
     super.initState();
-    _isVisible = List.filled(widget.data.topPics.length, true);
+    _isVisible = List.filled(widget.data?.topPics.length ?? 0, true);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChartCard(
-      title: 'Top Pics',
-      subtitle: 'This Week',
-      chart: SfCircularChart(
-        tooltipBehavior: TooltipBehavior(enable: true),
-        series: [
-          DoughnutSeries<TopPICsData, String>(
-            dataSource: List.generate(
-              widget.data.topPics.length,
-              (i) => _isVisible[i]
-                  ? widget.data.topPics[i]
-                  : TopPICsData(
-                      picName: '',
-                      quotationCount: 0,
-                      newCount: 0,
-                      followedUp: 0,
-                      accepted: 0,
-                      rejected: 0,
-                      onHold: 0,
-                      percentage: 0,
-                    ),
-            ),
-            xValueMapper: (d, _) => _formatPicName(d.picName),
-            yValueMapper: (d, _) => d.quotationCount,
-            pointColorMapper: (d, i) => colors[i],
-            dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
-            dataLabelSettings: DataLabelSettings(
-              isVisible: true,
-              textStyle: bold.copyWith(fontSize: 16, color: AppColors.white),
-            ),
-            explode: true,
+    return widget.data == null || widget.data?.topPics.isEmpty == true
+        ? const EmptyChartCard(
+            title: 'Top PICs',
+            subtitle: 'This Week',
           )
-        ],
-      ),
-      chartDescriptions: List.generate(
-        widget.data.topPics.length,
-        (index) => ChartDataDescription(
-          label: _formatPicName(widget.data.topPics[index].picName),
-          color: colors[index],
-          isSelected: _isVisible[index],
-          onTap: () {
-            setState(() => _isVisible[index] = !_isVisible[index]);
-          },
-        ),
-      ),
-      onTapDetails: () => Get.toNamed(AppRoutes.analyticsDetailView),
-    );
+        : ChartCard(
+            title: 'Top PICs',
+            subtitle: 'This Week',
+            chart: SfCircularChart(
+              tooltipBehavior: TooltipBehavior(enable: true),
+              series: [
+                DoughnutSeries<TopPICsData, String>(
+                  dataSource: List.generate(
+                    widget.data?.topPics.length ?? 0,
+                    (i) => _isVisible[i]
+                        ? widget.data?.topPics[i] ??
+                            TopPICsData(
+                              picName: '',
+                              quotationCount: 0,
+                              newCount: 0,
+                              followedUp: 0,
+                              accepted: 0,
+                              rejected: 0,
+                              onHold: 0,
+                              percentage: 0,
+                            )
+                        : TopPICsData(
+                            picName: '',
+                            quotationCount: 0,
+                            newCount: 0,
+                            followedUp: 0,
+                            accepted: 0,
+                            rejected: 0,
+                            onHold: 0,
+                            percentage: 0,
+                          ),
+                  ),
+                  xValueMapper: (d, _) => _formatPicName(d.picName),
+                  yValueMapper: (d, _) => d.quotationCount,
+                  pointColorMapper: (d, i) => colors[i],
+                  dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
+                  dataLabelSettings: DataLabelSettings(
+                    isVisible: true,
+                    textStyle: bold.copyWith(fontSize: 16, color: AppColors.white),
+                  ),
+                  explode: true,
+                )
+              ],
+            ),
+            chartDescriptions: List.generate(
+              widget.data?.topPics.length ?? 0,
+              (index) => ChartDataDescription(
+                label: _formatPicName(widget.data?.topPics[index].picName ?? ''),
+                color: colors[index],
+                isSelected: _isVisible[index],
+                onTap: () {
+                  setState(() => _isVisible[index] = !_isVisible[index]);
+                },
+              ),
+            ),
+            onTapDetails: () => Get.toNamed(AppRoutes.analyticsDetailView),
+          );
   }
 
   String _formatPicName(String name) {

@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controllers/analytics/analytics_controller.dart';
-import '../../models/analytics/quotation_trends_model.dart';
-import '../../models/analytics/top_pics_model.dart';
-import '../../models/analytics/top_services_model.dart';
 import '../../utils/color.dart';
 import '../../widgets/analytics/quotation_traffic_card.dart';
 import '../../widgets/analytics/quotation_trends_card.dart';
@@ -34,16 +31,16 @@ class _AnalyticsViewState extends State<AnalyticsView> {
             () => QuotationTrafficCard(data: controller.quotationTraffic.value),
           ),
           const SizedBox(height: 20),
-          TopServicesCard(
-            data: TopServices.fromJson(topServicesExample),
+          Obx(
+            () => TopServicesCard(data: controller.topServices.value),
           ),
           const SizedBox(height: 20),
-          TopPICsCard(
-            data: TopPICs.fromJson(topPICsExample),
+          Obx(
+            () => TopPICsCard(data: controller.topPICs.value),
           ),
           const SizedBox(height: 20),
-          QuotationTrendsCard(
-            data: QuotationTrends.fromJson(quotationTrendsExample),
+          Obx(
+            () => QuotationTrendsCard(data: controller.quotationTrends.value),
           ),
           const SizedBox(height: 20),
         ],
