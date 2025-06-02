@@ -1,48 +1,20 @@
 import 'package:cmlabs_connect/src/models/client_pic_model.dart';
 import 'package:cmlabs_connect/src/models/client_source_model.dart';
-import 'package:hive/hive.dart';
+import 'package:flutter/material.dart';
 
-part 'quotation_model.g.dart';
-
-@HiveType(typeId: 0)
-class Quotation extends HiveObject {
-  @HiveField(0)
+class Quotation {
   final int id;
-
-  @HiveField(1)
   final int? userId;
-
-  @HiveField(2)
   final String feature;
-
-  @HiveField(3)
   final String url;
-
-  @HiveField(4)
   final String email;
-
-  @HiveField(5)
   final QuotationData data;
-
-  @HiveField(6)
   final AgentData? agent;
-
-  @HiveField(7)
   final DateTime createdAt;
-
-  @HiveField(8)
   final DateTime? updatedAt;
-
-  @HiveField(9)
   final String? section;
-
-  @HiveField(10)
   final int priority;
-
-  @HiveField(11)
   final int status;
-
-  @HiveField(12)
   final DateTime? deletedAt;
 
   Quotation({
@@ -64,24 +36,18 @@ class Quotation extends HiveObject {
   factory Quotation.fromJson(Map<String, dynamic> json) {
     return Quotation(
       id: json['id'],
-      userId: json['user_id'] != null
-          ? int.tryParse(json['user_id'].toString())
-          : null,
+      userId: json['user_id'] != null ? int.tryParse(json['user_id'].toString()) : null,
       feature: json['feature'],
       url: json['url'] ?? '-',
       email: json['email'] ?? "-",
       data: QuotationData.fromJson(json['data']),
       agent: json['agent'] != null ? AgentData.fromJson(json['agent']) : null,
       createdAt: DateTime.parse(json['created_at']),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'])
-          : null,
+      updatedAt: json['updated_at'] != null ? DateTime.parse(json['updated_at']) : null,
       section: json['section'] ?? '-',
       priority: json['priority'] ?? 0,
       status: json['status'] ?? 0,
-      deletedAt: json['deleted_at'] != null
-          ? DateTime.parse(json['deleted_at'])
-          : null,
+      deletedAt: json['deleted_at'] != null ? DateTime.parse(json['deleted_at']) : null,
     );
   }
 
@@ -104,78 +70,30 @@ class Quotation extends HiveObject {
   }
 }
 
-@HiveType(typeId: 1)
 class QuotationData {
-  @HiveField(0)
   final String? language;
-
-  @HiveField(1)
   final String? name;
-
-  @HiveField(2)
   final String? phoneCode;
-
-  @HiveField(3)
   final String? phoneNumber;
-
-  @HiveField(4)
   final String? company;
-
-  @HiveField(5)
   final String? companyIndustry;
-
-  @HiveField(10)
   final List<String?> category;
-
-  @HiveField(6)
   final dynamic registrationStatus;
-
-  @HiveField(7)
   final String? website;
-
-  @HiveField(8)
   final String? region;
-
-  @HiveField(9)
   final List<String?> type;
-
-  @HiveField(12)
   final String? pic;
-
-  @HiveField(11)
-  final List<ClientPic?> clientPIC; // Menggunakan List<ClientPic>
-
-  @HiveField(13)
+  final List<ClientPic?> clientPIC;
   final String? remarks;
-
-  @HiveField(14)
   final String? notes;
-
-  @HiveField(15)
   final List<String?> meetingTopic;
-
-  @HiveField(16)
   final List<DateTime?> meetingSchedule;
-
-  @HiveField(17)
   final List<String?> meetingStatus;
-
-  @HiveField(18)
   final List<String?> meetingNote;
-
-  @HiveField(19)
   final String? addtionalNotes;
-
-  @HiveField(20)
   final DateTime? meetingAppointment;
-
-  @HiveField(21)
   final String? message;
-
-  @HiveField(22)
   final List<List<String>?> meetingType;
-
-  @HiveField(23)
   final ClientSource? clientSource;
 
   QuotationData({
@@ -206,15 +124,12 @@ class QuotationData {
   });
 
   factory QuotationData.fromJson(Map<String, dynamic> json) {
-
     try {
       // Parsing client_pic menjadi List<ClientPic>
       List<ClientPic> clientPics = [];
       if (json['client_pic'] is List) {
-        clientPics = (json['client_pic'] as List<dynamic>?)
-                ?.map((picJson) => ClientPic.fromJson(picJson))
-                .toList() ??
-            [];
+        clientPics =
+            (json['client_pic'] as List<dynamic>?)?.map((picJson) => ClientPic.fromJson(picJson)).toList() ?? [];
       } else if (json['client_pic'] is Map) {
         clientPics = (json['client_pic'] as Map<String, dynamic>?)
                 ?.values
@@ -224,32 +139,23 @@ class QuotationData {
       }
 
       // Parsing data meeting lainnya tetap sama
-      List<String?> meetingTopics = (json['meeting_topic'] as List<dynamic>?)
-              ?.map((topic) => topic.toString())
+      List<String?> meetingTopics =
+          (json['meeting_topic'] as List<dynamic>?)?.map((topic) => topic.toString()).toList() ?? [];
+
+      List<DateTime?> meetingSchedules = (json['meeting_schedule'] as List<dynamic>?)
+              ?.map((schedule) => DateTime.tryParse(schedule.toString()))
               .toList() ??
           [];
 
-      List<DateTime?> meetingSchedules =
-          (json['meeting_schedule'] as List<dynamic>?)
-                  ?.map((schedule) => DateTime.tryParse(schedule.toString()))
-                  .toList() ??
-              [];
+      List<String?> meetingStatuses =
+          (json['meeting_status'] as List<dynamic>?)?.map((status) => status.toString()).toList() ?? [];
 
-      List<String?> meetingStatuses = (json['meeting_status'] as List<dynamic>?)
-              ?.map((status) => status.toString())
-              .toList() ??
-          [];
-
-      List<String?> meetingNotes = (json['meeting_note'] as List<dynamic>?)
-              ?.map((note) => note.toString())
-              .toList() ??
-          [];
+      List<String?> meetingNotes =
+          (json['meeting_note'] as List<dynamic>?)?.map((note) => note.toString()).toList() ?? [];
 
       List<List<String>> meetingTypes = [];
       if (json['meeting_type'] != null && json['meeting_type'] is List) {
-        meetingTypes = (json['meeting_type'] as List<dynamic>)
-            .map((type) => List<String>.from(type as List))
-            .toList();
+        meetingTypes = (json['meeting_type'] as List<dynamic>).map((type) => List<String>.from(type as List)).toList();
       }
 
       // Handle 'type' yang mungkin null, String, atau List
@@ -262,8 +168,7 @@ class QuotationData {
           if (json['type'].every((element) => element == null)) {
             types = []; // Set to empty list if all elements are null
           } else {
-            types = List<String>.from(json['type']
-                .where((element) => element != null)); // Filter out nulls
+            types = List<String>.from(json['type'].where((element) => element != null)); // Filter out nulls
           }
         }
       }
@@ -301,16 +206,13 @@ class QuotationData {
         addtionalNotes: json['meeting'] ?? '-',
         meetingType: meetingTypes,
         clientSource: ClientSource.fromJson(
-          {
-            'client_source': json['client_source'],
-            ...?json['client_source_detail']
-          },
+          {'client_source': json['client_source'], ...?json['client_source_detail']},
         ),
       );
     } catch (e, stacktrace) {
       // Cetak error dan stack trace untuk melacak lebih jelas
-      print("Error in QuotationData.fromJson: $e");
-      print("Stacktrace: $stacktrace");
+      debugPrint("Error in QuotationData.fromJson: $e");
+      debugPrint("Stacktrace: $stacktrace");
       return QuotationData(
         language: '',
         name: '',
@@ -355,9 +257,7 @@ class QuotationData {
       'remarks': remarks,
       'notes': notes,
       'meeting_topic': meetingTopic,
-      'meeting_schedule': meetingSchedule
-          .map((schedule) => schedule?.toIso8601String())
-          .toList(),
+      'meeting_schedule': meetingSchedule.map((schedule) => schedule?.toIso8601String()).toList(),
       'meeting_status': meetingStatus,
       'meeting_note': meetingNote,
       'meeting': addtionalNotes,
@@ -367,19 +267,12 @@ class QuotationData {
   }
 }
 
-@HiveType(typeId: 2)
 class AgentData {
-  @HiveField(0)
   final String? browser;
-  @HiveField(1)
   final String? device;
-  @HiveField(2)
   final String? ip;
-  @HiveField(3)
   final List<String?> language;
-  @HiveField(4)
   final String? platform;
-  @HiveField(5)
   final String? devices;
 
   AgentData({
@@ -392,21 +285,18 @@ class AgentData {
   });
 
   factory AgentData.fromJson(Map<String, dynamic> json) {
-
     try {
       return AgentData(
         browser: json['browser'] is String ? json['browser'] : null,
         device: json['device'] is String ? json['device'] : null,
         ip: json['ip'],
-        language: json['language'] is String
-            ? [json['language']]
-            : List<String>.from(json['language'] ?? []),
+        language: json['language'] is String ? [json['language']] : List<String>.from(json['language'] ?? []),
         platform: json['platform'] is String ? json['platform'] : null,
         devices: json['devices'] is String ? json['devices'] : null,
       );
     } catch (e, stacktrace) {
-      print("Error in AgentData.fromJson: $e");
-      print("Stacktrace: $stacktrace");
+      debugPrint("Error in AgentData.fromJson: $e");
+      debugPrint("Stacktrace: $stacktrace");
       return AgentData(
         browser: null,
         device: null,

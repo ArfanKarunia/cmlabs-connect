@@ -1,88 +1,30 @@
-import 'package:hive/hive.dart';
-
-part 'user_model.g.dart';
-
-@HiveType(typeId: 3)
-class User extends HiveObject {
-  @HiveField(0)
+class User {
   final int id;
-
-  @HiveField(1)
   final int adminRoleId;
-
-  @HiveField(2)
   final String? roleName;
-
-  @HiveField(3)
   final String? rememberToken;
-
-  @HiveField(4)
   final String name;
-
-  @HiveField(5)
   final String email;
-
-  @HiveField(6)
   final String password;
-
-  @HiveField(7)
   final String username;
-
-  @HiveField(8)
   final String? pic;
-
-  @HiveField(9)
   final String? phone;
-
-  @HiveField(10)
   final String? jobPosition;
-
-  @HiveField(11)
   final String? about;
-
-  @HiveField(12)
   final String? aboutEn;
-
-  @HiveField(13)
   final String? facebook;
-
-  @HiveField(14)
   final String? twitter;
-
-  @HiveField(15)
   final String? linkedin;
-
-  @HiveField(16)
   final String? instagram;
-
-  @HiveField(17)
   final String? medium;
-
-  @HiveField(18)
   final String? tiktok;
-
-  @HiveField(19)
   final String? quora;
-
-  @HiveField(20)
   final String? additionalInformation;
-
-  @HiveField(21)
   final int? adminProjectId;
-
-  @HiveField(22)
   final String? link;
-
-  @HiveField(23)
   final int? adminPositionId;
-
-  @HiveField(24)
   final String? picUrl;
-
-  @HiveField(25)
   final DateTime? createdAt;
-
-  @HiveField(26)
   final DateTime? updatedAt;
 
   User({
@@ -143,10 +85,8 @@ class User extends HiveObject {
       link: map['link'],
       adminPositionId: map['admin_position_id'],
       picUrl: map['pic_url'],
-      createdAt:
-          map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
-      updatedAt:
-          map['updated_at'] != null ? DateTime.parse(map['updated_at']) : null,
+      createdAt: map['created_at'] != null ? DateTime.parse(map['created_at']) : null,
+      updatedAt: map['updated_at'] != null ? DateTime.parse(map['updated_at']) : null,
     );
   }
 

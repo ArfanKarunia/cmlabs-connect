@@ -5,7 +5,6 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../models/analytics/quotation_traffic_model.dart';
 import '../../routes.dart';
 import '../../utils/color.dart';
-import '../empty_state.dart';
 import 'charts_card.dart';
 
 class QuotationTrafficCard extends StatefulWidget {
@@ -38,11 +37,9 @@ class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
     List<String> sources = _extractAllSources(chartData);
 
     return widget.data == null
-        ? const ChartCard(
+        ? const EmptyChartCard(
             title: 'Quotation Traffic',
             subtitle: 'This Week',
-            chart: EmptyState(),
-            chartDescriptions: [],
           )
         : ChartCard(
             title: 'Quotation Traffic',
@@ -72,20 +69,22 @@ class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
   List<QuotationTrafficModified> _parseChartData() {
     List<QuotationTrafficModified> data = [];
 
-    for (int i = 0; i < widget.data!.labels.length && i < widget.data!.data.length; i++) {
-      Map<String, dynamic> perSource = Map<String, dynamic>.from(widget.data!.data[i].perSource);
-      // int total = widget.data.data[i].total;
+    if (widget.data != null) {
+      for (int i = 0; i < widget.data!.labels.length && i < widget.data!.data.length; i++) {
+        Map<String, dynamic> perSource = Map<String, dynamic>.from(widget.data!.data[i].perSource);
+        // int total = widget.data.data[i].total;
 
-      // Convert all values to int and clean up source names
-      Map<String, int> sourceValues = {};
-      perSource.forEach((key, value) {
-        sourceValues[key] = (value is int) ? value : int.tryParse(value.toString()) ?? 0;
-      });
+        // Convert all values to int and clean up source names
+        Map<String, int> sourceValues = {};
+        perSource.forEach((key, value) {
+          sourceValues[key] = (value is int) ? value : int.tryParse(value.toString()) ?? 0;
+        });
 
-      data.add(QuotationTrafficModified(
-        date: widget.data!.labels[i],
-        sourceValues: sourceValues,
-      ));
+        data.add(QuotationTrafficModified(
+          date: widget.data!.labels[i],
+          sourceValues: sourceValues,
+        ));
+      }
     }
 
     return data;
