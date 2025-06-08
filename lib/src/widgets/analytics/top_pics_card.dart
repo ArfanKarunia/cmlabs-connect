@@ -8,6 +8,7 @@ import '../../controllers/analytics/top_pics/top_pics_controller.dart';
 import '../../models/analytics/top_pics_model.dart';
 import '../../routes.dart';
 import '../../utils/color.dart';
+import '../../utils/string_utils.dart';
 import 'charts_card.dart';
 
 class TopPICsCard extends StatefulWidget {
@@ -45,8 +46,7 @@ class _TopPICsCardState extends State<TopPICsCard> {
             ? EmptyChartCard(
                 title: 'Top PICs',
                 subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
-                onTapViewDetails:
-                    widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
+                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
               )
             : ChartCard(
                 title: 'Top PICs',
@@ -80,7 +80,7 @@ class _TopPICsCardState extends State<TopPICsCard> {
                                 percentage: 0,
                               ),
                       ),
-                      xValueMapper: (d, _) => _formatPicName(d.picName),
+                      xValueMapper: (d, _) => formatPICName(d.picName),
                       yValueMapper: (d, _) => d.quotationCount,
                       pointColorMapper: (d, i) => colors[i],
                       dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
@@ -95,7 +95,7 @@ class _TopPICsCardState extends State<TopPICsCard> {
                 chartDescriptions: List.generate(
                   controller.topPICs.value?.topPics.length ?? 0,
                   (index) => ChartDataDescription(
-                    label: _formatPicName(controller.topPICs.value?.topPics[index].picName ?? ''),
+                    label: formatPICName(controller.topPICs.value?.topPics[index].picName ?? ''),
                     color: colors[index],
                     isSelected: _isVisible[index],
                     onTap: () {
@@ -103,14 +103,9 @@ class _TopPICsCardState extends State<TopPICsCard> {
                     },
                   ),
                 ),
-                onTapViewDetails:
-                    widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
+                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
               );
       },
     );
-  }
-
-  String _formatPicName(String name) {
-    return name.split('-').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
   }
 }

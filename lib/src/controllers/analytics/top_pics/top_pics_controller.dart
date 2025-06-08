@@ -16,6 +16,12 @@ class TopPICsController extends AnalyticsController {
   @override
   Rx<DateType?> selectedDateType = (DateType.weekly).obs;
 
+  TopPICs? get data => topPICs.value;
+  int get dataLength => data?.topPics.length ?? 0;
+
+  @override
+  Rx<SortOption?> selectedSortOption = (SortOption.totalMost).obs;
+
   @override
   Future<void> fetchData({DateType? dateType}) async {
     try {
