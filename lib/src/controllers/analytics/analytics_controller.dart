@@ -3,13 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constant/config.dart';
-import '../../models/analytics/quotation_traffic_model.dart';
-import '../../models/analytics/quotation_trends_model.dart';
-import '../../models/analytics/top_pics_model.dart';
-import '../../models/analytics/top_services_model.dart';
 import '../user/user_controller.dart';
 
-// Definisi enum SortOption dipindahkan ke sini
 enum SortOption {
   newestDate,
   oldestDate,
@@ -27,66 +22,24 @@ enum SortOption {
 
 enum DateType { daily, weekly, monthly, yearly }
 
+enum AnalyticsType { quotationTraffic, topServices, topPICs, quotationTrends }
+
+enum AnalyticsFilterType { category, pic, clientSource, utm, status }
+
 class AnalyticsController extends GetxController {
-  // Analytics Data
-  Rx<QuotationTraffic?> quotationTraffic = Rx<QuotationTraffic?>(null);
-  Rx<TopServices?> topServices = Rx<TopServices?>(null);
-  Rx<TopPICs?> topPICs = Rx<TopPICs?>(null);
-  Rx<QuotationTrends?> quotationTrends = Rx<QuotationTrends?>(null);
-
-  // Variabel untuk Top Services & PIC (jika ada)
-  RxList<dynamic> topServicesList = <dynamic>[].obs;
-  RxList<dynamic> picList = <dynamic>[].obs;
-
-  // --- START: VARIABEL BARU UNTUK STATE TOMBOL SAVE ---
-  RxBool hasFilterChanged = false.obs;
-
-  // --- START: ANALYTICS FILTER STATE BARU ---
-  Rx<DateTime?> filterStartDate = Rx<DateTime?>(null); // Untuk tanggal mulai filter
-  Rx<DateTime?> filterEndDate = Rx<DateTime?>(null); // Untuk tanggal selesai filter
-
-  // RxString untuk menyimpan pilihan filter tunggal (nama atau ID)
-  RxString selectedCategory = 'All'.obs;
-  RxString selectedPic = 'All'.obs;
-  RxString selectedClientSource = 'All'.obs;
-  RxString selectedUtm = 'All'.obs;
-  RxString selectedStatus = 'All'.obs;
-  // --- END: ANALYTICS FILTER STATE BARU ---
-
-  // Analytics Sort By
+  RxBool isFilterLoading = false.obs;
   Rx<SortOption?> selectedSortOption = Rx<SortOption?>(SortOption.newestDate);
 
-  // --- START: DUMMY DATA UNTUK FILTER OPTIONS ---
-  // Ganti ini dengan data yang diambil dari API jika opsi-opsinya dinamis
-  final List<String> categoriesOptions = [
-    'All',
-    'SEO Services',
-    'SEO Content Writing',
-    'SEM',
-    'Social Media Management',
-    'Digital Marketing'
-  ];
-  final List<String> picOptions = [
-    'All',
-    'Vanessa',
-    'Larasati',
-    'Agita Ayudya',
-    'Bobby Pranata',
-    'Arfan',
-    'Naufal',
-    'Pasha'
-  ];
-  final List<String> clientSourceOptions = [
-    'All',
-    'Direct Email',
-    'Web WhatsApp',
-    'SEM',
-    'Direct LinkedIn',
-    'Direct Partnership'
-  ];
-  final List<String> utmOptions = ['All', 'Google & GDN', 'Google & CPC', 'Meta & GDN', 'Meta & Carousel'];
-  final List<String> statusOptions = ['All', 'New', 'Followed Up', 'Accepted', 'Rejected'];
-  // --- END: DUMMY DATA UNTUK FILTER OPTIONS ---
+  Rx<DateType?> initialDateType = (DateType.daily).obs;
+  Rx<DateType?> selectedDateType = (DateType.daily).obs;
+
+  Rx<DateTime?> selectedStartDate = Rx<DateTime?>(null);
+  Rx<DateTime?> selectedEndDate = Rx<DateTime?>(null);
+  RxMap<String, String> selectedCategory = {'label': 'All', 'value': 'all'}.obs;
+  RxMap<String, String> selectedPic = {'label': 'All', 'value': 'all'}.obs;
+  RxMap<String, String> selectedClientSource = {'label': 'All', 'value': 'all'}.obs;
+  RxMap<String, String> selectedUtm = {'label': 'All', 'value': 'all'}.obs;
+  RxMap<String, String> selectedStatus = {'label': 'All', 'value': 'all'}.obs;
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
@@ -95,241 +48,287 @@ class AnalyticsController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchQuotationTraffic(DateType.daily);
-    fetchTopServices(DateType.daily);
-    fetchTopPICs(DateType.daily);
-    fetchQuotationTrends(DateType.monthly);
-
-    // Inisialisasi tanggal filter awal jika diperlukan (misal: 1 bulan terakhir)
-    // filterEndDate.value = DateTime.now();
-    // filterStartDate.value = DateTime.now().subtract(const Duration(days: 30));
+    fetchData(dateType: selectedDateType.value);
   }
 
-// --- START: MODIFIKASI FILTER METHODS ---
-  void setFilterStartDate(DateTime? date) {
-    if (filterStartDate.value != date) {
-      // Cek apakah ada perubahan
-      filterStartDate.value = date;
-      hasFilterChanged.value = true; // Set true jika ada perubahan
+  Future<void> fetchData({DateType? dateType}) async {}
+
+  String constructFilteredUrl(
+    String baseUrl, {
+    AnalyticsType? analyticsType,
+    DateType? dateType,
+  }) {
+    String? startDateString = selectedStartDate.value != null
+        ? "${selectedStartDate.value!.year}-${selectedStartDate.value!.month.toString().padLeft(2, '0')}-${selectedStartDate.value!.day.toString().padLeft(2, '0')}"
+        : null;
+    String? endDateString = selectedEndDate.value != null
+        ? "${selectedEndDate.value!.year}-${selectedEndDate.value!.month.toString().padLeft(2, '0')}-${selectedEndDate.value!.day.toString().padLeft(2, '0')}"
+        : null;
+
+    List<String> queryParams = [];
+    if (startDateString != null) {
+      queryParams.add('startDate=${Uri.encodeComponent(startDateString)}');
     }
-    debugPrint('Filter Start Date set to: ${filterStartDate.value}');
-  }
-
-  void setFilterEndDate(DateTime? date) {
-    if (filterEndDate.value != date) {
-      // Cek apakah ada perubahan
-      filterEndDate.value = date;
-      hasFilterChanged.value = true; // Set true jika ada perubahan
+    if (endDateString != null) {
+      queryParams.add('endDate=${Uri.encodeComponent(endDateString)}');
     }
-    debugPrint('Filter End Date set to: ${filterEndDate.value}');
-  }
 
-  void updateFilter(String filterType, String value) {
-    // Ambil RxString yang sesuai
-    RxString? targetRx;
-    switch (filterType) {
-      case 'category':
-        targetRx = selectedCategory;
+    if (startDateString != null || endDateString != null) {
+      queryParams.add('date_type=custom');
+    } else {
+      if (analyticsType == AnalyticsType.topPICs || analyticsType == AnalyticsType.topServices) {
+        switch (dateType ?? selectedDateType.value) {
+          case DateType.daily:
+            queryParams.add('date_type=this_day');
+            break;
+          case DateType.weekly:
+            queryParams.add('date_type=this_week');
+            break;
+          case DateType.monthly:
+            queryParams.add('date_type=this_month');
+            break;
+          case DateType.yearly:
+            queryParams.add('date_type=this_year');
+            break;
+          default:
+            break;
+        }
+      } else {
+        switch (dateType ?? selectedDateType.value) {
+          case DateType.daily:
+            queryParams.add('date_type=daily');
+            break;
+          case DateType.weekly:
+            queryParams.add('date_type=weekly');
+            break;
+          case DateType.monthly:
+            queryParams.add('date_type=monthly');
+            break;
+          case DateType.yearly:
+            queryParams.add('date_type=yearly');
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    switch (selectedSortOption.value) {
+      case SortOption.newestDate:
+        queryParams.add('sort_by=date');
+        queryParams.add('sort_order=desc');
         break;
-      case 'pic':
-        targetRx = selectedPic;
+      case SortOption.oldestDate:
+        queryParams.add('sort_by=date');
+        queryParams.add('sort_order=asc');
         break;
-      case 'clientSource':
-        targetRx = selectedClientSource;
+      case SortOption.newMost:
+        queryParams.add('sort_by=new');
+        queryParams.add('sort_order=desc');
         break;
-      case 'utm':
-        targetRx = selectedUtm;
+      case SortOption.newLeast:
+        queryParams.add('sort_by=new');
+        queryParams.add('sort_order=asc');
         break;
-      case 'status':
-        targetRx = selectedStatus;
+      case SortOption.acceptedMost:
+        queryParams.add('sort_by=accepted');
+        queryParams.add('sort_order=desc');
+        break;
+      case SortOption.acceptedLeast:
+        queryParams.add('sort_by=accepted');
+        queryParams.add('sort_order=asc');
+        break;
+      case SortOption.rejectedMost:
+        queryParams.add('sort_by=rejected');
+        queryParams.add('sort_order=desc');
+        break;
+      case SortOption.rejectedLeast:
+        queryParams.add('sort_by=rejected');
+        queryParams.add('sort_order=asc');
+        break;
+      case SortOption.followUpMost:
+        queryParams.add('sort_by=followed_up');
+        queryParams.add('sort_order=desc');
+        break;
+      case SortOption.followUpLeast:
+        queryParams.add('sort_by=followed_up');
+        queryParams.add('sort_order=asc');
+        break;
+      case SortOption.totalMost:
+        queryParams.add('sort_by=total');
+        queryParams.add('sort_order=desc');
+        break;
+      case SortOption.totalLeast:
+        queryParams.add('sort_by=total');
+        queryParams.add('sort_order=asc');
         break;
       default:
-        debugPrint('Unknown filter type: $filterType');
+        break;
     }
 
-    if (targetRx != null && targetRx.value != value) {
-      // Cek apakah ada perubahan
-      targetRx.value = value;
-      hasFilterChanged.value = true; // Set true jika ada perubahan
+    if (selectedCategory['value'] != 'all') {
+      queryParams.add('category[]=${selectedCategory['value']}');
     }
-    debugPrint('Filter $filterType updated to: $value');
+    if (selectedPic['value'] != 'all') {
+      queryParams.add('pic=${selectedPic['value']}');
+    }
+    if (selectedClientSource['value'] != 'all') {
+      queryParams.add('client_source=${selectedClientSource['value']}');
+    }
+    if (selectedUtm['value'] != 'all') {
+      queryParams.add('utm[]=${selectedUtm['value']}');
+    }
+    if (selectedStatus['value'] != 'all') {
+      queryParams.add('status=${selectedStatus['value']}');
+    }
+
+    debugPrint('$baseUrl?${queryParams.join('&')}');
+    return '$baseUrl?${queryParams.join('&')}';
   }
 
-  void applyFilters() {
-    // ... (kode yang sudah ada)
-    hasFilterChanged.value = false; // Reset state setelah filter diterapkan
+  String getChartSubtitle(DateType dateType) {
+    switch (dateType) {
+      case DateType.daily:
+        return 'Today';
+      case DateType.weekly:
+        return 'This Week';
+      case DateType.monthly:
+        return 'This Month';
+      case DateType.yearly:
+        return 'This Year';
+    }
+  }
+
+  List<Map<String, String>> getFilterOptions({
+    required AnalyticsFilterType type,
+  }) {
+    switch (type) {
+      case AnalyticsFilterType.category:
+        return categoriesOptions;
+      case AnalyticsFilterType.pic:
+        return picOptions;
+      case AnalyticsFilterType.clientSource:
+        return clientSourceOptions;
+      case AnalyticsFilterType.utm:
+        return utmOptions;
+      case AnalyticsFilterType.status:
+        return statusOptions;
+    }
+  }
+
+  Map<String, String> getSelectedFilterOption({
+    required AnalyticsFilterType type,
+  }) {
+    switch (type) {
+      case AnalyticsFilterType.category:
+        return selectedCategory;
+      case AnalyticsFilterType.pic:
+        return selectedPic;
+      case AnalyticsFilterType.clientSource:
+        return selectedClientSource;
+      case AnalyticsFilterType.utm:
+        return selectedUtm;
+      case AnalyticsFilterType.status:
+        return selectedStatus;
+    }
+  }
+
+  void setDateType({required DateType dateType}) {
+    selectedDateType.value = dateType;
+    fetchData(dateType: dateType);
+  }
+
+  void setSelectedFilterOption({
+    required AnalyticsFilterType type,
+    required Map<String, String> option,
+  }) {
+    switch (type) {
+      case AnalyticsFilterType.category:
+        selectedCategory.value = option;
+        break;
+      case AnalyticsFilterType.pic:
+        selectedPic.value = option;
+        break;
+      case AnalyticsFilterType.clientSource:
+        selectedClientSource.value = option;
+        break;
+      case AnalyticsFilterType.utm:
+        selectedUtm.value = option;
+        break;
+      case AnalyticsFilterType.status:
+        selectedStatus.value = option;
+        break;
+    }
+  }
+
+  void setAnalyticsSortOption({required SortOption sortOption}) {
+    selectedSortOption.value = sortOption;
+    fetchData(dateType: selectedDateType.value);
+  }
+
+  Future<void> applyFilters() async {
+    isFilterLoading(true);
+    await fetchData(dateType: selectedDateType.value);
+    isFilterLoading(false);
     Get.back();
   }
 
-  void clearFilters() {
-    // ... (kode yang sudah ada untuk membersihkan filter)
-    hasFilterChanged.value = false; // Reset state setelah filter dibersihkan
-    debugPrint('Filters Cleared!');
-  }
-  // --- END: FILTER METHODS BARU ---
+  void resetFilter() {
+    selectedDateType.value = initialDateType.value;
+    selectedStartDate.value = null;
+    selectedEndDate.value = null;
+    selectedCategory.value = {'label': 'All', 'value': 'all'};
+    selectedPic.value = {'label': 'All', 'value': 'all'};
+    selectedClientSource.value = {'label': 'All', 'value': 'all'};
+    selectedUtm.value = {'label': 'All', 'value': 'all'};
+    selectedStatus.value = {'label': 'All', 'value': 'all'};
 
-  // Metode setSelectedSortOption tetap sama
-  void setSelectedSortOption(SortOption? option) {
-    selectedSortOption.value = option;
-    // Di sini Anda bisa memicu fetch data utama dengan opsi sort baru
-    // Misalnya: fetchQuotationOverviewData(sortOption: option);
-    debugPrint('Sort Option Selected: ${option?.name}');
+    applyFilters();
   }
 
-  Future<void> fetchQuotationTraffic(DateType type) async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/quotation/analytics?date_type=${type.name}',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200) {
-        quotationTraffic.value = QuotationTraffic.fromJson(response.data);
-      }
-    } catch (e) {
-      debugPrint('Error fetching quotation traffic data: $e');
-    }
-  }
-
-  // Sementara sebelum lanjut ke tahap filtering
-  Future<void> fetchTopServices(DateType type) async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/quotation/getTopRequestedServices?date_type=${type.name}',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200) {
-        topServices.value = TopServices.fromJson(response.data);
-      }
-    } catch (e) {
-      debugPrint('Error fetching top services data: $e');
-    }
-  }
-  // Future<void> fetchTopServices({
-  //   String dateType = 'custom',
-  //   String startDate = '2000-01-01',
-  //   String endDate = '2025-12-30',
-  //   String status = 'accepted',
-  //   String utm = 'GoogleL2CDC', // Sesuai Postman Anda
-  //   String sortBy = 'percentage:desc',
-  // }) async {
-  //   try {
-  //     String? accessToken = userController.accesToken.value;
-  //     if (accessToken == null || accessToken.isEmpty) {
-  //       debugPrint('Access token not available for top services fetch.');
-  //       return;
-  //     }
-  //     final String apiUrl = '$baseUrl/quotation/getTopRequestedServices?'
-  //         'date_type=$dateType&'
-  //         'start_date=$startDate&'
-  //         'end_date=$endDate&'
-  //         'status=$status&'
-  //         'utm=$utm';
-  //     debugPrint('Fetching Top Services from: $apiUrl');
-  //     final response = await dio.get(
-  //       apiUrl,
-  //       options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-  //     );
-  //     if (response.statusCode == 200 && response.data != null) {
-  //       topServicesList.value = response.data['data'] as List<dynamic>;
-  //       debugPrint('Top services fetched successfully: ${topServicesList.length} items');
-  //     } else {
-  //       debugPrint('Failed to fetch top services: Status Code ${response.statusCode}, Data: ${response.data}');
-  //     }
-  //   } on DioException catch (e) {
-  //     debugPrint('Dio Error fetching top services: ${e.response?.statusCode} - ${e.message}');
-  //     if (e.response?.data != null) {
-  //       debugPrint('Top Services Error Data: ${e.response?.data}');
-  //     }
-  //   } catch (e) {
-  //     debugPrint('General Error fetching top services: $e');
-  //   }
-  // }
-
-// Sementara sebelum lanjut ke tahap filtering
-  Future<void> fetchTopPICs(DateType type) async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/quotation/getTopPIC?date_type=${type.name}',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200) {
-        topPICs.value = TopPICs.fromJson(response.data);
-      }
-    } catch (e) {
-      debugPrint('Error fetching top services data: $e');
-    }
-  }
-  // Future<void> fetchPics({
-  //   String dateType = 'custom',
-  //   String startDate = '2000-01-01',
-  //   String endDate = '2025-12-30',
-  //   String status = 'accepted',
-  //   String utm = 'GoogleL2CPC', // Sesuai Postman Anda
-  //   List<String> categories = const ['seo services'],
-  //   String sortBy = 'percentage:desc',
-  // }) async {
-  //   try {
-  //     String? accessToken = userController.accesToken.value;
-  //     if (accessToken == null || accessToken.isEmpty) {
-  //       debugPrint('Access token not available for PIC fetch.');
-  //       return;
-  //     }
-  //     Map<String, dynamic> queryParams = {
-  //       'date_type': dateType,
-  //       'start_date': startDate,
-  //       'end_date': endDate,
-  //       'status': status,
-  //       'utm': utm,
-  //       'sort_by': sortBy,
-  //     };
-  //     for (int i = 0; i < categories.length; i++) {
-  //       queryParams['category[$i]'] = categories[i];
-  //     }
-  //     final String apiUrl = '$baseUrl/quotation/getTopPic';
-  //     debugPrint('Fetching PICs from: $apiUrl with params: $queryParams');
-  //     final response = await dio.get(
-  //       apiUrl,
-  //       queryParameters: queryParams,
-  //       options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-  //     );
-  //     if (response.statusCode == 200 && response.data != null) {
-  //       picList.value = response.data['data'] as List<dynamic>;
-  //       debugPrint('PICs fetched successfully: ${picList.length} items');
-  //     } else {
-  //       debugPrint('Failed to fetch PICs: Status Code ${response.statusCode}, Data: ${response.data}');
-  //     }
-  //   } on DioException catch (e) {
-  //     debugPrint('Dio Error fetching PICs: ${e.response?.statusCode} - ${e.message}');
-  //     if (e.response?.data != null) {
-  //       debugPrint('PICs Error Data: ${e.response?.data}');
-  //     }
-  //   } catch (e) {
-  //     debugPrint('General Error fetching PICs: $e');
-  //   }
-  // }
-
-  Future<void> fetchQuotationTrends(DateType type) async {
-    try {
-      String? accessToken = userController.accesToken.value;
-      final response = await dio.get(
-        '$baseUrl/quotation/getQuotationTrendsLineChart?date_type=${type.name}',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200) {
-        quotationTrends.value = QuotationTrends.fromJson(response.data);
-      }
-    } catch (e) {
-      debugPrint('Error fetching quotation trends data: $e');
-    }
+  void resetSortOption() {
+    selectedSortOption.value = SortOption.newestDate;
   }
 }
+
+// Dummy Data
+final List<Map<String, String>> categoriesOptions = [
+  {'label': 'All', 'value': 'all'},
+  {'label': 'SEO Services', 'value': 'seo-services'},
+  {'label': 'SEO Content Writing', 'value': 'seo-content-writing'},
+  {'label': 'SEM', 'value': 'sem'},
+  {'label': 'Social Media Management', 'value': 'social-media-management'},
+  {'label': 'Digital Marketing', 'value': 'digital-marketing'},
+];
+final List<Map<String, String>> picOptions = [
+  {'label': 'All', 'value': 'all'},
+  {'label': 'Vanessa', 'value': 'vanessa'},
+  {'label': 'Larasati', 'value': 'larasati'},
+  {'label': 'Agita Ayudya', 'value': 'agita_ayudya'},
+  {'label': 'Bobby Pranata', 'value': 'bobby_pranata'},
+  {'label': 'Arfan', 'value': 'arfan'},
+  {'label': 'Naufal', 'value': 'naufal'},
+  {'label': 'Pasha', 'value': 'pasha'},
+];
+final List<Map<String, String>> clientSourceOptions = [
+  {'label': 'All', 'value': 'all'},
+  {'label': 'Direct Email', 'value': 'direct_email'},
+  {'label': 'Web WhatsApp', 'value': 'web_whatsapp'},
+  {'label': 'SEM', 'value': 'sem'},
+  {'label': 'Direct LinkedIn', 'value': 'direct_linkedin'},
+  {'label': 'Direct Partnership', 'value': 'direct_partnership'},
+];
+final List<Map<String, String>> utmOptions = [
+  {'label': 'All', 'value': 'all'},
+  {'label': 'Google & GDN', 'value': 'google_gdn'},
+  {'label': 'Google & CPC', 'value': 'google_cpc'},
+  {'label': 'Meta & GDN', 'value': 'meta_gdn'},
+  {'label': 'Meta & Carousel', 'value': 'meta_carousel'},
+];
+final List<Map<String, String>> statusOptions = [
+  {'label': 'All', 'value': 'all'},
+  {'label': 'New', 'value': '0'},
+  {'label': 'Followed Up', 'value': '1'},
+  {'label': 'Accepted', 'value': '2'},
+  {'label': 'Rejected', 'value': '3'},
+];
