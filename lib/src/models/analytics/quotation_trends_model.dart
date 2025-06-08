@@ -2,7 +2,7 @@ class QuotationTrends {
   final String dateType;
   final List<String> xLabels;
   final List<QuotationTrendsData> lineChart;
-  final CompareData compareLastTwo;
+  final CompareData? compareLastTwo;
 
   QuotationTrends({
     required this.dateType,
@@ -17,7 +17,9 @@ class QuotationTrends {
       xLabels: List<String>.from(json['x_labels'] as List),
       lineChart:
           (json['line_chart'] as List).map((e) => QuotationTrendsData.fromJson(e as Map<String, dynamic>)).toList(),
-      compareLastTwo: CompareData.fromJson(json['compare_last_two'] as Map<String, dynamic>),
+      compareLastTwo: json['compare_last_two'] != null
+          ? CompareData.fromJson(json['compare_last_two'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -26,7 +28,7 @@ class QuotationTrends {
       'date_type': dateType,
       'x_labels': xLabels,
       'line_chart': lineChart.map((e) => e.toJson()).toList(),
-      'compare_last_two': compareLastTwo.toJson(),
+      'compare_last_two': compareLastTwo?.toJson(),
     };
   }
 }
@@ -54,7 +56,7 @@ class QuotationTrendsData {
       count: json['count'] as int,
       percentChange: json['percent_change'] != null ? (json['percent_change'] as num).toDouble() : null,
       kategoriLayanan: Map<String, int>.from(json['kategori_layanan'] as Map),
-      status: List<int>.from(json['status'] as List),
+      status: json['status'] is List ? List<int>.from(json['status'] as List) : [],
       utmCounts: Map<String, int>.from(json['utm_counts'] as Map),
     );
   }

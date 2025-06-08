@@ -67,10 +67,16 @@ class AnalyticsController extends GetxController {
 
     List<String> queryParams = [];
     if (startDateString != null) {
-      queryParams.add('start_date=${Uri.encodeComponent(startDateString)}');
+      analyticsType != AnalyticsType.quotationTrends
+          ? queryParams.add('start_date=${Uri.encodeComponent(startDateString)}')
+          : queryParams.add(
+              'start_period=${selectedStartDate.value?.year}-${selectedStartDate.value?.month.toString().padLeft(2, '0')}');
     }
     if (endDateString != null) {
-      queryParams.add('end_date=${Uri.encodeComponent(endDateString)}');
+      analyticsType != AnalyticsType.quotationTrends
+          ? queryParams.add('end_date=${Uri.encodeComponent(endDateString)}')
+          : queryParams.add(
+              'end_period=${selectedEndDate.value?.year}-${selectedEndDate.value?.month.toString().padLeft(2, '0')}');
     }
 
     if (startDateString != null || endDateString != null) {
@@ -327,10 +333,10 @@ final List<Map<String, String>> clientSourceOptions = [
 ];
 final List<Map<String, String>> utmOptions = [
   {'label': 'All', 'value': 'all'},
-  {'label': 'Google & GDN', 'value': 'google_gdn'},
-  {'label': 'Google & CPC', 'value': 'google_cpc'},
-  {'label': 'Meta & GDN', 'value': 'meta_gdn'},
-  {'label': 'Meta & Carousel', 'value': 'meta_carousel'},
+  {'label': 'Google & GDN', 'value': 'Google&GDN'},
+  {'label': 'Google & CPC', 'value': 'Google&CPC'},
+  {'label': 'Meta & GDN', 'value': 'Meta&GDN'},
+  {'label': 'Meta & Carousel', 'value': 'Meta&Carousel'},
 ];
 final List<Map<String, String>> statusOptions = [
   {'label': 'All', 'value': 'all'},

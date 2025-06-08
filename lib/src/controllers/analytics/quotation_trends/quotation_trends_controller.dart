@@ -17,6 +17,7 @@ class QuotationTrendsController extends AnalyticsController {
   QuotationTrends? get data => quotationTrends.value;
   CompareData? get compareLastTwo => data?.compareLastTwo;
   List<QuotationTrendsData>? get lineChart => data?.lineChart;
+  int get dataLength => data?.lineChart.length ?? 0;
 
   @override
   Future<void> fetchData({DateType? dateType}) async {

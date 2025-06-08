@@ -7,13 +7,18 @@ class DateTypeButton extends StatelessWidget {
   final String title;
   final bool isSelected;
   final VoidCallback? onTap;
-  const DateTypeButton({super.key, required this.title, required this.isSelected, this.onTap});
+  const DateTypeButton({
+    super.key,
+    required this.title,
+    required this.isSelected,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: GestureDetector(
-        onTap: onTap,
+        onTap: !isSelected ? onTap : null,
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
