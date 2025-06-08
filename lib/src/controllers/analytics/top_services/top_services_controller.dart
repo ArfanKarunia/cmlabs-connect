@@ -15,6 +15,12 @@ class TopServicesController extends AnalyticsController {
   Rx<DateType?> selectedDateType = (DateType.weekly).obs;
 
   @override
+  Rx<SortOption?> selectedSortOption = (SortOption.totalMost).obs;
+
+  TopServices? get data => topServices.value;
+  int get dataLength => data?.topServices.length ?? 0;
+
+  @override
   Future<void> fetchData({DateType? dateType}) async {
     try {
       String? accessToken = userController.accesToken.value;

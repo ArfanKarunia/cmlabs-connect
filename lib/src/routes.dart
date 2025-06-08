@@ -36,6 +36,7 @@ import 'models/quotation_model.dart';
 import 'view/analytics/analytics_filter_view.dart';
 import 'view/analytics/analytics_view.dart';
 import 'view/analytics/detail_quotation_traffic_view.dart';
+import 'view/analytics/detail_top_services_view.dart';
 import 'view/filter_view.dart';
 import 'view/home_view.dart';
 import 'view/inbox/case_studies/case_studies_detail_view.dart';
@@ -140,6 +141,7 @@ class AppRoutes {
   static const String analyticsView = '/analyticsView';
   static const String analyticsFilterView = '/analyticsFilterView';
   static const String detailQuotationTrafficView = '/detailQuotationTrafficView';
+  static const String detailTopServicesView = '/detailTopServicesView';
 
   // List of Route
   static List<GetPage> routes = [
@@ -659,6 +661,10 @@ class AppRoutes {
     GetPage(
       name: detailQuotationTrafficView,
       page: () => const DetailQuotationTrafficView(),
+    ),
+    GetPage(
+      name: detailTopServicesView,
+      page: () => const DetailTopServicesView(),
     ),
   ];
 }

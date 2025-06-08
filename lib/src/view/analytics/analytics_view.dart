@@ -23,13 +23,13 @@ class _AnalyticsViewState extends State<AnalyticsView> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         children: const [
-          QuotationTrafficCard(),
+          QuotationTrafficCard(showViewDetails: true),
           SizedBox(height: 20),
-          TopServicesCard(),
+          TopServicesCard(showViewDetails: true),
           SizedBox(height: 20),
-          TopPICsCard(),
+          TopPICsCard(showViewDetails: true),
           SizedBox(height: 20),
-          QuotationTrendsCard(),
+          QuotationTrendsCard(showViewDetails: true),
           SizedBox(height: 20),
         ],
       ),

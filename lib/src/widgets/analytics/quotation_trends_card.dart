@@ -10,8 +10,8 @@ import '../../utils/color.dart';
 import 'charts_card.dart';
 
 class QuotationTrendsCard extends StatefulWidget {
-  final bool isDetail;
-  const QuotationTrendsCard({super.key, this.isDetail = false});
+  final bool showViewDetails;
+  const QuotationTrendsCard({super.key, this.showViewDetails = false});
 
   @override
   State<QuotationTrendsCard> createState() => _QuotationTrendsCardState();
@@ -26,6 +26,7 @@ class _QuotationTrendsCardState extends State<QuotationTrendsCard> {
         ? EmptyChartCard(
             title: 'Quotation Trends',
             subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.monthly),
+            onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
           )
         : ChartCard(
             title: 'Quotation Trends',
@@ -59,8 +60,7 @@ class _QuotationTrendsCardState extends State<QuotationTrendsCard> {
               ],
             ),
             chartDescriptions: const [],
-            isDetail: widget.isDetail,
-            onTapDetails: () => Get.toNamed(AppRoutes.detailQuotationTrafficView),
+            onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
           );
   }
 }

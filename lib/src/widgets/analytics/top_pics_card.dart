@@ -11,8 +11,8 @@ import '../../utils/color.dart';
 import 'charts_card.dart';
 
 class TopPICsCard extends StatefulWidget {
-  final bool isDetail;
-  const TopPICsCard({super.key, this.isDetail = false});
+  final bool showViewDetails;
+  const TopPICsCard({super.key, this.showViewDetails = false});
 
   @override
   State<TopPICsCard> createState() => _TopPICsCardState();
@@ -45,6 +45,8 @@ class _TopPICsCardState extends State<TopPICsCard> {
             ? EmptyChartCard(
                 title: 'Top PICs',
                 subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+                onTapViewDetails:
+                    widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
               )
             : ChartCard(
                 title: 'Top PICs',
@@ -101,8 +103,8 @@ class _TopPICsCardState extends State<TopPICsCard> {
                     },
                   ),
                 ),
-                isDetail: widget.isDetail,
-                onTapDetails: () => Get.toNamed(AppRoutes.detailQuotationTrafficView),
+                onTapViewDetails:
+                    widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
               );
       },
     );

@@ -20,7 +20,7 @@ enum SortOption {
   totalLeast,
 }
 
-enum DateType { daily, weekly, monthly, yearly }
+enum DateType { daily, weekly, monthly, yearly, custom }
 
 enum AnalyticsType { quotationTraffic, topServices, topPICs, quotationTrends }
 
@@ -67,14 +67,15 @@ class AnalyticsController extends GetxController {
 
     List<String> queryParams = [];
     if (startDateString != null) {
-      queryParams.add('startDate=${Uri.encodeComponent(startDateString)}');
+      queryParams.add('start_date=${Uri.encodeComponent(startDateString)}');
     }
     if (endDateString != null) {
-      queryParams.add('endDate=${Uri.encodeComponent(endDateString)}');
+      queryParams.add('end_date=${Uri.encodeComponent(endDateString)}');
     }
 
     if (startDateString != null || endDateString != null) {
       queryParams.add('date_type=custom');
+      selectedDateType.value = DateType.custom;
     } else {
       if (analyticsType == AnalyticsType.topPICs || analyticsType == AnalyticsType.topServices) {
         switch (dateType ?? selectedDateType.value) {
@@ -196,6 +197,8 @@ class AnalyticsController extends GetxController {
         return 'This Month';
       case DateType.yearly:
         return 'This Year';
+      case DateType.custom:
+        return '${selectedStartDate.value?.toLocal().toString().split(' ')[0]} - ${selectedEndDate.value?.toLocal().toString().split(' ')[0]}';
     }
   }
 
@@ -235,6 +238,10 @@ class AnalyticsController extends GetxController {
 
   void setDateType({required DateType dateType}) {
     selectedDateType.value = dateType;
+    if (dateType != DateType.custom) {
+      selectedStartDate.value = null;
+      selectedEndDate.value = null;
+    }
     fetchData(dateType: dateType);
   }
 

@@ -11,20 +11,18 @@ class ChartCard extends StatefulWidget {
   final String subtitle;
   final String? value;
   final Color? valueColor;
-  final VoidCallback? onTapDetails;
   final Widget chart;
   final List<ChartDataDescription> chartDescriptions;
-  final bool isDetail;
+  final VoidCallback? onTapViewDetails;
   const ChartCard({
     super.key,
     required this.title,
     required this.subtitle,
     this.value,
     this.valueColor = AppColors.text_2,
-    this.onTapDetails,
     required this.chart,
     required this.chartDescriptions,
-    this.isDetail = false,
+    this.onTapViewDetails,
   });
 
   @override
@@ -79,10 +77,10 @@ class _ChartCardState extends State<ChartCard> {
                   ],
                 ),
               ),
-              if (!widget.isDetail) ...[
+              if (widget.onTapViewDetails != null) ...[
                 const SizedBox(width: 12),
                 InkWell(
-                  onTap: widget.onTapDetails,
+                  onTap: widget.onTapViewDetails,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
@@ -149,8 +147,8 @@ class ChartDataDescription extends StatelessWidget {
 class EmptyChartCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  final bool isDetail;
-  const EmptyChartCard({super.key, required this.title, required this.subtitle, this.isDetail = false});
+  final VoidCallback? onTapViewDetails;
+  const EmptyChartCard({super.key, required this.title, required this.subtitle, this.onTapViewDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -159,7 +157,7 @@ class EmptyChartCard extends StatelessWidget {
       subtitle: subtitle,
       chart: const SizedBox(height: 200, child: EmptyState()),
       chartDescriptions: const [],
-      isDetail: isDetail,
+      onTapViewDetails: onTapViewDetails,
     );
   }
 }

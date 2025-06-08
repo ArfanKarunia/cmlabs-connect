@@ -10,8 +10,8 @@ import '../../routes.dart';
 import 'charts_card.dart';
 
 class TopServicesCard extends StatefulWidget {
-  final bool isDetail;
-  const TopServicesCard({super.key, this.isDetail = false});
+  final bool showViewDetails;
+  const TopServicesCard({super.key, this.showViewDetails = false});
 
   @override
   State<TopServicesCard> createState() => _TopServicesCardState();
@@ -44,6 +44,7 @@ class _TopServicesCardState extends State<TopServicesCard> {
             ? EmptyChartCard(
                 title: 'Top Services',
                 subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
               )
             : ChartCard(
                 title: 'Top Services',
@@ -90,8 +91,7 @@ class _TopServicesCardState extends State<TopServicesCard> {
                     },
                   ),
                 ),
-                isDetail: widget.isDetail,
-                onTapDetails: () => Get.toNamed(AppRoutes.detailQuotationTrafficView),
+                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
               );
       },
     );
