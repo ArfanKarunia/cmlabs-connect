@@ -33,8 +33,12 @@ import 'models/contact_us_model.dart';
 import 'models/faq_model.dart';
 import 'models/project_history_model.dart';
 import 'models/quotation_model.dart';
+import 'view/analytics/analytics_filter_view.dart';
 import 'view/analytics/analytics_view.dart';
-import 'view/analytics/quotation_overview_page.dart';
+import 'view/analytics/detail_quotation_traffic_view.dart';
+import 'view/analytics/detail_quotation_trends.dart';
+import 'view/analytics/detail_top_pics_view.dart';
+import 'view/analytics/detail_top_services_view.dart';
 import 'view/filter_view.dart';
 import 'view/home_view.dart';
 import 'view/inbox/case_studies/case_studies_detail_view.dart';
@@ -61,25 +65,30 @@ class AppRoutes {
   // initialization url of route
   static const String home = '/';
   static const String loginForm = '/login';
+
   static const String addQuotation = '/addQuotation';
   static const String addQuotationSelect = '/addQuotationSelect';
   static const String addQuotationSelectNew = '/addQuotationSelectNew';
   static const String addQuotationContact = '/addQuotationContact';
   static const String detailQuotation = '/detailQuotation';
-  static const String detailCaseStudies = '/detailCaseStudies';
-  static const String detailContactUs = '/detailContactUs';
-  static const String detailFaq = '/detailFaq';
   static const String editQuotation = '/editQuotation';
+
+  static const String detailCaseStudies = '/detailCaseStudies';
   static const String editCaseStudies = '/editCaseStudies';
   static const String editCaseStudiesSelect = '/editCaseStudiesSelect';
   static const String editCaseStudiesContact = '/editCaseStudiesContact';
   static const String editCaseStudiesHistory = '/editCaseStudiesHistory';
+
+  static const String detailContactUs = '/detailContactUs';
   static const String editContactUs = '/editContactUs';
   static const String editContactUsSelect = '/editContactUsSelect';
-  static const String editContactUsContact = '/editCaseStudiesContact';
+  static const String editContactUsContact = '/editContactUsContact';
   static const String editContactUsHistory = '/editContactUsHistory';
+
+  static const String detailFaq = '/detailFaq';
   static const String editFaqStatus = '/editFaqStatus';
   static const String editFaqSelect = '/editFaqSelect';
+
   static const String addContactClientPIC = '/addContactClientPIC';
   static const String editHistoryChangesData = '/editHistoryChangesData';
   // static const String profile = '/profile';
@@ -132,7 +141,11 @@ class AppRoutes {
   static const String changePasswordView = '/changePasswordView';
 
   static const String analyticsView = '/analyticsView';
-  static const String analyticsDetailView = '/analyticsDetailView';
+  static const String analyticsFilterView = '/analyticsFilterView';
+  static const String detailQuotationTrafficView = '/detailQuotationTrafficView';
+  static const String detailTopServicesView = '/detailTopServicesView';
+  static const String detailTopPICsView = '/detailTopPICsView';
+  static const String detailQuotationTrendsView = '/detailQuotationTrendsView';
 
   // List of Route
   static List<GetPage> routes = [
@@ -639,8 +652,31 @@ class AppRoutes {
       page: () => const AnalyticsView(),
     ),
     GetPage(
-      name: analyticsDetailView,
-      page: () => const QuotationOverviewPage(),
+      name: analyticsFilterView,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>;
+
+        return AnalyticsFilterView(
+          analyticsType: args['analyticsType'],
+          controller: args['controller'],
+        );
+      },
+    ),
+    GetPage(
+      name: detailQuotationTrafficView,
+      page: () => const DetailQuotationTrafficView(),
+    ),
+    GetPage(
+      name: detailTopServicesView,
+      page: () => const DetailTopServicesView(),
+    ),
+    GetPage(
+      name: detailTopPICsView,
+      page: () => const DetailTopPICsView(),
+    ),
+    GetPage(
+      name: detailQuotationTrendsView,
+      page: () => const DetailQuotationTrendsView(),
     ),
   ];
 }

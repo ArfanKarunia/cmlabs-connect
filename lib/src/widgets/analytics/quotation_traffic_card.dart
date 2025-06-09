@@ -2,20 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-import '../../models/analytics/quotation_traffic_model.dart';
+import '../../controllers/analytics/analytics_controller.dart';
+import '../../controllers/analytics/quotation_traffic/quotation_traffic_controller.dart';
 import '../../routes.dart';
 import '../../utils/color.dart';
 import 'charts_card.dart';
 
 class QuotationTrafficCard extends StatefulWidget {
-  final QuotationTraffic? data;
-  const QuotationTrafficCard({super.key, this.data});
+  final bool showViewDetails;
+  const QuotationTrafficCard({super.key, this.showViewDetails = false});
 
   @override
   State<QuotationTrafficCard> createState() => _QuotationTrafficCardState();
 }
 
 class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
+  final controller = Get.find<QuotationTrafficController>();
+
   String? selectedCategory;
   List<Color> colors = [
     const Color(0xFFD1EBFF),
@@ -33,45 +36,55 @@ class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
 
   @override
   Widget build(BuildContext context) {
-    List<QuotationTrafficModified> chartData = _parseChartData();
-    List<String> sources = _extractAllSources(chartData);
+    return Obx(
+      () {
+        List<QuotationTrafficModified> chartData = _parseChartData();
+        List<String> sources = _extractAllSources(chartData);
 
-    return widget.data == null
-        ? const EmptyChartCard(
-            title: 'Quotation Traffic',
-            subtitle: 'This Week',
-          )
-        : ChartCard(
-            title: 'Quotation Traffic',
-            subtitle: 'This Week',
-            value: '${widget.data?.totalQuotation} Quotations',
-            chart: SfCartesianChart(
-              primaryXAxis: const CategoryAxis(),
-              primaryYAxis: const NumericAxis(minimum: 0, interval: 20),
-              tooltipBehavior: TooltipBehavior(enable: true),
-              series: _buildStackedBarSeries(chartData, sources),
-            ),
-            chartDescriptions: List.generate(
-              sources.length,
-              (index) => ChartDataDescription(
-                label: _formatSourceName(sources[index]),
-                color: colors[index],
-                isSelected: selectedCategory == sources[index],
-                onTap: () {
-                  setState(() => selectedCategory = selectedCategory == sources[index] ? null : sources[index]);
-                },
-              ),
-            ),
-            onTapDetails: () => Get.toNamed(AppRoutes.analyticsDetailView),
-          );
+        return controller.quotationTraffic.value == null || controller.quotationTraffic.value?.totalQuotation == 0
+            ? EmptyChartCard(
+                title: 'Quotation Traffic',
+                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.daily),
+                onTapViewDetails:
+                    widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
+              )
+            : ChartCard(
+                title: 'Quotation Traffic',
+                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.daily),
+                value: '${controller.quotationTraffic.value?.totalQuotation} Quotations',
+                chart: SfCartesianChart(
+                  primaryXAxis: const CategoryAxis(),
+                  primaryYAxis: const NumericAxis(minimum: 0, interval: 20),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: _buildStackedBarSeries(chartData, sources),
+                ),
+                chartDescriptions: List.generate(
+                  sources.length,
+                  (index) => ChartDataDescription(
+                    label: _formatSourceName(sources[index]),
+                    color: colors[index],
+                    isSelected: selectedCategory == sources[index],
+                    onTap: () {
+                      setState(() => selectedCategory = selectedCategory == sources[index] ? null : sources[index]);
+                    },
+                  ),
+                ),
+                onTapViewDetails:
+                    widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
+              );
+      },
+    );
   }
 
   List<QuotationTrafficModified> _parseChartData() {
     List<QuotationTrafficModified> data = [];
 
-    if (widget.data != null) {
-      for (int i = 0; i < widget.data!.labels.length && i < widget.data!.data.length; i++) {
-        Map<String, dynamic> perSource = Map<String, dynamic>.from(widget.data!.data[i].perSource);
+    if (controller.quotationTraffic.value != null) {
+      for (int i = 0;
+          i < controller.quotationTraffic.value!.labels.length && i < controller.quotationTraffic.value!.data.length;
+          i++) {
+        Map<String, dynamic> perSource =
+            Map<String, dynamic>.from(controller.quotationTraffic.value!.data[i].perSource);
         // int total = widget.data.data[i].total;
 
         // Convert all values to int and clean up source names
@@ -81,7 +94,7 @@ class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
         });
 
         data.add(QuotationTrafficModified(
-          date: widget.data!.labels[i],
+          date: controller.quotationTraffic.value!.labels[i],
           sourceValues: sourceValues,
         ));
       }

@@ -3,20 +3,25 @@ import 'package:get/get.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../constant/fontstyle.dart';
+import '../../controllers/analytics/analytics_controller.dart';
+import '../../controllers/analytics/top_pics/top_pics_controller.dart';
 import '../../models/analytics/top_pics_model.dart';
 import '../../routes.dart';
 import '../../utils/color.dart';
+import '../../utils/string_utils.dart';
 import 'charts_card.dart';
 
 class TopPICsCard extends StatefulWidget {
-  final TopPICs? data;
-  const TopPICsCard({super.key, this.data});
+  final bool showViewDetails;
+  const TopPICsCard({super.key, this.showViewDetails = false});
 
   @override
   State<TopPICsCard> createState() => _TopPICsCardState();
 }
 
 class _TopPICsCardState extends State<TopPICsCard> {
+  final controller = Get.find<TopPICsController>();
+
   late List<bool> _isVisible;
   List<Color> colors = [
     const Color(0xFF4596D7),
@@ -32,78 +37,75 @@ class _TopPICsCardState extends State<TopPICsCard> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _isVisible = List.filled(widget.data?.topPics.length ?? 0, true);
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return widget.data == null || widget.data?.topPics.isEmpty == true
-        ? const EmptyChartCard(
-            title: 'Top PICs',
-            subtitle: 'This Week',
-          )
-        : ChartCard(
-            title: 'Top PICs',
-            subtitle: 'This Week',
-            chart: SfCircularChart(
-              tooltipBehavior: TooltipBehavior(enable: true),
-              series: [
-                DoughnutSeries<TopPICsData, String>(
-                  dataSource: List.generate(
-                    widget.data?.topPics.length ?? 0,
-                    (i) => _isVisible[i]
-                        ? widget.data?.topPics[i] ??
-                            TopPICsData(
-                              picName: '',
-                              quotationCount: 0,
-                              newCount: 0,
-                              followedUp: 0,
-                              accepted: 0,
-                              rejected: 0,
-                              onHold: 0,
-                              percentage: 0,
-                            )
-                        : TopPICsData(
-                            picName: '',
-                            quotationCount: 0,
-                            newCount: 0,
-                            followedUp: 0,
-                            accepted: 0,
-                            rejected: 0,
-                            onHold: 0,
-                            percentage: 0,
-                          ),
-                  ),
-                  xValueMapper: (d, _) => _formatPicName(d.picName),
-                  yValueMapper: (d, _) => d.quotationCount,
-                  pointColorMapper: (d, i) => colors[i],
-                  dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
-                  dataLabelSettings: DataLabelSettings(
-                    isVisible: true,
-                    textStyle: bold.copyWith(fontSize: 16, color: AppColors.white),
-                  ),
-                  explode: true,
-                )
-              ],
-            ),
-            chartDescriptions: List.generate(
-              widget.data?.topPics.length ?? 0,
-              (index) => ChartDataDescription(
-                label: _formatPicName(widget.data?.topPics[index].picName ?? ''),
-                color: colors[index],
-                isSelected: _isVisible[index],
-                onTap: () {
-                  setState(() => _isVisible[index] = !_isVisible[index]);
-                },
-              ),
-            ),
-            onTapDetails: () => Get.toNamed(AppRoutes.analyticsDetailView),
-          );
-  }
+    return Obx(
+      () {
+        _isVisible = List.filled(controller.topPICs.value?.topPics.length ?? 0, true);
 
-  String _formatPicName(String name) {
-    return name.split('-').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
+        return controller.topPICs.value == null || controller.topPICs.value?.topPics.isEmpty == true
+            ? EmptyChartCard(
+                title: 'Top PICs',
+                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
+              )
+            : ChartCard(
+                title: 'Top PICs',
+                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+                chart: SfCircularChart(
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: [
+                    DoughnutSeries<TopPICsData, String>(
+                      dataSource: List.generate(
+                        controller.topPICs.value?.topPics.length ?? 0,
+                        (i) => _isVisible[i]
+                            ? controller.topPICs.value?.topPics[i] ??
+                                TopPICsData(
+                                  picName: '',
+                                  quotationCount: 0,
+                                  newCount: 0,
+                                  followedUp: 0,
+                                  accepted: 0,
+                                  rejected: 0,
+                                  onHold: 0,
+                                  percentage: 0,
+                                )
+                            : TopPICsData(
+                                picName: '',
+                                quotationCount: 0,
+                                newCount: 0,
+                                followedUp: 0,
+                                accepted: 0,
+                                rejected: 0,
+                                onHold: 0,
+                                percentage: 0,
+                              ),
+                      ),
+                      xValueMapper: (d, _) => formatPICName(d.picName),
+                      yValueMapper: (d, _) => d.quotationCount,
+                      pointColorMapper: (d, i) => colors[i],
+                      dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        textStyle: bold.copyWith(fontSize: 16, color: AppColors.white),
+                      ),
+                      explode: true,
+                    )
+                  ],
+                ),
+                chartDescriptions: List.generate(
+                  controller.topPICs.value?.topPics.length ?? 0,
+                  (index) => ChartDataDescription(
+                    label: formatPICName(controller.topPICs.value?.topPics[index].picName ?? ''),
+                    color: colors[index],
+                    isSelected: _isVisible[index],
+                    onTap: () {
+                      setState(() => _isVisible[index] = !_isVisible[index]);
+                    },
+                  ),
+                ),
+                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
+              );
+      },
+    );
   }
 }

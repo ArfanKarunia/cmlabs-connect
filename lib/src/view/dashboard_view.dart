@@ -62,66 +62,75 @@ class _DashboardViewState extends State<DashboardView> {
         slivers: [
           _buildDashboardOverview(user),
 
-          SliverStickyHeader(
-            header: Stack(
+          SliverToBoxAdapter(
+            child: Stack(
               children: [
                 Container(
                   color: AppColors.primary,
                 ),
                 Container(
-                  padding: const EdgeInsets.all(18),
+                  height: 12,
                   decoration: const BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+              ],
+            ),
+          ),
+
+          SliverStickyHeader(
+            header: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              decoration: const BoxDecoration(
+                color: AppColors.white,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Inbox Leads",
+                    style: bold.copyWith(
+                      fontSize: 20,
+                      color: AppColors.primaryText,
+                    ),
+                  ),
+                  const SizedBox(height: 7),
+                  Row(
                     children: [
+                      Obx(
+                        () => Text(
+                          "${quotationController.totalLeads.value} ",
+                          style: regular.copyWith(
+                            fontSize: 12,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
                       Text(
-                        "Inbox Leads",
-                        style: bold.copyWith(
-                          fontSize: 20,
+                        "Leads",
+                        style: regular.copyWith(
+                          fontSize: 12,
                           color: AppColors.primaryText,
                         ),
                       ),
-                      const SizedBox(height: 7),
-                      Row(
-                        children: [
-                          Obx(
-                            () => Text(
-                              "${quotationController.totalLeads.value} ",
-                              style: regular.copyWith(
-                                fontSize: 12,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                          Text(
-                            "Leads",
-                            style: regular.copyWith(
-                              fontSize: 12,
-                              color: AppColors.primaryText,
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 7),
-
-                      // Select Status, Filter Section, & Historical Lead History
-                      SelectStatus(
-                        controllers: [
-                          quotationController,
-                          caseStudiesController,
-                          contactUsController,
-                          faqController,
-                        ],
-                        enableFilter: true,
-                      ),
                     ],
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 7),
+
+                  // Select Status, Filter Section, & Historical Lead History
+                  SelectStatus(
+                    controllers: [
+                      quotationController,
+                      caseStudiesController,
+                      contactUsController,
+                      faqController,
+                    ],
+                    enableFilter: true,
+                  ),
+                ],
+              ),
             ),
             sliver: SliverList(
               delegate: SliverChildListDelegate([

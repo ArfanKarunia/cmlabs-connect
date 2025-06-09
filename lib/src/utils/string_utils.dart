@@ -1,4 +1,3 @@
-
 class StringUtils {
   // Static method to convert a hyphenated string to camel case
   static String toCamelCase(String? input) {
@@ -38,9 +37,15 @@ class StringUtils {
     final parts = type.split('-');
     return {
       "package": parts.first, // Ambil bagian sebelum tanda '-'
-      "selected_language": parts.length > 1
-          ? toCamelCase(parts[1])
-          : '-',
+      "selected_language": parts.length > 1 ? toCamelCase(parts[1]) : '-',
     };
+  }
+}
+
+String formatPICName(String name) {
+  try {
+    return name.split('-').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
+  } catch (e) {
+    return name;
   }
 }

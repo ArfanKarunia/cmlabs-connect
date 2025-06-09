@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../constant/fontstyle.dart';
 import '../utils/color.dart';
 
-AppBar defaultAppBar(String title, {double? titleSpacing}) {
+AppBar defaultAppBar(String title, {double? titleSpacing, List<Widget>? actions}) {
   return AppBar(
     toolbarHeight: 70,
     backgroundColor: AppColors.scaffoldBgColor2,
@@ -13,5 +13,6 @@ AppBar defaultAppBar(String title, {double? titleSpacing}) {
       title,
       style: bold.copyWith(fontSize: 20),
     ),
+    actions: actions,
   );
 }

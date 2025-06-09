@@ -11,18 +11,18 @@ class ChartCard extends StatefulWidget {
   final String subtitle;
   final String? value;
   final Color? valueColor;
-  final VoidCallback? onTapDetails;
   final Widget chart;
   final List<ChartDataDescription> chartDescriptions;
+  final VoidCallback? onTapViewDetails;
   const ChartCard({
     super.key,
     required this.title,
     required this.subtitle,
     this.value,
     this.valueColor = AppColors.text_2,
-    this.onTapDetails,
     required this.chart,
     required this.chartDescriptions,
+    this.onTapViewDetails,
   });
 
   @override
@@ -77,34 +77,37 @@ class _ChartCardState extends State<ChartCard> {
                   ],
                 ),
               ),
-              const SizedBox(width: 12),
-              InkWell(
-                onTap: widget.onTapDetails,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF31393C),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Text(
-                    'View Details',
-                    style: regular.copyWith(fontSize: 12, color: AppColors.white),
+              if (widget.onTapViewDetails != null) ...[
+                const SizedBox(width: 12),
+                InkWell(
+                  onTap: widget.onTapViewDetails,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF31393C),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Text(
+                      'View Details',
+                      style: regular.copyWith(fontSize: 12, color: AppColors.white),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
 
           const SizedBox(height: 8),
           widget.chart,
 
-          // if (widget.chartType == ChartType.quotationTraffic) ...[
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 12,
-            runSpacing: 6,
-            children: widget.chartDescriptions,
-          ),
+          if (widget.chartDescriptions.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 12,
+              runSpacing: 6,
+              children: widget.chartDescriptions,
+            ),
+          ],
         ],
         // ],
       ),
@@ -144,7 +147,8 @@ class ChartDataDescription extends StatelessWidget {
 class EmptyChartCard extends StatelessWidget {
   final String title;
   final String subtitle;
-  const EmptyChartCard({super.key, required this.title, required this.subtitle});
+  final VoidCallback? onTapViewDetails;
+  const EmptyChartCard({super.key, required this.title, required this.subtitle, this.onTapViewDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -153,6 +157,7 @@ class EmptyChartCard extends StatelessWidget {
       subtitle: subtitle,
       chart: const SizedBox(height: 200, child: EmptyState()),
       chartDescriptions: const [],
+      onTapViewDetails: onTapViewDetails,
     );
   }
 }
