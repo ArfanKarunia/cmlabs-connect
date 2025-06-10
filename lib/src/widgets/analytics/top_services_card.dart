@@ -7,6 +7,7 @@ import '../../controllers/analytics/analytics_controller.dart';
 import '../../controllers/analytics/top_services/top_services_controller.dart';
 import '../../models/analytics/top_services_model.dart';
 import '../../routes.dart';
+import '../../utils/string_utils.dart';
 import 'charts_card.dart';
 
 class TopServicesCard extends StatefulWidget {
@@ -68,7 +69,7 @@ class _TopServicesCardState extends State<TopServicesCard> {
                                 percentage: 0,
                               ),
                       ),
-                      xValueMapper: (d, _) => _formatServiceName(d.serviceName),
+                      xValueMapper: (d, _) => formatServiceName(d.serviceName),
                       yValueMapper: (d, _) => d.quotationCount,
                       pointColorMapper: (d, i) => colors[i],
                       dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
@@ -83,7 +84,7 @@ class _TopServicesCardState extends State<TopServicesCard> {
                 chartDescriptions: List.generate(
                   controller.topServices.value?.topServices.length ?? 0,
                   (index) => ChartDataDescription(
-                    label: _formatServiceName(controller.topServices.value?.topServices[index].serviceName ?? ''),
+                    label: formatServiceName(controller.topServices.value?.topServices[index].serviceName ?? ''),
                     color: colors[index],
                     isSelected: _isVisible[index],
                     onTap: () {
@@ -95,9 +96,5 @@ class _TopServicesCardState extends State<TopServicesCard> {
               );
       },
     );
-  }
-
-  String _formatServiceName(String name) {
-    return name.split('-').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
   }
 }

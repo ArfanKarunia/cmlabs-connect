@@ -49,3 +49,11 @@ String formatPICName(String name) {
     return name;
   }
 }
+
+String formatServiceName(String name) {
+  try {
+    return name.split('-').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
+  } catch (e) {
+    return name;
+  }
+}
