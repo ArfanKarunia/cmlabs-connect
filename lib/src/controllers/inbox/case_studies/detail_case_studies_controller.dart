@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
-import '../../../models/case_studies_model.dart';
+import '../../../models/inbox/case_studies_model.dart';
 import '../../user/user_controller.dart';
 
 class DetailCaseStudiesController extends GetxController {

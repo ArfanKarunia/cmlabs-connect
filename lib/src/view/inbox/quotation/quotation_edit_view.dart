@@ -7,8 +7,8 @@ import 'package:safe_password_generator/safe_password_generator.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/quotation/edit_quotation_controller.dart';
-import '../../../models/inbox_edit_form_model.dart';
-import '../../../models/quotation_model.dart';
+import '../../../models/inbox/property/inbox_edit_form_model.dart';
+import '../../../models/inbox/quotation_model.dart';
 import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';

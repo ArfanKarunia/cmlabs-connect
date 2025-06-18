@@ -7,7 +7,7 @@ import 'package:safe_password_generator/safe_password_generator.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/case_studies/edit_case_studies_controller.dart';
-import '../../../models/case_studies_model.dart';
+import '../../../models/inbox/case_studies_model.dart';
 import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:cmlabs_connect/src/models/quotation_model.dart';
+import 'package:cmlabs_connect/src/models/inbox/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';

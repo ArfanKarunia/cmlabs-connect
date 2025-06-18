@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart' as http;
 import 'package:get/get.dart';
 
-import '../../../models/project_history_model.dart';
+import '../../../models/inbox/property/project_history_model.dart';
 import '../../../utils/toast.dart';
 import '../edit_history_controller.dart';
 import 'edit_contact_us_controller.dart';

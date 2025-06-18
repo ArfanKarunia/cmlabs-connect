@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../models/contact_us_model.dart';
+import '../../../models/inbox/contact_us_model.dart';
 import '../../../utils/file_utils.dart';
 import '../../../utils/permission_utils.dart';
 import '../../../utils/toast.dart';

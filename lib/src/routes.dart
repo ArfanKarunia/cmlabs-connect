@@ -23,12 +23,12 @@ import 'package:cmlabs_connect/src/view/notification/layout_notification.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
-import 'models/case_studies_model.dart';
-import 'models/client_pic_model.dart';
-import 'models/contact_us_model.dart';
-import 'models/faq_model.dart';
-import 'models/project_history_model.dart';
-import 'models/quotation_model.dart';
+import 'models/inbox/case_studies_model.dart';
+import 'models/inbox/property/client_pic_model.dart';
+import 'models/inbox/contact_us_model.dart';
+import 'models/inbox/faq_model.dart';
+import 'models/inbox/property/project_history_model.dart';
+import 'models/inbox/quotation_model.dart';
 import 'view/analytics/analytics_filter_view.dart';
 import 'view/analytics/analytics_view.dart';
 import 'view/analytics/detail_quotation_traffic_view.dart';

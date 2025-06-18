@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
-import '../../../models/faq_model.dart';
+import '../../../models/inbox/faq_model.dart';
 import '../../user/user_controller.dart';
 
 class DetailFaqController extends GetxController {

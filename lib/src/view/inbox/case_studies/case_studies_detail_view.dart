@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../constant/const.dart';
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/case_studies/detail_case_studies_controller.dart';
-import '../../../models/case_studies_model.dart';
+import '../../../models/inbox/case_studies_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_submit_button.dart';

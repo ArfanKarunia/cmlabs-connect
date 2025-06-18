@@ -1,6 +1,6 @@
 // enum StatusLead { newLead, followedUp, accepted, rejected, onHold}
 
-import '../models/status_lead_model.dart';
+import '../models/inbox/property/status_lead_model.dart';
 import '../utils/color.dart';
 
 final List<StatusLead> statusLead = [

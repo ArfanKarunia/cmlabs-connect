@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
-import '../../../models/faq_model.dart';
+import '../../../models/inbox/faq_model.dart';
 import '../../../utils/file_utils.dart';
 import '../../../utils/permission_utils.dart';
 import '../../../utils/toast.dart';

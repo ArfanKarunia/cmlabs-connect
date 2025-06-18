@@ -7,7 +7,7 @@ import 'package:safe_password_generator/safe_password_generator.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/contact_us/edit_contact_us_controller.dart';
-import '../../../models/contact_us_model.dart';
+import '../../../models/inbox/contact_us_model.dart';
 import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';

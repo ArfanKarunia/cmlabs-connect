@@ -8,7 +8,7 @@ import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/contact_us/edit_history_contact_us_controller.dart';
-import '../../../models/project_history_model.dart';
+import '../../../models/inbox/property/project_history_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_formfield.dart';

@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../constant/const.dart';
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/quotation/detail_quotation_controller.dart';
-import '../../../models/quotation_model.dart';
+import '../../../models/inbox/quotation_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../utils/string_utils.dart';

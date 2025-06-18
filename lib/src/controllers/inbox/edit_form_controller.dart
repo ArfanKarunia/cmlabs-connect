@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../constant/config.dart';
-import '../../models/client_pic_model.dart';
-import '../../models/inbox_edit_form_model.dart';
-import '../../models/project_history_model.dart';
+import '../../models/inbox/property/client_pic_model.dart';
+import '../../models/inbox/property/inbox_edit_form_model.dart';
+import '../../models/inbox/property/project_history_model.dart';
 import '../user/user_controller.dart';
 
 class EditFormController extends GetxController {

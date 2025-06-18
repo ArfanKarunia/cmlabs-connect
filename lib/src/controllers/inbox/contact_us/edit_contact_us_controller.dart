@@ -2,7 +2,7 @@ import 'package:dio/dio.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../models/inbox_edit_form_model.dart';
+import '../../../models/inbox/property/inbox_edit_form_model.dart';
 import '../../../utils/toast.dart';
 import '../edit_form_controller.dart';
 

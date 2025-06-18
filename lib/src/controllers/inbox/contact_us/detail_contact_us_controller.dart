@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
-import '../../../models/contact_us_model.dart';
+import '../../../models/inbox/contact_us_model.dart';
 import '../../user/user_controller.dart';
 
 class DetailContactUsController extends GetxController {

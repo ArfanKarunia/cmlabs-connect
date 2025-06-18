@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../constant/config.dart';
-import '../../../models/quotation_model.dart';
+import '../../../models/inbox/quotation_model.dart';
 import '../../user/user_controller.dart';
 
 class DetailQuotationController extends GetxController {

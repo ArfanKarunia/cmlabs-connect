@@ -1,7 +1,7 @@
-import 'package:cmlabs_connect/src/models/client_pic_model.dart';
-import 'package:cmlabs_connect/src/models/client_source_model.dart';
+import 'package:cmlabs_connect/src/models/inbox/property/client_pic_model.dart';
+import 'package:cmlabs_connect/src/models/inbox/property/client_source_model.dart';
 
-import 'project_history_model.dart';
+import 'property/project_history_model.dart';
 
 class Quotation {
   final int? id;

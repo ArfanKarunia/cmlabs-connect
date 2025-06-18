@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constant/config.dart';
-import '../../models/project_history_model.dart';
+import '../../models/inbox/property/project_history_model.dart';
 import '../user/user_controller.dart';
 
 class EditHistoryController extends GetxController {
