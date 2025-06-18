@@ -145,22 +145,32 @@ class ClientPicContactController extends GetxController {
     "Email": [
       {"value": "Contacted", "label": "Contacted"},
       {"value": "Not Contacted", "label": "Not Contacted"},
+      {"value": "Visited", "label": "Visited"},
+      {"value": "Not Visited", "label": "Not Visited"},
     ],
     "WhatsApp": [
       {"value": "Contacted", "label": "Contacted"},
       {"value": "Not Contacted", "label": "Not Contacted"},
+      {"value": "Visited", "label": "Visited"},
+      {"value": "Not Visited", "label": "Not Visited"},
     ],
     "Phone Number": [
       {"value": "Contacted", "label": "Contacted"},
       {"value": "Not Contacted", "label": "Not Contacted"},
+      {"value": "Visited", "label": "Visited"},
+      {"value": "Not Visited", "label": "Not Visited"},
     ],
     "Telegram": [
       {"value": "Contacted", "label": "Contacted"},
       {"value": "Not Contacted", "label": "Not Contacted"},
+      {"value": "Visited", "label": "Visited"},
+      {"value": "Not Visited", "label": "Not Visited"},
     ],
     "LinkedIn": [
       {"value": "Contacted", "label": "Contacted"},
       {"value": "Not Contacted", "label": "Not Contacted"},
+      {"value": "Visited", "label": "Visited"},
+      {"value": "Not Visited", "label": "Not Visited"},
     ],
   };
 

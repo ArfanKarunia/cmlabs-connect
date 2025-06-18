@@ -1,4 +1,3 @@
-import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/models/status_lead_model.dart';
 import 'package:cmlabs_connect/src/utils/string_utils.dart';
 import 'package:flutter/material.dart';
@@ -180,27 +179,25 @@ class QuotationListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
-
     return InboxListTile(
-      title: quotation.data.company ?? 'N/A',
-      subtitle: quotation.data.category.isNotEmpty && quotation.section != 'content-writing'
-          ? StringUtils.toCamelCase(quotation.data.category.map((cat) {
+      title: quotation.data?.company ?? 'N/A',
+      subtitle: quotation.data?.category?.isNotEmpty ?? false
+          ? StringUtils.toCamelCase(quotation.data?.category?.map((cat) {
               return cat == null || cat.isEmpty ? '-' : cat.replaceAll('SEO Article', 'SEO Writing');
             }).join(', '))
           : StringUtils.toCamelCase(quotation.section),
-      name: quotation.data.pic ?? '-',
-      phoneNumber: quotation.data.phoneNumber ?? '-',
-      email: quotation.email,
-      createdAt: quotation.createdAt,
+      name: quotation.data?.pic ?? '-',
+      phoneNumber: quotation.data?.phoneNumber ?? '-',
+      email: quotation.email ?? '-',
+      createdAt: quotation.createdAt ?? DateTime.now(),
       status: quotation.status,
-      onTap: () {
-        detailQuotationController.quotation.value = quotation;
-        Get.toNamed(AppRoutes.detailQuotation);
-      },
+      onTap: () => Get.toNamed(
+        AppRoutes.detailQuotation,
+        arguments: {'quotation': quotation},
+      ),
       onWhatsapp: () => quotationController.redirectToWhatsapp(
-        phoneCode: quotation.data.phoneCode,
-        phoneNumber: quotation.data.phoneNumber,
+        phoneCode: quotation.data?.phoneCode,
+        phoneNumber: quotation.data?.phoneNumber,
       ),
       onDelete: () => handleDeleteQuotation(
         context,

@@ -18,10 +18,6 @@ import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_vie
 import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/form_volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/volunteer_view.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation/edit_section/add_contact_view.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation/detail_quotation_view.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation/edit_section/edit_history_view.dart';
-import 'package:cmlabs_connect/src/view/detail_quotation/edit_quotation_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:cmlabs_connect/src/view/notification/layout_notification.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';
@@ -58,6 +54,11 @@ import 'view/inbox/quotation/quotation_add_pic_contact_view.dart';
 import 'view/inbox/quotation/quotation_add_select_new_view.dart';
 import 'view/inbox/quotation/quotation_add_select_view.dart';
 import 'view/inbox/quotation/quotation_add_view.dart';
+import 'view/inbox/quotation/quotation_detail_view.dart';
+import 'view/inbox/quotation/quotation_edit_history_view.dart';
+import 'view/inbox/quotation/quotation_edit_pic_contact_view.dart';
+import 'view/inbox/quotation/quotation_edit_select_view.dart';
+import 'view/inbox/quotation/quotation_edit_view.dart';
 import 'view/login_view.dart';
 import 'view/select_filter_view.dart';
 
@@ -72,6 +73,9 @@ class AppRoutes {
   static const String addQuotationContact = '/addQuotationContact';
   static const String detailQuotation = '/detailQuotation';
   static const String editQuotation = '/editQuotation';
+  static const String editQuotationSelect = '/editQuotationSelect';
+  static const String editQuotationContact = '/editQuotationContact';
+  static const String editQuotationHistory = '/editQuotationHistory';
 
   static const String detailCaseStudies = '/detailCaseStudies';
   static const String editCaseStudies = '/editCaseStudies';
@@ -244,7 +248,10 @@ class AppRoutes {
 
     GetPage(
       name: detailQuotation,
-      page: () => DetailQuotationView(),
+      page: () {
+        final Quotation quotation = Get.arguments['quotation'];
+        return QuotationDetailView(quotation: quotation);
+      },
     ),
     GetPage(
       name: detailCaseStudies,
@@ -268,29 +275,29 @@ class AppRoutes {
       },
     ),
 
-    GetPage(
-      name: addContactClientPIC,
-      page: () {
-        final args = Get.arguments as int;
-        return AddContactView(
-          indexClientPIC: args,
-        );
-      },
-    ),
+    // GetPage(
+    //   name: addContactClientPIC,
+    //   page: () {
+    //     final args = Get.arguments as int;
+    //     return AddContactView(
+    //       indexClientPIC: args,
+    //     );
+    //   },
+    // ),
 
-    GetPage(
-      name: editHistoryChangesData,
-      page: () {
-        final args = Get.arguments as Map<String, dynamic>;
-        return EditHistoryView(historyData: args['history']);
-      },
-    ),
+    // GetPage(
+    //   name: editHistoryChangesData,
+    //   page: () {
+    //     final args = Get.arguments as Map<String, dynamic>;
+    //     return EditHistoryView(historyData: args['history']);
+    //   },
+    // ),
 
     GetPage(
       name: editQuotation,
       page: () {
-        final Quotation quotation = Get.arguments['quotation'];
-        return EditQuotationView(quotation: quotation);
+        final DetailQuotation quotation = Get.arguments['quotation'];
+        return QuotationEditView(quotation: quotation);
       },
     ),
     GetPage(
@@ -312,6 +319,28 @@ class AppRoutes {
       page: () {
         final Faq faq = Get.arguments['faq'];
         return FaqEditStatusView(faq: faq);
+      },
+    ),
+    GetPage(
+      name: editQuotationSelect,
+      page: () {
+        final String title = Get.arguments['title'];
+        final String data = Get.arguments['data'];
+        final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? false;
+        final bool isActivity = Get.arguments['isActivity'] ?? false;
+        final bool isHistory = Get.arguments['isHistory'] ?? false;
+        final bool isContactForm = Get.arguments['isContactForm'] ?? false;
+        final int? index = Get.arguments['index'];
+
+        return QuotationEditSelectView(
+          title: title,
+          data: data,
+          isMultipleChoice: isMultipleChoice,
+          isActivity: isActivity,
+          isHistory: isHistory,
+          isContactForm: isContactForm,
+          index: index,
+        );
       },
     ),
     GetPage(
@@ -381,6 +410,20 @@ class AppRoutes {
       },
     ),
     GetPage(
+      name: editQuotationContact,
+      page: () {
+        final int clientIndex = Get.arguments['clientIndex'];
+        final ContactClientPic? currentContact = Get.arguments['currentContact'];
+        final int? currentContactIndex = Get.arguments['currentContactIndex'];
+
+        return QuotationEditPicContactView(
+          clientIndex: clientIndex,
+          currentContact: currentContact,
+          currentContactIndex: currentContactIndex,
+        );
+      },
+    ),
+    GetPage(
       name: editCaseStudiesContact,
       page: () {
         final int clientIndex = Get.arguments['clientIndex'];
@@ -406,6 +449,13 @@ class AppRoutes {
           currentContact: currentContact,
           currentContactIndex: currentContactIndex,
         );
+      },
+    ),
+    GetPage(
+      name: editQuotationHistory,
+      page: () {
+        final ProjectHistory history = Get.arguments['history'];
+        return QuotationEditHistoryView(history: history);
       },
     ),
     GetPage(

@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
+// import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,7 +21,7 @@ class NotificationTile extends StatelessWidget {
   final bool isReminder;
   final bool isRead;
 
-  final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
+  // final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +37,7 @@ class NotificationTile extends StatelessWidget {
                   width: 1,
                 )
               : null,
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(2, 2),
-                blurRadius: 30,
-                color: Color.fromRGBO(0, 0, 0, 0.05))
-          ]),
+          boxShadow: [BoxShadow(offset: Offset(2, 2), blurRadius: 30, color: Color.fromRGBO(0, 0, 0, 0.05))]),
       child: Column(
         children: [
           Row(
@@ -82,10 +77,8 @@ class NotificationTile extends StatelessWidget {
                   ),
                   Text(
                     name,
-                    style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.text_1,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
+                    style:
+                        GoogleFonts.plusJakartaSans(color: AppColors.text_1, fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   isReminder
                       ? Column(
@@ -124,7 +117,7 @@ class NotificationTile extends StatelessWidget {
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () async {
-                await detailQuotationController.fetchDetailQuotation(id);
+                // await detailQuotationController.fetchDetailQuotation(id);
                 Get.toNamed(
                   '/detailQuotation',
                 );

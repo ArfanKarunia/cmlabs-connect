@@ -243,9 +243,11 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                                 case 'pic':
                                   widget.controller.addFilterPic(tempData.value);
                                   Get.back();
+                                  break;
                                 case 'client_source':
                                   widget.controller.addFilterClientSource(tempData.value);
                                   Get.back();
+                                  break;
                                 default:
                                   break;
                               }

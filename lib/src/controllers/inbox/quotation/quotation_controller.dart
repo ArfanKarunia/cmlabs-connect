@@ -110,8 +110,8 @@ class QuotationController extends InboxController {
     try {
       // Jika data belum ada di local storage, fetch data dari API
       String? accessToken = userController.accesToken.value;
-      var start = 0;
-      var limit = 1;
+      int start = 0;
+      int limit = 1;
 
       final response = await dio.get(
         '$baseUrl/dashboard/data_recent_quotation?start=$start&limit=$limit',
@@ -126,7 +126,7 @@ class QuotationController extends InboxController {
             return Quotation.fromJson(item);
           }).toList();
 
-          newestIdQuotation.value = quotations.first.id;
+          newestIdQuotation.value = quotations.first.id ?? 1;
           newQuotationCount.value = 0;
         }
       }
@@ -139,8 +139,8 @@ class QuotationController extends InboxController {
     try {
       // Jika data belum ada di local storage, fetch data dari API
       String? accessToken = userController.accesToken.value;
-      var start = 0;
-      var limit = 1;
+      int start = 0;
+      int limit = 1;
 
       final response = await dio.get(
         '$baseUrl/dashboard/data_recent_quotation?start=$start&limit=$limit',
@@ -155,11 +155,11 @@ class QuotationController extends InboxController {
             return Quotation.fromJson(item);
           }).toList();
 
-          var newQuotationId = quotations.first.id;
+          int? newQuotationId = quotations.first.id;
 
-          if (newestIdQuotation.value < newQuotationId) {
-            newQuotationCount.value = newQuotationId - newestIdQuotation.value;
-            newestIdQuotation.value = newQuotationId;
+          if (newestIdQuotation.value < (newQuotationId ?? 1)) {
+            newQuotationCount.value = (newQuotationId ?? 1) - newestIdQuotation.value;
+            newestIdQuotation.value = newQuotationId ?? 1;
           }
 
           // print("check new data : ${newQuotationCount.value}");
@@ -195,12 +195,12 @@ class QuotationController extends InboxController {
       final query = search.value!.toLowerCase();
 
       result = result.where((quotation) {
-        return (quotation.email.toLowerCase().contains(query)) ||
+        return (quotation.email?.toLowerCase().contains(query) ?? false) ||
             (quotation.section?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.company?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.name?.toLowerCase().contains(query) ?? false) ||
-            (quotation.data.category.any((cat) => cat!.toLowerCase().contains(query))) ||
-            (quotation.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
+            (quotation.data?.company?.toLowerCase().contains(query) ?? false) ||
+            (quotation.data?.name?.toLowerCase().contains(query) ?? false) ||
+            (quotation.data?.category?.any((cat) => cat.toLowerCase().contains(query)) ?? false) ||
+            (quotation.data?.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();
     }
 

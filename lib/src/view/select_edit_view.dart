@@ -1,4 +1,3 @@
-import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,8 +18,8 @@ class SelectEditView extends StatelessWidget {
 
   final dynamic controller;
 
-  final EditQuotationController editQuotationController =
-      Get.put(EditQuotationController());
+  // final EditQuotationController editQuotationController =
+  //     Get.put(EditQuotationController());
 
   var temporaryData = Rx<Map<String, String>?>(null);
   var temporaryMultipleData = Rx<List<Map<String, String>?>>([]);
@@ -30,10 +29,7 @@ class SelectEditView extends StatelessWidget {
     String result = text.replaceAll('_', ' ');
 
     // Buat huruf pertama dari setiap kata kapital
-    result = result
-        .split(' ')
-        .map((word) => word[0].toUpperCase() + word.substring(1))
-        .join(' ');
+    result = result.split(' ').map((word) => word[0].toUpperCase() + word.substring(1)).join(' ');
 
     return result;
   }
@@ -103,8 +99,7 @@ class SelectEditView extends StatelessWidget {
                   ),
                 ),
               ),
-              selectData.toLowerCase() == 'type_activity' ||
-                      selectData.toLowerCase() == 'type_history'
+              selectData.toLowerCase() == 'type_activity' || selectData.toLowerCase() == 'type_history'
                   ? Obx(
                       () {
                         if (temporaryMultipleData.value.isNotEmpty) {
@@ -155,18 +150,13 @@ class SelectEditView extends StatelessWidget {
                     ),
                     child: ListView.builder(
                       shrinkWrap: true,
-                      itemCount: controller
-                          .searchData(selectData.toLowerCase())
-                          .length,
+                      itemCount: controller.searchData(selectData.toLowerCase()).length,
                       itemBuilder: (context, index) {
-                        final data = controller
-                            .searchData(selectData.toLowerCase())[index];
+                        final data = controller.searchData(selectData.toLowerCase())[index];
 
-                        print(controller
-                            .searchData(selectData.toLowerCase()));
+                        print(controller.searchData(selectData.toLowerCase()));
 
-                        if (controller
-                            .searchData(selectData.toLowerCase()).length == 0) {
+                        if (controller.searchData(selectData.toLowerCase()).length == 0) {
                           return SizedBox(
                             height: 200,
                             width: double.infinity,
@@ -186,8 +176,7 @@ class SelectEditView extends StatelessWidget {
                         // Hanya bungkus bagian yang perlu dipantau dengan Obx
                         return GestureDetector(
                           onTap: () {
-                            if (selectData == "type_activity" ||
-                                selectData == "type_history") {
+                            if (selectData == "type_activity" || selectData == "type_history") {
                               if (temporaryMultipleData.value.contains(data)) {
                                 temporaryMultipleData.value.remove(data);
                               } else {
@@ -209,19 +198,15 @@ class SelectEditView extends StatelessWidget {
                               return Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
-                                  color: (selectData == "type_activity" ||
-                                          selectData == "type_history")
-                                      ? (temporaryMultipleData.value
-                                              .contains(data)
+                                  color: (selectData == "type_activity" || selectData == "type_history")
+                                      ? (temporaryMultipleData.value.contains(data)
                                           ? AppColors.bgPrimary
                                           : AppColors.white_1)
-                                      : (temporaryData.value != null &&
-                                              temporaryData.value == data
+                                      : (temporaryData.value != null && temporaryData.value == data
                                           ? AppColors.bgPrimary
                                           : AppColors.white_1),
                                 ),
-                                padding: EdgeInsetsDirectional.symmetric(
-                                    horizontal: 14, vertical: 12),
+                                padding: EdgeInsetsDirectional.symmetric(horizontal: 14, vertical: 12),
                                 child: Text(
                                   data['label'] ?? "-",
                                   style: GoogleFonts.plusJakartaSans(
@@ -248,24 +233,23 @@ class SelectEditView extends StatelessWidget {
                 height: 51,
                 child: ElevatedButton(
                   onPressed: () {
-                    if (temporaryData.value != null ||
-                        temporaryMultipleData.value.isNotEmpty) {
+                    if (temporaryData.value != null || temporaryMultipleData.value.isNotEmpty) {
                       if (selectData == "pic") {
                         controller.addPIC(temporaryData.value!);
-                        editQuotationController.onFieldChanged();
+                        // editQuotationController.onFieldChanged();
                         Get.back();
                       } else if (selectData == "priority") {
                         controller.addPriority(temporaryData.value!);
-                        editQuotationController.onFieldChanged();
+                        // editQuotationController.onFieldChanged();
                         Get.back();
                       } else if (selectData == "status") {
                         controller.addStatus(temporaryData.value!);
                         if (temporaryData.value!["value"] == 0.toString() ||
                             temporaryData.value!["value"] == 4.toString()) {
-                          editQuotationController.onFieldChanged();
+                          // editQuotationController.onFieldChanged();
                           Get.back();
                         } else {
-                          editQuotationController.onFieldChanged();
+                          // editQuotationController.onFieldChanged();
                           Get.toNamed("/editSelect", arguments: "type");
 
                           Navigator.of(context).push(
@@ -281,9 +265,8 @@ class SelectEditView extends StatelessWidget {
                         }
                       } else if (selectData == "type") {
                         controller.addType(temporaryData.value!);
-                        editQuotationController.onFieldChanged();
-                        Get.until((route) =>
-                            Get.currentRoute == AppRoutes.editQuotation);
+                        // editQuotationController.onFieldChanged();
+                        Get.until((route) => Get.currentRoute == AppRoutes.editQuotation);
                       } else if (selectData == "type_contact") {
                         controller.addType(temporaryData.value!);
                         Get.back(result: temporaryData.value);
@@ -294,10 +277,10 @@ class SelectEditView extends StatelessWidget {
                         controller.addDetailStatus(temporaryData.value!);
                         Get.back(result: temporaryData.value);
                       } else if (selectData == "status_activity") {
-                        editQuotationController.onFieldChanged();
+                        // editQuotationController.onFieldChanged();
                         Get.back(result: temporaryData.value);
                       } else if (selectData == "type_activity") {
-                        editQuotationController.onFieldChanged();
+                        // editQuotationController.onFieldChanged();
                         Get.back(result: temporaryMultipleData.value);
                       } else if (selectData == "type_history") {
                         List<String?> data = [];
@@ -305,12 +288,12 @@ class SelectEditView extends StatelessWidget {
                         for (var type in temporaryMultipleData.value) {
                           data.add(type?['value'] ?? '');
                         }
-                        editQuotationController.onFieldChanged();
+                        // editQuotationController.onFieldChanged();
 
                         Get.back(result: data);
                       } else if (selectData == "validity_url_tracking") {
                         controller.addValidity(temporaryData.value);
-                        editQuotationController.onFieldChanged();
+                        // editQuotationController.onFieldChanged();
                         Get.back();
                       }
                     }

@@ -58,6 +58,7 @@ class EditFormController extends GetxController {
   RxList<ProjectHistory> historyList = <ProjectHistory>[].obs;
 
   Rx<bool> isLoading = false.obs;
+  Rx<bool> isUrlTrackingLoading = false.obs;
 
   final UserController userController = Get.find<UserController>();
   final http.Dio dio = http.Dio();
@@ -419,6 +420,31 @@ class EditFormController extends GetxController {
     }
 
     return activityArray;
+  }
+
+  Future<String?> fetchUrlTracking(int id) async {
+    final response = await dio.get(
+      '$baseUrl/quotation/generate_url_tracker?id=$id',
+      options: http.Options(
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return response.data['data'];
+    }
+
+    return null;
+  }
+
+  Future<void> switchUrlTracking(int id, bool value) async {
+    if (urlTrackingUrl.value == null) {
+      isUrlTrackingLoading(true);
+      urlTrackingUrl.value = await fetchUrlTracking(id);
+      isUrlTrackingLoading(false);
+    }
+
+    urlTrackingEnabled(value);
   }
 
   Future<void> fetchData(int id) async {}
