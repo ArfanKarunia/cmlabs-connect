@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/fontstyle.dart';
-import '../../../controllers/edit_quotation/client_pic_contact_controller.dart';
+import '../../../controllers/inbox/client_pic_contact_controller.dart';
 import '../../../controllers/inbox/case_studies/edit_case_studies_controller.dart';
 import '../../../controllers/inbox/case_studies/edit_history_case_studies_controller.dart';
 import '../../../utils/color.dart';

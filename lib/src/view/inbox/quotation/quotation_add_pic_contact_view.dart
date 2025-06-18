@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/fontstyle.dart';
-import '../../../controllers/edit_quotation/client_pic_contact_controller.dart';
+import '../../../controllers/inbox/client_pic_contact_controller.dart';
 import '../../../controllers/inbox/quotation/add_quotation_controller.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
