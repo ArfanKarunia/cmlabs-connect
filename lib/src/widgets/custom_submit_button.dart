@@ -70,7 +70,7 @@ class CustomLoadingButton extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(13.5),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(10),
         color: AppColors.primary,
       ),
       child: const Row(

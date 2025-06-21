@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:dio/dio.dart' as http;
 import 'package:get/get.dart';
 
-import '../../../models/inbox/property/project_history_model.dart';
 import '../../../utils/toast.dart';
 import '../edit_history_controller.dart';
 import 'edit_quotation_controller.dart';
@@ -23,8 +22,9 @@ class EditHistoryQuotationController extends EditHistoryController {
       }
 
       final fields = {
+        "id": id,
         "name": activityName.value.text,
-        "type": activityType.map((type) => type['value']).toList(),
+        for (int i = 0; i < activityType.length; i++) "type[$i]": activityType[i]['value'],
         "note": activityNote.value.text,
         "available_to_user": availableToUser.value == true ? 1 : 0,
         if (file != null) "file": await http.MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
@@ -33,7 +33,7 @@ class EditHistoryQuotationController extends EditHistoryController {
       http.FormData data = http.FormData.fromMap(fields);
 
       final response = await dio.post(
-        '$baseUrl/quotation/update_history_byId/$id',
+        '$baseUrl/quotation/update_history_byId',
         data: data,
         options: http.Options(
           headers: {
@@ -47,10 +47,16 @@ class EditHistoryQuotationController extends EditHistoryController {
 
       if (response.statusCode == 200) {
         final index = parentController.historyList.indexWhere((history) => history.id == id);
-        final newData = ProjectHistory.fromJson(response.data['data']);
 
         if (index != -1) {
-          parentController.historyList[index] = newData;
+          parentController.historyList[index] = parentController.historyList[index].copyWith(
+            id: id,
+            name: activityName.value.text,
+            type: activityType.map((type) => type['value'] ?? '').toList(),
+            note: activityNote.value.text,
+            availableToUser: availableToUser.value,
+            file: file?.path.split('/').last,
+          );
         }
         showSuccessToast('Berhasil mengubah Project History!');
         Get.back();
