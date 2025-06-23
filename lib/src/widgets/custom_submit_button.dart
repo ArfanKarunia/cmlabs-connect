@@ -94,6 +94,6 @@ class CustomLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LoadingAnimationWidget.progressiveDots(color: AppColors.primary, size: 28);
+    return LoadingAnimationWidget.progressiveDots(color: color, size: 28);
   }
 }
