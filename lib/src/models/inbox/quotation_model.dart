@@ -388,7 +388,11 @@ class DetailQuotation {
       url: json['data']['url'],
       clientPic: clientPics,
       cmlabspic: json['data']['cmlabspic'],
-      category: json['data']['category'] != null ? List<String>.from(json['data']['category']) : null,
+      category: json['data']['category'] != null
+          ? json['data']['category'] is List
+              ? List<String>.from(json['data']['category'])
+              : [json['data']['category']]
+          : null,
       // agent: json['data']['agent'] != null ? AgentData.fromJson(json['data']['agent']) : null,
       email: json['data']['email'],
       activities: activitiesList,

@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 
+import '../../services/firebase_analytics_service.dart';
 import 'analytics/analytics_bindings.dart';
 import 'authentication/authentication_bindings.dart';
 import 'dashboard/dashboard_bindings.dart';
@@ -10,9 +11,14 @@ import 'user/user_bindings.dart';
 class AppBindings extends Bindings {
   @override
   void dependencies() {
+    // GA4
+    Get.lazyPut<FirebaseAnalyticsService>(() => FirebaseAnalyticsService());
+
+    // User and Auth
     UserBindings().dependencies();
     AuthenticationBindings().dependencies();
 
+    // Features
     AnalyticsBindings().dependencies();
     DashboardBindings().dependencies();
     FilterBindings().dependencies();

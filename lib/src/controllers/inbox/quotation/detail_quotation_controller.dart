@@ -2,13 +2,17 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../../../services/firebase_analytics_service.dart';
 import '../../../constant/config.dart';
+import '../../../constant/const.dart';
 import '../../../models/inbox/quotation_model.dart';
 import '../../user/user_controller.dart';
 
 class DetailQuotationController extends GetxController {
   Rx<DetailQuotation?> quotation = Rx<DetailQuotation?>(null);
   Rx<String?> pitchingDuration = Rx<String?>(null);
+
+  final FirebaseAnalyticsService analyticsService = Get.find<FirebaseAnalyticsService>();
 
   final UserController userController = Get.find<UserController>();
   final Dio dio = Dio();
@@ -29,6 +33,14 @@ class DetailQuotationController extends GetxController {
         quotation.value = DetailQuotation.fromJson(data);
         pitchingDuration.value = timeago.format(quotation.value?.createdAt ?? DateTime.now());
       }
+
+      await analyticsService.logEvent('fetch_detail_inbox', parameters: {
+        'id': id,
+        'feature': 'quotation',
+        'client': quotation.value?.companyName ?? '',
+        'joined_at': quotation.value?.createdAt.toString() ?? '',
+        'status': statusLead[quotation.value?.status ?? 0].title,
+      });
     } catch (e) {
       rethrow;
     }
