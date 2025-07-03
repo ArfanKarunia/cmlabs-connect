@@ -302,8 +302,8 @@ class EditFormController extends GetxController {
         activityNote.add(TextEditingController(text: projectActivity.meetingNote));
       }
     }
-    activityRemarks.value.text = inboxEditForm.remarks.toString();
-    activityAdditionalNotes.value.text = inboxEditForm.additionalNotes.toString();
+    activityRemarks.value.text = inboxEditForm.remarks ?? '';
+    activityAdditionalNotes.value.text = inboxEditForm.additionalNotes ?? '';
 
     urlTrackingEnabled.value = inboxEditForm.urlTracking != null;
     urlTrackingUrl.value = inboxEditForm.urlTracking?.url;

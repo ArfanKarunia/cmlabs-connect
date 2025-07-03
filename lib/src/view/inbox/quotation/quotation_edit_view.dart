@@ -47,6 +47,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
       picClientSide: widget.quotation.clientPic,
       projectHistory: widget.quotation.activities,
     );
+    controller.quotationId = widget.quotation.id ?? 0;
     controller.setInitialValue(editForm);
     updateValidity();
     controller.urlTrackingPassword.value.addListener(updateValidity);
@@ -646,7 +647,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
           child: CustomSelectField(
             isEnabled: controller.selectedPic.value != null && controller.urlTrackingEnabled.value,
             icon: null,
-            child: InboxTextOnField(title: 'URL', selected: {'label': '${controller.urlTrackingUrl.value}'}),
+            child: InboxTextOnField(title: 'URL', selected: {'label': controller.urlTrackingUrl.value ?? ''}),
           ),
         ),
         const SizedBox(height: 11),

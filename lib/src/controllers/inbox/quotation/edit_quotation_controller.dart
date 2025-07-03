@@ -45,22 +45,24 @@ class EditQuotationController extends EditFormController {
 
     try {
       isLoading(true);
+
       final data = {
         "project_tracker": "true",
 
         // General
-        "pic": selectedPic.value?['value'],
-        "status": selectedStatus.value?['value'],
-        "priority": selectedPriority.value?['value'],
-        "type": selectedType.map((type) => type['value']).toList(),
+        "pic": selectedPic.value?['value'].toString(),
+        "status": selectedStatus.value?['value'].toString(),
+        "priority": selectedPriority.value?['value'].toString(),
+        "type": selectedType.map((type) => type['value'].toString()).toList(),
         "client_pic": picClients.asMap().map((index, picClient) => MapEntry(index.toString(), picClient.toJson())),
+
         // Activity
         "meeting_topic": activityName.map((name) => name.text).toList(),
         "meeting_schedule": activitySchedule
             .map((schedule) => schedule != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(schedule) : null)
             .toList(),
-        "meeting_status": activityStatus.map((status) => status?['value']).toList(),
-        "meeting_type": activityType.map((type) => [type?['value']]).toList(),
+        "meeting_status": activityStatus.map((status) => status?['value'].toString()).toList(),
+        "meeting_type": activityType.map((type) => type?['value']).toList(),
         "meeting_available_to_user":
             activityAvailableToUser.map((availableToUser) => availableToUser ? "1" : "0").toList(),
         "meeting_note": activityNote.map((note) => note.text).toList(),
@@ -74,6 +76,7 @@ class EditQuotationController extends EditFormController {
         "validity": selectedValidity.value?['value'],
       };
 
+      print(quotationId);
       print(data);
 
       final response = await dio.put(
