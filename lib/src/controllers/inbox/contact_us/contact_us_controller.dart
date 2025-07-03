@@ -167,7 +167,8 @@ class ContactUsController extends InboxController {
         return (contactUs.email?.toLowerCase().contains(query) ?? false) ||
             (contactUs.section?.toLowerCase().contains(query) ?? false) ||
             (contactUs.data?.company?.name?.toLowerCase().contains(query) ?? false) ||
-            (contactUs.data?.name?.toLowerCase().contains(query) ?? false);
+            (contactUs.data?.name?.toLowerCase().contains(query) ?? false) ||
+            (contactUs.data?.phoneNumber?.toLowerCase().contains(query) ?? false);
         // (contactUs.data.category.any((cat) => cat!.toLowerCase().contains(query))) ||
         // (contactUs.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();

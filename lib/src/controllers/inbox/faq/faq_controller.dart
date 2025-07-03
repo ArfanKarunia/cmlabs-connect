@@ -169,7 +169,8 @@ class FaqController extends InboxController {
             (faq.question?.toLowerCase().contains(query) ?? false) ||
             (faq.shortQuestion?.toLowerCase().contains(query) ?? false) ||
             (faq.data?.companyName?.toLowerCase().contains(query) ?? false) ||
-            (faq.data?.name?.toLowerCase().contains(query) ?? false);
+            (faq.data?.name?.toLowerCase().contains(query) ?? false) ||
+            (faq.data?.phoneNumber?.toLowerCase().contains(query) ?? false);
         // (faq.data.category.any((cat) => cat!.toLowerCase().contains(query))) ||
         // (faq.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();
