@@ -65,9 +65,7 @@ class _FilterViewState extends State<FilterView> {
                 style: bold.copyWith(fontSize: 16),
               ),
               InkWell(
-                onTap: () {
-                  filterController.clearFilter();
-                },
+                onTap: () => filterController.clearFilter(),
                 child: Ink(
                   child: Text(
                     "Clear filter",
@@ -183,8 +181,7 @@ class _FilterViewState extends State<FilterView> {
             onTap: () => Get.toNamed(
               AppRoutes.filterSelect,
               arguments: {
-                'selectData': "category",
-                'controller': filterController,
+                'filter': InboxFilterType.category,
                 'isMultipleChoice': true,
               },
             ),
@@ -245,8 +242,7 @@ class _FilterViewState extends State<FilterView> {
             onTap: () => Get.toNamed(
               AppRoutes.filterSelect,
               arguments: {
-                'selectData': "pic",
-                'controller': filterController,
+                'filter': InboxFilterType.pic,
                 'isMultipleChoice': false,
               },
             ),
@@ -286,76 +282,11 @@ class _FilterViewState extends State<FilterView> {
             style: bold,
           ),
           const SizedBox(height: 15),
-          // Container(
-          //   height: 51,
-          //   padding: const EdgeInsets.symmetric(horizontal: 10),
-          //   width: double.infinity,
-          //   decoration: BoxDecoration(
-          //     border: Border.all(color: AppColors.primaryText),
-          //     borderRadius: BorderRadius.circular(5),
-          //   ),
-          //   child: Stack(
-          //     alignment: Alignment.centerRight,
-          //     children: [
-          //       Obx(
-          //         () {
-          //           var clientSource = filterController.filterClientSource.value;
-          //           if (clientSource == null) {
-          //             return Container(
-          //               padding: const EdgeInsets.only(left: 10),
-          //               alignment: Alignment.centerLeft,
-          //               child: Text(
-          //                 "All",
-          //                 style: GoogleFonts.plusJakartaSans(
-          //                   fontSize: 14,
-          //                   color: AppColors.text_3,
-          //                 ),
-          //               ),
-          //             );
-          //           }
-          //           return Container(
-          //             padding: const EdgeInsets.only(left: 10),
-          //             alignment: Alignment.centerLeft,
-          //             child: Text(
-          //               clientSource['label'] ?? "-",
-          //               style: GoogleFonts.plusJakartaSans(
-          //                 fontSize: 14,
-          //                 color: AppColors.text_1,
-          //               ),
-          //             ),
-          //           );
-          //         },
-          //       ),
-          //       Container(
-          //         height: 45,
-          //         width: 45,
-          //         child: CustomButton(
-          //           backgroundColor: Colors.transparent,
-          //           onPressed: () {
-          //             Get.toNamed(
-          //               AppRoutes.filterSelect,
-          //               arguments: {
-          //                 'selectData': "client_source",
-          //                 'controller': filterController,
-          //                 'isMultipleChoice': false,
-          //               },
-          //             );
-          //           },
-          //           child: const Icon(
-          //             Ionicons.chevron_down_outline,
-          //             color: AppColors.text_1,
-          //           ),
-          //         ),
-          //       )
-          //     ],
-          //   ),
-          // ),
           InkWell(
             onTap: () => Get.toNamed(
               AppRoutes.filterSelect,
               arguments: {
-                'selectData': "client_source",
-                'controller': filterController,
+                'filter': InboxFilterType.clientSource,
                 'isMultipleChoice': false,
               },
             ),

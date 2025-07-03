@@ -14,8 +14,7 @@ import '../historical_lead_view.dart';
 class HistoryNotificationView extends StatelessWidget {
   HistoryNotificationView({super.key});
 
-  final NotificationController notificationController =
-      Get.put(NotificationController());
+  final NotificationController notificationController = Get.put(NotificationController());
 
   final TextEditingController fromDateController = TextEditingController();
   final TextEditingController toDateController = TextEditingController();
@@ -40,47 +39,46 @@ class HistoryNotificationView extends StatelessWidget {
                   return SelectField(
                     name: "Select Time Range",
                     child: Container(
-                      child:
-                          notificationController.selectTimeRange.value == null
-                              ? Text(
-                                  "Select year",
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_3,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                )
-                              : Text(
-                                  notificationController.selectTimeRange.value!,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.text_1,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
-                                ),
+                      child: notificationController.selectTimeRange.value == null
+                          ? Text(
+                              "Select year",
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.text_3,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            )
+                          : Text(
+                              notificationController.selectTimeRange.value!,
+                              style: GoogleFonts.plusJakartaSans(
+                                color: AppColors.text_1,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
                     ),
                     onPressed: () {
-                      Get.toNamed(
-                        AppRoutes.filterSelect,
-                        arguments: {
-                          'selectData': "time_range",
-                          'controller': notificationController,
-                          'canSearch': false,
-                          'isMultipleChoice': false,
-                        },
-                      )?.then(
-                        (value) {
-                          notificationController.setTimeRange(value);
+                      // Get.toNamed(
+                      //   AppRoutes.filterSelect,
+                      //   arguments: {
+                      //     'selectData': "time_range",
+                      //     'controller': notificationController,
+                      //     'canSearch': false,
+                      //     'isMultipleChoice': false,
+                      //   },
+                      // )?.then(
+                      //   (value) {
+                      //     notificationController.setTimeRange(value);
 
-                          print(notificationController.startDate.value);
-                          print(notificationController.endDate.value);
+                      //     print(notificationController.startDate.value);
+                      //     print(notificationController.endDate.value);
 
-                          fromDateController.text =
-                              "${notificationController.startDate.value!.year}-${notificationController.startDate.value!.month}-${notificationController.startDate.value!.day}";
-                          toDateController.text =
-                              "${notificationController.endDate.value!.year}-${notificationController.endDate.value!.month}-${notificationController.endDate.value!.day}";
-                        },
-                      );
+                      //     fromDateController.text =
+                      //         "${notificationController.startDate.value!.year}-${notificationController.startDate.value!.month}-${notificationController.startDate.value!.day}";
+                      //     toDateController.text =
+                      //         "${notificationController.endDate.value!.year}-${notificationController.endDate.value!.month}-${notificationController.endDate.value!.day}";
+                      //   },
+                      // );
                     },
                   );
                 },
@@ -226,8 +224,7 @@ class HistoryNotificationView extends StatelessWidget {
                   ),
                   child: Text(
                     "Search",
-                    style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14, fontWeight: FontWeight.bold),
+                    style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -353,12 +350,9 @@ class HistoryNotificationView extends StatelessWidget {
       weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       selectedDayHighlightColor: Color.fromRGBO(188, 223, 252, 1),
       selectedRangeHighlightColor: Color.fromRGBO(188, 223, 252, 1),
-      selectedDayTextStyle:
-          GoogleFonts.plusJakartaSans(color: AppColors.primary),
-      dayTextStyle:
-          GoogleFonts.plusJakartaSans(color: Color.fromRGBO(143, 202, 250, 1)),
-      selectedRangeDayTextStyle:
-          GoogleFonts.plusJakartaSans(color: AppColors.primary),
+      selectedDayTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.primary),
+      dayTextStyle: GoogleFonts.plusJakartaSans(color: Color.fromRGBO(143, 202, 250, 1)),
+      selectedRangeDayTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.primary),
       controlsTextStyle: GoogleFonts.plusJakartaSans(
         color: AppColors.text_1,
         fontSize: 15,
@@ -367,8 +361,7 @@ class HistoryNotificationView extends StatelessWidget {
       dayBorderRadius: BorderRadius.circular(5),
       centerAlignModePicker: true,
       customModePickerIcon: const SizedBox(),
-      cancelButtonTextStyle:
-          GoogleFonts.plusJakartaSans(color: AppColors.danger),
+      cancelButtonTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.danger),
       okButtonTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.primary),
       dayBuilder: ({
         required date,
@@ -397,9 +390,7 @@ class HistoryNotificationView extends StatelessWidget {
                       width: 4,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: isSelected == true
-                            ? AppColors.primary
-                            : Color.fromRGBO(143, 202, 250, 1),
+                        color: isSelected == true ? AppColors.primary : Color.fromRGBO(143, 202, 250, 1),
                       ),
                     ),
                   ),
@@ -452,13 +443,9 @@ class HistoryNotificationView extends StatelessWidget {
       },
     );
 
-    List<DateTime?> defaultDate =
-        (notificationController.selectTimeRange.value != null)
-            ? [
-                notificationController.startDate.value,
-                notificationController.endDate.value
-              ]
-            : [];
+    List<DateTime?> defaultDate = (notificationController.selectTimeRange.value != null)
+        ? [notificationController.startDate.value, notificationController.endDate.value]
+        : [];
 
     pickedRange = await showCalendarDatePicker2Dialog(
       context: context,
@@ -475,12 +462,10 @@ class HistoryNotificationView extends StatelessWidget {
 
     if (pickedRange != null) {
       if (pickedRange!.first != null) {
-        fromDateController.text =
-            "${pickedRange!.first!.year}-${pickedRange!.first!.month}-${pickedRange!.first!.day}";
+        fromDateController.text = "${pickedRange!.first!.year}-${pickedRange!.first!.month}-${pickedRange!.first!.day}";
       }
       if (pickedRange!.last != null) {
-        toDateController.text =
-            "${pickedRange!.last!.year}-${pickedRange!.last!.month}-${pickedRange!.last!.day}";
+        toDateController.text = "${pickedRange!.last!.year}-${pickedRange!.last!.month}-${pickedRange!.last!.day}";
       }
     }
   }

@@ -42,6 +42,10 @@ class StringUtils {
   }
 }
 
+String capitalizeFirstLetter(String input) {
+  return input[0].toUpperCase() + input.substring(1);
+}
+
 String formatPICName(String name) {
   try {
     return name.split('-').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
