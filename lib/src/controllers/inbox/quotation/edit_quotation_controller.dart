@@ -46,6 +46,12 @@ class EditQuotationController extends EditFormController {
     try {
       isLoading(true);
 
+      final isFormValid = await validateForm();
+      if (!isFormValid) {
+        isLoading(false);
+        return;
+      }
+
       final data = {
         "project_tracker": "true",
 
@@ -76,9 +82,6 @@ class EditQuotationController extends EditFormController {
         "validity": selectedValidity.value?['value'],
       };
 
-      print(quotationId);
-      print(data);
-
       final response = await dio.put(
         '$baseUrl/quotation/update/$quotationId',
         data: data,
@@ -99,8 +102,6 @@ class EditQuotationController extends EditFormController {
     } on http.DioException catch (e) {
       isLoading(false);
       final errors = e.response?.data['message'];
-      print(e.response?.statusCode);
-      print(errors);
 
       if (errors is Map) {
         errors.forEach(

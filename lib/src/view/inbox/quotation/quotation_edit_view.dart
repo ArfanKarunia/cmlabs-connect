@@ -145,8 +145,10 @@ class _QuotationEditViewState extends State<QuotationEditView> {
       children: [
         InboxAddField(
           title: 'PIC',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
+              errorText: controller.projectPicError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editQuotationSelect,
                 arguments: {'title': 'PIC', 'data': 'pic'},
@@ -161,9 +163,11 @@ class _QuotationEditViewState extends State<QuotationEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Priority',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectPriorityError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editQuotationSelect,
                 arguments: {'title': 'Priority', 'data': 'priority'},
@@ -178,9 +182,11 @@ class _QuotationEditViewState extends State<QuotationEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Status',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectStatusError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editQuotationSelect,
                 arguments: {'title': 'Status', 'data': 'status'},
@@ -195,9 +201,11 @@ class _QuotationEditViewState extends State<QuotationEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Type',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectTypeError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editQuotationSelect,
                 arguments: {
@@ -245,11 +253,12 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                   children: [
                     InboxAddField(
                       title: 'PIC Name',
-                      // isRequired: true,
+                      isRequired: true,
                       child: CustomFormField(
                         isEnabled: controller.selectedPic.value != null,
                         controller: controller.picNameControllers[index],
                         hintText: 'PIC Name',
+                        errorText: controller.picNameErrors[index],
                       ),
                     ),
                     const SizedBox(height: 11),
@@ -259,6 +268,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                         isEnabled: controller.selectedPic.value != null,
                         controller: controller.picPositionControllers[index],
                         hintText: 'Position',
+                        errorText: controller.picPositionErrors[index],
                       ),
                     ),
                     const SizedBox(height: 11),
@@ -266,10 +276,22 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                       () {
                         return InboxAddField(
                           title: 'Contact',
-                          // isRequired: true,
+                          isRequired: true,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (controller.picContactErrors[index] != null) ...[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(
+                                    controller.picContactErrors[index].toString(),
+                                    style: regular.copyWith(color: AppColors.danger),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
                               ...List.generate(controller.picClients[index].contacts.length, (i) {
                                 return Obx(
                                   () => InboxAddField(

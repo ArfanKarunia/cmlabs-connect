@@ -134,8 +134,10 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
       children: [
         InboxAddField(
           title: 'PIC',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
+              errorText: controller.projectPicError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editContactUsSelect,
                 arguments: {
@@ -153,9 +155,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Priority',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectPriorityError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editContactUsSelect,
                 arguments: {
@@ -173,9 +177,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Status',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectStatusError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editContactUsSelect,
                 arguments: {
@@ -193,9 +199,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Type',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectTypeError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editContactUsSelect,
                 arguments: {
@@ -243,11 +251,12 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                   children: [
                     InboxAddField(
                       title: 'PIC Name',
-                      // isRequired: true,
+                      isRequired: true,
                       child: CustomFormField(
                         isEnabled: controller.selectedPic.value != null,
                         controller: controller.picNameControllers[index],
                         hintText: 'PIC Name',
+                        errorText: controller.picNameErrors[index],
                       ),
                     ),
                     const SizedBox(height: 11),
@@ -257,6 +266,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                         isEnabled: controller.selectedPic.value != null,
                         controller: controller.picPositionControllers[index],
                         hintText: 'Position',
+                        errorText: controller.picPositionErrors[index],
                       ),
                     ),
                     const SizedBox(height: 11),
@@ -264,10 +274,22 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                       () {
                         return InboxAddField(
                           title: 'Contact',
-                          // isRequired: true,
+                          isRequired: true,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (controller.picContactErrors[index] != null) ...[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(
+                                    controller.picContactErrors[index].toString(),
+                                    style: regular.copyWith(color: AppColors.danger),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
                               ...List.generate(controller.picClients[index].contacts.length, (i) {
                                 return Obx(
                                   () => InboxAddField(

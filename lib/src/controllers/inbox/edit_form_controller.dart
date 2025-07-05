@@ -57,6 +57,15 @@ class EditFormController extends GetxController {
   // History
   RxList<ProjectHistory> historyList = <ProjectHistory>[].obs;
 
+  // Error Text
+  Rx<String?> projectPicError = Rx<String?>(null);
+  Rx<String?> projectPriorityError = Rx<String?>(null);
+  Rx<String?> projectStatusError = Rx<String?>(null);
+  Rx<String?> projectTypeError = Rx<String?>(null);
+  RxList<String?> picNameErrors = <String?>[].obs;
+  RxList<String?> picPositionErrors = <String?>[].obs;
+  RxList<String?> picContactErrors = <String?>[].obs;
+
   Rx<bool> isLoading = false.obs;
   Rx<bool> isUrlTrackingLoading = false.obs;
 
@@ -92,6 +101,35 @@ class EditFormController extends GetxController {
     fetchActivityType();
   }
 
+  Future<bool> validateForm() async {
+    projectPicError.value = selectedPic.value == null ? 'The CMLABS PIC must not be empty.' : null;
+    projectPriorityError.value = selectedPriority.value == null ? 'The priority must not be empty.' : null;
+    projectStatusError.value = selectedStatus.value == null ? 'The status must not be empty.' : null;
+    projectTypeError.value = selectedType.isEmpty ? 'The type must not be empty.' : null;
+
+    for (int i = 0; i < picNameControllers.length; i++) {
+      picNameErrors[i] = picNameControllers[i].text.isEmpty
+          ? 'The PIC name must not be empty.'
+          : picNameControllers[i].text.length > 25
+              ? 'The maximum character of PIC name is 25 characters.'
+              : null;
+      picPositionErrors[i] = picPositionControllers[i].text.isEmpty
+          ? null
+          : picPositionControllers[i].text.length > 20
+              ? 'The maximum character of position is 20 characters.'
+              : null;
+      picContactErrors[i] = picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
+    }
+
+    return projectPicError.value == null &&
+        projectPriorityError.value == null &&
+        projectStatusError.value == null &&
+        projectTypeError.value == null &&
+        picNameErrors.every((picNameError) => picNameError == null) &&
+        picPositionErrors.every((picPositionError) => picPositionError == null) &&
+        picContactErrors.every((picContactError) => picContactError == null);
+  }
+
   void addNewActivity() {
     activityName.add(TextEditingController());
     activitySchedule.add(null);
@@ -115,8 +153,11 @@ class EditFormController extends GetxController {
 
   void addClientPic() {
     picNameControllers.add(TextEditingController());
+    picNameErrors.add(null);
     picPositionControllers.add(TextEditingController());
+    picPositionErrors.add(null);
     picClients.add(ClientPic(contacts: []));
+    picContactErrors.add(null);
   }
 
   void addClientPicContact({required int index, required ContactClientPic contact}) {
@@ -147,6 +188,9 @@ class EditFormController extends GetxController {
     picNameControllers.removeAt(index);
     picPositionControllers.removeAt(index);
     picClients.removeAt(index);
+    picNameErrors.removeAt(index);
+    picPositionErrors.removeAt(index);
+    picContactErrors.removeAt(index);
   }
 
   Future<void> fetchPic() async {
@@ -282,7 +326,10 @@ class EditFormController extends GetxController {
     for (final clientPic in inboxEditForm.picClientSide!) {
       picClients.add(clientPic);
       picNameControllers.add(TextEditingController(text: clientPic.name));
+      picNameErrors.add(null);
       picPositionControllers.add(TextEditingController(text: clientPic.position));
+      picPositionErrors.add(null);
+      picContactErrors.add(null);
     }
 
     if (inboxEditForm.projectActivity != null) {

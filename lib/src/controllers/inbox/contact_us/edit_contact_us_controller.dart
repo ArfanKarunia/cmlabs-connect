@@ -73,6 +73,12 @@ class EditContactUsController extends EditFormController {
     try {
       isLoading(true);
 
+      final isFormValid = await validateForm();
+      if (!isFormValid) {
+        isLoading(false);
+        return;
+      }
+
       final data = {
         "project_tracker": "true",
         "pic": selectedPic.value?['value'],
