@@ -617,11 +617,13 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                       ),
                     );
                   }),
-                  CustomSubmitButton(
-                    title: 'Add More Contact',
-                    icon: Ionicons.add,
-                    onTap: () => Get.toNamed(AppRoutes.addQuotationContact, arguments: {'contactIndex': index}),
-                  ),
+                  if (controller.picClients[index].contacts.length < 3) ...[
+                    CustomSubmitButton(
+                      title: 'Add More Contact',
+                      icon: Ionicons.add,
+                      onTap: () => Get.toNamed(AppRoutes.addQuotationContact, arguments: {'contactIndex': index}),
+                    ),
+                  ],
                   if (index > 0) ...[
                     const SizedBox(height: 10),
                     CustomSubmitButton(
