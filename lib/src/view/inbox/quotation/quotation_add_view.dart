@@ -10,6 +10,7 @@ import '../../../controllers/inbox/quotation/add_quotation_controller.dart';
 import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';
+import '../../../utils/toast.dart';
 import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
@@ -45,13 +46,23 @@ class _QuotationAddViewState extends State<QuotationAddView> {
 
   Future<void> _selectFile() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'docs', 'xlsx', 'csv', 'ppt'],
-      );
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
       if (result != null) {
         PlatformFile file = result.files.first;
+        String extension = file.extension?.toLowerCase() ?? '';
+        List<String> allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf', 'docs', 'xlsx', 'csv', 'ppt'];
+
+        if (!allowedExtensions.contains(extension)) {
+          showErrorToast('The format file must be ${allowedExtensions.join(", ")}!');
+          return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+          showErrorToast('The maximum of file size is 2 MB!');
+          return;
+        }
+
         pickedFile.value = File(file.path!);
         setState(() => fileNameController.text = file.name);
       } else {
