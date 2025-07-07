@@ -639,7 +639,17 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                     const SizedBox(height: 10),
                     CustomSubmitButton(
                       title: 'Delete PIC ${index + 1}',
-                      onTap: () => controller.removeClientPIC(index),
+                      onTap: () {
+                        deleteBottomSheet(
+                          context,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          message: 'Are you sure wanna delete this Client PIC ${index + 1}?',
+                          onDelete: () {
+                            controller.removeClientPIC(index);
+                            Get.back();
+                          },
+                        );
+                      },
                       color: AppColors.bgDanger,
                       textColor: AppColors.danger,
                     ),
