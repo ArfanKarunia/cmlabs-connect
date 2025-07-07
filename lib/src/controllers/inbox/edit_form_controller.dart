@@ -171,8 +171,7 @@ class EditFormController extends GetxController {
     required int contactIndex,
     required ContactClientPic contact,
   }) {
-    final indexed = picClients[clientIndex].contacts[contactIndex];
-    picClients[clientIndex].contacts[contactIndex] = indexed.copyWith(
+    picClients[clientIndex].contacts[contactIndex] = ContactClientPic(
       type: contact.type,
       info: contact.info,
       status: contact.status,

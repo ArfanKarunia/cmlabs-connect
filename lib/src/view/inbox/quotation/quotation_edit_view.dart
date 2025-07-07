@@ -304,7 +304,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].type.toString(),
+                                              title: controller.picClients[index].contacts[i].type ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
@@ -320,7 +320,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].info.toString(),
+                                              title: controller.picClients[index].contacts[i].info ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
@@ -336,7 +336,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].status.toString(),
+                                              title: controller.picClients[index].contacts[i].status ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
@@ -352,7 +352,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].detail.toString(),
+                                              title: controller.picClients[index].contacts[i].detail ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
@@ -368,7 +368,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].note.toString(),
+                                              title: controller.picClients[index].contacts[i].note ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {

@@ -548,7 +548,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Type',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].type.toString(),
+                                title: controller.picClients[index].contacts[i].type ?? '',
                                 selected: null,
                               ),
                             ),
@@ -558,7 +558,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Contact Info',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].info.toString(),
+                                title: controller.picClients[index].contacts[i].info ?? '',
                                 selected: null,
                               ),
                             ),
@@ -568,7 +568,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Status',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].status.toString(),
+                                title: controller.picClients[index].contacts[i].status ?? '',
                                 selected: null,
                               ),
                             ),
@@ -578,7 +578,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Detail Status',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].detail.toString(),
+                                title: controller.picClients[index].contacts[i].detail ?? '',
                                 selected: null,
                               ),
                             ),
@@ -588,7 +588,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Note',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].note.toString(),
+                                title: controller.picClients[index].contacts[i].note ?? '',
                                 selected: null,
                               ),
                             ),

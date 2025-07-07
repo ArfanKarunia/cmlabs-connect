@@ -107,11 +107,11 @@ class _CaseStudiesEditPicContactViewState extends State<CaseStudiesEditPicContac
             ),
           ),
           const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Detail Status',
-            isRequired: true,
-            child: Obx(
-              () => CustomSelectField(
+          Obx(
+            () => InboxAddField(
+              title: 'Detail Status',
+              isRequired: controller.isDetailStatusRequired,
+              child: CustomSelectField(
                 onTap: () => Get.toNamed(
                   AppRoutes.editCaseStudiesSelect,
                   arguments: {
