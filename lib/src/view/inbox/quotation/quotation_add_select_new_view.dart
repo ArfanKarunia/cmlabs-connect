@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../../controllers/inbox/quotation/add_quotation_controller.dart';
 import '../../../utils/color.dart';
+import '../../../utils/toast.dart';
 import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
@@ -79,6 +80,7 @@ class _QuotationAddSelectNewViewState extends State<QuotationAddSelectNewView> {
                 data: widget.data,
                 value: fieldController.text,
               );
+              showSuccessToast('Berhasil menambahkan ${widget.title}: ${fieldController.text}');
               Get.back();
             },
           )
