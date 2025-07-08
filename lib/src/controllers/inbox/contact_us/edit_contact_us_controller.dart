@@ -44,8 +44,11 @@ class EditContactUsController extends EditFormController {
       }
 
       final response = await dio.delete(
-        '$baseUrl/contact-us/delete-history-activity/$id',
+        '$baseUrl/quotation/delete_history_byId',
         options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: {
+          'id': id,
+        },
       );
 
       if (response.statusCode == 200 && response.data != null) {
