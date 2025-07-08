@@ -37,6 +37,12 @@ class TopServicesController extends AnalyticsController {
       if (response.statusCode == 200) {
         topServices.value = TopServices.fromJson(response.data);
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        topServices.value = null;
+      }
+
+      debugPrint('Error fetching top services data: ${e.response?.data}');
     } catch (e) {
       debugPrint('Error fetching top services data: $e');
     }
