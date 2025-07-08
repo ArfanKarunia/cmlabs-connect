@@ -43,7 +43,7 @@ Future<void> deleteBottomSheet(
   BuildContext context, {
   VoidCallback? onDelete,
   required String message,
-  CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.start,
+  CrossAxisAlignment crossAxisAlignment = CrossAxisAlignment.center,
 }) {
   return showCustomBottomSheet(
     context,
