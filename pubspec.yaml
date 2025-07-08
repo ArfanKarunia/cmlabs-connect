@@ -15,6 +15,7 @@ dependencies:
   dio: ^5.7.0
   double_tap_to_exit: ^1.0.2
   file_picker: ^10.1.9
+  firebase_analytics: ^11.4.6
   firebase_core: ^3.8.1
   firebase_messaging: ^15.1.6
   flutter:
@@ -62,7 +63,7 @@ flutter:
     - assets/images/
     - assets/images/logos/
     - assets/icons/
- 
+
   fonts:
     - family: PlusJakartaSans
       fonts:

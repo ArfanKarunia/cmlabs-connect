@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
 
+import '../../../../services/firebase_analytics_service.dart';
 import '../../../constant/config.dart';
-import '../../../models/contact_us_model.dart';
+import '../../../constant/const.dart';
+import '../../../models/inbox/contact_us_model.dart';
 import '../../user/user_controller.dart';
 
 class DetailContactUsController extends GetxController {
   Rx<ContactUs?> contactUs = Rx<ContactUs?>(null);
   Rx<String?> pitchingDuration = Rx<String?>(null);
+
+  final FirebaseAnalyticsService analyticsService = Get.find<FirebaseAnalyticsService>();
 
   final UserController userController = Get.find<UserController>();
   final Dio dio = Dio();
@@ -26,6 +30,14 @@ class DetailContactUsController extends GetxController {
         final rawData = response.data['data'];
         pitchingDuration.value = rawData['pitching_duration'];
       }
+
+      await analyticsService.logEvent('fetch_detail_inbox', parameters: {
+        'id': id,
+        'feature': 'contact_us',
+        'client': contactUs.value?.data?.name ?? '',
+        'joined_at': contactUs.value?.createdAt.toString() ?? '',
+        'status': statusLead[contactUs.value?.status ?? 0].title,
+      });
     } catch (e) {
       rethrow;
     }

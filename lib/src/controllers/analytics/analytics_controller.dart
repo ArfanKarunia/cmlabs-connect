@@ -333,10 +333,10 @@ final List<Map<String, String>> clientSourceOptions = [
 ];
 final List<Map<String, String>> utmOptions = [
   {'label': 'All', 'value': 'all'},
-  {'label': 'Google & GDN', 'value': 'Google&GDN'},
-  {'label': 'Google & CPC', 'value': 'Google&CPC'},
-  {'label': 'Meta & GDN', 'value': 'Meta&GDN'},
-  {'label': 'Meta & Carousel', 'value': 'Meta&Carousel'},
+  {'label': 'Google & GDN', 'value': 'Google%26GDN'},
+  {'label': 'Google & CPC', 'value': 'Google%26CPC'},
+  {'label': 'Meta & GDN', 'value': 'Meta%26GDN'},
+  {'label': 'Meta & Carousel', 'value': 'Meta%26Carousel'},
 ];
 final List<Map<String, String>> statusOptions = [
   {'label': 'All', 'value': 'all'},

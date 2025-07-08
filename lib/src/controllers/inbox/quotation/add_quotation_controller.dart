@@ -6,7 +6,7 @@ import 'package:dio/dio.dart' as http;
 
 import '../../../constant/config.dart';
 import '../../../constant/const.dart';
-import '../../../models/client_pic_model.dart';
+import '../../../models/inbox/property/client_pic_model.dart';
 import '../../../utils/agent_utils.dart';
 import '../../../utils/toast.dart';
 import '../../user/user_controller.dart';

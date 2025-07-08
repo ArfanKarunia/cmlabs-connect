@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'services/firebase_analytics_service.dart';
 import 'services/notification_service.dart';
 import 'src/controllers/app_bindings.dart';
 import 'src/routes.dart';
@@ -38,6 +39,12 @@ class MyApp extends StatelessWidget {
 
       // Routing of the app
       getPages: AppRoutes.routes,
+      routingCallback: (routing) {
+        if (routing?.current != null) {
+          final analyticsService = Get.find<FirebaseAnalyticsService>();
+          analyticsService.setCurrentScreen(routing!.current);
+        }
+      },
       defaultTransition: Transition.rightToLeft,
     );
   }

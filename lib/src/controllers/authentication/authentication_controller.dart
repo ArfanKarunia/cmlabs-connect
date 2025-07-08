@@ -6,14 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
+import '../../../services/firebase_analytics_service.dart';
 import '../../constant/config.dart';
 import '../../models/user_model.dart';
 import '../../routes.dart';
 import '../../utils/toast.dart';
 
 class AuthenticationController extends GetxController {
-  var isLoading = false.obs;
-  var isRememberMe = false.obs;
+  RxBool isLoading = false.obs;
+  RxBool isRememberMe = false.obs;
   final roleList = Rx<List<Map<String, dynamic>>>([]);
 
   final Dio dio = Dio();
@@ -23,7 +24,8 @@ class AuthenticationController extends GetxController {
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
   );
 
-  UserController userController = Get.find<UserController>();
+  final UserController userController = Get.find<UserController>();
+  final FirebaseAnalyticsService analyticsService = Get.find<FirebaseAnalyticsService>();
 
   Future<void> setEmail(String email) async {
     await storage.write(key: 'email', value: email);
@@ -83,9 +85,8 @@ class AuthenticationController extends GetxController {
 
       await fetchRoleList();
 
-      var roles = roleList.value;
-
-      var dataUser = data['data_user'];
+      final roles = roleList.value;
+      final dataUser = data['data_user'];
       String? jobPosition = dataUser['job_position'];
       String? role = getRoleName(jobPosition, roles);
 
@@ -110,6 +111,11 @@ class AuthenticationController extends GetxController {
       }
 
       Get.offAndToNamed(AppRoutes.home);
+
+      await analyticsService.logEvent(
+        'login_success',
+        parameters: {'name': user.name, 'email': email},
+      );
 
       return {
         "code": "400",

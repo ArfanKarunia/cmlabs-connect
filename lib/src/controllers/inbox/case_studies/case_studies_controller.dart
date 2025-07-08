@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
-import '../../../models/case_studies_model.dart';
+import '../../../models/inbox/case_studies_model.dart';
 import '../../../utils/file_utils.dart';
 import '../../../utils/permission_utils.dart';
 import '../../../utils/toast.dart';
@@ -166,7 +166,8 @@ class CaseStudiesController extends InboxController {
             (caseStudies.section?.toLowerCase().contains(query) ?? false) ||
             (caseStudies.data?.company?.toLowerCase().contains(query) ?? false) ||
             (caseStudies.data?.name?.toLowerCase().contains(query) ?? false) ||
-            (caseStudies.data?.category?.any((e) => e.contains(query)) ?? false);
+            (caseStudies.data?.category?.any((e) => e.contains(query)) ?? false) ||
+            (caseStudies.data?.phoneNumber?.toLowerCase().contains(query) ?? false);
         // || (caseStudies.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();
     }

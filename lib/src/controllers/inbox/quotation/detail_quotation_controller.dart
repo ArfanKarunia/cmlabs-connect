@@ -1,14 +1,15 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 import '../../../../services/firebase_analytics_service.dart';
 import '../../../constant/config.dart';
 import '../../../constant/const.dart';
-import '../../../models/inbox/case_studies_model.dart';
+import '../../../models/inbox/quotation_model.dart';
 import '../../user/user_controller.dart';
 
-class DetailCaseStudiesController extends GetxController {
-  Rx<CaseStudies?> caseStudies = Rx<CaseStudies?>(null);
+class DetailQuotationController extends GetxController {
+  Rx<DetailQuotation?> quotation = Rx<DetailQuotation?>(null);
   Rx<String?> pitchingDuration = Rx<String?>(null);
 
   final FirebaseAnalyticsService analyticsService = Get.find<FirebaseAnalyticsService>();
@@ -22,24 +23,23 @@ class DetailCaseStudiesController extends GetxController {
       String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
-        '$baseUrl/case-studies/view-case-study-detail/$id',
+        '$baseUrl/quotation/detail/$id',
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final rawData = response.data['data'];
-        caseStudies.value = caseStudies.value?.copyWith(
-          data: caseStudies.value?.data?.copyWith(companyProfile: rawData['company_profile'] ?? '-'),
-        );
-        pitchingDuration.value = rawData['pitching_duration'];
+        final data = response.data;
+
+        quotation.value = DetailQuotation.fromJson(data);
+        pitchingDuration.value = timeago.format(quotation.value?.createdAt ?? DateTime.now());
       }
 
       await analyticsService.logEvent('fetch_detail_inbox', parameters: {
         'id': id,
-        'feature': 'case_studies',
-        'client': caseStudies.value?.data?.company ?? '',
-        'joined_at': caseStudies.value?.createdAt.toString() ?? '',
-        'status': statusLead[caseStudies.value?.status ?? 0].title,
+        'feature': 'quotation',
+        'client': quotation.value?.companyName ?? '',
+        'joined_at': quotation.value?.createdAt.toString() ?? '',
+        'status': statusLead[quotation.value?.status ?? 0].title,
       });
     } catch (e) {
       rethrow;

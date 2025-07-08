@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../constant/const.dart';
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/faq/edit_faq_controller.dart';
-import '../../../models/faq_model.dart';
+import '../../../models/inbox/faq_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_select_field.dart';

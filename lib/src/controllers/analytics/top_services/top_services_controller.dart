@@ -8,11 +8,11 @@ import '../analytics_controller.dart';
 class TopServicesController extends AnalyticsController {
   Rx<TopServices?> topServices = Rx<TopServices?>(null);
 
-  // Weekly, Monthly or Yearly
+  // Monthly or Yearly
   @override
-  Rx<DateType?> initialDateType = (DateType.weekly).obs;
+  Rx<DateType?> initialDateType = (DateType.monthly).obs;
   @override
-  Rx<DateType?> selectedDateType = (DateType.weekly).obs;
+  Rx<DateType?> selectedDateType = (DateType.monthly).obs;
 
   @override
   Rx<SortOption?> selectedSortOption = (SortOption.totalMost).obs;
@@ -37,6 +37,12 @@ class TopServicesController extends AnalyticsController {
       if (response.statusCode == 200) {
         topServices.value = TopServices.fromJson(response.data);
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) {
+        topServices.value = null;
+      }
+
+      debugPrint('Error fetching top services data: ${e.response?.data}');
     } catch (e) {
       debugPrint('Error fetching top services data: $e');
     }

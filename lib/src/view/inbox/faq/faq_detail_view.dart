@@ -6,7 +6,7 @@ import '../../../constant/const.dart';
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/faq/detail_faq_controller.dart';
 import '../../../controllers/inbox/faq/faq_controller.dart';
-import '../../../models/faq_model.dart';
+import '../../../models/inbox/faq_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_submit_button.dart';

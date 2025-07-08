@@ -10,7 +10,7 @@ import '../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../controllers/inbox/contact_us/contact_us_controller.dart';
 import '../controllers/inbox/faq/faq_controller.dart';
 import '../controllers/inbox/inbox_controller.dart';
-import '../models/inbox_page_model.dart';
+import '../models/inbox/property/inbox_page_model.dart';
 import '../routes.dart';
 import '../utils/bottom_sheet.dart';
 import '../widgets/custom_buttom.dart';

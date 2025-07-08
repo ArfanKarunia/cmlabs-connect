@@ -4,7 +4,7 @@ import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/faq/faq_controller.dart';
-import '../../../models/faq_model.dart';
+import '../../../models/inbox/faq_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/inbox_list_tile.dart';

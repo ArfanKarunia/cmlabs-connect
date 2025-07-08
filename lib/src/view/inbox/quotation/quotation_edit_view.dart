@@ -6,8 +6,9 @@ import 'package:ionicons/ionicons.dart';
 import 'package:safe_password_generator/safe_password_generator.dart';
 
 import '../../../constant/fontstyle.dart';
-import '../../../controllers/inbox/contact_us/edit_contact_us_controller.dart';
-import '../../../models/inbox/contact_us_model.dart';
+import '../../../controllers/inbox/quotation/edit_quotation_controller.dart';
+import '../../../models/inbox/property/inbox_edit_form_model.dart';
+import '../../../models/inbox/quotation_model.dart';
 import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';
@@ -21,17 +22,16 @@ import '../../../widgets/inbox_add_section.dart';
 import '../../../widgets/inbox_history_tile.dart';
 import '../../../widgets/tag_button.dart';
 
-class ContactUsEditView extends StatefulWidget {
-  final ContactUs contactUs;
-
-  const ContactUsEditView({super.key, required this.contactUs});
+class QuotationEditView extends StatefulWidget {
+  final DetailQuotation quotation;
+  const QuotationEditView({super.key, required this.quotation});
 
   @override
-  State<ContactUsEditView> createState() => _ContactUsEditViewState();
+  State<QuotationEditView> createState() => _QuotationEditViewState();
 }
 
-class _ContactUsEditViewState extends State<ContactUsEditView> {
-  final controller = Get.find<EditContactUsController>();
+class _QuotationEditViewState extends State<QuotationEditView> {
+  final controller = Get.find<EditQuotationController>();
 
   int historyLength = 10;
   bool isValidityEnabled = true;
@@ -39,7 +39,17 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
   @override
   void initState() {
     super.initState();
-    controller.fetchData(widget.contactUs.id ?? 0).then((_) => updateValidity());
+    InboxEditForm editForm = InboxEditForm(
+      pic: widget.quotation.cmlabspic,
+      priority: widget.quotation.priority,
+      status: widget.quotation.status,
+      type: widget.quotation.typeInformation,
+      picClientSide: widget.quotation.clientPic,
+      projectHistory: widget.quotation.activities,
+    );
+    controller.quotationId = widget.quotation.id ?? 0;
+    controller.setInitialValue(editForm);
+    updateValidity();
     controller.urlTrackingPassword.value.addListener(updateValidity);
   }
 
@@ -58,7 +68,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: defaultAppBar('Edit Contact Us'),
+      appBar: defaultAppBar('Edit Quotation'),
       backgroundColor: AppColors.scaffoldBgColor2,
       body: Stack(
         children: [
@@ -111,6 +121,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                         ? const CustomLoadingButton()
                         : CustomSubmitButton(
                             title: 'Save',
+                            isDisabled: controller.selectedPic.value == null,
                             onTap: () => controller.submitForm(),
                           ),
                   ),
@@ -139,11 +150,8 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
             () => CustomSelectField(
               errorText: controller.projectPicError.value,
               onTap: () => Get.toNamed(
-                AppRoutes.editContactUsSelect,
-                arguments: {
-                  'title': 'PIC',
-                  'data': 'pic',
-                },
+                AppRoutes.editQuotationSelect,
+                arguments: {'title': 'PIC', 'data': 'pic'},
               ),
               child: InboxTextOnField(
                 title: 'Select PIC',
@@ -161,11 +169,8 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
               isEnabled: controller.selectedPic.value != null,
               errorText: controller.projectPriorityError.value,
               onTap: () => Get.toNamed(
-                AppRoutes.editContactUsSelect,
-                arguments: {
-                  'title': 'Priority',
-                  'data': 'priority',
-                },
+                AppRoutes.editQuotationSelect,
+                arguments: {'title': 'Priority', 'data': 'priority'},
               ),
               child: InboxTextOnField(
                 title: 'Select Priority',
@@ -183,11 +188,8 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
               isEnabled: controller.selectedPic.value != null,
               errorText: controller.projectStatusError.value,
               onTap: () => Get.toNamed(
-                AppRoutes.editContactUsSelect,
-                arguments: {
-                  'title': 'Status',
-                  'data': 'status',
-                },
+                AppRoutes.editQuotationSelect,
+                arguments: {'title': 'Status', 'data': 'status'},
               ),
               child: InboxTextOnField(
                 title: 'Select Status',
@@ -205,7 +207,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
               isEnabled: controller.selectedPic.value != null,
               errorText: controller.projectTypeError.value,
               onTap: () => Get.toNamed(
-                AppRoutes.editContactUsSelect,
+                AppRoutes.editQuotationSelect,
                 arguments: {
                   'title': 'Type',
                   'data': 'type',
@@ -305,14 +307,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                               title: controller.picClients[index].contacts[i].type ?? '',
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(
-                                              AppRoutes.editContactUsContact,
-                                              arguments: {
-                                                'clientIndex': index,
-                                                'currentContact': controller.picClients[index].contacts[i],
-                                                'currentContactIndex': i,
-                                              },
-                                            ),
+                                            onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
+                                              'clientIndex': index,
+                                              'currentContact': controller.picClients[index].contacts[i],
+                                              'currentContactIndex': i,
+                                            }),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -324,14 +323,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                               title: controller.picClients[index].contacts[i].info ?? '',
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(
-                                              AppRoutes.editContactUsContact,
-                                              arguments: {
-                                                'clientIndex': index,
-                                                'currentContact': controller.picClients[index].contacts[i],
-                                                'currentContactIndex': i,
-                                              },
-                                            ),
+                                            onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
+                                              'clientIndex': index,
+                                              'currentContact': controller.picClients[index].contacts[i],
+                                              'currentContactIndex': i,
+                                            }),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -343,14 +339,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                               title: controller.picClients[index].contacts[i].status ?? '',
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(
-                                              AppRoutes.editContactUsContact,
-                                              arguments: {
-                                                'clientIndex': index,
-                                                'currentContact': controller.picClients[index].contacts[i],
-                                                'currentContactIndex': i,
-                                              },
-                                            ),
+                                            onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
+                                              'clientIndex': index,
+                                              'currentContact': controller.picClients[index].contacts[i],
+                                              'currentContactIndex': i,
+                                            }),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -362,14 +355,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                               title: controller.picClients[index].contacts[i].detail ?? '',
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(
-                                              AppRoutes.editContactUsContact,
-                                              arguments: {
-                                                'clientIndex': index,
-                                                'currentContact': controller.picClients[index].contacts[i],
-                                                'currentContactIndex': i,
-                                              },
-                                            ),
+                                            onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
+                                              'clientIndex': index,
+                                              'currentContact': controller.picClients[index].contacts[i],
+                                              'currentContactIndex': i,
+                                            }),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -381,14 +371,11 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                               title: controller.picClients[index].contacts[i].note ?? '',
                                               selected: null,
                                             ),
-                                            onTap: () => Get.toNamed(
-                                              AppRoutes.editContactUsContact,
-                                              arguments: {
-                                                'clientIndex': index,
-                                                'currentContact': controller.picClients[index].contacts[i],
-                                                'currentContactIndex': i,
-                                              },
-                                            ),
+                                            onTap: () => Get.toNamed(AppRoutes.editQuotationContact, arguments: {
+                                              'clientIndex': index,
+                                              'currentContact': controller.picClients[index].contacts[i],
+                                              'currentContactIndex': i,
+                                            }),
                                           ),
                                         ),
                                         const SizedBox(height: 11),
@@ -420,7 +407,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                 title: 'Add More Contact',
                                 icon: Ionicons.add,
                                 onTap: () => Get.toNamed(
-                                  AppRoutes.editContactUsContact,
+                                  AppRoutes.editQuotationContact,
                                   arguments: {'clientIndex': index},
                                 ),
                               ),
@@ -542,7 +529,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                             () => CustomSelectField(
                               isEnabled: controller.selectedPic.value != null,
                               onTap: () => Get.toNamed(
-                                AppRoutes.editContactUsSelect,
+                                AppRoutes.editQuotationSelect,
                                 arguments: {
                                   'title': 'Activity Status',
                                   'data': 'activityStatus',
@@ -564,7 +551,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                             () => CustomSelectField(
                               isEnabled: controller.selectedPic.value != null,
                               onTap: () => Get.toNamed(
-                                AppRoutes.editContactUsSelect,
+                                AppRoutes.editQuotationSelect,
                                 arguments: {
                                   'title': 'Activity Type',
                                   'data': 'activityType',
@@ -591,9 +578,8 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                   fit: BoxFit.fill,
                                   child: Switch(
                                     value: controller.activityAvailableToUser[index],
-                                    onChanged: (value) {
-                                      setState(() => controller.activityAvailableToUser[index] = value);
-                                    },
+                                    onChanged: (value) =>
+                                        setState(() => controller.activityAvailableToUser[index] = value),
                                     activeTrackColor: AppColors.primary,
                                     inactiveTrackColor: const Color(0xFFD8DAE5),
                                     trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -672,14 +658,16 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
               height: 32,
               child: FittedBox(
                 fit: BoxFit.fill,
-                child: Switch(
-                  value: controller.urlTrackingEnabled.value,
-                  onChanged: (value) => setState(() => controller.urlTrackingEnabled(value)),
-                  activeTrackColor: AppColors.primary,
-                  inactiveTrackColor: const Color(0xFFD8DAE5),
-                  trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
-                  inactiveThumbColor: AppColors.white,
-                ),
+                child: controller.isUrlTrackingLoading.value
+                    ? const CustomLoading()
+                    : Switch(
+                        value: controller.urlTrackingEnabled.value,
+                        onChanged: (value) => controller.switchUrlTracking(widget.quotation.id ?? 0, value),
+                        activeTrackColor: AppColors.primary,
+                        inactiveTrackColor: const Color(0xFFD8DAE5),
+                        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                        inactiveThumbColor: AppColors.white,
+                      ),
               ),
             ),
           ],
@@ -691,7 +679,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
           child: CustomSelectField(
             isEnabled: controller.selectedPic.value != null && controller.urlTrackingEnabled.value,
             icon: null,
-            child: InboxTextOnField(title: 'URL', selected: {'label': '${controller.urlTrackingUrl.value}'}),
+            child: InboxTextOnField(title: 'URL', selected: {'label': controller.urlTrackingUrl.value ?? ''}),
           ),
         ),
         const SizedBox(height: 11),
@@ -748,13 +736,10 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
             () => CustomSelectField(
               isEnabled:
                   controller.selectedPic.value != null && controller.urlTrackingEnabled.value && isValidityEnabled,
-              onTap: () => Get.toNamed(
-                AppRoutes.editContactUsSelect,
-                arguments: {
-                  'title': 'Validity',
-                  'data': 'validity',
-                },
-              ),
+              onTap: () => Get.toNamed(AppRoutes.editQuotationSelect, arguments: {
+                'title': 'Validity',
+                'data': 'validity',
+              }),
               child: InboxTextOnField(
                 title: 'Select Validity',
                 selected: controller.selectedValidity.value,
@@ -776,7 +761,7 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                   (index) => HistoryTile(
                     controller: controller,
                     index: index,
-                    onEditRoute: AppRoutes.editContactUsHistory,
+                    onEditRoute: AppRoutes.editQuotationHistory,
                   ),
                 ),
                 if (historyLength < controller.historyList.length)

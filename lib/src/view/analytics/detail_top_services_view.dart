@@ -6,6 +6,7 @@ import '../../controllers/analytics/analytics_controller.dart';
 import '../../controllers/analytics/top_services/top_services_controller.dart';
 import '../../routes.dart';
 import '../../utils/color.dart';
+import '../../utils/string_utils.dart';
 import '../../widgets/analytics/details/date_type_button.dart';
 import '../../widgets/analytics/details/quick_sort_button.dart';
 import '../../widgets/analytics/details/quotation_overview_card.dart';
@@ -52,16 +53,6 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
           Obx(
             () => Row(
               children: [
-                DateTypeButton(
-                  title: 'Today',
-                  isSelected: controller.selectedDateType.value == DateType.daily,
-                  onTap: () => controller.setDateType(dateType: DateType.daily),
-                ),
-                DateTypeButton(
-                  title: 'This Week',
-                  isSelected: controller.selectedDateType.value == DateType.weekly,
-                  onTap: () => controller.setDateType(dateType: DateType.weekly),
-                ),
                 DateTypeButton(
                   title: 'This Month',
                   isSelected: controller.selectedDateType.value == DateType.monthly,
@@ -143,7 +134,7 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
                         ? List.generate(
                             controller.dataLength,
                             (index) => QuotationOverviewCard(
-                              date: controller.data?.topServices[index].serviceName ?? '',
+                              date: formatServiceName(controller.data?.topServices[index].serviceName ?? ''),
                               totalQuotation: controller.data?.topServices[index].quotationCount ?? 0,
                               percentage: controller.data?.topServices[index].percentage ?? 0,
                             ),

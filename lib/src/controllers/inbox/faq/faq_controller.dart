@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
-import '../../../models/faq_model.dart';
+import '../../../models/inbox/faq_model.dart';
 import '../../../utils/file_utils.dart';
 import '../../../utils/permission_utils.dart';
 import '../../../utils/toast.dart';
@@ -169,7 +169,8 @@ class FaqController extends InboxController {
             (faq.question?.toLowerCase().contains(query) ?? false) ||
             (faq.shortQuestion?.toLowerCase().contains(query) ?? false) ||
             (faq.data?.companyName?.toLowerCase().contains(query) ?? false) ||
-            (faq.data?.name?.toLowerCase().contains(query) ?? false);
+            (faq.data?.name?.toLowerCase().contains(query) ?? false) ||
+            (faq.data?.phoneNumber?.toLowerCase().contains(query) ?? false);
         // (faq.data.category.any((cat) => cat!.toLowerCase().contains(query))) ||
         // (faq.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();

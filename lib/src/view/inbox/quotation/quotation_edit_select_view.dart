@@ -1,39 +1,43 @@
 import 'dart:async';
 
-import 'package:cmlabs_connect/src/widgets/default_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/client_pic_contact_controller.dart';
-import '../../../controllers/inbox/quotation/add_quotation_controller.dart';
-import '../../../routes.dart';
+import '../../../controllers/inbox/quotation/edit_history_quotation_controller.dart';
+import '../../../controllers/inbox/quotation/edit_quotation_controller.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_submit_button.dart';
+import '../../../widgets/default_appbar.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/tag_button.dart';
 
-class QuotationAddSelectView extends StatefulWidget {
+class QuotationEditSelectView extends StatefulWidget {
   final String title;
   final String data;
   final bool isMultipleChoice;
+  final bool isActivity;
+  final bool isHistory;
   final bool isContactForm;
-  final bool canAdd;
-  const QuotationAddSelectView({
+  final int? index;
+  const QuotationEditSelectView({
     super.key,
     required this.title,
     required this.data,
     required this.isMultipleChoice,
+    required this.isActivity,
+    required this.isHistory,
     required this.isContactForm,
-    required this.canAdd,
+    this.index,
   });
 
   @override
-  State<QuotationAddSelectView> createState() => _QuotationAddSelectViewState();
+  State<QuotationEditSelectView> createState() => _QuotationEditSelectViewState();
 }
 
-class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
+class _QuotationEditSelectViewState extends State<QuotationEditSelectView> {
   late final List<Map<String, String>> choice;
   final TextEditingController searchController = TextEditingController();
   String searchQuery = '';
@@ -42,13 +46,18 @@ class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
   Rx<List<Map<String, String>>> tempMapData = Rx<List<Map<String, String>>>([]);
   Rx<bool> canSelect = Rx<bool>(false);
 
-  final controller = Get.find<AddQuotationController>();
+  final controller = Get.find<EditQuotationController>();
   final contactController = Get.find<ClientPicContactController>();
+  final historyController = Get.find<EditHistoryQuotationController>();
 
   @override
   void initState() {
     super.initState();
-    choice = widget.isContactForm ? contactController.getList(widget.data) : controller.getList(widget.data);
+    choice = widget.isContactForm
+        ? contactController.getList(widget.data)
+        : widget.isHistory
+            ? historyController.getList(widget.data)
+            : controller.getList(widget.data);
     ever(tempData, (_) => _updateCanSelect());
     ever(tempMapData, (_) => _updateCanSelect());
   }
@@ -190,8 +199,19 @@ class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
               () {
                 return CustomSubmitButton(
                   onTap: () {
-                    if (widget.isContactForm) {
+                    if (widget.isActivity) {
+                      controller.setActivityValue(
+                        data: widget.data,
+                        index: widget.index!,
+                        value: widget.isMultipleChoice ? tempMapData.value : tempData.value,
+                      );
+                    } else if (widget.isContactForm) {
                       contactController.setValue(
+                        data: widget.data,
+                        value: widget.isMultipleChoice ? tempMapData.value : tempData.value,
+                      );
+                    } else if (widget.isHistory) {
+                      historyController.setValue(
                         data: widget.data,
                         value: widget.isMultipleChoice ? tempMapData.value : tempData.value,
                       );
@@ -208,25 +228,6 @@ class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
                 );
               },
             ),
-            if (widget.canAdd) ...[
-              const SizedBox(height: 20),
-              CustomSubmitButton(
-                onTap: () => Get.toNamed(
-                  AppRoutes.addQuotationSelectNew,
-                  arguments: {
-                    'title': widget.title,
-                    'data': widget.data,
-                    'maxDigit': widget.data == 'companyWebsite' ? 200 : 50,
-                  },
-                ),
-                title: 'Add',
-                icon: Ionicons.add,
-                iconSize: 18,
-                color: Colors.transparent,
-                borderColor: AppColors.primary,
-                textColor: AppColors.primary,
-              ),
-            ],
           ],
         ),
       ),

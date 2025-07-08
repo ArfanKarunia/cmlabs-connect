@@ -4,9 +4,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../constant/config.dart';
-import '../../models/client_pic_model.dart';
-import '../../models/inbox_edit_form_model.dart';
-import '../../models/project_history_model.dart';
+import '../../models/inbox/property/client_pic_model.dart';
+import '../../models/inbox/property/inbox_edit_form_model.dart';
+import '../../models/inbox/property/project_history_model.dart';
 import '../user/user_controller.dart';
 
 class EditFormController extends GetxController {
@@ -57,7 +57,17 @@ class EditFormController extends GetxController {
   // History
   RxList<ProjectHistory> historyList = <ProjectHistory>[].obs;
 
+  // Error Text
+  Rx<String?> projectPicError = Rx<String?>(null);
+  Rx<String?> projectPriorityError = Rx<String?>(null);
+  Rx<String?> projectStatusError = Rx<String?>(null);
+  Rx<String?> projectTypeError = Rx<String?>(null);
+  RxList<String?> picNameErrors = <String?>[].obs;
+  RxList<String?> picPositionErrors = <String?>[].obs;
+  RxList<String?> picContactErrors = <String?>[].obs;
+
   Rx<bool> isLoading = false.obs;
+  Rx<bool> isUrlTrackingLoading = false.obs;
 
   final UserController userController = Get.find<UserController>();
   final http.Dio dio = http.Dio();
@@ -91,6 +101,35 @@ class EditFormController extends GetxController {
     fetchActivityType();
   }
 
+  Future<bool> validateForm() async {
+    projectPicError.value = selectedPic.value == null ? 'The CMLABS PIC must not be empty.' : null;
+    projectPriorityError.value = selectedPriority.value == null ? 'The priority must not be empty.' : null;
+    projectStatusError.value = selectedStatus.value == null ? 'The status must not be empty.' : null;
+    projectTypeError.value = selectedType.isEmpty ? 'The type must not be empty.' : null;
+
+    for (int i = 0; i < picNameControllers.length; i++) {
+      picNameErrors[i] = picNameControllers[i].text.isEmpty
+          ? 'The PIC name must not be empty.'
+          : picNameControllers[i].text.length > 25
+              ? 'The maximum character of PIC name is 25 characters.'
+              : null;
+      picPositionErrors[i] = picPositionControllers[i].text.isEmpty
+          ? null
+          : picPositionControllers[i].text.length > 20
+              ? 'The maximum character of position is 20 characters.'
+              : null;
+      picContactErrors[i] = picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
+    }
+
+    return projectPicError.value == null &&
+        projectPriorityError.value == null &&
+        projectStatusError.value == null &&
+        projectTypeError.value == null &&
+        picNameErrors.every((picNameError) => picNameError == null) &&
+        picPositionErrors.every((picPositionError) => picPositionError == null) &&
+        picContactErrors.every((picContactError) => picContactError == null);
+  }
+
   void addNewActivity() {
     activityName.add(TextEditingController());
     activitySchedule.add(null);
@@ -114,8 +153,11 @@ class EditFormController extends GetxController {
 
   void addClientPic() {
     picNameControllers.add(TextEditingController());
+    picNameErrors.add(null);
     picPositionControllers.add(TextEditingController());
+    picPositionErrors.add(null);
     picClients.add(ClientPic(contacts: []));
+    picContactErrors.add(null);
   }
 
   void addClientPicContact({required int index, required ContactClientPic contact}) {
@@ -129,8 +171,7 @@ class EditFormController extends GetxController {
     required int contactIndex,
     required ContactClientPic contact,
   }) {
-    final indexed = picClients[clientIndex].contacts[contactIndex];
-    picClients[clientIndex].contacts[contactIndex] = indexed.copyWith(
+    picClients[clientIndex].contacts[contactIndex] = ContactClientPic(
       type: contact.type,
       info: contact.info,
       status: contact.status,
@@ -146,6 +187,9 @@ class EditFormController extends GetxController {
     picNameControllers.removeAt(index);
     picPositionControllers.removeAt(index);
     picClients.removeAt(index);
+    picNameErrors.removeAt(index);
+    picPositionErrors.removeAt(index);
+    picContactErrors.removeAt(index);
   }
 
   Future<void> fetchPic() async {
@@ -281,7 +325,10 @@ class EditFormController extends GetxController {
     for (final clientPic in inboxEditForm.picClientSide!) {
       picClients.add(clientPic);
       picNameControllers.add(TextEditingController(text: clientPic.name));
+      picNameErrors.add(null);
       picPositionControllers.add(TextEditingController(text: clientPic.position));
+      picPositionErrors.add(null);
+      picContactErrors.add(null);
     }
 
     if (inboxEditForm.projectActivity != null) {
@@ -301,8 +348,8 @@ class EditFormController extends GetxController {
         activityNote.add(TextEditingController(text: projectActivity.meetingNote));
       }
     }
-    activityRemarks.value.text = inboxEditForm.remarks.toString();
-    activityAdditionalNotes.value.text = inboxEditForm.additionalNotes.toString();
+    activityRemarks.value.text = inboxEditForm.remarks ?? '';
+    activityAdditionalNotes.value.text = inboxEditForm.additionalNotes ?? '';
 
     urlTrackingEnabled.value = inboxEditForm.urlTracking != null;
     urlTrackingUrl.value = inboxEditForm.urlTracking?.url;
@@ -419,6 +466,31 @@ class EditFormController extends GetxController {
     }
 
     return activityArray;
+  }
+
+  Future<String?> fetchUrlTracking(int id) async {
+    final response = await dio.get(
+      '$baseUrl/quotation/generate_url_tracker?id=$id',
+      options: http.Options(
+        headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+      ),
+    );
+
+    if (response.statusCode == 200 && response.data != null) {
+      return response.data['data'];
+    }
+
+    return null;
+  }
+
+  Future<void> switchUrlTracking(int id, bool value) async {
+    if (urlTrackingUrl.value == null) {
+      isUrlTrackingLoading(true);
+      urlTrackingUrl.value = await fetchUrlTracking(id);
+      isUrlTrackingLoading(false);
+    }
+
+    urlTrackingEnabled(value);
   }
 
   Future<void> fetchData(int id) async {}

@@ -4,7 +4,7 @@ import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../../../constant/fontstyle.dart';
 import '../../../controllers/inbox/quotation/quotation_controller.dart';
-import '../../../models/quotation_model.dart';
+import '../../../models/inbox/quotation_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/inbox_list_tile.dart';

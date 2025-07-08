@@ -70,19 +70,30 @@ class CustomLoadingButton extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(13.5),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(10),
         color: AppColors.primary,
       ),
-      child: Row(
+      child: const Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             height: 28,
             width: 28,
-            child: LoadingAnimationWidget.progressiveDots(color: AppColors.white_1, size: 28),
+            child: CustomLoading(color: AppColors.white_1, size: 28),
           ),
         ],
       ),
     );
+  }
+}
+
+class CustomLoading extends StatelessWidget {
+  final Color color;
+  final double size;
+  const CustomLoading({super.key, this.color = AppColors.primary, this.size = 28});
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingAnimationWidget.progressiveDots(color: color, size: 28);
   }
 }

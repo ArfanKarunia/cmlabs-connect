@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/fontstyle.dart';
-import '../../../controllers/edit_quotation/client_pic_contact_controller.dart';
+import '../../../controllers/inbox/client_pic_contact_controller.dart';
 import '../../../controllers/inbox/contact_us/edit_contact_us_controller.dart';
-import '../../../models/client_pic_model.dart';
+import '../../../models/inbox/property/client_pic_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_formfield.dart';
@@ -107,11 +107,11 @@ class _ContactUsEditPicContactViewState extends State<ContactUsEditPicContactVie
             ),
           ),
           const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Detail Status',
-            isRequired: true,
-            child: Obx(
-              () => CustomSelectField(
+          Obx(
+            () => InboxAddField(
+              title: 'Detail Status',
+              isRequired: controller.isDetailStatusRequired,
+              child: CustomSelectField(
                 onTap: () => Get.toNamed(
                   AppRoutes.editContactUsSelect,
                   arguments: {

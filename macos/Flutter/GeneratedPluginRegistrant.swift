@@ -8,6 +8,7 @@ import Foundation
 import device_info_plus
 import file_picker
 import file_selector_macos
+import firebase_analytics
 import firebase_core
 import firebase_messaging
 import flutter_local_notifications

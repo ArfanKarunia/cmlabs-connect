@@ -1,22 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../constant/fontstyle.dart';
+import '../controllers/filter/filter_controller.dart';
 import '../utils/bottom_sheet.dart';
 import '../utils/color.dart';
 import '../utils/string_utils.dart';
+import '../widgets/custom_submit_button.dart';
+import '../widgets/default_appbar.dart';
+import '../widgets/empty_state.dart';
 import '../widgets/tag_button.dart';
 
 class SelectFilterView extends StatefulWidget {
-  final String filter;
-  final dynamic controller;
+  final InboxFilterType filter;
   final bool isMultipleChoice;
   final bool canSearch;
   const SelectFilterView({
     super.key,
     required this.filter,
-    required this.controller,
     this.canSearch = true,
     this.isMultipleChoice = true,
   });
@@ -32,8 +36,12 @@ class _SelectFilterViewState extends State<SelectFilterView> {
 
   final allData = {'value': 'all', 'label': 'All'};
 
+  final FilterController controller = Get.find<FilterController>();
+
   @override
   void initState() {
+    controller.clearSearch();
+
     super.initState();
     ever(tempData, (_) => _updateCanSelect());
     ever(tempMapData, (_) => _updateCanSelect());
@@ -47,107 +55,97 @@ class _SelectFilterViewState extends State<SelectFilterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
-      appBar: AppBar(
-        toolbarHeight: 100,
-        backgroundColor: AppColors.scaffoldBgColor2,
-        surfaceTintColor: AppColors.scaffoldBgColor2,
-        title: Text(
-          "Filter ${StringUtils.toCamelCase(widget.filter)}",
-          style: bold.copyWith(fontSize: 20),
-        ),
-      ),
+      appBar: defaultAppBar("Filter ${capitalizeFirstLetter(widget.filter.name)}", titleSpacing: 0),
       body: Stack(
         children: [
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    (widget.canSearch)
-                        ? Container(
-                            height: 45,
-                            alignment: AlignmentDirectional.centerStart,
-                            child: TextFormField(
-                              onChanged: widget.controller.setSearch,
-                              textAlignVertical: TextAlignVertical.center,
-                              style: regular.copyWith(fontSize: 12),
-                              decoration: InputDecoration(
-                                hintText: "Search ${StringUtils.toCamelCase(widget.filter)}",
-                                hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
-                                suffixIcon: const Icon(Ionicons.search_outline, size: 24),
-                                focusColor: AppColors.primary,
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.primary,
-                                    width: 2,
-                                  ),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: const BorderSide(
-                                    color: AppColors.text_3,
-                                    width: 1,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        : Container(),
-                    (widget.isMultipleChoice)
-                        ? Obx(
-                            () {
-                              if (tempMapData.value.isNotEmpty) {
-                                return SizedBox(
-                                  width: double.infinity,
-                                  height: 50,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: tempMapData.value.length,
-                                    itemBuilder: (context, index) {
-                                      final data = tempMapData.value[index];
-                                      var label = data?['label'] ?? "-";
-
-                                      return TagButton(
-                                        statusLabel: label,
-                                        onPressed: () {
-                                          tempMapData.value.remove(data);
-                                          tempMapData.refresh();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                );
-                              }
-
-                              return Container();
-                            },
-                          )
-                        : Container(),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      child: Text(
-                        "Select ${StringUtils.toCamelCase(widget.filter)}",
-                        style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
+          ListView(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            children: [
+              if (widget.canSearch) ...[
+                Container(
+                  height: 45,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: TextFormField(
+                    onChanged: (value) {
+                      Timer(Durations.long2, () {
+                        controller.setSearch(value);
+                        setState(() {});
+                      });
+                    },
+                    textAlignVertical: TextAlignVertical.center,
+                    style: regular.copyWith(fontSize: 12),
+                    decoration: InputDecoration(
+                      hintText: "Search ${capitalizeFirstLetter(widget.filter.name)}",
+                      hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
+                      suffixIcon: const Icon(Ionicons.search_outline, size: 24),
+                      focusColor: AppColors.primary,
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: const BorderSide(color: AppColors.text_3, width: 1),
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: AppColors.white_1,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: ListView.builder(
+                  ),
+                ),
+              ],
+              if (widget.isMultipleChoice) ...[
+                Obx(
+                  () {
+                    if (tempMapData.value.isNotEmpty) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: tempMapData.value.length,
+                          itemBuilder: (context, index) {
+                            final data = tempMapData.value[index];
+                            var label = data?['label'] ?? "-";
+
+                            return TagButton(
+                              statusLabel: label,
+                              onPressed: () {
+                                tempMapData.value.remove(data);
+                                tempMapData.refresh();
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    }
+
+                    return Container();
+                  },
+                )
+              ],
+              const SizedBox(height: 10),
+              Text(
+                "Select ${capitalizeFirstLetter(widget.filter.name)}",
+                style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.white_1,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: controller.searchData(widget.filter).isEmpty
+                    ? Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        color: AppColors.scaffoldBgColor2,
+                        child: const EmptyState(),
+                      )
+                    : ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: widget.controller.searchData(widget.filter.toLowerCase()).length,
+                        itemCount: controller.searchData(widget.filter).length,
                         itemBuilder: (context, index) {
-                          final data = widget.controller.searchData(widget.filter.toLowerCase())[index];
+                          final data = controller.searchData(widget.filter)[index];
 
                           // Hanya bungkus bagian yang perlu dipantau dengan Obx
                           return GestureDetector(
@@ -198,84 +196,82 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                           );
                         },
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
               ),
-            ),
+              const SizedBox(height: 150),
+            ],
           ),
-          Obx(
-            () {
-              bool isKeyboardShow = MediaQuery.of(context).viewInsets.bottom != 0;
-
-              return TweenAnimationBuilder<double>(
-                tween: Tween(
-                  begin: canSelect.value ? -200 : 0,
-                  end: canSelect.value ? 0 : -200,
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
                 ),
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeInOut,
-                builder: (context, value, child) {
-                  // print(value);
-                  return Positioned(
-                    bottom: value,
-                    left: 0,
-                    right: 0,
-                    child: (isKeyboardShow)
-                        ? const SizedBox.shrink()
-                        : BottomSheetSaveChanges(
-                            name: "Select",
-                            onPressed: () {
+                color: AppColors.white_1,
+                boxShadow: [
+                  BoxShadow(
+                    color: Color.fromARGB(30, 0, 0, 0),
+                    offset: Offset(0, -4),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 140,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.text_4,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Obx(
+                    () => controller.isLoading.value
+                        ? const CustomLoadingButton()
+                        : CustomSubmitButton(
+                            title: 'Select',
+                            isDisabled: !canSelect.value,
+                            onTap: () {
                               switch (widget.filter) {
-                                case 'year' || 'month' || 'days':
+                                case InboxFilterType.year || InboxFilterType.month || InboxFilterType.days:
                                   Get.back(result: tempData.value);
                                   break;
-                                case 'time_range':
+                                case InboxFilterType.timeRange:
                                   Get.back(result: tempData.value?['value']);
                                   break;
-                                case 'category':
+                                case InboxFilterType.category:
                                   for (Map<String, String>? data in tempMapData.value) {
-                                    widget.controller.addFilterCategory(data);
+                                    controller.addFilterCategory(data);
                                   }
                                   Get.back();
                                   break;
-                                case 'pic':
-                                  widget.controller.addFilterPic(tempData.value);
+                                case InboxFilterType.pic:
+                                  controller.addFilterPic(tempData.value);
                                   Get.back();
-                                case 'client_source':
-                                  widget.controller.addFilterClientSource(tempData.value);
+                                  break;
+                                case InboxFilterType.clientSource:
+                                  controller.addFilterClientSource(tempData.value);
                                   Get.back();
-                                default:
                                   break;
                               }
-                              // if (widget.filter == 'year') {
-                              // Get.back(result: tempData.value);
-                              // } else if (widget.filter == 'month') {
-                              // Get.back(result: tempData.value);
-                              // } else if (widget.filter == 'time_range') {
-                              //   Get.back(result: tempData.value!['value']);
-                              // } else if (widget.filter == 'days') {
-                              // Get.back(result: tempMapData.value);
-                              // } else if (widget.filter == 'category') {
-                              //   for (var data in tempMapData.value) {
-                              //     widget.controller.addFilterCategory(data);
-                              //   }
-                              //   Get.back();
-                              // } else if (widget.filter == 'pic') {
-                              //   widget.controller.addFilterPic(tempData.value);
-                              //   Get.back();
-                              // } else if (widget.filter == 'client_source') {
-                              //   widget.controller.addFilterClientSource(tempData.value);
-                              //   Get.back();
-                              // }
                             },
                           ),
-                  );
-                },
-              );
-            },
-          ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Click to save all changes",
+                    style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );

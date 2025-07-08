@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
+// import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/view/notification/all_notification_view.dart';
@@ -16,15 +16,13 @@ class LayoutNotification extends StatefulWidget {
   State<LayoutNotification> createState() => _LayoutNotificationState();
 }
 
-class _LayoutNotificationState extends State<LayoutNotification>
-    with SingleTickerProviderStateMixin {
+class _LayoutNotificationState extends State<LayoutNotification> with SingleTickerProviderStateMixin {
   late TabController tabController;
 
-  final DetailQuotationController detailQuotationController =
-      Get.put(DetailQuotationController());
+  // final DetailQuotationController detailQuotationController =
+  //     Get.put(DetailQuotationController());
 
-  final NotificationController notificationController =
-      Get.put(NotificationController());
+  final NotificationController notificationController = Get.put(NotificationController());
 
   @override
   void initState() {
@@ -38,7 +36,7 @@ class _LayoutNotificationState extends State<LayoutNotification>
 
   @override
   Widget build(BuildContext context) {
-    detailQuotationController.quotation.value = null;
+    // detailQuotationController.quotation.value = null;
 
     return Container(
       color: Color(0xFFF9F9F9),
@@ -65,8 +63,7 @@ class _LayoutNotificationState extends State<LayoutNotification>
               indicatorSize: TabBarIndicatorSize.label,
               indicatorPadding: EdgeInsets.symmetric(),
               unselectedLabelColor: AppColors.text_4,
-              labelStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 14, fontWeight: FontWeight.bold),
+              labelStyle: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.bold),
               indicatorColor: AppColors.primary,
               dividerHeight: 0,
               tabs: [
@@ -83,9 +80,7 @@ class _LayoutNotificationState extends State<LayoutNotification>
                               ? Container(
                                   width: 15,
                                   height: 15,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.danger),
+                                  decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.danger),
                                   child: Center(
                                     child: Text(
                                       "${notificationController.unreadAll.value}",
@@ -115,9 +110,7 @@ class _LayoutNotificationState extends State<LayoutNotification>
                               ? Container(
                                   width: 15,
                                   height: 15,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.danger),
+                                  decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.danger),
                                   child: Center(
                                     child: Text(
                                       "${notificationController.unreadNew.value}",
@@ -143,14 +136,11 @@ class _LayoutNotificationState extends State<LayoutNotification>
                       ),
                       Obx(
                         () {
-                          return notificationController.unreadReminder.value !=
-                                  0
+                          return notificationController.unreadReminder.value != 0
                               ? Container(
                                   width: 15,
                                   height: 15,
-                                  decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: AppColors.danger),
+                                  decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.danger),
                                   child: Center(
                                     child: Text(
                                       "${notificationController.unreadReminder.value}",

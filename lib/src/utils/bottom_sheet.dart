@@ -1,10 +1,8 @@
 import 'dart:ui';
 
-import 'package:cmlabs_connect/src/controllers/edit_quotation/edit_quotation_controller.dart';
-import 'package:cmlabs_connect/src/models/quotation_model.dart';
+import 'package:cmlabs_connect/src/models/inbox/quotation_model.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constant/fontstyle.dart';
@@ -313,7 +311,7 @@ class BottomSheetSaveChanges extends StatefulWidget {
 }
 
 class _BottomSheetSaveChangesState extends State<BottomSheetSaveChanges> {
-  EditQuotationController detailQuotationController = Get.put(EditQuotationController());
+  // EditQuotationController detailQuotationController = Get.put(EditQuotationController());
 
   @override
   Widget build(BuildContext context) {

@@ -1,39 +1,12 @@
 import 'package:dio/dio.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
-import '../../../models/inbox/property/inbox_edit_form_model.dart';
 import '../../../utils/toast.dart';
 import '../edit_form_controller.dart';
 
-class EditContactUsController extends EditFormController {
-  int contactUsId = 0;
-
-  @override
-  Future<void> fetchData(int id) async {
-    try {
-      isLoading(true);
-
-      final response = await dio.get(
-        '$baseUrl/contact-us/view-detail-form-contact-us/$id',
-        options: http.Options(
-          headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
-        ),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        final rawData = response.data['data'];
-
-        if (rawData != null) {
-          final formContactUs = InboxEditForm.fromJson(rawData);
-          setInitialValue(formContactUs);
-          contactUsId = id;
-        }
-      }
-    } finally {
-      isLoading(false);
-    }
-  }
+class EditQuotationController extends EditFormController {
+  int quotationId = 0;
 
   @override
   Future<void> deleteHistory(int? id) async {
@@ -44,7 +17,7 @@ class EditContactUsController extends EditFormController {
       }
 
       final response = await dio.delete(
-        '$baseUrl/contact-us/delete-history-activity/$id',
+        '$baseUrl/quotation/delete_history_byId/$id',
         options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
 
@@ -81,24 +54,36 @@ class EditContactUsController extends EditFormController {
 
       final data = {
         "project_tracker": "true",
-        "pic": selectedPic.value?['value'],
-        "status": selectedStatus.value?['value'],
-        "priority": selectedPriority.value?['value'],
-        "type": selectedType.map((type) => type['value']).toList(),
-        "client_pic": picClients.map((picClient) => picClient.toJson()).toList(),
-        "activity": createActivityList(),
+
+        // General
+        "pic": selectedPic.value?['value'].toString(),
+        "status": selectedStatus.value?['value'].toString(),
+        "priority": selectedPriority.value?['value'].toString(),
+        "type": selectedType.map((type) => type['value'].toString()).toList(),
+        "client_pic": picClients.asMap().map((index, picClient) => MapEntry(index.toString(), picClient.toJson())),
+
+        // Activity
+        "meeting_topic": activityName.map((name) => name.text).toList(),
+        "meeting_schedule": activitySchedule
+            .map((schedule) => schedule != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(schedule) : null)
+            .toList(),
+        "meeting_status": activityStatus.map((status) => status?['value'].toString()).toList(),
+        "meeting_type": activityType.map((type) => type?['value']).toList(),
+        "meeting_available_to_user":
+            activityAvailableToUser.map((availableToUser) => availableToUser ? "1" : "0").toList(),
+        "meeting_note": activityNote.map((note) => note.text).toList(),
         "remarks": activityRemarks.value.text,
         "notes": activityAdditionalNotes.value.text,
+
+        // URL Tracking
         "url_track_status": urlTrackingEnabled.value,
         "url": urlTrackingUrl.value,
         "password": urlTrackingPassword.value.text,
         "validity": selectedValidity.value?['value'],
       };
 
-      debugPrint(data.toString());
-
-      final response = await dio.post(
-        '$baseUrl/contact-us/save-form-detail-contact-us/$contactUsId',
+      final response = await dio.put(
+        '$baseUrl/quotation/update/$quotationId',
         data: data,
         options: http.Options(
           headers: {
@@ -108,12 +93,10 @@ class EditContactUsController extends EditFormController {
         ),
       );
 
-      debugPrint(response.toString());
-
       isLoading(false);
 
       if (response.statusCode == 200) {
-        showSuccessToast('Berhasil mengubah Case Study!');
+        showSuccessToast('Berhasil mengubah Quotation!');
         Get.back();
       }
     } on http.DioException catch (e) {

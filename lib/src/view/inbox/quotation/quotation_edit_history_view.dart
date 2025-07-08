@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 
 import '../../../constant/fontstyle.dart';
-import '../../../controllers/inbox/contact_us/edit_history_contact_us_controller.dart';
+import '../../../controllers/inbox/quotation/edit_history_quotation_controller.dart';
 import '../../../models/inbox/property/project_history_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
@@ -19,16 +19,16 @@ import '../../../widgets/inbox_add_field.dart';
 import '../../../widgets/inbox_add_section.dart';
 import '../../../widgets/tag_button.dart';
 
-class ContactUsEditHistoryView extends StatefulWidget {
+class QuotationEditHistoryView extends StatefulWidget {
   final ProjectHistory history;
-  const ContactUsEditHistoryView({super.key, required this.history});
+  const QuotationEditHistoryView({super.key, required this.history});
 
   @override
-  State<ContactUsEditHistoryView> createState() => _ContactUsEditHistoryViewState();
+  State<QuotationEditHistoryView> createState() => _QuotationEditHistoryViewState();
 }
 
-class _ContactUsEditHistoryViewState extends State<ContactUsEditHistoryView> {
-  final controller = Get.find<EditHistoryContactUsController>();
+class _QuotationEditHistoryViewState extends State<QuotationEditHistoryView> {
+  final controller = Get.find<EditHistoryQuotationController>();
   final TextEditingController fileNameController = TextEditingController();
   Rx<File?> pickedFile = Rx<File?>(null);
 
@@ -66,6 +66,7 @@ class _ContactUsEditHistoryViewState extends State<ContactUsEditHistoryView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Edit History'),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -89,7 +90,7 @@ class _ContactUsEditHistoryViewState extends State<ContactUsEditHistoryView> {
                     title: 'Type',
                     child: CustomSelectField(
                       onTap: () => Get.toNamed(
-                        AppRoutes.editContactUsSelect,
+                        AppRoutes.editQuotationSelect,
                         arguments: {
                           'title': 'Type',
                           'data': 'historyType',
