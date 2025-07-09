@@ -23,6 +23,7 @@ import 'package:cmlabs_connect/src/view/notification/layout_notification.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
+import 'controllers/filter/filter_controller.dart';
 import 'models/inbox/case_studies_model.dart';
 import 'models/inbox/property/client_pic_model.dart';
 import 'models/inbox/contact_us_model.dart';
@@ -168,15 +169,12 @@ class AppRoutes {
     GetPage(
       name: filterSelect,
       page: () {
-        final args = Get.arguments as Map<String, dynamic>;
-        final String filter = args['selectData'];
-        final dynamic controller = args['controller'];
-        final bool canSearch = args['canSearch'] ?? true;
-        final bool isMultipleChoice = args['isMultipleChoice'] ?? true;
+        final InboxFilterType filter = Get.arguments['filter'];
+        final bool canSearch = Get.arguments['canSearch'] ?? true;
+        final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? true;
 
         return SelectFilterView(
           filter: filter,
-          controller: controller,
           canSearch: canSearch,
           isMultipleChoice: isMultipleChoice,
         );

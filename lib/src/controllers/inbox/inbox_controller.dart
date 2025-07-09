@@ -166,17 +166,25 @@ abstract class InboxController extends GetxController {
   }
 
   Future<void> redirectToWhatsapp({
-    required String? phoneCode,
-    required String? phoneNumber,
+    String? phoneCode,
+    required String phoneNumber,
   }) async {
-    if (phoneCode == null || phoneNumber == null || phoneCode.isEmpty || phoneNumber.isEmpty) {
+    if (phoneNumber.isEmpty) {
       showErrorToast('Nomor telepon tidak tersedia');
       return;
     }
 
-    phoneCode.replaceAll('+', '');
+    if (phoneCode == null || phoneCode.isEmpty) {
+      await launchUrl(Uri.parse("https://wa.me/$phoneNumber"), mode: LaunchMode.externalApplication);
+      return;
+    }
+
     String modifiedNumber = phoneNumber;
-    if (!(phoneNumber.startsWith(phoneCode))) modifiedNumber = '$phoneCode$phoneNumber';
+    if (phoneNumber.startsWith('0')) {
+      modifiedNumber = '$phoneCode${phoneNumber.substring(1)}';
+    } else if (!(phoneNumber.startsWith(phoneCode) || phoneNumber.startsWith('+$phoneCode'))) {
+      modifiedNumber = '$phoneCode$phoneNumber';
+    }
 
     final url = Uri.parse("https://wa.me/$modifiedNumber");
 

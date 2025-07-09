@@ -183,7 +183,7 @@ class QuotationListTile extends StatelessWidget {
       title: quotation.data?.company ?? 'N/A',
       subtitle: quotation.data?.category?.isNotEmpty ?? false
           ? StringUtils.toCamelCase(quotation.data?.category?.map((cat) {
-              return cat == null || cat.isEmpty ? '-' : cat.replaceAll('SEO Article', 'SEO Writing');
+              return formatServiceName(cat);
             }).join(', '))
           : StringUtils.toCamelCase(quotation.section),
       name: quotation.data?.pic ?? '-',
@@ -197,7 +197,7 @@ class QuotationListTile extends StatelessWidget {
       ),
       onWhatsapp: () => quotationController.redirectToWhatsapp(
         phoneCode: quotation.data?.phoneCode,
-        phoneNumber: quotation.data?.phoneNumber,
+        phoneNumber: quotation.data?.phoneNumber ?? '',
       ),
       onDelete: () => handleDeleteQuotation(
         context,
@@ -228,7 +228,7 @@ class CaseStudiesListTile extends StatelessWidget {
       ),
       onWhatsapp: () => caseStudiesController.redirectToWhatsapp(
         phoneCode: caseStudies.data?.phoneCode,
-        phoneNumber: caseStudies.data?.phoneNumber,
+        phoneNumber: caseStudies.data?.phoneNumber ?? '',
       ),
       onDelete: () => handleDeleteQuotation(
         context,
@@ -260,7 +260,7 @@ class ContactUsListTile extends StatelessWidget {
       ),
       onWhatsapp: () => contactUsController.redirectToWhatsapp(
         phoneCode: contactUs.data?.phoneCode,
-        phoneNumber: contactUs.data?.phoneNumber,
+        phoneNumber: contactUs.data?.phoneNumber ?? '',
       ),
       onDelete: () => handleDeleteQuotation(
         context,
@@ -291,8 +291,7 @@ class FaqListTile extends StatelessWidget {
         arguments: {'faq': faq},
       ),
       onWhatsapp: () => faqController.redirectToWhatsapp(
-        phoneCode: faq.data?.phoneCode,
-        phoneNumber: faq.data?.phoneNumber,
+        phoneNumber: faq.whatsappNumber ?? '',
       ),
       onDelete: () => handleDeleteQuotation(
         context,

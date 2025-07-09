@@ -211,13 +211,15 @@ class FilterController extends GetxController {
     switch (filter) {
       case InboxFilterType.clientSource:
         return clientSourceList
-            .where((element) => element['label']?.toLowerCase().contains(search.value) ?? false)
+            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
             .toList();
       case InboxFilterType.pic:
-        return picList.where((element) => element['label']?.toLowerCase().contains(search.value) ?? false).toList();
+        return picList
+            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .toList();
       case InboxFilterType.category:
         return categoryList
-            .where((element) => element['label']?.toLowerCase().contains(search.value) ?? false)
+            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
             .toList();
       default:
         return [];
