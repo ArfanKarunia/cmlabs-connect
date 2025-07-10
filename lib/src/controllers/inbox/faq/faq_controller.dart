@@ -155,6 +155,16 @@ class FaqController extends InboxController {
     }
   }
 
+  @override
+  String constructFilteredUrl(String url) {
+    String finalUrl = '$url?start=${start.value}&limit=${limit.value}';
+    if (filterStatus.value != null) {
+      finalUrl += 'status=${Uri.encodeComponent(filterStatus.value!)}';
+    }
+
+    return finalUrl;
+  }
+
   List<Faq> get filteredFaq {
     List<Faq> result = List.from(faqList);
 
