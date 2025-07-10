@@ -374,8 +374,11 @@ class DetailQuotation {
       companyWebsite: json['data']['company_website'],
       phoneNumber: json['data']['phone_number'],
       phoneCode: json['data']['phone_code'],
-      typeInformation:
-          json['data']['typeInformation'] != null ? List<String>.from(json['data']['typeInformation']) : null,
+      typeInformation: json['data']['typeInformation'] != null
+          ? json['data']['typeInformation'] is List
+              ? List<String>.from(json['data']['typeInformation'])
+              : [json['data']['typeInformation']]
+          : null,
       clientSource: json['data']['client_source'],
       clientSourceDetail: json['data']['client_source_detail'] != null
           ? ClientSource.fromJson(json['data']['client_source_detail'])
