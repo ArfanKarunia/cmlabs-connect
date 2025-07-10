@@ -421,7 +421,10 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                 icon: Ionicons.add,
                                 onTap: () => Get.toNamed(
                                   AppRoutes.editContactUsContact,
-                                  arguments: {'clientIndex': index},
+                                  arguments: {
+                                    'clientIndex': index,
+                                    'currentContactIndex': controller.picClients[index].contacts.length,
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 10),

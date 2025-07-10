@@ -49,7 +49,10 @@ class _QuotationEditPicContactViewState extends State<QuotationEditPicContactVie
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         children: [
-          Text('Contact ${widget.clientIndex + 1}', style: bold),
+          Text(
+            'Contact ${widget.currentContact != null ? (widget.currentContactIndex ?? 0) + 1 : (widget.currentContactIndex ?? 0) + 1}',
+            style: bold,
+          ),
           const SizedBox(height: 7),
           InboxAddField(
             title: 'Type',

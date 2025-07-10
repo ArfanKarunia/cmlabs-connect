@@ -404,9 +404,13 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                               CustomSubmitButton(
                                 title: 'Add More Contact',
                                 icon: Ionicons.add,
-                                onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                  'clientIndex': index,
-                                }),
+                                onTap: () => Get.toNamed(
+                                  AppRoutes.editCaseStudiesContact,
+                                  arguments: {
+                                    'clientIndex': index,
+                                    'currentContactIndex': controller.picClients[index].contacts.length,
+                                  },
+                                ),
                               ),
                               const SizedBox(height: 10),
                               CustomSubmitButton(

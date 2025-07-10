@@ -408,7 +408,10 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                                 icon: Ionicons.add,
                                 onTap: () => Get.toNamed(
                                   AppRoutes.editQuotationContact,
-                                  arguments: {'clientIndex': index},
+                                  arguments: {
+                                    'clientIndex': index,
+                                    'currentContactIndex': controller.picClients[index].contacts.length,
+                                  },
                                 ),
                               ),
                               const SizedBox(height: 10),
