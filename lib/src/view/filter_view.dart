@@ -8,7 +8,9 @@ import '../constant/fontstyle.dart';
 import '../controllers/filter/filter_controller.dart';
 import '../utils/color.dart';
 // import '../widgets/custom_buttom.dart';
+import '../widgets/custom_select_field.dart';
 import '../widgets/custom_submit_button.dart';
+import '../widgets/inbox_add_field.dart';
 import '../widgets/tag_button.dart';
 
 class FilterView extends StatefulWidget {
@@ -19,26 +21,7 @@ class FilterView extends StatefulWidget {
 }
 
 class _FilterViewState extends State<FilterView> {
-  final FilterController filterController = Get.find<FilterController>();
-
-  DateTime? startDate;
-  DateTime? endDate;
-  final TextEditingController startDateController = TextEditingController();
-  final TextEditingController endDateController = TextEditingController();
-
-  // Error message variables
-  RxString startDateError = ''.obs;
-  RxString endDateError = ''.obs;
-
-  // Validation function
-  void validateDateFields() {
-    startDateError.value = '';
-    endDateError.value = '';
-
-    if (startDateController.text.isEmpty && endDateController.text.isNotEmpty) {
-      startDateError.value = 'Start date must be filled';
-    }
-  }
+  final FilterController controller = Get.find<FilterController>();
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +48,7 @@ class _FilterViewState extends State<FilterView> {
                 style: bold.copyWith(fontSize: 16),
               ),
               InkWell(
-                onTap: () => filterController.clearFilter(),
+                onTap: () => controller.clearFilter(),
                 child: Ink(
                   child: Text(
                     "Clear filter",
@@ -85,40 +68,37 @@ class _FilterViewState extends State<FilterView> {
 
           // Data Range
           const Text('Data range', style: bold),
-          const SizedBox(height: 10),
+          const SizedBox(height: 15),
           SizedBox(
             child: Row(
               children: [
                 Expanded(
-                  child: TextFormField(
-                    style: regular.copyWith(fontSize: 13),
-                    decoration: InputDecoration(
-                      focusColor: AppColors.primary,
-                      suffixIcon: const Icon(
-                        Ionicons.calendar_outline,
-                        color: AppColors.text_1,
-                      ),
-                      hintText: "Select date",
-                      border: const OutlineInputBorder(),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColors.primary, width: 2),
-                      ),
-                      errorText: startDateError.value.isNotEmpty ? startDateError.value : null,
-                    ),
-                    readOnly: true,
-                    controller: startDateController,
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: filterController.startDate.value ?? DateTime.now(),
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2100),
+                  child: Obx(
+                    () {
+                      return CustomSelectField(
+                        icon: Ionicons.calendar_outline,
+                        onTap: () async {
+                          DateTime? pickedDate = await showDatePicker(
+                            context: context,
+                            initialDate: controller.startDate.value ?? DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2100),
+                          );
+                          if (pickedDate != null) controller.startDate.value = pickedDate;
+                        },
+                        errorText: controller.startDateError.value,
+                        child: InboxTextOnField(
+                          title: 'Select date',
+                          selected: controller.startDate.value != null
+                              ? {
+                                  'value':
+                                      DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
+                                  'label':
+                                      DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
+                                }
+                              : null,
+                        ),
                       );
-                      if (pickedDate != null) {
-                        startDate = pickedDate;
-                        startDateController.text = DateFormat('dd MMM yyyy').format(pickedDate);
-                        validateDateFields();
-                      }
                     },
                   ),
                 ),
@@ -131,36 +111,27 @@ class _FilterViewState extends State<FilterView> {
                 Expanded(
                   child: Obx(
                     () {
-                      return TextFormField(
-                        style: regular.copyWith(fontSize: 13),
-                        decoration: InputDecoration(
-                          focusColor: AppColors.primary,
-                          suffixIcon: const Icon(
-                            Ionicons.calendar_outline,
-                            color: AppColors.text_1,
-                          ),
-                          hintText: "Select date",
-                          border: const OutlineInputBorder(),
-                          focusedBorder: const OutlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.primary, width: 2),
-                          ),
-                          errorText: endDateError.value.isNotEmpty ? endDateError.value : null,
-                        ),
-                        readOnly: true,
-                        controller: endDateController,
+                      return CustomSelectField(
+                        icon: Ionicons.calendar_outline,
                         onTap: () async {
                           DateTime? pickedDate = await showDatePicker(
                             context: context,
-                            initialDate: DateTime.now(),
+                            initialDate: controller.endDate.value ?? DateTime.now(),
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2100),
                           );
-                          if (pickedDate != null) {
-                            endDate = pickedDate;
-                            endDateController.text = DateFormat('dd MMM yyyy').format(pickedDate);
-                            validateDateFields();
-                          }
+                          if (pickedDate != null) controller.endDate.value = pickedDate;
                         },
+                        errorText: controller.endDateError.value,
+                        child: InboxTextOnField(
+                          title: 'Select date',
+                          selected: controller.endDate.value != null
+                              ? {
+                                  'value': DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
+                                  'label': DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
+                                }
+                              : null,
+                        ),
                       );
                     },
                   ),
@@ -196,7 +167,7 @@ class _FilterViewState extends State<FilterView> {
                   Expanded(
                     child: Obx(
                       () {
-                        List<Map<String, String>> categoryList = filterController.filterCategoryList;
+                        List<Map<String, String>> categoryList = controller.filterCategoryList;
                         return categoryList.isEmpty
                             ? Padding(
                                 padding: const EdgeInsets.all(7),
@@ -215,7 +186,7 @@ class _FilterViewState extends State<FilterView> {
                                     return FittedBox(
                                       child: TagButton(
                                         statusLabel: category['label'].toString(),
-                                        onPressed: () => filterController.deleteFilterCategory(category),
+                                        onPressed: () => controller.deleteFilterCategory(category),
                                       ),
                                     );
                                   },
@@ -257,7 +228,7 @@ class _FilterViewState extends State<FilterView> {
                   Expanded(
                     child: Obx(
                       () {
-                        Map<String, String>? pic = filterController.filterPic.value;
+                        Map<String, String>? pic = controller.filterPic.value;
                         return Padding(
                           padding: const EdgeInsets.all(7),
                           child: Text(
@@ -301,7 +272,7 @@ class _FilterViewState extends State<FilterView> {
                   Expanded(
                     child: Obx(
                       () {
-                        Map<String, String>? clientSource = filterController.filterClientSource.value;
+                        Map<String, String>? clientSource = controller.filterClientSource.value;
                         return Padding(
                           padding: const EdgeInsets.all(7),
                           child: Text(
@@ -321,17 +292,16 @@ class _FilterViewState extends State<FilterView> {
           const SizedBox(height: 20),
 
           // Button Search
-          Obx(() {
-            return filterController.isLoading.isTrue
-                ? const CustomLoadingButton()
-                : CustomSubmitButton(
-                    title: 'Search',
-                    onTap: () {
-                      filterController.setDateRange(startDate, endDate);
-                      filterController.applyFilter();
-                    },
-                  );
-          }),
+          Obx(
+            () {
+              return controller.isLoading.isTrue
+                  ? const CustomLoadingButton()
+                  : CustomSubmitButton(
+                      title: 'Search',
+                      onTap: () => controller.applyFilter(),
+                    );
+            },
+          ),
         ],
       ),
     );

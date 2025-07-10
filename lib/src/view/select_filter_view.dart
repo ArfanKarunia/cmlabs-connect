@@ -6,7 +6,6 @@ import 'package:ionicons/ionicons.dart';
 
 import '../constant/fontstyle.dart';
 import '../controllers/filter/filter_controller.dart';
-import '../utils/bottom_sheet.dart';
 import '../utils/color.dart';
 import '../utils/string_utils.dart';
 import '../widgets/custom_submit_button.dart';

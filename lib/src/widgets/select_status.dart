@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 
 import '../constant/const.dart';
 import '../constant/fontstyle.dart';
+import '../controllers/filter/filter_controller.dart';
 import '../controllers/inbox/inbox_controller.dart';
 import '../routes.dart';
 import '../utils/color.dart';
@@ -24,6 +25,8 @@ class SelectStatus extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final FilterController filterController = Get.find<FilterController>();
+
     return SizedBox(
       width: double.infinity,
       child: Row(
@@ -121,13 +124,26 @@ class SelectStatus extends StatelessWidget {
           Row(
             children: [
               if (enableFilter)
-                CustomButton(
-                  onPressed: () => Get.toNamed(AppRoutes.filter),
-                  backgroundColor: Colors.transparent,
-                  overlayColor: const Color.fromARGB(33, 31, 149, 245),
-                  child: const Icon(
-                    Ionicons.options_outline,
-                    color: AppColors.text_1,
+                Obx(
+                  () => GestureDetector(
+                    onTap: () => Get.toNamed(AppRoutes.filter),
+                    child: Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.all(2.5),
+                          child: Icon(
+                            Ionicons.options_outline,
+                            color: AppColors.text_1,
+                          ),
+                        ),
+                        if (filterController.isFilterApplied)
+                          const Align(
+                            alignment: Alignment.topRight,
+                            child: CircleAvatar(radius: 4, backgroundColor: AppColors.primary),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               // if (enableFilter && enableHistory) const SizedBox(width: 14),

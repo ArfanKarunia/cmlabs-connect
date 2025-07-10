@@ -6,6 +6,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../constant/fontstyle.dart';
+import '../controllers/filter/filter_controller.dart';
 import '../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../controllers/inbox/contact_us/contact_us_controller.dart';
 import '../controllers/inbox/faq/faq_controller.dart';
@@ -13,7 +14,6 @@ import '../controllers/inbox/inbox_controller.dart';
 import '../models/inbox/property/inbox_page_model.dart';
 import '../routes.dart';
 import '../utils/bottom_sheet.dart';
-import '../widgets/custom_buttom.dart';
 import '../widgets/inbox_action_button.dart';
 import '../widgets/select_status.dart';
 import 'inbox/case_studies/case_studies_inbox_view.dart';
@@ -42,6 +42,8 @@ class _InboxViewState extends State<InboxView> {
     Get.find<ContactUsController>(),
     Get.find<FaqController>(),
   ];
+
+  final FilterController filterController = Get.find<FilterController>();
 
   int index = 0;
   late List<InboxPage> pages;
@@ -164,7 +166,9 @@ class _InboxViewState extends State<InboxView> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+
+                SizedBox(height: index != 3 ? 16 : 20),
+
                 Row(
                   children: [
                     // Search Field Input
@@ -200,28 +204,45 @@ class _InboxViewState extends State<InboxView> {
                       ),
                     ),
 
-                    const SizedBox(width: 14),
+                    if (index != 3) ...[
+                      const SizedBox(width: 10),
 
-                    // Button Filter
-                    SizedBox(
-                      height: 40,
-                      width: 40,
-                      child: CustomButton(
-                        onPressed: () => Get.toNamed(AppRoutes.filter), // Icon as child
-                        backgroundColor: AppColors.white_1, // Button background color
-                        overlayColor: const Color.fromARGB(100, 149, 149, 149), // Ripple effect color
-                        borderRadius: BorderRadius.circular(5),
-                        side: const BorderSide(color: AppColors.text_3, width: 1),
-                        child: const Icon(
-                          Ionicons.options_outline,
-                          color: AppColors.text_3,
-                          size: 28,
+                      // Button Filter (do not show for FAQ)
+                      Obx(
+                        () => Stack(
+                          alignment: Alignment.topRight,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(5),
+                                onTap: () => Get.toNamed(AppRoutes.filter),
+                                child: Ink(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.white_1,
+                                    borderRadius: BorderRadius.circular(5),
+                                    border: Border.all(color: AppColors.text_3, width: 1),
+                                  ),
+                                  child: const Icon(
+                                    Ionicons.options_outline,
+                                    color: AppColors.text_3,
+                                    size: 28,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (filterController.isFilterApplied)
+                              const CircleAvatar(radius: 6, backgroundColor: AppColors.primary),
+                          ],
                         ),
                       ),
-                    ),
+                    ],
                   ],
                 ),
-                const SizedBox(height: 15),
+
+                SizedBox(height: index != 3 ? 14 : 18),
 
                 SelectStatus(controllers: controller),
 

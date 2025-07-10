@@ -41,7 +41,7 @@ final List<StatusLead> statusLead = [
   ),
 ];
 
-List<Map<String, String>> internationalPhoneCodes = [
+final List<Map<String, String>> internationalPhoneCodes = [
   {'label': 'AFG (+93)', 'value': '+93'}, // Afghanistan
   {'label': 'ALB (+355)', 'value': '+355'}, // Albania
   {'label': 'DZA (+213)', 'value': '+213'}, // Algeria
