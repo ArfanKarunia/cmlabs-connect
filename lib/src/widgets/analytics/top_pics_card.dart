@@ -22,7 +22,8 @@ class TopPICsCard extends StatefulWidget {
 class _TopPICsCardState extends State<TopPICsCard> {
   final controller = Get.find<TopPICsController>();
 
-  late List<bool> _isVisible;
+   String? _selectedPIC;
+
   List<Color> colors = [
     const Color(0xFF4596D7),
     const Color(0xFF5FB6FF),
@@ -36,76 +37,108 @@ class _TopPICsCardState extends State<TopPICsCard> {
     const Color(0xFFB5DDFF),
   ];
 
+   @override
+  void initState() {
+    super.initState();
+    _selectedPIC = null; // Inisialisasi: semua PIC ditampilkan
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(
       () {
-        _isVisible = List.filled(controller.topPICs.value?.topPics.length ?? 0, true);
+        List<TopPICsData> rawData = controller.topPICs.value?.topPics ?? [];
+        List<TopPICsData> filteredData = [];
 
-        return controller.topPICs.value == null || controller.topPICs.value?.topPics.isEmpty == true
-            ? EmptyChartCard(
-                title: 'Top PICs',
-                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
-                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
+        if (_selectedPIC == null) {
+          // Jika tidak ada PIC yang dipilih, tampilkan semua data asli
+          filteredData = rawData;
+        } else {
+          // Jika ada PIC yang dipilih, hanya tampilkan PIC tersebut
+          filteredData = rawData
+              .where((picData) => picData.picName == _selectedPIC)
+              .toList();
+        }
+
+        // Hitung total kuotasi dari data yang sudah difilter
+        int totalFilteredQuotations = filteredData.fold(0, (sum, item) => sum + item.quotationCount);
+
+        // Jika tidak ada data atau total kuotasi 0 setelah filter, tampilkan EmptyChartCard
+        if (totalFilteredQuotations == 0) {
+          return EmptyChartCard(
+            title: 'Top PICs',
+            subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+            onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
+          );
+        }
+
+        // Hitung ulang persentase untuk data yang difilter agar akurat
+        List<TopPICsData> chartDataWithPercentages = filteredData.map((picData) {
+          // Pastikan tidak ada pembagian dengan nol
+          double percentage = totalFilteredQuotations > 0 ? (picData.quotationCount / totalFilteredQuotations) * 100 : 0;
+          return TopPICsData(
+            picName: picData.picName,
+            quotationCount: picData.quotationCount,
+            newCount: picData.newCount,
+            followedUp: picData.followedUp,
+            accepted: picData.accepted,
+            rejected: picData.rejected,
+            onHold: picData.onHold,
+            percentage: percentage,
+          );
+        }).toList();
+
+
+        return ChartCard(
+          title: 'Top PICs',
+          subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+          chart: SfCircularChart(
+            tooltipBehavior: TooltipBehavior(enable: true),
+            series: [
+              DoughnutSeries<TopPICsData, String>(
+                dataSource: chartDataWithPercentages,
+                xValueMapper: (d, _) => formatPICName(d.picName),
+                yValueMapper: (d, _) => d.quotationCount,
+                pointColorMapper: (d, i) => colors[rawData.indexOf(rawData.firstWhere((element) => element.picName == d.picName))], // Pastikan warna konsisten
+                dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
+                dataLabelSettings: DataLabelSettings(
+                  isVisible: true,
+                  textStyle: bold.copyWith(fontSize: 16, color: Colors.white),
+                ),
+                explode: true,
               )
-            : ChartCard(
-                title: 'Top PICs',
-                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
-                chart: SfCircularChart(
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: [
-                    DoughnutSeries<TopPICsData, String>(
-                      dataSource: List.generate(
-                        controller.topPICs.value?.topPics.length ?? 0,
-                        (i) => _isVisible[i]
-                            ? controller.topPICs.value?.topPics[i] ??
-                                TopPICsData(
-                                  picName: '',
-                                  quotationCount: 0,
-                                  newCount: 0,
-                                  followedUp: 0,
-                                  accepted: 0,
-                                  rejected: 0,
-                                  onHold: 0,
-                                  percentage: 0,
-                                )
-                            : TopPICsData(
-                                picName: '',
-                                quotationCount: 0,
-                                newCount: 0,
-                                followedUp: 0,
-                                accepted: 0,
-                                rejected: 0,
-                                onHold: 0,
-                                percentage: 0,
-                              ),
-                      ),
-                      xValueMapper: (d, _) => formatPICName(d.picName),
-                      yValueMapper: (d, _) => d.quotationCount,
-                      pointColorMapper: (d, i) => colors[i],
-                      dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
-                      dataLabelSettings: DataLabelSettings(
-                        isVisible: true,
-                        textStyle: bold.copyWith(fontSize: 16, color: AppColors.white),
-                      ),
-                      explode: true,
-                    )
-                  ],
-                ),
-                chartDescriptions: List.generate(
-                  controller.topPICs.value?.topPics.length ?? 0,
-                  (index) => ChartDataDescription(
-                    label: formatPICName(controller.topPICs.value?.topPics[index].picName ?? ''),
-                    color: colors[index],
-                    isSelected: _isVisible[index],
-                    onTap: () {
-                      setState(() => _isVisible[index] = !_isVisible[index]);
-                    },
-                  ),
-                ),
-                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
+            ],
+          ),
+          chartDescriptions: List.generate(
+            rawData.length, // Tetap iterasi semua rawData untuk legend
+            (index) {
+              String picName = rawData[index].picName;
+              return ChartDataDescription(
+                label: formatPICName(picName),
+                color: colors[index],
+                // isSelected berarti item ini sedang dipilih secara eksklusif,
+                // atau jika tidak ada yang dipilih (_selectedPIC == null)
+                // maka semua item dianggap terpilih (untuk highlight)
+                isSelected: _selectedPIC == null || _selectedPIC == picName,
+                onTap: () {
+                  setState(() {
+                    if (_selectedPIC == picName) {
+                      _selectedPIC = null; // Jika yang diklik sama, reset (tampilkan semua)
+                    } else {
+                      _selectedPIC = picName; // Jika yang diklik berbeda, pilih item ini saja
+                    }
+                  });
+                },
               );
+            },
+          ),
+          onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
+        );
       },
     );
+  }
+
+  String formatPICName(String picName) {
+    return StringUtils.toTitleCase(picName.replaceAll('_', ' '));
   }
 }

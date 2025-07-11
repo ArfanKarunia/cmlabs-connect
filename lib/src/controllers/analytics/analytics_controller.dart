@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import '../../constant/config.dart';
 import '../user/user_controller.dart';
+import '../filter/filter_controller.dart';
 
 enum SortOption {
   newestDate,
@@ -44,11 +45,94 @@ class AnalyticsController extends GetxController {
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
   final UserController userController = Get.find<UserController>();
+  final FilterController filterController = Get.find<FilterController>();
+
+  final RxList<Map<String, String>> _categoriesOptions = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'}
+  ].obs;
+  final RxList<Map<String, String>> _picOptions = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'}
+  ].obs;
+  final RxList<Map<String, String>> _clientSourceOptions = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'}
+  ].obs;
+  final RxList<Map<String, String>> _utmOptions = <Map<String, String>>[ // Inisialisasi dengan dummy
+    {'label': 'All', 'value': 'all'},
+    {'label': 'Google & GDN', 'value': 'Google%26GDN'},
+    {'label': 'Google & CPC', 'value': 'Google%26CPC'},
+    {'label': 'Meta & GDN', 'value': 'Meta%26GDN'},
+    {'label': 'Meta & Carousel', 'value': 'Meta%26Carousel'},
+  ].obs;
+  final RxList<Map<String, String>> _statusOptions = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'},
+    {'label': 'New', 'value': '0'},
+    {'label': 'Followed Up', 'value': '1'},
+    {'label': 'Accepted', 'value': '2'},
+    {'label': 'Rejected', 'value': '3'},
+  ].obs;
 
   @override
   void onReady() {
     super.onReady();
+    fetchFilterOptions();
     fetchData(dateType: selectedDateType.value);
+  }
+
+    Future<void> fetchFilterOptions() async {
+    isFilterLoading(true);
+    try {
+      await filterController.fetchCategoryFilter();
+      if (filterController.categoryList.isNotEmpty) {
+        _categoriesOptions.assignAll(filterController.categoryList);
+      } else {
+        _categoriesOptions.assignAll(dummyCategoriesOptions);
+      }
+    } catch (e) {
+      debugPrint('Error fetching category filter: $e');
+      _categoriesOptions.assignAll(dummyCategoriesOptions);
+    }
+
+    try {
+      await filterController.fetchPicFilter();
+      if (filterController.picList.isNotEmpty) {
+        _picOptions.assignAll(filterController.picList);
+      } else {
+        _picOptions.assignAll(dummyPicOptions);
+      }
+    } catch (e) {
+      debugPrint('Error fetching PIC filter: $e');
+      _picOptions.assignAll(dummyPicOptions);
+    }
+
+    try {
+      await filterController.fetchClientSourceFilter();
+      if (filterController.clientSourceList.isNotEmpty) {
+        _clientSourceOptions.assignAll(filterController.clientSourceList);
+      } else {
+        _clientSourceOptions.assignAll(dummyClientSourceOptions);
+      }
+    } catch (e) {
+      debugPrint('Error fetching client source filter: $e');
+      _clientSourceOptions.assignAll(dummyClientSourceOptions);
+    }
+
+    // Tambahkan fetch untuk UTM
+    try {
+      await filterController.fetchUtmFilter();
+      if (filterController.utmList.isNotEmpty) {
+        _utmOptions.assignAll(filterController.utmList);
+      } else {
+        _utmOptions.assignAll(dummyUtmOptions); // Fallback to dummy data
+      }
+    } catch (e) {
+      debugPrint('Error fetching UTM filter: $e');
+      _utmOptions.assignAll(dummyUtmOptions); // Fallback to dummy data
+    }
+
+    // Status options are not fetched in FilterController, so keep it static or create a fetch for it.
+    _statusOptions.assignAll(dummyStatusOptions);
+
+    isFilterLoading(false);
   }
 
   Future<void> fetchData({DateType? dateType}) async {}
@@ -213,15 +297,15 @@ class AnalyticsController extends GetxController {
   }) {
     switch (type) {
       case AnalyticsFilterType.category:
-        return categoriesOptions;
+        return _categoriesOptions;
       case AnalyticsFilterType.pic:
-        return picOptions;
+        return _picOptions;
       case AnalyticsFilterType.clientSource:
-        return clientSourceOptions;
+        return _clientSourceOptions;
       case AnalyticsFilterType.utm:
-        return utmOptions;
+        return _utmOptions;
       case AnalyticsFilterType.status:
-        return statusOptions;
+        return _statusOptions;
     }
   }
 
@@ -305,7 +389,7 @@ class AnalyticsController extends GetxController {
 }
 
 // Dummy Data
-final List<Map<String, String>> categoriesOptions = [
+final List<Map<String, String>> dummyCategoriesOptions = [
   {'label': 'All', 'value': 'all'},
   {'label': 'SEO Services', 'value': 'seo-services'},
   {'label': 'SEO Content Writing', 'value': 'seo-content-writing'},
@@ -313,7 +397,7 @@ final List<Map<String, String>> categoriesOptions = [
   {'label': 'Social Media Management', 'value': 'social-media-management'},
   {'label': 'Digital Marketing', 'value': 'digital-marketing'},
 ];
-final List<Map<String, String>> picOptions = [
+final List<Map<String, String>> dummyPicOptions = [
   {'label': 'All', 'value': 'all'},
   {'label': 'Vanessa', 'value': 'vanessa'},
   {'label': 'Larasati', 'value': 'larasati'},
@@ -323,7 +407,7 @@ final List<Map<String, String>> picOptions = [
   {'label': 'Naufal', 'value': 'naufal'},
   {'label': 'Pasha', 'value': 'pasha'},
 ];
-final List<Map<String, String>> clientSourceOptions = [
+final List<Map<String, String>> dummyClientSourceOptions = [
   {'label': 'All', 'value': 'all'},
   {'label': 'Direct Email', 'value': 'direct_email'},
   {'label': 'Web WhatsApp', 'value': 'web_whatsapp'},
@@ -331,14 +415,14 @@ final List<Map<String, String>> clientSourceOptions = [
   {'label': 'Direct LinkedIn', 'value': 'direct_linkedin'},
   {'label': 'Direct Partnership', 'value': 'direct_partnership'},
 ];
-final List<Map<String, String>> utmOptions = [
+final List<Map<String, String>> dummyUtmOptions = [
   {'label': 'All', 'value': 'all'},
   {'label': 'Google & GDN', 'value': 'Google%26GDN'},
   {'label': 'Google & CPC', 'value': 'Google%26CPC'},
   {'label': 'Meta & GDN', 'value': 'Meta%26GDN'},
   {'label': 'Meta & Carousel', 'value': 'Meta%26Carousel'},
 ];
-final List<Map<String, String>> statusOptions = [
+final List<Map<String, String>> dummyStatusOptions = [
   {'label': 'All', 'value': 'all'},
   {'label': 'New', 'value': '0'},
   {'label': 'Followed Up', 'value': '1'},

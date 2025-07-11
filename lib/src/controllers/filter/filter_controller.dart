@@ -15,12 +15,14 @@ class FilterController extends GetxController {
   RxList<Map<String, String>> categoryList = <Map<String, String>>[].obs;
   RxList<Map<String, String>> picList = <Map<String, String>>[].obs;
   RxList<Map<String, String>> clientSourceList = <Map<String, String>>[].obs;
+  RxList<Map<String, String>> utmList = <Map<String, String>>[].obs;
 
   // Choosed Filter List
   Rx<String?> search = Rx<String?>(null);
   RxList<Map<String, String>> filterCategoryList = <Map<String, String>>[].obs;
   Rx<Map<String, String>?> filterPic = Rx<Map<String, String>?>(null);
   Rx<Map<String, String>?> filterClientSource = Rx<Map<String, String>?>(null);
+  Rx<Map<String, String>?> filterUtm = Rx<Map<String, String>?>(null);
 
   // Date Filter
   Rx<DateTime?> startDate = Rx<DateTime?>(null);
@@ -45,6 +47,7 @@ class FilterController extends GetxController {
     fetchClientSourceFilter();
     fetchPicFilter();
     fetchCategoryFilter();
+    fetchUtmFilter();
   }
 
   Future<void> fetchFilter(String filter) async {
@@ -58,6 +61,9 @@ class FilterController extends GetxController {
           break;
         case 'category':
           await fetchCategoryFilter();
+          break;
+        case 'utm':
+          await fetchUtmFilter();
           break;
         default:
           break;
@@ -133,6 +139,33 @@ class FilterController extends GetxController {
     }
   }
 
+    Future<void> fetchUtmFilter() async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/filter/utm', // Sesuaikan dengan endpoint UTM Anda
+        options: Options(
+          headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'].map<Map<String, String>>((utm) {
+          return {
+            'value': utm['value']?.toString() ?? '', // Sesuaikan field jika berbeda
+            'label': utm['label']?.toString() ?? '', // Sesuaikan field jika berbeda
+          };
+        }).toList();
+
+        utmList.clear();
+        utmList.add({'value': 'all', 'label': 'All'});
+        utmList.addAll(data);
+      }
+    } catch (e) {
+      debugPrint('Error fetching UTM filter: $e');
+      // Anda bisa menambahkan logic fallback ke data statis di sini jika diperlukan
+    }
+  }
+
   void addFilterClientSource(Map<String, String> clientSource) {
     if (clientSource['value'] == "all") {
       clearFilterClientSource();
@@ -178,6 +211,18 @@ class FilterController extends GetxController {
 
   void clearFilterCategory() {
     filterCategoryList.clear();
+  }
+
+  void addFilterUtm(Map<String, String> utm) {
+    if (utm['value'] == "all") {
+      clearFilterUtm();
+    } else {
+      filterUtm.value = utm;
+    }
+  }
+
+    void clearFilterUtm() {
+    filterUtm.value = null;
   }
 
   void setSearch(String? query) {
@@ -317,6 +362,17 @@ class FilterController extends GetxController {
     }
   }
 
+void filterByUtm() {
+    if (filterUtm.value != null) {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterUtm(); // Asumsi ada clearFilterUtm di InboxController
+        controller.addFilterUtm(filterUtm.value!['value'].toString()); // Asumsi ada addFilterUtm di InboxController
+      }
+      dashboardController.clearFilterUtm(); // Asumsi ada clearFilterUtm di DashboardController
+      dashboardController.addFilterUtm(filterUtm.value!['value'].toString()); // Asumsi ada addFilterUtm di DashboardController
+    }
+  }
+
   void setDateRange(DateTime? start, DateTime? end) {
     if (start != null && end == null) {
       end = DateTime.now();
@@ -363,6 +419,10 @@ class FilterController extends GetxController {
       // Filter category
     } else if (filter.toLowerCase() == 'category') {
       filterByCategory();
+    
+      // Filter UTM
+    } else if (filter.toLowerCase() == 'utm') { 
+      filterByUtm();
     }
 
     dashboardController.fetchDashboardData();
@@ -378,6 +438,7 @@ class FilterController extends GetxController {
     filterByClientSource();
     filterByPic();
     filterByCategory();
+    filterByUtm();
     filterByDateRange();
     for (InboxController controller in inboxController) {
       await controller.fetchList();

@@ -15,6 +15,7 @@ class DashboardController extends GetxController {
   RxList<String> filterCategory = <String>[].obs;
   Rx<String?> filterClientSource = Rx<String?>(null);
   Rx<String?> filterPic = Rx<String?>(null);
+  Rx<String?> filterUtm = Rx<String?>(null);
   Rx<DateTime?> filterStartDate = Rx<DateTime?>(null);
   Rx<DateTime?> filterEndDate = Rx<DateTime?>(null);
 
@@ -89,6 +90,14 @@ class DashboardController extends GetxController {
     filterPic.value = null;
   }
 
+  void addFilterUtm(String utm) {
+    filterUtm.value = utm;
+  }
+
+  void clearFilterUtm() {
+    filterUtm.value = null;
+  }
+
   void addFilterDate({DateTime? start, DateTime? end}) {
     filterStartDate.value = start ?? filterStartDate.value;
     filterEndDate.value = end ?? filterEndDate.value;
@@ -103,6 +112,7 @@ class DashboardController extends GetxController {
     clearFilterCategory();
     clearFilterClientSource();
     clearFilterPic();
+    clearFilterUtm();
     clearFilterDate();
   }
 
@@ -129,6 +139,9 @@ class DashboardController extends GetxController {
     }
     if (filterClientSource.value != null) {
       queryParams.add('clientSource=${Uri.encodeComponent(StringUtils.toCamelCase(filterClientSource.value))}');
+    }
+    if (filterUtm.value != null) {
+      queryParams.add('utm[]=${Uri.encodeComponent(filterUtm.value!)}'); // Assuming UTM is an array parameter
     }
 
     // Handle category filter with array format

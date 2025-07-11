@@ -21,7 +21,8 @@ class TopServicesCard extends StatefulWidget {
 class _TopServicesCardState extends State<TopServicesCard> {
   final controller = Get.find<TopServicesController>();
 
-  late List<bool> _isVisible;
+String? _selectedService;
+
   List<Color> colors = [
     const Color(0xFFFFB300), // Deep amber yellow
     const Color(0xFFFFA000), // Dark amber
@@ -35,66 +36,102 @@ class _TopServicesCardState extends State<TopServicesCard> {
     const Color(0xFFFFB74D), // Light amber
   ];
 
+   @override
+  void initState() {
+    super.initState();
+    _selectedService = null; // Inisialisasi: semua service ditampilkan
+  }
+
   @override
   Widget build(BuildContext context) {
     return Obx(
       () {
-        _isVisible = List.filled(controller.topServices.value?.topServices.length ?? 0, true);
+        List<TopServicesData> rawData = controller.topServices.value?.topServices ?? [];
+        List<TopServicesData> filteredData = [];
 
-        return controller.topServices.value == null || controller.topServices.value?.topServices.isEmpty == true
-            ? EmptyChartCard(
-                title: 'Top Services',
-                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
-                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+        if (_selectedService == null) {
+          // Jika tidak ada service yang dipilih, tampilkan semua data asli
+          filteredData = rawData;
+        } else {
+          // Jika ada service yang dipilih, hanya tampilkan service tersebut
+          filteredData = rawData
+              .where((serviceData) => serviceData.serviceName == _selectedService)
+              .toList();
+        }
+
+        // Hitung total kuotasi dari data yang sudah difilter
+        int totalFilteredQuotations = filteredData.fold(0, (sum, item) => sum + item.quotationCount);
+
+        // Jika tidak ada data atau total kuotasi 0 setelah filter, tampilkan EmptyChartCard
+        if (totalFilteredQuotations == 0) {
+          return EmptyChartCard(
+            title: 'Top Services',
+            subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+            onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+          );
+        }
+
+        // Hitung ulang persentase untuk data yang difilter agar akurat
+        List<TopServicesData> chartDataWithPercentages = filteredData.map((serviceData) {
+          // Pastikan tidak ada pembagian dengan nol
+          double percentage = totalFilteredQuotations > 0 ? (serviceData.quotationCount / totalFilteredQuotations) * 100 : 0;
+          return TopServicesData(
+            serviceName: serviceData.serviceName,
+            quotationCount: serviceData.quotationCount,
+            percentage: percentage,
+          );
+        }).toList();
+
+        return ChartCard(
+          title: 'Top Services',
+          subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+          chart: SfCircularChart(
+            tooltipBehavior: TooltipBehavior(enable: true),
+            series: [
+              DoughnutSeries<TopServicesData, String>(
+                dataSource: chartDataWithPercentages,
+                xValueMapper: (d, _) => formatServiceName(d.serviceName),
+                yValueMapper: (d, _) => d.quotationCount,
+                pointColorMapper: (d, i) => colors[rawData.indexOf(rawData.firstWhere((element) => element.serviceName == d.serviceName))], // Pastikan warna konsisten
+                dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
+                dataLabelSettings: DataLabelSettings(
+                  isVisible: true,
+                  textStyle: bold.copyWith(fontSize: 16, color: Colors.white),
+                ),
+                explode: true,
               )
-            : ChartCard(
-                title: 'Top Services',
-                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
-                chart: SfCircularChart(
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: [
-                    DoughnutSeries<TopServicesData, String>(
-                      dataSource: List.generate(
-                        controller.topServices.value?.topServices.length ?? 0,
-                        (i) => _isVisible[i]
-                            ? controller.topServices.value?.topServices[i] ??
-                                TopServicesData(
-                                  serviceName: '',
-                                  quotationCount: 0,
-                                  percentage: 0,
-                                )
-                            : TopServicesData(
-                                serviceName: '',
-                                quotationCount: 0,
-                                percentage: 0,
-                              ),
-                      ),
-                      xValueMapper: (d, _) => formatServiceName(d.serviceName),
-                      yValueMapper: (d, _) => d.quotationCount,
-                      pointColorMapper: (d, i) => colors[i],
-                      dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
-                      dataLabelSettings: DataLabelSettings(
-                        isVisible: true,
-                        textStyle: bold.copyWith(fontSize: 16, color: Colors.white),
-                      ),
-                      explode: true,
-                    )
-                  ],
-                ),
-                chartDescriptions: List.generate(
-                  controller.topServices.value?.topServices.length ?? 0,
-                  (index) => ChartDataDescription(
-                    label: formatServiceName(controller.topServices.value?.topServices[index].serviceName ?? ''),
-                    color: colors[index],
-                    isSelected: _isVisible[index],
-                    onTap: () {
-                      setState(() => _isVisible[index] = !_isVisible[index]);
-                    },
-                  ),
-                ),
-                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+            ],
+          ),
+          chartDescriptions: List.generate(
+            rawData.length, // Tetap iterasi semua rawData untuk legend
+            (index) {
+              String serviceName = rawData[index].serviceName;
+              return ChartDataDescription(
+                label: formatServiceName(serviceName),
+                color: colors[index],
+                // isSelected berarti item ini sedang dipilih secara eksklusif,
+                // atau jika tidak ada yang dipilih (_selectedService == null)
+                // maka semua item dianggap terpilih (untuk highlight)
+                isSelected: _selectedService == null || _selectedService == serviceName,
+                onTap: () {
+                  setState(() {
+                    if (_selectedService == serviceName) {
+                      _selectedService = null; // Jika yang diklik sama, reset (tampilkan semua)
+                    } else {
+                      _selectedService = serviceName; // Jika yang diklik berbeda, pilih item ini saja
+                    }
+                  });
+                },
               );
+            },
+          ),
+          onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+        );
       },
     );
+  }
+
+  String formatServiceName(String serviceName) {
+    return StringUtils.toTitleCase(serviceName.replaceAll('_', ' '));
   }
 }
