@@ -258,6 +258,11 @@ class FilterController extends GetxController {
       }
       dashboardController.clearFilterClientSource();
       dashboardController.addFilterClientSource(filterClientSource.value!['value'].toString());
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterClientSource();
+      }
+      dashboardController.clearFilterClientSource();
     }
   }
 
@@ -269,19 +274,31 @@ class FilterController extends GetxController {
       }
       dashboardController.clearFilterPic();
       dashboardController.addFilterPic(filterPic.value!['value'].toString());
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterPic();
+      }
+      dashboardController.clearFilterPic();
     }
   }
 
   void filterByCategory() {
-    for (InboxController controller in inboxController) {
-      controller.clearFilterCategory();
-      for (Map<String, String> category in filterCategoryList) {
-        controller.addFilterCategory(category['value'].toString());
+    if (filterCategoryList.isNotEmpty) {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterCategory();
+        for (Map<String, String> category in filterCategoryList) {
+          controller.addFilterCategory(category['value'].toString());
+        }
       }
-    }
-    dashboardController.clearFilterCategory();
-    for (Map<String, String> category in filterCategoryList) {
-      dashboardController.addFilterCategory(category['value'].toString());
+      dashboardController.clearFilterCategory();
+      for (Map<String, String> category in filterCategoryList) {
+        dashboardController.addFilterCategory(category['value'].toString());
+      }
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterCategory();
+      }
+      dashboardController.clearFilterCategory();
     }
   }
 
