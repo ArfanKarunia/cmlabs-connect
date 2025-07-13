@@ -47,10 +47,10 @@ class EditFormController extends GetxController {
   Rx<TextEditingController> urlTrackingPassword = TextEditingController().obs;
   Rx<DateTime?> urlTrackingExpired = Rx<DateTime?>(null);
   RxList<Map<String, String>> validityList = <Map<String, String>>[
-    {'value': '1', 'label': '1 month'},
-    {'value': '2', 'label': '2 months'},
-    {'value': '3', 'label': '3 months'},
-    {'value': '6', 'label': '6 months'},
+    {'value': '1 month', 'label': '1 month'},
+    {'value': '2 months', 'label': '2 months'},
+    {'value': '3 months', 'label': '3 months'},
+    {'value': '6 months', 'label': '6 months'},
   ].obs;
   Rx<Map<String, String>?> selectedValidity = Rx<Map<String, String>?>(null);
 
@@ -484,7 +484,7 @@ class EditFormController extends GetxController {
   }
 
   Future<void> switchUrlTracking(int id, bool value) async {
-    if (urlTrackingUrl.value == null) {
+    if (urlTrackingUrl.value == null && value == true) {
       isUrlTrackingLoading(true);
       urlTrackingUrl.value = await fetchUrlTracking(id);
       isUrlTrackingLoading(false);

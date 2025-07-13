@@ -104,10 +104,11 @@ class EditCaseStudiesController extends EditFormController {
           },
         ),
       );
+      print(response.data);
 
       isLoading(false);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.data != null) {
         showSuccessToast('Berhasil mengubah Case Study!');
         Get.back();
       }

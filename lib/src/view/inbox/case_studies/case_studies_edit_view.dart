@@ -659,14 +659,16 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
               height: 32,
               child: FittedBox(
                 fit: BoxFit.fill,
-                child: Switch(
-                  value: controller.urlTrackingEnabled.value,
-                  onChanged: (value) => setState(() => controller.urlTrackingEnabled(value)),
-                  activeTrackColor: AppColors.primary,
-                  inactiveTrackColor: const Color(0xFFD8DAE5),
-                  trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
-                  inactiveThumbColor: AppColors.white,
-                ),
+                child: controller.isUrlTrackingLoading.value
+                    ? const CustomLoading()
+                    : Switch(
+                        value: controller.urlTrackingEnabled.value,
+                        onChanged: (value) => controller.switchUrlTracking(widget.caseStudies.id ?? 0, value),
+                        activeTrackColor: AppColors.primary,
+                        inactiveTrackColor: const Color(0xFFD8DAE5),
+                        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                        inactiveThumbColor: AppColors.white,
+                      ),
               ),
             ),
           ],
@@ -678,13 +680,21 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
           child: CustomSelectField(
             isEnabled: controller.selectedPic.value != null && controller.urlTrackingEnabled.value,
             icon: null,
-            child: InboxTextOnField(title: 'URL', selected: {'label': '${controller.urlTrackingUrl.value}'}),
+            child: InboxTextOnField(
+              title: 'URL',
+              selected: controller.urlTrackingUrl.value != null
+                  ? {
+                      'label': '${controller.urlTrackingUrl.value}',
+                      'value': '${controller.urlTrackingUrl.value}',
+                    }
+                  : null,
+            ),
           ),
         ),
         const SizedBox(height: 11),
         CustomSubmitButton(
           title: 'Copy URL',
-          isDisabled: !controller.urlTrackingEnabled.value,
+          isDisabled: controller.urlTrackingEnabled.isFalse || controller.urlTrackingUrl.value == null,
           onTap: () async {
             if (controller.urlTrackingUrl.value != null) {
               await Clipboard.setData(ClipboardData(text: controller.urlTrackingUrl.value ?? ''));

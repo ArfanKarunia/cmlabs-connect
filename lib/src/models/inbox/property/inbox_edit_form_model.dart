@@ -44,7 +44,9 @@ class InboxEditForm {
       remarks: json['remarks'],
       additionalNotes: json['additional_notes'],
       projectActivity: projectActivity,
-      urlTracking: json['url_tracking'] == null ? null : UrlTracking.fromJson(json['url_tracking']),
+      urlTracking: json['url_tracking'] == null || json['url_tracking']['URL'] == null
+          ? null
+          : UrlTracking.fromJson(json['url_tracking']),
       projectHistory: projectHistory,
     );
   }
