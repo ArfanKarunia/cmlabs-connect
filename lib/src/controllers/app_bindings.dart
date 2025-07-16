@@ -6,6 +6,7 @@ import 'authentication/authentication_bindings.dart';
 import 'dashboard/dashboard_bindings.dart';
 import 'filter/filter_bindings.dart';
 import 'inbox/inbox_bindings.dart';
+import 'notification/notification_bindings.dart';
 import 'user/user_bindings.dart';
 
 class AppBindings extends Bindings {
@@ -23,5 +24,6 @@ class AppBindings extends Bindings {
     DashboardBindings().dependencies();
     FilterBindings().dependencies();
     InboxBindings().dependencies();
+    NotificationBindings().dependencies();
   }
 }

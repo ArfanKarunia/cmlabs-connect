@@ -1,78 +1,101 @@
+import 'dart:async';
+
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/notification_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+
+enum NotificationFilterType { timeRange }
 
 class NotificationController extends GetxController {
-  var selectedIndex = 0.obs;
-  var search = Rx<String?>(null);
-
-  var start = 0.obs;
-  var limit = 10.obs;
-
-  var startDate = Rx<DateTime?>(null);
-  var endDate = Rx<DateTime?>(null);
-  var selectTimeRange = Rx<String?>(null);
-
-  // Configuration Notification
-  final quiteDay = Rx<List<Map<String, String>?>>([]);
-
-  final pushNotifNewQuotation = Rx<bool>(false);
-  final pushNotifFollowedUpQuotation = Rx<bool>(false);
-
-  final emailNotifNewQuotation = Rx<bool>(false);
-  final emailNotifFollowedUpQuotation = Rx<bool>(false);
-
   final UserController userController = Get.find<UserController>();
-
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
 
-  final todayNotification = Rx<List<NotificationModel?>>([]);
-  final weekNotification = Rx<List<NotificationModel?>>([]);
-  final monthNotification = Rx<List<NotificationModel?>>([]);
+  Rx<int> selectedIndex = 0.obs;
+  Rx<String?> search = Rx<String?>(null);
 
-  final unreadAll = Rx<int>(0);
-  final unreadNew = Rx<int>(0);
-  final unreadReminder = Rx<int>(0);
+  Rx<int> start = 0.obs;
+  Rx<int> limit = 10.obs;
+
+  Rx<DateTime?> startDate = Rx<DateTime?>(null);
+  Rx<DateTime?> endDate = Rx<DateTime?>(null);
+  Rx<Map<String, String>?> selectedTimeRange = Rx<Map<String, String>?>(null);
+  String get startDateText => DateFormat('dd MMM yyyy').format(startDate.value ?? DateTime.now());
+  String get endDateText => DateFormat('dd MMM yyyy').format(endDate.value ?? DateTime.now());
+
+  RxList<NotificationModel?> todayNotification = <NotificationModel?>[].obs;
+  RxList<NotificationModel?> weekNotification = <NotificationModel?>[].obs;
+  RxList<NotificationModel?> monthNotification = <NotificationModel?>[].obs;
+
+  Rx<int> unreadAll = 0.obs;
+  Rx<int> unreadNew = 0.obs;
+  Rx<int> unreadReminder = 0.obs;
+
+  // Configuration
+  RxList<Map<String, String>?> quiteDay = <Map<String, String>?>[].obs;
+  Rx<bool> pushNotifNewQuotation = false.obs;
+  Rx<bool> pushNotifFollowedUpQuotation = false.obs;
+  Rx<bool> emailNotifNewQuotation = false.obs;
+  Rx<bool> emailNotifFollowedUpQuotation = false.obs;
+
+  @override
+  void onReady() {
+    super.onReady();
+    fetchNotification();
+    Timer.periodic(const Duration(seconds: 10), (timer) {
+      fetchNotification();
+    });
+  }
 
   void updateIndex(int index) {
     selectedIndex.value = index;
   }
 
-  void setTimeRange(String? range) {
-    selectTimeRange.value = range;
+  void setTimeRange(Map<String, String>? range) {
+    selectedTimeRange.value = range;
     DateTime now = DateTime.now();
 
-    if (range == "Last 7 days") {
-      startDate.value = now.subtract(const Duration(days: 7));
-      endDate.value = now;
-    } else if (range == "Last 1 month") {
-      startDate.value = now.subtract(const Duration(days: 30));
-      endDate.value = now;
-    } else if (range == "Last 3 months") {
-      startDate.value = now.subtract(const Duration(days: 90));
-      endDate.value = now;
-    } else if (range == "Last 6 months") {
-      startDate.value = now.subtract(const Duration(days: 180));
-      endDate.value = now;
-    } else if (range == "Last 1 year") {
-      startDate.value = now.subtract(const Duration(days: 365));
-      endDate.value = now;
-    } else {
-      startDate.value = null;
-      endDate.value = null;
+    switch (range?['value']) {
+      case "Last 7 days":
+        startDate.value = now.subtract(const Duration(days: 7));
+        endDate.value = now;
+        break;
+      case "Last 1 month":
+        startDate.value = now.subtract(const Duration(days: 30));
+        endDate.value = now;
+        break;
+      case "Last 3 months":
+        startDate.value = now.subtract(const Duration(days: 90));
+        endDate.value = now;
+        break;
+      case "Last 6 months":
+        startDate.value = now.subtract(const Duration(days: 180));
+        endDate.value = now;
+        break;
+      case "Last 1 year":
+        startDate.value = now.subtract(const Duration(days: 365));
+        endDate.value = now;
+        break;
+      default:
+        startDate.value = null;
+        endDate.value = null;
+        break;
     }
   }
 
-  Future<void> fetchNotification({bool isLoadMore = false, bool refreshData = false}) async {
-    print("Fetch Notification");
+  Future<void> fetchNotification({
+    bool isLoadMore = false,
+    bool refreshData = false,
+  }) async {
     try {
       String? accessToken = userController.accesToken.value;
 
-      var endDate = DateTime.now();
-      var startDate = endDate.subtract(const Duration(days: 30));
+      DateTime endDate = DateTime.now();
+      DateTime startDate = endDate.subtract(const Duration(days: 30));
 
       String startDateString =
           "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
@@ -87,7 +110,7 @@ class NotificationController extends GetxController {
 
       if (refreshData) {
         start.value = 0;
-        limit.value = todayNotification.value.length + weekNotification.value.length + monthNotification.value.length;
+        limit.value = todayNotification.length + weekNotification.length + monthNotification.length;
       }
 
       final response = await dio.get(
@@ -104,25 +127,20 @@ class NotificationController extends GetxController {
           }).toList();
 
           if (!isLoadMore) {
-            // Clear previous notifications
-            todayNotification.value.clear();
-            weekNotification.value.clear();
-            monthNotification.value.clear();
+            todayNotification.clear();
+            weekNotification.clear();
+            monthNotification.clear();
           }
 
           DateTime now = DateTime.now();
 
-          // Categorize notifications
-          for (var notification in allNotification) {
+          for (final notification in allNotification) {
             if (notification.createdAt.isAfter(now.subtract(const Duration(days: 1)))) {
-              // Notification  today
-              todayNotification.value.add(notification);
+              todayNotification.add(notification);
             } else if (notification.createdAt.isAfter(now.subtract(const Duration(days: 7)))) {
-              // Notification last week
-              weekNotification.value.add(notification);
+              weekNotification.add(notification);
             } else if (notification.createdAt.isAfter(now.subtract(const Duration(days: 30)))) {
-              // Notification last month
-              monthNotification.value.add(notification);
+              monthNotification.add(notification);
             }
           }
 
@@ -136,7 +154,7 @@ class NotificationController extends GetxController {
         }
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      debugPrint('Error fetching data: $e');
     }
   }
 
@@ -144,10 +162,8 @@ class NotificationController extends GetxController {
     try {
       String? accessToken = userController.accesToken.value;
 
-      var endDate = DateTime.now();
-      var startDate = endDate.subtract(const Duration(days: 30));
-      print("StartDate: $startDate");
-      print("endDate: $endDate");
+      DateTime endDate = DateTime.now();
+      DateTime startDate = endDate.subtract(const Duration(days: 30));
 
       String startDateString =
           "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
@@ -171,49 +187,40 @@ class NotificationController extends GetxController {
           unreadNew.value = 0;
           unreadReminder.value = 0;
 
-          // Categorize notifications
-          for (var notification in allNotification) {
+          for (final notification in allNotification) {
             if (notification.isRead == false) {
-              unreadAll.value++; // Count all unread notifications
+              unreadAll.value++;
               if (notification.status == 0) {
-                unreadNew.value++; // Count unread notifications from today
+                unreadNew.value++;
               }
 
-              if (notification.isRemainder == true) {
-                unreadReminder.value++; // Count unread reminders
+              if (notification.isReminder == true) {
+                unreadReminder.value++;
               }
             }
           }
-
-          print("unread all : ${unreadAll.value}");
-          print("unread new : ${unreadNew.value}");
-          print("unread reminder : ${unreadReminder.value}");
         }
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      debugPrint('Error fetching data: $e');
     }
   }
 
   Future<void> updateReadParam(int id) async {
     String? accessToken = userController.accesToken.value;
 
-    Map<String, dynamic> requestData = {
-      "id": id,
-    };
-
     try {
       final response = await dio.put(
         "$baseUrl/notification/update_notification",
-        options: Options(
-          headers: {'Authorization': 'Bearer $accessToken'},
-        ),
-        data: requestData,
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: {
+          "id": id,
+        },
       );
 
-      print(response.statusCode);
+      debugPrint(response.data);
     } catch (e) {
-      print("Error: $e");
+      debugPrint("Error: $e");
     }
   }
 
@@ -223,8 +230,6 @@ class NotificationController extends GetxController {
 
   List<dynamic> searchData(String select) {
     List result = [];
-
-    // Debugging
 
     if (select.toLowerCase() == 'time_range') {
       result = timeRangeList;
@@ -237,17 +242,17 @@ class NotificationController extends GetxController {
     return result;
   }
 
-  Future<List<NotificationModel?>> fetchHistoryNotification(DateTime startDate, DateTime endDate) async {
+  Future<List<NotificationModel?>> fetchHistoryNotification() async {
     List<NotificationModel?> filteredData = [];
+    if (startDate.value == null || endDate.value == null) return filteredData;
 
     try {
       String? accessToken = userController.accesToken.value;
 
-      // Format tanggal ke dalam string dengan format YYYY-MM-DD
       String startDateString =
-          "${startDate.year}-${startDate.month.toString().padLeft(2, '0')}-${startDate.day.toString().padLeft(2, '0')}";
+          "${startDate.value?.year}-${startDate.value?.month.toString().padLeft(2, '0')}-${startDate.value?.day.toString().padLeft(2, '0')}";
       String endDateString =
-          "${endDate.year}-${endDate.month.toString().padLeft(2, '0')}-${endDate.day.toString().padLeft(2, '0')}";
+          "${endDate.value?.year}-${endDate.value?.month.toString().padLeft(2, '0')}-${endDate.value?.day.toString().padLeft(2, '0')}";
 
       final response = await dio.get(
         '$baseUrl/notification/list_notification?start_date=$startDateString&end_date=$endDateString',
@@ -258,24 +263,41 @@ class NotificationController extends GetxController {
         final rawData = response.data['data'];
 
         if (rawData != null && rawData is List) {
-          // Mengonversi data mentah menjadi daftar NotificationModel
           filteredData = rawData.map<NotificationModel?>((item) {
             return NotificationModel.fromJson(item);
           }).toList();
         }
       }
     } catch (e) {
-      print('Error fetching data: $e');
+      debugPrint('Error fetching data: $e');
     }
 
-    return filteredData; // Mengembalikan daftar notifikasi
+    return filteredData;
+  }
+
+  List<Map<String, String>> getList(NotificationFilterType filter) {
+    switch (filter) {
+      case NotificationFilterType.timeRange:
+        return timeRangeList;
+    }
+  }
+
+  void setValue({
+    required NotificationFilterType filter,
+    Map<String, String>? value,
+  }) {
+    switch (filter) {
+      case NotificationFilterType.timeRange:
+        setTimeRange(value);
+        break;
+    }
   }
 
   void clearQuiteDay() {
-    quiteDay.value.clear();
+    quiteDay.clear();
   }
 
-  final timeRangeList = [
+  final List<Map<String, String>> timeRangeList = [
     {'value': "Last 7 days", 'label': "Last 7 days"},
     {'value': "Last 1 month", 'label': "Last 1 month"},
     {'value': "Last 3 months", 'label': "Last 3 months"},

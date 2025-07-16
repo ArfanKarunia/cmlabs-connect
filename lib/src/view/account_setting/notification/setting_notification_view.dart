@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification/notification_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/widgets/custom_buttom.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +9,7 @@ import 'package:ionicons/ionicons.dart';
 class SettingNotificationView extends StatelessWidget {
   SettingNotificationView({super.key});
 
-  final NotificationController notificationController =
-      Get.put(NotificationController());
+  final NotificationController notificationController = Get.put(NotificationController());
 
   final pushNotifNewQuotation = Rx<bool>(false);
   final pushNotifFollowedUpQuotation = Rx<bool>(false);
@@ -21,8 +20,7 @@ class SettingNotificationView extends StatelessWidget {
   final TextEditingController fromTimeController = TextEditingController();
   final TextEditingController endTimeController = TextEditingController();
 
-  Future<void> _selectTime(
-      BuildContext context, TextEditingController controller) async {
+  Future<void> _selectTime(BuildContext context, TextEditingController controller) async {
     TimeOfDay? pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -35,8 +33,7 @@ class SettingNotificationView extends StatelessWidget {
     );
 
     if (pickedTime != null) {
-      final formattedTime =
-          pickedTime.format(context); // Format sesuai kebutuhan
+      final formattedTime = pickedTime.format(context); // Format sesuai kebutuhan
       controller.text = formattedTime;
     }
   }
@@ -95,15 +92,13 @@ class SettingNotificationView extends StatelessWidget {
                         child: Switch(
                           thumbColor: WidgetStatePropertyAll(AppColors.white_1),
                           trackOutlineWidth: WidgetStatePropertyAll(0),
-                          trackOutlineColor:
-                              WidgetStatePropertyAll(Colors.transparent),
+                          trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
                           trackColor: (!pushNotifNewQuotation.value)
                               ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
                               : WidgetStatePropertyAll(AppColors.primary),
                           value: pushNotifNewQuotation.value,
                           onChanged: (bool value) {
-                            pushNotifNewQuotation.value =
-                                !pushNotifNewQuotation.value;
+                            pushNotifNewQuotation.value = !pushNotifNewQuotation.value;
                           },
                         ),
                       ),
@@ -133,15 +128,13 @@ class SettingNotificationView extends StatelessWidget {
                         child: Switch(
                           thumbColor: WidgetStatePropertyAll(AppColors.white_1),
                           trackOutlineWidth: WidgetStatePropertyAll(0),
-                          trackOutlineColor:
-                              WidgetStatePropertyAll(Colors.transparent),
+                          trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
                           trackColor: (!pushNotifFollowedUpQuotation.value)
                               ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
                               : WidgetStatePropertyAll(AppColors.primary),
                           value: pushNotifFollowedUpQuotation.value,
                           onChanged: (bool value) {
-                            pushNotifFollowedUpQuotation.value =
-                                !pushNotifFollowedUpQuotation.value;
+                            pushNotifFollowedUpQuotation.value = !pushNotifFollowedUpQuotation.value;
                           },
                         ),
                       ),
@@ -192,16 +185,21 @@ class SettingNotificationView extends StatelessWidget {
                             onTap: () {
                               Get.defaultDialog(
                                 title: "Confirmation",
-                                middleText:
-                                    "Are you sure you want to clear the selected days?",
+                                middleText: "Are you sure you want to clear the selected days?",
                                 textConfirm: "Yes",
                                 textCancel: "No",
                                 confirmTextColor: Colors.white,
                                 backgroundColor: AppColors.white_1,
                                 titlePadding: EdgeInsets.only(top: 20),
-                                titleStyle: GoogleFonts.plusJakartaSans(color: AppColors.text_1, fontSize: 20, fontWeight: FontWeight.bold,),
-                                
-                                middleTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.text_1, fontSize: 12,),
+                                titleStyle: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.text_1,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                middleTextStyle: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.text_1,
+                                  fontSize: 12,
+                                ),
                                 radius: 10,
                                 contentPadding: EdgeInsets.all(20),
                                 buttonColor: AppColors.primary,
@@ -268,9 +266,7 @@ class SettingNotificationView extends StatelessWidget {
                               padding: EdgeInsets.only(left: 10),
                               alignment: Alignment.centerLeft,
                               child: Text(
-                                notificationController.quiteDay.value
-                                    .map((e) => e!['label'] ?? '')
-                                    .join(', '),
+                                notificationController.quiteDay.value.map((e) => e!['label'] ?? '').join(', '),
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,
                                   color: AppColors.text_1,
@@ -472,15 +468,13 @@ class SettingNotificationView extends StatelessWidget {
                         child: Switch(
                           thumbColor: WidgetStatePropertyAll(AppColors.white_1),
                           trackOutlineWidth: WidgetStatePropertyAll(0),
-                          trackOutlineColor:
-                              WidgetStatePropertyAll(Colors.transparent),
+                          trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
                           trackColor: (!emailNotifNewQuotation.value)
                               ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
                               : WidgetStatePropertyAll(AppColors.primary),
                           value: emailNotifNewQuotation.value,
                           onChanged: (bool value) {
-                            emailNotifNewQuotation.value =
-                                !emailNotifNewQuotation.value;
+                            emailNotifNewQuotation.value = !emailNotifNewQuotation.value;
                           },
                         ),
                       ),
@@ -510,15 +504,13 @@ class SettingNotificationView extends StatelessWidget {
                         child: Switch(
                           thumbColor: WidgetStatePropertyAll(AppColors.white_1),
                           trackOutlineWidth: WidgetStatePropertyAll(0),
-                          trackOutlineColor:
-                              WidgetStatePropertyAll(Colors.transparent),
+                          trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
                           trackColor: (!emailNotifFollowedUpQuotation.value)
                               ? WidgetStatePropertyAll(Color(0xFFD8DAE5))
                               : WidgetStatePropertyAll(AppColors.primary),
                           value: pushNotifFollowedUpQuotation.value,
                           onChanged: (bool value) {
-                            emailNotifFollowedUpQuotation.value =
-                                !emailNotifFollowedUpQuotation.value;
+                            emailNotifFollowedUpQuotation.value = !emailNotifFollowedUpQuotation.value;
                           },
                         ),
                       ),

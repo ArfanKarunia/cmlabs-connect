@@ -12,8 +12,8 @@ import '../models/inbox/faq_model.dart';
 import '../routes.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/dashboard/dashboard_controller.dart';
-import '../controllers/historical_lead_controller.dart';
-import '../controllers/notification_controller.dart';
+// import '../controllers/historical_lead_controller.dart';
+import '../controllers/notification/notification_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../controllers/user/user_controller.dart';
 import '../models/inbox/case_studies_model.dart';
@@ -34,8 +34,8 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
-  final HistoricalLeadController historicalLeadController = Get.put(HistoricalLeadController());
-  final NotificationController notificationController = Get.put(NotificationController());
+  // final HistoricalLeadController historicalLeadController = Get.put(HistoricalLeadController());
+  final NotificationController notificationController = Get.find<NotificationController>();
 
   final DashboardController dashboardController = Get.find<DashboardController>();
   final UserController userController = Get.find<UserController>();
@@ -48,7 +48,7 @@ class _DashboardViewState extends State<DashboardView> {
   @override
   void initState() {
     super.initState();
-    historicalLeadController.clear();
+    // historicalLeadController.clear();
   }
 
   @override
@@ -65,9 +65,7 @@ class _DashboardViewState extends State<DashboardView> {
           SliverToBoxAdapter(
             child: Stack(
               children: [
-                Container(
-                  color: AppColors.primary,
-                ),
+                Container(color: AppColors.primary),
                 Container(
                   height: 12,
                   decoration: const BoxDecoration(
@@ -90,10 +88,7 @@ class _DashboardViewState extends State<DashboardView> {
                 children: [
                   Text(
                     "Inbox Leads",
-                    style: bold.copyWith(
-                      fontSize: 20,
-                      color: AppColors.primaryText,
-                    ),
+                    style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
                   ),
                   const SizedBox(height: 7),
                   Row(
@@ -101,18 +96,12 @@ class _DashboardViewState extends State<DashboardView> {
                       Obx(
                         () => Text(
                           "${quotationController.totalLeads.value} ",
-                          style: regular.copyWith(
-                            fontSize: 12,
-                            color: AppColors.primary,
-                          ),
+                          style: regular.copyWith(fontSize: 12, color: AppColors.primary),
                         ),
                       ),
                       Text(
                         "Leads",
-                        style: regular.copyWith(
-                          fontSize: 12,
-                          color: AppColors.primaryText,
-                        ),
+                        style: regular.copyWith(fontSize: 12, color: AppColors.primaryText),
                       ),
                     ],
                   ),
@@ -146,10 +135,7 @@ class _DashboardViewState extends State<DashboardView> {
                         children: [
                           Text(
                             'Quotations',
-                            style: bold.copyWith(
-                              fontSize: 20,
-                              color: AppColors.primaryText,
-                            ),
+                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
                           ),
                           GestureDetector(
                             onTap: () => widget.updateIndex(1),
@@ -188,10 +174,7 @@ class _DashboardViewState extends State<DashboardView> {
                         children: [
                           Text(
                             'Case Studies',
-                            style: bold.copyWith(
-                              fontSize: 20,
-                              color: AppColors.primaryText,
-                            ),
+                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
                           ),
                           DashboardViewAllInbox(
                             onTap: () => widget.updateIndex(1),
@@ -220,10 +203,7 @@ class _DashboardViewState extends State<DashboardView> {
                         children: [
                           Text(
                             'Contact Us',
-                            style: bold.copyWith(
-                              fontSize: 20,
-                              color: AppColors.primaryText,
-                            ),
+                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
                           ),
                           DashboardViewAllInbox(
                             onTap: () => widget.updateIndex(1),
@@ -252,10 +232,7 @@ class _DashboardViewState extends State<DashboardView> {
                         children: [
                           Text(
                             'FAQ',
-                            style: bold.copyWith(
-                              fontSize: 20,
-                              color: AppColors.primaryText,
-                            ),
+                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
                           ),
                           DashboardViewAllInbox(
                             onTap: () => widget.updateIndex(1),
@@ -364,10 +341,7 @@ class _DashboardViewState extends State<DashboardView> {
                         ),
                         Text(
                           userController.roleName.value,
-                          style: regular.copyWith(
-                            fontSize: 12,
-                            color: AppColors.text_2,
-                          ),
+                          style: regular.copyWith(fontSize: 12, color: AppColors.text_2),
                         )
                       ],
                     )

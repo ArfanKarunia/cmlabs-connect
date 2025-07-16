@@ -19,11 +19,12 @@ import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dar
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/form_volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/account_setting/volunteer/volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
-import 'package:cmlabs_connect/src/view/notification/layout_notification.dart';
+import 'package:cmlabs_connect/src/view/notification/notification_view.dart';
 import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
 import 'controllers/filter/filter_controller.dart';
+import 'controllers/notification/notification_controller.dart';
 import 'models/inbox/case_studies_model.dart';
 import 'models/inbox/property/client_pic_model.dart';
 import 'models/inbox/contact_us_model.dart';
@@ -61,6 +62,7 @@ import 'view/inbox/quotation/quotation_edit_pic_contact_view.dart';
 import 'view/inbox/quotation/quotation_edit_select_view.dart';
 import 'view/inbox/quotation/quotation_edit_view.dart';
 import 'view/login_view.dart';
+import 'view/notification/notification_select_view.dart';
 import 'view/select_filter_view.dart';
 
 class AppRoutes {
@@ -103,6 +105,7 @@ class AppRoutes {
   static const String editSelect = '/editSelect';
 
   static const String notification = '/notification';
+  static const String notificationSelect = '/notificationSelect';
 
   static const String historicalLead = '/historicalLead';
 
@@ -195,7 +198,19 @@ class AppRoutes {
     ),
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
 
-    GetPage(name: notification, page: () => const LayoutNotification()),
+    GetPage(name: notification, page: () => const NotificationView()),
+    GetPage(
+      name: notificationSelect,
+      page: () {
+        final String title = Get.arguments['title'];
+        final NotificationFilterType filter = Get.arguments['filter'];
+
+        return NotificationSelectView(
+          title: title,
+          filter: filter,
+        );
+      },
+    ),
 
     GetPage(
       name: addQuotation,

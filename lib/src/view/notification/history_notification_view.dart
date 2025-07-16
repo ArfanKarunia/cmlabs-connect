@@ -1,368 +1,181 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
-import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification/notification_controller.dart';
 import 'package:cmlabs_connect/src/models/notification_model.dart';
 import 'package:cmlabs_connect/src/routes.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:cmlabs_connect/src/widgets/notification_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../historical_lead_view.dart';
+import '../../constant/fontstyle.dart';
+import '../../widgets/custom_select_field.dart';
+import '../../widgets/custom_submit_button.dart';
+import '../../widgets/empty_state.dart';
+import '../../widgets/inbox_add_field.dart';
 
-class HistoryNotificationView extends StatelessWidget {
-  HistoryNotificationView({super.key});
+class HistoryNotificationView extends StatefulWidget {
+  const HistoryNotificationView({super.key});
 
-  final NotificationController notificationController = Get.put(NotificationController());
+  @override
+  State<HistoryNotificationView> createState() => _HistoryNotificationViewState();
+}
 
-  final TextEditingController fromDateController = TextEditingController();
-  final TextEditingController toDateController = TextEditingController();
+class _HistoryNotificationViewState extends State<HistoryNotificationView> {
+  final NotificationController controller = Get.find<NotificationController>();
 
-  List<DateTime?>? pickedRange = [];
-
-  var filteredNotification = Rx<List<NotificationModel?>>([]);
+  Rx<List<NotificationModel?>> filteredNotification = Rx<List<NotificationModel?>>([]);
 
   @override
   Widget build(BuildContext context) {
-    notificationController.selectTimeRange.value = null;
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Obx(
-                () {
-                  return SelectField(
-                    name: "Select Time Range",
-                    child: Container(
-                      child: notificationController.selectTimeRange.value == null
-                          ? Text(
-                              "Select year",
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_3,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            )
-                          : Text(
-                              notificationController.selectTimeRange.value!,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                    ),
-                    onPressed: () {
-                      // Get.toNamed(
-                      //   AppRoutes.filterSelect,
-                      //   arguments: {
-                      //     'selectData': "time_range",
-                      //     'controller': notificationController,
-                      //     'canSearch': false,
-                      //     'isMultipleChoice': false,
-                      //   },
-                      // )?.then(
-                      //   (value) {
-                      //     notificationController.setTimeRange(value);
+      backgroundColor: AppColors.scaffoldBgColor2,
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          // Time Range
+          InboxAddField(
+            title: 'Select Time Range',
+            child: CustomSelectField(
+              onTap: () => Get.toNamed(AppRoutes.notificationSelect, arguments: {
+                'title': 'Time Range',
+                'filter': NotificationFilterType.timeRange,
+              }),
+              child: Obx(
+                () => InboxTextOnField(
+                  title: 'Select Time Range',
+                  selected: controller.selectedTimeRange.value,
+                ),
+              ),
+            ),
+          ),
 
-                      //     print(notificationController.startDate.value);
-                      //     print(notificationController.endDate.value);
+          const SizedBox(height: 20),
 
-                      //     fromDateController.text =
-                      //         "${notificationController.startDate.value!.year}-${notificationController.startDate.value!.month}-${notificationController.startDate.value!.day}";
-                      //     toDateController.text =
-                      //         "${notificationController.endDate.value!.year}-${notificationController.endDate.value!.month}-${notificationController.endDate.value!.day}";
-                      //   },
-                      // );
-                    },
-                  );
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Start Date",
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            color: AppColors.text_2,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TextFormField(
-                          controller: fromDateController,
-                          readOnly: true,
-                          cursorColor: AppColors.primary,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            color: AppColors.text_1,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "Select date",
-                            hintStyle: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: AppColors.text_4,
-                            ),
-                            suffixIcon: Icon(Ionicons.calendar_outline),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: AppColors.primary,
-                                width: 2,
-                              ),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: AppColors.text_1,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            errorStyle: GoogleFonts.plusJakartaSans(
-                              color: AppColors.danger,
-                              fontSize: 11,
-                            ),
-                          ),
-                          onTap: () => _selectDateRange(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "End Date",
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 14,
-                            color: AppColors.text_2,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        TextFormField(
-                          controller: toDateController,
-                          readOnly: true,
-                          cursorColor: AppColors.primary,
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 13,
-                            color: AppColors.text_1,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: "Select date",
-                            hintStyle: GoogleFonts.plusJakartaSans(
-                              fontSize: 13,
-                              color: AppColors.text_4,
-                            ),
-                            suffixIcon: Icon(Ionicons.calendar_outline),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: AppColors.primary,
-                                width: 2,
-                              ),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: AppColors.text_1,
-                                width: 1,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            errorStyle: GoogleFonts.plusJakartaSans(
-                              color: AppColors.danger,
-                              fontSize: 11,
-                            ),
-                            filled: true,
-                            fillColor: AppColors.white_1,
-                          ),
-                          onTap: () => _selectDateRange(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              SizedBox(
-                width: double.infinity,
-                height: 51,
-                child: ElevatedButton(
-                  onPressed: () {
-                    loadFilteredNotifications();
-                  },
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(AppColors.primary),
-                    foregroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                    overlayColor: WidgetStatePropertyAll(Colors.white30),
-                    shape: WidgetStatePropertyAll(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5),
+          // Date Range
+          const Text('Date range', style: bold),
+          const SizedBox(height: 15),
+          SizedBox(
+            child: Row(
+              children: [
+                Expanded(
+                  child: Obx(
+                    () => CustomSelectField(
+                      icon: Ionicons.calendar_outline,
+                      onTap: () => _selectDateRange(context),
+                      child: InboxTextOnField(
+                        title: 'Start Date',
+                        selected: controller.startDate.value != null
+                            ? {'value': controller.startDateText, 'label': controller.startDateText}
+                            : null,
                       ),
                     ),
                   ),
-                  child: Text(
-                    "Search",
-                    style: GoogleFonts.plusJakartaSans(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 10), // Spasi antar form
+                Text(
+                  "to",
+                  style: regular.copyWith(fontSize: 12),
+                ),
+                const SizedBox(width: 10), // Spasi antar form
+                Expanded(
+                  child: Obx(
+                    () => CustomSelectField(
+                      icon: Ionicons.calendar_outline,
+                      onTap: () => _selectDateRange(context),
+                      child: InboxTextOnField(
+                        title: 'End Date',
+                        selected: controller.endDate.value != null
+                            ? {'value': controller.endDateText, 'label': controller.endDateText}
+                            : null,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Divider(),
-              SizedBox(
-                height: 10,
-              ),
-              Text(
-                "Result History",
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.text_1,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Obx(
-                () {
-                  return filteredNotification.value.isNotEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "${fromDateController.text} s/d ${toDateController.text}",
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.text_2,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: filteredNotification.value.length,
-                              itemBuilder: (context, index) {
-                                var notif = filteredNotification.value[index]!;
-                                return NotificationTile(
-                                  id: notif.id,
-                                  name: notif.company,
-                                  date: notif.createdAt,
-                                  isRead: notif.isRead,
-                                  isReminder: notif.isRemainder,
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                      : Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 300,
-                                width: double.infinity,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Ionicons.briefcase_outline,
-                                        color: AppColors.text_4,
-                                        size: 40,
-                                      ),
-                                      Text(
-                                        'No available data',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.text_4,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        );
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+
+          const SizedBox(height: 20),
+
+          CustomSubmitButton(
+            title: 'Search',
+            onTap: () => loadFilteredNotifications(),
+          ),
+
+          const Divider(height: 40),
+
+          Text(
+            "Result History",
+            style: bold.copyWith(color: AppColors.text_1),
+          ),
+          const SizedBox(height: 10),
+          Obx(
+            () {
+              return filteredNotification.value.isNotEmpty
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${controller.startDateText} s/d ${controller.endDateText}",
+                          style: bold.copyWith(fontSize: 12, color: AppColors.text_2),
+                        ),
+                        const SizedBox(height: 10),
+                        ListView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: filteredNotification.value.length,
+                          itemBuilder: (context, index) {
+                            final notif = filteredNotification.value[index]!;
+                            return NotificationTile(
+                              id: notif.id,
+                              name: notif.company,
+                              date: notif.createdAt,
+                              isRead: notif.isRead,
+                              isReminder: notif.isReminder,
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  : const EmptyState();
+            },
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 
   Future<void> loadFilteredNotifications() async {
     try {
-      // Memanggil fetchHistoryNotification dengan await
-      var notifications = await notificationController.fetchHistoryNotification(
-        notificationController.startDate.value!,
-        notificationController.endDate.value!,
-      );
-
-      // Memperbarui filteredNotification dengan hasil yang didapat
+      final notifications = await controller.fetchHistoryNotification();
       filteredNotification.value = notifications;
     } catch (e) {
-      print('Error loading filtered notifications: $e');
+      debugPrint('Error loading filtered notifications: $e');
     }
   }
 
   Future<void> _selectDateRange(BuildContext context) async {
-    var config = CalendarDatePicker2WithActionButtonsConfig(
+    final config = CalendarDatePicker2WithActionButtonsConfig(
       calendarViewScrollPhysics: const NeverScrollableScrollPhysics(),
       calendarType: CalendarDatePicker2Type.range,
       closeDialogOnCancelTapped: true,
       firstDayOfWeek: 1,
-      weekdayLabelTextStyle: GoogleFonts.plusJakartaSans(
-        color: AppColors.text_1,
-      ),
+      weekdayLabelTextStyle: regular.copyWith(color: AppColors.text_1),
       weekdayLabels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-      selectedDayHighlightColor: Color.fromRGBO(188, 223, 252, 1),
-      selectedRangeHighlightColor: Color.fromRGBO(188, 223, 252, 1),
-      selectedDayTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.primary),
-      dayTextStyle: GoogleFonts.plusJakartaSans(color: Color.fromRGBO(143, 202, 250, 1)),
-      selectedRangeDayTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.primary),
-      controlsTextStyle: GoogleFonts.plusJakartaSans(
-        color: AppColors.text_1,
-        fontSize: 15,
-        fontWeight: FontWeight.bold,
-      ),
+      selectedDayHighlightColor: const Color(0xFFBCDFFC),
+      selectedRangeHighlightColor: const Color(0xFFBCDFFC),
+      selectedRangeDayTextStyle: regular.copyWith(color: AppColors.primary),
+      selectedDayTextStyle: regular.copyWith(color: AppColors.primary),
+      dayTextStyle: regular.copyWith(color: AppColors.lightPrimaryColor),
+      daySplashColor: const Color(0xFFBCDFFC),
       dayBorderRadius: BorderRadius.circular(5),
+      controlsTextStyle: bold.copyWith(fontSize: 15, color: AppColors.text_1),
       centerAlignModePicker: true,
       customModePickerIcon: const SizedBox(),
-      cancelButtonTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.danger),
-      okButtonTextStyle: GoogleFonts.plusJakartaSans(color: AppColors.primary),
+      cancelButtonTextStyle: regular.copyWith(color: AppColors.danger),
+      okButtonTextStyle: regular.copyWith(color: AppColors.primary),
       dayBuilder: ({
         required date,
         textStyle,
@@ -390,7 +203,7 @@ class HistoryNotificationView extends StatelessWidget {
                       width: 4,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        color: isSelected == true ? AppColors.primary : Color.fromRGBO(143, 202, 250, 1),
+                        color: isSelected == true ? AppColors.primary : const Color(0xFFBCDFFC),
                       ),
                     ),
                   ),
@@ -443,11 +256,10 @@ class HistoryNotificationView extends StatelessWidget {
       },
     );
 
-    List<DateTime?> defaultDate = (notificationController.selectTimeRange.value != null)
-        ? [notificationController.startDate.value, notificationController.endDate.value]
-        : [];
+    List<DateTime?> defaultDate =
+        (controller.selectedTimeRange.value != null) ? [controller.startDate.value, controller.endDate.value] : [];
 
-    pickedRange = await showCalendarDatePicker2Dialog(
+    final pickedRange = await showCalendarDatePicker2Dialog(
       context: context,
       value: defaultDate,
       config: config,
@@ -455,18 +267,10 @@ class HistoryNotificationView extends StatelessWidget {
       dialogSize: const Size(325, 370),
     );
 
-    if (pickedRange!.isNotEmpty) {
-      notificationController.startDate.value = pickedRange!.first;
-      notificationController.endDate.value = pickedRange!.last;
-    }
-
     if (pickedRange != null) {
-      if (pickedRange!.first != null) {
-        fromDateController.text = "${pickedRange!.first!.year}-${pickedRange!.first!.month}-${pickedRange!.first!.day}";
-      }
-      if (pickedRange!.last != null) {
-        toDateController.text = "${pickedRange!.last!.year}-${pickedRange!.last!.month}-${pickedRange!.last!.day}";
-      }
+      controller.selectedTimeRange.value = null;
+      controller.startDate.value = pickedRange.first;
+      controller.endDate.value = pickedRange.last;
     }
   }
 }

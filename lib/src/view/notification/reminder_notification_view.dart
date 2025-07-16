@@ -1,68 +1,49 @@
-import 'package:cmlabs_connect/src/controllers/notification_controller.dart';
+import 'package:cmlabs_connect/src/controllers/notification/notification_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
+import '../../constant/fontstyle.dart';
+import '../../widgets/default_header.dart';
 import '../../widgets/notification_tile.dart';
 
 class ReminderNotificationView extends StatefulWidget {
-  ReminderNotificationView({super.key});
+  const ReminderNotificationView({super.key});
 
   @override
-  State<ReminderNotificationView> createState() =>
-      _ReminderNotificationViewState();
+  State<ReminderNotificationView> createState() => _ReminderNotificationViewState();
 }
 
 class _ReminderNotificationViewState extends State<ReminderNotificationView> {
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  final NotificationController controller = Get.find<NotificationController>();
 
-  final NotificationController notificationController =
-      Get.put(NotificationController());
-
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
   late ScrollController scrollController;
 
   void _onRefresh() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-    notificationController.fetchNotification();
-
+    await Future.delayed(Durations.extralong4);
+    controller.fetchNotification();
     _refreshController.refreshCompleted();
   }
 
   void _onLoading() async {
-    // monitor network fetch
-    await Future.delayed(Duration(milliseconds: 1000));
-    // if failed,use loadFailed(),if no data return,use LoadNodata()
-
-    notificationController.fetchNotification();
-
+    await Future.delayed(Durations.extralong4);
+    controller.fetchNotification();
     _refreshController.loadComplete();
   }
 
   @override
   void initState() {
     super.initState();
-
     scrollController = ScrollController();
-
     bool isLoadMoreInProgress = false;
-
     scrollController.addListener(() async {
-      if (scrollController.position.pixels ==
-          scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
         if (isLoadMoreInProgress) return;
-
         isLoadMoreInProgress = true;
-
-        await Future.delayed(Duration(milliseconds: 500));
-
-        await notificationController.fetchNotification(
-            isLoadMore: isLoadMoreInProgress);
-
+        await Future.delayed(Durations.long2);
+        await controller.fetchNotification(isLoadMore: isLoadMoreInProgress);
         isLoadMoreInProgress = false;
       }
     });
@@ -70,7 +51,6 @@ class _ReminderNotificationViewState extends State<ReminderNotificationView> {
 
   @override
   void dispose() {
-    // Dispose of the controller to avoid memory leaks
     scrollController.dispose();
     super.dispose();
   }
@@ -78,182 +58,127 @@ class _ReminderNotificationViewState extends State<ReminderNotificationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF9F9F9),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: SmartRefresher(
-          enablePullDown: true,
-          header: ClassicHeader(
-            refreshStyle: RefreshStyle.Follow,
-            refreshingIcon: SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                color: AppColors.text_4,
-                strokeWidth: 2,
-              ),
+      backgroundColor: AppColors.scaffoldBgColor2,
+      body: SmartRefresher(
+        enablePullDown: true,
+        header: const DefaultSmartRefresherHeader(),
+        onRefresh: _onRefresh,
+        onLoading: _onLoading,
+        controller: _refreshController,
+        child: ListView(
+          controller: scrollController,
+          padding: const EdgeInsets.all(20),
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            Text(
+              "Today",
+              style: bold.copyWith(color: AppColors.text_1),
             ),
-          ),
-          onRefresh: _onRefresh,
-          onLoading: _onLoading,
-          controller: _refreshController,
-          child: ListView(
-            controller: scrollController,
-            physics: AlwaysScrollableScrollPhysics(),
-            children: [
-              Obx(
-                () {
-                  var todayReminders = notificationController
-                      .todayNotification.value
-                      .where((notif) => notif?.isRemainder == true)
-                      .toList();
+            const SizedBox(height: 10),
+            Obx(
+              () {
+                final todayReminders =
+                    controller.todayNotification.where((notif) => notif?.isReminder == true).toList();
+                return todayReminders.isNotEmpty
+                    ? ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: todayReminders.length,
+                        itemBuilder: (context, index) {
+                          final notifToday = todayReminders[index];
+                          return NotificationTile(
+                            id: notifToday?.id ?? 0,
+                            name: notifToday?.company ?? "",
+                            date: notifToday?.createdAt ?? DateTime.now(),
+                            isRead: notifToday?.isRead ?? false,
+                            isReminder: notifToday?.isReminder ?? false,
+                          );
+                        },
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No more data",
+                          style: regular.copyWith(color: AppColors.text_4),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+              },
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "This Week",
+              style: bold.copyWith(color: AppColors.text_1),
+            ),
+            const SizedBox(height: 10),
+            Obx(
+              () {
+                final weekReminders = controller.weekNotification.where((notif) => notif?.isReminder == true).toList();
 
-                  return todayReminders.isNotEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Today",
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.text_1,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: todayReminders.length,
-                              itemBuilder: (context, index) {
-                                var notifToday = todayReminders[index]!;
-                                return NotificationTile(
-                                  id: notifToday.id,
-                                  name: notifToday.company,
-                                  date: notifToday.createdAt,
-                                  isRead: notifToday.isRead,
-                                  isReminder: notifToday.isRemainder,
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                      : SizedBox.shrink();
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Obx(
-                () {
-                  var weekReminders = notificationController
-                      .weekNotification.value
-                      .where((notif) => notif?.isRemainder == true)
-                      .toList();
+                return weekReminders.isNotEmpty
+                    ? ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: weekReminders.length,
+                        itemBuilder: (context, index) {
+                          final notifWeek = weekReminders[index];
+                          return NotificationTile(
+                            id: notifWeek?.id ?? 0,
+                            name: notifWeek?.company ?? "",
+                            date: notifWeek?.createdAt ?? DateTime.now(),
+                            isRead: notifWeek?.isRead ?? false,
+                            isReminder: notifWeek?.isReminder ?? false,
+                          );
+                        },
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No more data",
+                          style: regular.copyWith(color: AppColors.text_4),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+              },
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "This Month",
+              style: bold.copyWith(color: AppColors.text_1),
+            ),
+            const SizedBox(height: 10),
+            Obx(
+              () {
+                final monthReminders =
+                    controller.monthNotification.where((notif) => notif?.isReminder == true).toList();
 
-                  return weekReminders.isNotEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "This Week",
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.text_1,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: weekReminders.length,
-                              itemBuilder: (context, index) {
-                                var notifWeek = weekReminders[index]!;
-                                return NotificationTile(
-                                  id: notifWeek.id,
-                                  name: notifWeek.company,
-                                  date: notifWeek.createdAt,
-                                  isRead: notifWeek.isRead,
-                                  isReminder: notifWeek.isRemainder,
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                      : SizedBox.shrink();
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Obx(
-                () {
-                  var monthReminders = notificationController
-                      .monthNotification.value
-                      .where((notif) => notif?.isRemainder == true)
-                      .toList();
-
-                  return monthReminders.isNotEmpty
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "This Month",
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.text_1,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: monthReminders.length,
-                              itemBuilder: (context, index) {
-                                var notifMonth = monthReminders[index]!;
-                                return NotificationTile(
-                                  id: notifMonth.id,
-                                  name: notifMonth.company,
-                                  date: notifMonth.createdAt,
-                                  isRead: notifMonth.isRead,
-                                  isReminder: notifMonth.isRemainder,
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                      : SizedBox.shrink();
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Center(
-                  child: Text(
-                    "No more data",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      color: AppColors.text_4,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
+                return monthReminders.isNotEmpty
+                    ? ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: monthReminders.length,
+                        itemBuilder: (context, index) {
+                          final notifMonth = monthReminders[index];
+                          return NotificationTile(
+                            id: notifMonth?.id ?? 0,
+                            name: notifMonth?.company ?? "",
+                            date: notifMonth?.createdAt ?? DateTime.now(),
+                            isRead: notifMonth?.isRead ?? false,
+                            isReminder: notifMonth?.isReminder ?? false,
+                          );
+                        },
+                      )
+                    : Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Text(
+                          "No more data",
+                          style: regular.copyWith(color: AppColors.text_4),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+              },
+            ),
+          ],
         ),
       ),
     );
