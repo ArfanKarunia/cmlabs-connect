@@ -401,7 +401,7 @@ class DetailQuotation {
           : null,
       // agent: json['data']['agent'] != null ? AgentData.fromJson(json['data']['agent']) : null,
       email: json['data']['email'],
-      urlTracking: json['data']['url_tracking'],
+      urlTracking: json['data']['url_tracking'] != null ? UrlTracking.fromJson(json['data']['url_tracking']) : null,
       activities: activitiesList,
     );
   }
