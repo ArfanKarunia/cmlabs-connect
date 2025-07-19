@@ -23,39 +23,37 @@ class _NotificationViewState extends State<NotificationView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: DefaultTabController(
-        length: 4,
-        child: Scaffold(
-          backgroundColor: AppColors.scaffoldBgColor2,
-          appBar: defaultAppBar(
-            'Notification',
-            titleSpacing: 0,
-            bottom: TabBar(
-              labelStyle: bold.copyWith(color: AppColors.primary),
-              unselectedLabelStyle: bold.copyWith(color: AppColors.text_4),
-              indicatorColor: AppColors.primary,
-              indicatorWeight: 2,
-              indicatorSize: TabBarIndicatorSize.label,
-              overlayColor: const WidgetStatePropertyAll(Colors.transparent),
-              labelPadding: EdgeInsets.zero,
-              dividerHeight: 0,
-              tabs: [
-                NotificationTabBar(title: 'All', unread: controller.unreadAll),
-                NotificationTabBar(title: 'New', unread: controller.unreadNew),
-                NotificationTabBar(title: 'Reminder', unread: controller.unreadReminder),
-                const NotificationTabBar(title: 'History'),
-              ],
-            ),
-          ),
-          body: TabBarView(
-            children: [
-              const AllNotificationView(),
-              const NewNotificationView(),
-              const ReminderNotificationView(),
-              HistoryNotificationView(),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: AppColors.scaffoldBgColor2,
+        appBar: defaultAppBar(
+          'Notification',
+          titleSpacing: 0,
+          bottom: TabBar(
+            labelStyle: bold.copyWith(color: AppColors.primary),
+            unselectedLabelStyle: bold.copyWith(color: AppColors.text_4),
+            indicatorColor: AppColors.primary,
+            indicatorWeight: 2,
+            indicatorSize: TabBarIndicatorSize.label,
+            overlayColor: const WidgetStatePropertyAll(Colors.transparent),
+            labelPadding: EdgeInsets.zero,
+            dividerHeight: 0,
+            tabs: [
+              NotificationTabBar(title: 'All', unread: controller.unreadAll),
+              NotificationTabBar(title: 'New', unread: controller.unreadNew),
+              NotificationTabBar(title: 'Reminder', unread: controller.unreadReminder),
+              const NotificationTabBar(title: 'History'),
             ],
           ),
+        ),
+        body: TabBarView(
+          children: [
+            const AllNotificationView(),
+            const NewNotificationView(),
+            const ReminderNotificationView(),
+            HistoryNotificationView(),
+          ],
         ),
       ),
     );

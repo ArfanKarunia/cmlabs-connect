@@ -11,13 +11,18 @@ import 'src/routes.dart';
 import 'src/utils/custom_http_overrides.dart';
 
 Future<void> main() async {
+  // Ensure the widgets is initialized
   WidgetsFlutterBinding.ensureInitialized();
-
+  // Initialize Firebase
   await Firebase.initializeApp();
+
+  // Initialize the notification service
   await NotificationService.instance.initialize();
 
+  // Set the HTTP overrides
   HttpOverrides.global = CustomHttpOverrides();
 
+  // Run the app
   runApp(const MyApp());
 }
 

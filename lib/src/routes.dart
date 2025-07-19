@@ -1,26 +1,25 @@
-import 'package:cmlabs_connect/src/view/account_setting/achievement/achievement_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/achievement/form_achievement_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/certification/certification_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/certification/form_certification_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/change_password_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/education/education_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/education/form_education_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/experience/experience_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/experience/form_experience_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/notification/setting_notification_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/organization/form_organization_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/organization/organization_vew.dart';
-import 'package:cmlabs_connect/src/view/account_setting/profile/form_profile_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/publication/form_publication_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/publication/publication_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/select_data.dart';
-import 'package:cmlabs_connect/src/view/account_setting/summary/form_summary_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/summary/summary_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/volunteer/form_volunteer_view.dart';
-import 'package:cmlabs_connect/src/view/account_setting/volunteer/volunteer_view.dart';
+import 'package:cmlabs_connect/src/view/account/achievement/achievement_view.dart';
+import 'package:cmlabs_connect/src/view/account/achievement/form_achievement_view.dart';
+import 'package:cmlabs_connect/src/view/account/certification/certification_view.dart';
+import 'package:cmlabs_connect/src/view/account/certification/form_certification_view.dart';
+import 'package:cmlabs_connect/src/view/account/change_password_view.dart';
+import 'package:cmlabs_connect/src/view/account/education/education_view.dart';
+import 'package:cmlabs_connect/src/view/account/education/form_education_view.dart';
+import 'package:cmlabs_connect/src/view/account/experience/experience_view.dart';
+import 'package:cmlabs_connect/src/view/account/experience/form_experience_view.dart';
+import 'package:cmlabs_connect/src/view/account/notification/setting_notification_view.dart';
+import 'package:cmlabs_connect/src/view/account/organization/form_organization_view.dart';
+import 'package:cmlabs_connect/src/view/account/organization/organization_view.dart';
+import 'package:cmlabs_connect/src/view/account/profile/edit_profile_view.dart';
+import 'package:cmlabs_connect/src/view/account/publication/form_publication_view.dart';
+import 'package:cmlabs_connect/src/view/account/publication/publication_view.dart';
+import 'package:cmlabs_connect/src/view/account/account_select_view.dart';
+import 'package:cmlabs_connect/src/view/account/summary/form_summary_view.dart';
+import 'package:cmlabs_connect/src/view/account/summary/summary_view.dart';
+import 'package:cmlabs_connect/src/view/account/volunteer/form_volunteer_view.dart';
+import 'package:cmlabs_connect/src/view/account/volunteer/volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
 import 'package:cmlabs_connect/src/view/notification/notification_view.dart';
-import 'package:cmlabs_connect/src/view/select_edit_view.dart';
 import 'package:get/get.dart';
 
 import 'controllers/filter/filter_controller.dart';
@@ -102,7 +101,7 @@ class AppRoutes {
 
   static const String filter = '/filter';
   static const String filterSelect = '/filterSelect';
-  static const String editSelect = '/editSelect';
+  // static const String editSelect = '/editSelect';
 
   static const String notification = '/notification';
   static const String notificationSelect = '/notificationSelect';
@@ -110,43 +109,36 @@ class AppRoutes {
   static const String historicalLead = '/historicalLead';
 
   // account menu
+  static const String accountSelectView = '/accountSelectView';
+
   static const String editProfileView = '/editProfileView';
-  static const String selectDataProfile = '/editProfileView/form/select';
+  static const String changePasswordView = '/changePasswordView';
 
   static const String summaryView = '/summaryView';
   static const String formSummaryView = '/summaryView/form';
 
   static const String experienceView = '/experienceView';
   static const String formExperienceView = '/experienceView/form';
-  static const String selectDataExperience = '/experienceView/form/select';
 
   static const String educationView = '/educationView';
   static const String formEducationView = '/educationView/form';
-  static const String selectDataEducation = '/educationView/form/select';
 
   static const String certificationView = '/certificationView';
   static const String formCertificationnView = '/certificationView/form';
-  static const String selectDataCertification = '/certificationView/form/select';
 
   static const String organizationView = '/organizationView';
   static const String formOrganizationView = '/organizationView/form';
-  static const String selectDataOrganization = '/organizationView/form/select';
 
   static const String achievementView = '/achievementView';
   static const String formAchievementView = '/achievementView/form';
-  static const String selectDataAchievement = '/achievementView/form/select';
 
   static const String volunteerView = '/volunteerView';
   static const String formVolunteerView = '/volunteerView/form';
-  static const String selectDataVolunteer = '/volunteerView/form/select';
 
   static const String publicationView = '/publicationView';
   static const String formPublicationView = '/publicationView/form';
-  static const String selectDataPublication = '/publicationView/form/select';
 
   static const String settingNotification = '/settingNotification';
-
-  static const String changePasswordView = '/changePasswordView';
 
   static const String analyticsView = '/analyticsView';
   static const String analyticsFilterView = '/analyticsFilterView';
@@ -183,31 +175,36 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: editSelect,
-      page: () {
-        final args = Get.arguments as Map<String, dynamic>;
-        final String selectData = args['selectData'];
-        final dynamic controller = args['controller'];
+    // GetPage(
+    //   name: editSelect,
+    //   page: () {
+    //     final args = Get.arguments as Map<String, dynamic>;
+    //     final String selectData = args['selectData'];
+    //     final dynamic controller = args['controller'];
 
-        return SelectEditView(
-          selectData: selectData,
-          controller: controller,
-        );
-      },
-    ),
+    //     return SelectEditView(
+    //       selectData: selectData,
+    //       controller: controller,
+    //     );
+    //   },
+    // ),
     GetPage(name: historicalLead, page: () => HistoricalLeadView()),
 
-    GetPage(name: notification, page: () => const NotificationView()),
+    GetPage(
+      name: notification,
+      page: () => const NotificationView(),
+    ),
     GetPage(
       name: notificationSelect,
       page: () {
         final String title = Get.arguments['title'];
         final NotificationFilterType filter = Get.arguments['filter'];
+        final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? false;
 
         return NotificationSelectView(
           title: title,
           filter: filter,
+          isMultipleChoice: isMultipleChoice,
         );
       },
     ),
@@ -288,24 +285,6 @@ class AppRoutes {
       },
     ),
 
-    // GetPage(
-    //   name: addContactClientPIC,
-    //   page: () {
-    //     final args = Get.arguments as int;
-    //     return AddContactView(
-    //       indexClientPIC: args,
-    //     );
-    //   },
-    // ),
-
-    // GetPage(
-    //   name: editHistoryChangesData,
-    //   page: () {
-    //     final args = Get.arguments as Map<String, dynamic>;
-    //     return EditHistoryView(historyData: args['history']);
-    //   },
-    // ),
-
     GetPage(
       name: editQuotation,
       page: () {
@@ -334,6 +313,7 @@ class AppRoutes {
         return FaqEditStatusView(faq: faq);
       },
     ),
+
     GetPage(
       name: editQuotationSelect,
       page: () {
@@ -422,6 +402,7 @@ class AppRoutes {
         );
       },
     ),
+
     GetPage(
       name: editQuotationContact,
       page: () {
@@ -464,6 +445,7 @@ class AppRoutes {
         );
       },
     ),
+
     GetPage(
       name: editQuotationHistory,
       page: () {
@@ -491,26 +473,23 @@ class AppRoutes {
     // CHANGE PASSWORD
     GetPage(
       name: changePasswordView,
-      page: () => ChangePasswordView(),
+      page: () => const ChangePasswordView(),
     ),
 
     // EDIT PROFILE
     GetPage(
       name: editProfileView,
-      page: () => FormProfileView(),
+      page: () => const EditProfileView(),
     ),
     GetPage(
-      name: selectDataProfile,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
+      name: accountSelectView,
+      page: () => AccountSelectView(data: Get.arguments['data']),
     ),
 
     // SUUMMARY
     GetPage(
       name: summaryView,
-      page: () => SummaryView(),
+      page: () => const SummaryView(),
     ),
 
     GetPage(
@@ -524,7 +503,7 @@ class AppRoutes {
     // EXPERIENCE
     GetPage(
       name: experienceView,
-      page: () => ExperienceView(),
+      page: () => const ExperienceView(),
     ),
     GetPage(
       name: formExperienceView,
@@ -539,18 +518,11 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: selectDataExperience,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
-    ),
 
     // EDUCATION
     GetPage(
       name: educationView,
-      page: () => EducationView(),
+      page: () => const EducationView(),
     ),
     GetPage(
       name: formEducationView,
@@ -565,18 +537,10 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: selectDataEducation,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
-    ),
-
     // CERTIFICATION
     GetPage(
       name: certificationView,
-      page: () => CertificationView(),
+      page: () => const CertificationView(),
     ),
     GetPage(
       name: formCertificationnView,
@@ -591,18 +555,11 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: selectDataCertification,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
-    ),
 
     // ORGANIZATION
     GetPage(
       name: organizationView,
-      page: () => OrganizationVew(),
+      page: () => const OrganizationView(),
     ),
     GetPage(
       name: formOrganizationView,
@@ -617,18 +574,11 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: selectDataOrganization,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
-    ),
 
     // ACHIEVEMENT
     GetPage(
       name: achievementView,
-      page: () => AchievementView(),
+      page: () => const AchievementView(),
     ),
     GetPage(
       name: formAchievementView,
@@ -643,18 +593,11 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: selectDataAchievement,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
-    ),
 
     // VOLUNTEER
     GetPage(
       name: volunteerView,
-      page: () => VolunteerView(),
+      page: () => const VolunteerView(),
     ),
     GetPage(
       name: formVolunteerView,
@@ -669,18 +612,11 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: selectDataVolunteer,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
-    ),
 
     // PUBLICATION
     GetPage(
       name: publicationView,
-      page: () => PublicationView(),
+      page: () => const PublicationView(),
     ),
     GetPage(
       name: formPublicationView,
@@ -695,18 +631,11 @@ class AppRoutes {
         );
       },
     ),
-    GetPage(
-      name: selectDataPublication,
-      page: () {
-        final args = Get.arguments as String;
-        return SelectData(data: args);
-      },
-    ),
 
     // SETTING NOTIFICATION
     GetPage(
       name: settingNotification,
-      page: () => SettingNotificationView(),
+      page: () => const SettingNotificationView(),
     ),
 
     // ANALYTICS

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 
 import '../../services/firebase_analytics_service.dart';
+import 'account/account_bindings.dart';
 import 'analytics/analytics_bindings.dart';
 import 'authentication/authentication_bindings.dart';
 import 'dashboard/dashboard_bindings.dart';
@@ -20,6 +21,7 @@ class AppBindings extends Bindings {
     AuthenticationBindings().dependencies();
 
     // Features
+    AccountBindings().dependencies();
     AnalyticsBindings().dependencies();
     DashboardBindings().dependencies();
     FilterBindings().dependencies();

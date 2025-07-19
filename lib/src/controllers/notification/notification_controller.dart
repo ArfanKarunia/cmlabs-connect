@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-enum NotificationFilterType { timeRange }
+enum NotificationFilterType { timeRange, days }
 
 class NotificationController extends GetxController {
   final UserController userController = Get.find<UserController>();
@@ -85,6 +85,14 @@ class NotificationController extends GetxController {
         endDate.value = null;
         break;
     }
+  }
+
+  void setDays(List<Map<String, String>?> value) {
+    quiteDay.clear();
+    for (var data in value) {
+      quiteDay.add(data);
+    }
+    quiteDay.refresh();
   }
 
   Future<void> fetchNotification({
@@ -279,16 +287,21 @@ class NotificationController extends GetxController {
     switch (filter) {
       case NotificationFilterType.timeRange:
         return timeRangeList;
+      case NotificationFilterType.days:
+        return dayList;
     }
   }
 
   void setValue({
     required NotificationFilterType filter,
-    Map<String, String>? value,
+    dynamic value,
   }) {
     switch (filter) {
       case NotificationFilterType.timeRange:
         setTimeRange(value);
+        break;
+      case NotificationFilterType.days:
+        setDays(value);
         break;
     }
   }

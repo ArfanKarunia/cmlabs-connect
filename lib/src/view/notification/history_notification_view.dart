@@ -37,10 +37,14 @@ class _HistoryNotificationViewState extends State<HistoryNotificationView> {
           InboxAddField(
             title: 'Select Time Range',
             child: CustomSelectField(
-              onTap: () => Get.toNamed(AppRoutes.notificationSelect, arguments: {
-                'title': 'Time Range',
-                'filter': NotificationFilterType.timeRange,
-              }),
+              onTap: () => Get.toNamed(
+                AppRoutes.notificationSelect,
+                arguments: {
+                  'title': 'Time Range',
+                  'filter': NotificationFilterType.timeRange,
+                  'isMultipleChoice': false,
+                },
+              ),
               child: Obx(
                 () => InboxTextOnField(
                   title: 'Select Time Range',

@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class StringUtils {
   // Static method to convert a hyphenated string to camel case
   static String toCamelCase(String? input) {
@@ -60,4 +62,9 @@ String formatServiceName(String name) {
   } catch (e) {
     return name;
   }
+}
+
+String formatDate(DateTime? date) {
+  if (date == null) return '-';
+  return DateFormat('d MMM yyyy').format(date);
 }

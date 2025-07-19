@@ -8,12 +8,19 @@ import '../../utils/string_utils.dart';
 import '../../widgets/custom_submit_button.dart';
 import '../../widgets/default_appbar.dart';
 import '../../widgets/empty_state.dart';
+import '../../widgets/tag_button.dart';
 // import '../../widgets/tag_button.dart';
 
 class NotificationSelectView extends StatefulWidget {
   final String title;
   final NotificationFilterType filter;
-  const NotificationSelectView({super.key, required this.title, required this.filter});
+  final bool isMultipleChoice;
+  const NotificationSelectView({
+    super.key,
+    required this.title,
+    required this.filter,
+    this.isMultipleChoice = false,
+  });
 
   @override
   State<NotificationSelectView> createState() => _NotificationSelectViewState();
@@ -22,6 +29,7 @@ class NotificationSelectView extends StatefulWidget {
 class _NotificationSelectViewState extends State<NotificationSelectView> {
   late List<Map<String, String>> data;
   Rx<Map<String, String>?> tempData = Rx<Map<String, String>?>(null);
+  RxList<Map<String, String>?> tempDataList = RxList<Map<String, String>?>([]);
   Rx<bool> canSelect = Rx<bool>(false);
 
   final NotificationController controller = Get.find<NotificationController>();
@@ -30,11 +38,12 @@ class _NotificationSelectViewState extends State<NotificationSelectView> {
   void initState() {
     super.initState();
     ever(tempData, (_) => _updateCanSelect());
+    ever(tempDataList, (_) => _updateCanSelect());
     data = controller.getList(widget.filter);
   }
 
   void _updateCanSelect() {
-    canSelect.value = tempData.value != null;
+    canSelect.value = tempData.value != null || tempDataList.isNotEmpty;
   }
 
   @override
@@ -77,37 +86,37 @@ class _NotificationSelectViewState extends State<NotificationSelectView> {
               //     ),
               //   ),
               // ],
-              // if (widget.isMultipleChoice) ...[
-              //   Obx(
-              //     () {
-              //       if (tempMapData.value.isNotEmpty) {
-              //         return SizedBox(
-              //           width: double.infinity,
-              //           height: 50,
-              //           child: ListView.builder(
-              //             shrinkWrap: true,
-              //             scrollDirection: Axis.horizontal,
-              //             itemCount: tempMapData.value.length,
-              //             itemBuilder: (context, index) {
-              //               final data = tempMapData.value[index];
-              //               var label = data?['label'] ?? "-";
+              if (widget.isMultipleChoice) ...[
+                Obx(
+                  () {
+                    if (tempDataList.isNotEmpty) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: tempDataList.length,
+                          itemBuilder: (context, index) {
+                            final data = tempDataList[index];
+                            String label = data?['label'] ?? "-";
 
-              //               return TagButton(
-              //                 statusLabel: label,
-              //                 onPressed: () {
-              //                   tempMapData.value.remove(data);
-              //                   tempMapData.refresh();
-              //                 },
-              //               );
-              //             },
-              //           ),
-              //         );
-              //       }
+                            return TagButton(
+                              statusLabel: label,
+                              onPressed: () {
+                                tempDataList.remove(data);
+                                tempDataList.refresh();
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    }
 
-              //       return Container();
-              //     },
-              //   )
-              // ],
+                    return Container();
+                  },
+                )
+              ],
               // const SizedBox(height: 10),
               // Text(
               //   "Select ${capitalizeFirstLetter(widget.filter.name)}",
@@ -135,28 +144,29 @@ class _NotificationSelectViewState extends State<NotificationSelectView> {
 
                           return GestureDetector(
                             onTap: () {
-                              // if (widget.isMultipleChoice) {
-                              //   if (data['value'] == 'all') {
-                              //     if (tempMapData.value.isNotEmpty) {
-                              //       tempMapData.value.clear();
-                              //     }
-                              //     tempMapData.value.add(allData);
-                              //   } else if (tempMapData.value.contains(data)) {
-                              //     tempMapData.value.remove(data);
-                              //   } else {
-                              //     if (tempMapData.value.contains(allData)) {
-                              //       tempMapData.value.clear();
-                              //     }
-                              //     tempMapData.value.add(data);
-                              //   }
-                              //   tempMapData.refresh();
-                              // } else {
-                              if (tempData.value == item) {
-                                tempData.value = null;
+                              if (widget.isMultipleChoice) {
+                                // if (data['value'] == 'all') {
+                                //   if (tempMapData.value.isNotEmpty) {
+                                //     tempMapData.value.clear();
+                                //   }
+                                //   tempMapData.value.add(allData);
+                                // } else
+                                if (tempDataList.contains(item)) {
+                                  tempDataList.remove(item);
+                                } else {
+                                  if (tempDataList.contains(item)) {
+                                    tempDataList.clear();
+                                  }
+                                  tempDataList.add(item);
+                                }
+                                tempDataList.refresh();
                               } else {
-                                tempData.value = item;
+                                if (tempData.value == item) {
+                                  tempData.value = null;
+                                } else {
+                                  tempData.value = item;
+                                }
                               }
-                              // }
                             },
                             child: Obx(
                               () {
@@ -164,11 +174,11 @@ class _NotificationSelectViewState extends State<NotificationSelectView> {
                                 return Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color:
-                                        // (widget.isMultipleChoice)
-                                        // ? (tempMapData.value.contains(data) ? AppColors.bgPrimary : AppColors.white_1)
-                                        // :
-                                        (tempData.value == item) ? AppColors.bgPrimary : AppColors.white_1,
+                                    color: (widget.isMultipleChoice)
+                                        ? (tempDataList.contains(item) ? AppColors.bgPrimary : AppColors.white_1)
+                                        : (tempData.value == item)
+                                            ? AppColors.bgPrimary
+                                            : AppColors.white_1,
                                   ),
                                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                                   child: Text(
@@ -188,7 +198,10 @@ class _NotificationSelectViewState extends State<NotificationSelectView> {
                   title: 'Select',
                   isDisabled: !canSelect.value,
                   onTap: () {
-                    controller.setValue(filter: widget.filter, value: tempData.value);
+                    controller.setValue(
+                      filter: widget.filter,
+                      value: widget.isMultipleChoice ? tempDataList : tempData.value,
+                    );
                     Get.back();
                   },
                 ),
