@@ -37,7 +37,7 @@ import 'view/analytics/detail_quotation_traffic_view.dart';
 import 'view/analytics/detail_quotation_trends.dart';
 import 'view/analytics/detail_top_pics_view.dart';
 import 'view/analytics/detail_top_services_view.dart';
-import 'view/filter_view.dart';
+import 'view/filter/filter_view.dart';
 import 'view/historical_lead/historical_lead_select_view.dart';
 import 'view/home_view.dart';
 import 'view/inbox/case_studies/case_studies_detail_view.dart';
@@ -64,7 +64,7 @@ import 'view/inbox/quotation/quotation_edit_select_view.dart';
 import 'view/inbox/quotation/quotation_edit_view.dart';
 import 'view/login_view.dart';
 import 'view/notification/notification_select_view.dart';
-import 'view/select_filter_view.dart';
+import 'view/filter/select_filter_view.dart';
 
 class AppRoutes {
   // initialization url of route

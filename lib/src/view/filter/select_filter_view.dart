@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../constant/fontstyle.dart';
-import '../controllers/filter/filter_controller.dart';
-import '../utils/color.dart';
-import '../utils/string_utils.dart';
-import '../widgets/custom_submit_button.dart';
-import '../widgets/default_appbar.dart';
-import '../widgets/empty_state.dart';
-import '../widgets/tag_button.dart';
+import '../../constant/fontstyle.dart';
+import '../../controllers/filter/filter_controller.dart';
+import '../../utils/color.dart';
+import '../../utils/string_utils.dart';
+import '../../widgets/custom_submit_button.dart';
+import '../../widgets/default_appbar.dart';
+import '../../widgets/empty_state.dart';
+import '../../widgets/tag_button.dart';
 
 class SelectFilterView extends StatefulWidget {
   final InboxFilterType filter;

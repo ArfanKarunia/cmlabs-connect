@@ -5,21 +5,21 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
-import '../constant/fontstyle.dart';
-import '../controllers/filter/filter_controller.dart';
-import '../controllers/inbox/case_studies/case_studies_controller.dart';
-import '../controllers/inbox/contact_us/contact_us_controller.dart';
-import '../controllers/inbox/faq/faq_controller.dart';
-import '../controllers/inbox/inbox_controller.dart';
-import '../models/inbox/property/inbox_page_model.dart';
-import '../routes.dart';
-import '../utils/bottom_sheet.dart';
-import '../widgets/inbox_action_button.dart';
-import '../widgets/select_status.dart';
-import 'inbox/case_studies/case_studies_inbox_view.dart';
-import 'inbox/contact_us/contact_us_inbox_view.dart';
-import 'inbox/faq/faq_inbox_view.dart';
-import 'inbox/quotation/quotation_inbox_view.dart';
+import '../../constant/fontstyle.dart';
+import '../../controllers/filter/filter_controller.dart';
+import '../../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../../controllers/inbox/contact_us/contact_us_controller.dart';
+import '../../controllers/inbox/faq/faq_controller.dart';
+import '../../controllers/inbox/inbox_controller.dart';
+import '../../models/inbox/property/inbox_page_model.dart';
+import '../../routes.dart';
+import '../../utils/bottom_sheet.dart';
+import '../../widgets/inbox_action_button.dart';
+import '../../widgets/select_status.dart';
+import 'case_studies/case_studies_inbox_view.dart';
+import 'contact_us/contact_us_inbox_view.dart';
+import 'faq/faq_inbox_view.dart';
+import 'quotation/quotation_inbox_view.dart';
 
 class InboxView extends StatefulWidget {
   const InboxView({super.key});

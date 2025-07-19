@@ -7,7 +7,7 @@ import '../utils/color.dart';
 import 'account/account_view.dart';
 import 'analytics/analytics_view.dart';
 import 'dashboard_view.dart';
-import 'inbox_view.dart';
+import 'inbox/inbox_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

@@ -47,11 +47,11 @@ class _NotificationViewState extends State<NotificationView> {
             ],
           ),
         ),
-        body: TabBarView(
+        body: const TabBarView(
           children: [
-            const AllNotificationView(),
-            const NewNotificationView(),
-            const ReminderNotificationView(),
+            AllNotificationView(),
+            NewNotificationView(),
+            ReminderNotificationView(),
             HistoryNotificationView(),
           ],
         ),

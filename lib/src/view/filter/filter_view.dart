@@ -4,14 +4,14 @@ import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 
-import '../constant/fontstyle.dart';
-import '../controllers/filter/filter_controller.dart';
-import '../utils/color.dart';
+import '../../constant/fontstyle.dart';
+import '../../controllers/filter/filter_controller.dart';
+import '../../utils/color.dart';
 // import '../widgets/custom_buttom.dart';
-import '../widgets/custom_select_field.dart';
-import '../widgets/custom_submit_button.dart';
-import '../widgets/inbox_add_field.dart';
-import '../widgets/tag_button.dart';
+import '../../widgets/custom_select_field.dart';
+import '../../widgets/custom_submit_button.dart';
+import '../../widgets/inbox_add_field.dart';
+import '../../widgets/tag_button.dart';
 
 class FilterView extends StatefulWidget {
   const FilterView({super.key});
