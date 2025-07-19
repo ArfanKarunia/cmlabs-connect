@@ -7,7 +7,7 @@ import '../../../controllers/inbox/faq/faq_controller.dart';
 import '../../../models/inbox/faq_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
-import '../../../widgets/inbox_list_tile.dart';
+import '../../../widgets/inbox/inbox_list_tile.dart';
 
 class FaqInbox extends StatelessWidget {
   final RefreshController refreshController;

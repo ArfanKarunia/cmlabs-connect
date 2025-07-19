@@ -6,20 +6,20 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-import '../constant/const.dart';
-import '../constant/fontstyle.dart';
-import '../controllers/inbox/case_studies/case_studies_controller.dart';
-import '../controllers/inbox/contact_us/contact_us_controller.dart';
-import '../controllers/inbox/faq/faq_controller.dart';
-import '../controllers/inbox/inbox_controller.dart';
-import '../controllers/inbox/quotation/quotation_controller.dart';
-import '../models/inbox/case_studies_model.dart';
-import '../models/inbox/contact_us_model.dart';
-import '../models/inbox/faq_model.dart';
-import '../models/inbox/quotation_model.dart';
-import '../routes.dart';
-import '../utils/bottom_sheet.dart';
-import '../utils/color.dart';
+import '../../constant/const.dart';
+import '../../constant/fontstyle.dart';
+import '../../controllers/inbox/case_studies/case_studies_controller.dart';
+import '../../controllers/inbox/contact_us/contact_us_controller.dart';
+import '../../controllers/inbox/faq/faq_controller.dart';
+import '../../controllers/inbox/inbox_controller.dart';
+import '../../controllers/inbox/quotation/quotation_controller.dart';
+import '../../models/inbox/case_studies_model.dart';
+import '../../models/inbox/contact_us_model.dart';
+import '../../models/inbox/faq_model.dart';
+import '../../models/inbox/quotation_model.dart';
+import '../../routes.dart';
+import '../../utils/bottom_sheet.dart';
+import '../../utils/color.dart';
 
 class InboxListTile extends StatelessWidget {
   final String title;

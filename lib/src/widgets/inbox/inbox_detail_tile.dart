@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../constant/fontstyle.dart';
-import '../utils/color.dart';
+import '../../constant/fontstyle.dart';
+import '../../utils/color.dart';
 
 class InboxDetailTile extends StatelessWidget {
   final String title;

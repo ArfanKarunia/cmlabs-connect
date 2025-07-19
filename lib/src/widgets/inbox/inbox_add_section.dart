@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constant/fontstyle.dart';
+import '../../constant/fontstyle.dart';
 
 class InboxAddSection extends StatelessWidget {
   final String title;

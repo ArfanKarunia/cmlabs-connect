@@ -9,7 +9,7 @@ import '../../utils/toast.dart';
 import '../../widgets/custom_select_field.dart';
 import '../../widgets/custom_submit_button.dart';
 import '../../widgets/default_appbar.dart';
-import '../../widgets/inbox_add_field.dart';
+import '../../widgets/inbox/inbox_add_field.dart';
 
 class HistoricalLeadView extends StatefulWidget {
   const HistoricalLeadView({super.key});

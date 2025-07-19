@@ -12,7 +12,7 @@ import '../../constant/fontstyle.dart';
 import '../../widgets/custom_select_field.dart';
 import '../../widgets/custom_submit_button.dart';
 import '../../widgets/empty_state.dart';
-import '../../widgets/inbox_add_field.dart';
+import '../../widgets/inbox/inbox_add_field.dart';
 
 class HistoryNotificationView extends StatefulWidget {
   const HistoryNotificationView({super.key});

@@ -10,7 +10,7 @@ import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_detail_tile.dart';
+import '../../../widgets/inbox/inbox_detail_tile.dart';
 
 class CaseStudiesDetailView extends StatefulWidget {
   final CaseStudies caseStudies;

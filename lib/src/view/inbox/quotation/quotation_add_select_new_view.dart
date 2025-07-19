@@ -1,4 +1,4 @@
-import 'package:cmlabs_connect/src/widgets/inbox_add_field.dart';
+import 'package:cmlabs_connect/src/widgets/inbox/inbox_add_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

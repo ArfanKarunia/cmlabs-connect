@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../constant/const.dart';
-import '../constant/fontstyle.dart';
-import '../controllers/inbox/edit_form_controller.dart';
-import '../utils/bottom_sheet.dart';
-import '../utils/color.dart';
-import 'custom_submit_button.dart';
+import '../../constant/const.dart';
+import '../../constant/fontstyle.dart';
+import '../../controllers/inbox/edit_form_controller.dart';
+import '../../utils/bottom_sheet.dart';
+import '../../utils/color.dart';
+import '../custom_submit_button.dart';
 import 'inbox_list_tile.dart';
 
 class HistoryTile extends StatelessWidget {

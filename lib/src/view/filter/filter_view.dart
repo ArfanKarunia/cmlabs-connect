@@ -10,7 +10,7 @@ import '../../utils/color.dart';
 // import '../widgets/custom_buttom.dart';
 import '../../widgets/custom_select_field.dart';
 import '../../widgets/custom_submit_button.dart';
-import '../../widgets/inbox_add_field.dart';
+import '../../widgets/inbox/inbox_add_field.dart';
 import '../../widgets/tag_button.dart';
 
 class FilterView extends StatefulWidget {

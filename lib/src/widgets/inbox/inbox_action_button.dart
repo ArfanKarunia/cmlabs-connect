@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
-import '../constant/fontstyle.dart';
-import '../routes.dart';
-import '../utils/color.dart';
+import '../../constant/fontstyle.dart';
+import '../../routes.dart';
+import '../../utils/color.dart';
 
 class InboxAddQuotationButton extends StatelessWidget {
   const InboxAddQuotationButton({super.key});

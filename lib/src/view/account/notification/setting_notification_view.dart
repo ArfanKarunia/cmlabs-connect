@@ -8,7 +8,7 @@ import '../../../routes.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_add_field.dart';
+import '../../../widgets/inbox/inbox_add_field.dart';
 import '../../../widgets/tag_button.dart';
 
 class SettingNotificationView extends StatefulWidget {

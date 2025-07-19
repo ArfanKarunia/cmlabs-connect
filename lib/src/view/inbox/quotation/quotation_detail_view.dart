@@ -11,7 +11,7 @@ import '../../../utils/color.dart';
 import '../../../utils/string_utils.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_detail_tile.dart';
+import '../../../widgets/inbox/inbox_detail_tile.dart';
 
 class QuotationDetailView extends StatefulWidget {
   final Quotation quotation;

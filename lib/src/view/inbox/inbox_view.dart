@@ -14,7 +14,7 @@ import '../../controllers/inbox/inbox_controller.dart';
 import '../../models/inbox/property/inbox_page_model.dart';
 import '../../routes.dart';
 import '../../utils/bottom_sheet.dart';
-import '../../widgets/inbox_action_button.dart';
+import '../../widgets/inbox/inbox_action_button.dart';
 import '../../widgets/select_status.dart';
 import 'case_studies/case_studies_inbox_view.dart';
 import 'contact_us/contact_us_inbox_view.dart';

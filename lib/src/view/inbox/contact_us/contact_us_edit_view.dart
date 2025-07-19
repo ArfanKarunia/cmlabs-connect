@@ -16,9 +16,9 @@ import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_add_field.dart';
-import '../../../widgets/inbox_add_section.dart';
-import '../../../widgets/inbox_history_tile.dart';
+import '../../../widgets/inbox/inbox_add_field.dart';
+import '../../../widgets/inbox/inbox_add_section.dart';
+import '../../../widgets/inbox/inbox_history_tile.dart';
 import '../../../widgets/tag_button.dart';
 
 class ContactUsEditView extends StatefulWidget {

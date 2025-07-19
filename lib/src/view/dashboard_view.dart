@@ -21,7 +21,7 @@ import '../models/inbox/quotation_model.dart';
 import '../utils/color.dart';
 import '../widgets/custom_avatar.dart';
 import '../widgets/empty_state.dart';
-import '../widgets/inbox_list_tile.dart';
+import '../widgets/inbox/inbox_list_tile.dart';
 import '../widgets/metric_card.dart';
 import '../widgets/select_status.dart';
 
