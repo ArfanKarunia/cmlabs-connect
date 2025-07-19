@@ -34,7 +34,6 @@ class QuotationAddSelectView extends StatefulWidget {
 }
 
 class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
-  late final List<Map<String, String>> choice;
   final TextEditingController searchController = TextEditingController();
   String searchQuery = '';
 
@@ -48,7 +47,6 @@ class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
   @override
   void initState() {
     super.initState();
-    choice = widget.isContactForm ? contactController.getList(widget.data) : controller.getList(widget.data);
     ever(tempData, (_) => _updateCanSelect());
     ever(tempMapData, (_) => _updateCanSelect());
   }
@@ -65,11 +63,6 @@ class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
 
   @override
   Widget build(BuildContext context) {
-    List<Map<String, String>> filteredChoice = choice.where((data) {
-      return (data['label'] ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
-          (data['value'] ?? '').toLowerCase().contains(searchQuery.toLowerCase());
-    }).toList();
-
     return Scaffold(
       appBar: defaultAppBar('Select ${widget.title}'),
       backgroundColor: AppColors.scaffoldBgColor2,
@@ -138,52 +131,63 @@ class _QuotationAddSelectViewState extends State<QuotationAddSelectView> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child: filteredChoice.isEmpty
-                  ? const EmptyState()
-                  : ListView.builder(
-                      itemCount: filteredChoice.length,
-                      itemBuilder: (context, index) {
-                        final data = filteredChoice[index];
+              child: Obx(
+                () {
+                  List<Map<String, String>> choice =
+                      widget.isContactForm ? contactController.getList(widget.data) : controller.getList(widget.data);
+                  List<Map<String, String>> filteredChoice = choice.where((data) {
+                    return (data['label'] ?? '').toLowerCase().contains(searchQuery.toLowerCase()) ||
+                        (data['value'] ?? '').toLowerCase().contains(searchQuery.toLowerCase());
+                  }).toList();
 
-                        return GestureDetector(
-                          onTap: () {
-                            if (widget.isMultipleChoice) {
-                              if (tempMapData.value.contains(data)) {
-                                tempMapData.value.remove(data);
-                              } else {
-                                tempMapData.value.add(data);
-                              }
-                              tempMapData.refresh();
-                            } else {
-                              if (tempData.value == data) {
-                                tempData.value = null;
-                              } else {
-                                tempData.value = data;
-                              }
-                            }
+                  return filteredChoice.isEmpty
+                      ? const EmptyState()
+                      : ListView.builder(
+                          itemCount: filteredChoice.length,
+                          itemBuilder: (context, index) {
+                            final data = filteredChoice[index];
+
+                            return GestureDetector(
+                              onTap: () {
+                                if (widget.isMultipleChoice) {
+                                  if (tempMapData.value.contains(data)) {
+                                    tempMapData.value.remove(data);
+                                  } else {
+                                    tempMapData.value.add(data);
+                                  }
+                                  tempMapData.refresh();
+                                } else {
+                                  if (tempData.value == data) {
+                                    tempData.value = null;
+                                  } else {
+                                    tempData.value = data;
+                                  }
+                                }
+                              },
+                              child: Obx(
+                                () {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: (widget.isMultipleChoice)
+                                          ? (tempMapData.value.contains(data) ? AppColors.bgPrimary : AppColors.white_1)
+                                          : (tempData.value == data)
+                                              ? AppColors.bgPrimary
+                                              : AppColors.white_1,
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                    child: Text(
+                                      data['label'] ?? '',
+                                      style: regular.copyWith(fontSize: 13),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
                           },
-                          child: Obx(
-                            () {
-                              return Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: (widget.isMultipleChoice)
-                                      ? (tempMapData.value.contains(data) ? AppColors.bgPrimary : AppColors.white_1)
-                                      : (tempData.value == data)
-                                          ? AppColors.bgPrimary
-                                          : AppColors.white_1,
-                                ),
-                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                                child: Text(
-                                  data['label'] ?? '',
-                                  style: regular.copyWith(fontSize: 13),
-                                ),
-                              );
-                            },
-                          ),
                         );
-                      },
-                    ),
+                },
+              ),
             ),
             const SizedBox(height: 20),
             Obx(
