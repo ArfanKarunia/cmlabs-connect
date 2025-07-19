@@ -416,17 +416,19 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                   ),
                                 );
                               }),
-                              CustomSubmitButton(
-                                title: 'Add More Contact',
-                                icon: Ionicons.add,
-                                onTap: () => Get.toNamed(
-                                  AppRoutes.editContactUsContact,
-                                  arguments: {
-                                    'clientIndex': index,
-                                    'currentContactIndex': controller.picClients[index].contacts.length,
-                                  },
+                              if (controller.picClients[index].contacts.length < 3) ...[
+                                CustomSubmitButton(
+                                  title: 'Add More Contact',
+                                  icon: Ionicons.add,
+                                  onTap: () => Get.toNamed(
+                                    AppRoutes.editContactUsContact,
+                                    arguments: {
+                                      'clientIndex': index,
+                                      'currentContactIndex': controller.picClients[index].contacts.length,
+                                    },
+                                  ),
                                 ),
-                              ),
+                              ],
                               const SizedBox(height: 10),
                               CustomSubmitButton(
                                 title: 'Delete PIC ${index + 1}',

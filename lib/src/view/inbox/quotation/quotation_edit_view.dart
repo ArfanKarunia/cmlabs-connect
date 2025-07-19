@@ -46,6 +46,7 @@ class _QuotationEditViewState extends State<QuotationEditView> {
       type: widget.quotation.typeInformation,
       picClientSide: widget.quotation.clientPic,
       projectHistory: widget.quotation.activities,
+      urlTracking: widget.quotation.urlTracking,
     );
     controller.quotationId = widget.quotation.id ?? 0;
     controller.setInitialValue(editForm);
@@ -403,17 +404,19 @@ class _QuotationEditViewState extends State<QuotationEditView> {
                                   ),
                                 );
                               }),
-                              CustomSubmitButton(
-                                title: 'Add More Contact',
-                                icon: Ionicons.add,
-                                onTap: () => Get.toNamed(
-                                  AppRoutes.editQuotationContact,
-                                  arguments: {
-                                    'clientIndex': index,
-                                    'currentContactIndex': controller.picClients[index].contacts.length,
-                                  },
+                              if (controller.picClients[index].contacts.length < 3) ...[
+                                CustomSubmitButton(
+                                  title: 'Add More Contact',
+                                  icon: Ionicons.add,
+                                  onTap: () => Get.toNamed(
+                                    AppRoutes.editQuotationContact,
+                                    arguments: {
+                                      'clientIndex': index,
+                                      'currentContactIndex': controller.picClients[index].contacts.length,
+                                    },
+                                  ),
                                 ),
-                              ),
+                              ],
                               const SizedBox(height: 10),
                               CustomSubmitButton(
                                 title: 'Delete PIC ${index + 1}',
