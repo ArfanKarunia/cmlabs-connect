@@ -115,23 +115,7 @@ class EditContactUsController extends EditFormController {
       }
     } on http.DioException catch (e) {
       isLoading(false);
-      final errors = e.response?.data['message'];
-
-      if (errors is Map) {
-        errors.forEach(
-          (key, value) {
-            if (value is List) {
-              for (var errorMessage in value) {
-                Get.snackbar('Error', errorMessage, duration: const Duration(seconds: 1));
-              }
-            } else {
-              Get.snackbar('Error', value, duration: const Duration(seconds: 1));
-            }
-          },
-        );
-      } else {
-        Get.snackbar('Error', errors, duration: const Duration(seconds: 1));
-      }
+      showErrorToast('Error: ${e.response?.data}');
     } catch (e) {
       isLoading(false);
       Get.snackbar('Error', e.toString());
