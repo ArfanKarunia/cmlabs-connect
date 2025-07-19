@@ -2,7 +2,7 @@ import 'package:dio/dio.dart' as http;
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../../models/inbox/property/url_tracking.dart';
+// import '../../../models/inbox/property/url_tracking.dart';
 import '../../../utils/toast.dart';
 import '../edit_form_controller.dart';
 import 'detail_quotation_controller.dart';
@@ -101,18 +101,19 @@ class EditQuotationController extends EditFormController {
 
       if (response.statusCode == 200) {
         showSuccessToast('Berhasil mengubah Quotation!');
-        parent.quotation.value = parent.quotation.value?.copyWith(
-          cmlabspic: selectedPic.value?['value'],
-          status: int.tryParse(selectedStatus.value?['value'] ?? '0'),
-          priority: int.tryParse(selectedPriority.value?['value'] ?? '0'),
-          typeInformation: selectedType.map((type) => type['value'].toString()).toList(),
-          clientPic: picClients,
-          activities: historyList,
-          urlTracking: UrlTracking(
-            url: urlTrackingUrl.value,
-            password: urlTrackingPassword.value.text,
-          ),
-        );
+        parent.fetchDetails(quotationId);
+        // parent.quotation.value = parent.quotation.value?.copyWith(
+        //   cmlabspic: selectedPic.value?['value'],
+        //   status: int.tryParse(selectedStatus.value?['value'] ?? '0'),
+        //   priority: int.tryParse(selectedPriority.value?['value'] ?? '0'),
+        //   typeInformation: selectedType.map((type) => type['value'].toString()).toList(),
+        //   clientPic: picClients,
+        //   activities: historyList,
+        //   urlTracking: UrlTracking(
+        //     url: urlTrackingUrl.value,
+        //     password: urlTrackingPassword.value.text,
+        //   ),
+        // );
         Get.back();
       }
     } on http.DioException catch (e) {

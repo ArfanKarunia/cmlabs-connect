@@ -5,6 +5,32 @@ import 'package:get/get.dart';
 class ClientPicContactController extends GetxController {
   Rx<String?> search = Rx<String?>(null);
 
+  RxList<Map<String, String>> contactType = <Map<String, String>>[
+    {"value": "Email", "label": "Email"},
+    {"value": "WhatsApp", "label": "WhatsApp"},
+    {"value": "Phone Number", "label": "Phone Number"},
+    {"value": "Telegram", "label": "Telegram"},
+    {"value": "LinkedIn", "label": "LinkedIn"},
+  ].obs;
+  RxList<Map<String, String>> contactStatus = <Map<String, String>>[
+    {"value": "Contacted", "label": "Contacted"},
+    {"value": "Not Contacted", "label": "Not Contacted"},
+    {"value": "Visited", "label": "Visited"},
+    {"value": "Not Visited", "label": "Not Visited"},
+  ].obs;
+  RxMap<String, List<Map<String, String>>> contactDetailStatus = <String, List<Map<String, String>>>{
+    "Contacted": [
+      {"value": "Unreachable", "label": "Unreachable"},
+      {"value": "No further response", "label": "No further response"},
+    ],
+    "Not Contacted": [],
+    "Visited": [
+      {"value": "Met PIC", "label": "Met PIC"},
+      {"value": "Failed to meet PIC", "label": "Failed to meet PIC"},
+    ],
+    "Not Visited": [],
+  }.obs;
+
   Rx<Map<String, String>?> selectedContactType = Rx<Map<String, String>?>(null);
   Rx<TextEditingController> contactInfo = TextEditingController().obs;
   Rx<Map<String, String>?> selectedContactStatus = Rx<Map<String, String>?>(null);
@@ -122,34 +148,6 @@ class ClientPicContactController extends GetxController {
 
     return result;
   }
-
-  final contactType = [
-    {"value": "Email", "label": "Email"},
-    {"value": "WhatsApp", "label": "WhatsApp"},
-    {"value": "Phone Number", "label": "Phone Number"},
-    {"value": "Telegram", "label": "Telegram"},
-    {"value": "LinkedIn", "label": "LinkedIn"},
-  ];
-
-  final contactStatus = [
-    {"value": "Contacted", "label": "Contacted"},
-    {"value": "Not Contacted", "label": "Not Contacted"},
-    {"value": "Visited", "label": "Visited"},
-    {"value": "Not Visited", "label": "Not Visited"},
-  ];
-
-  Map<String, List<Map<String, String>>> contactDetailStatus = {
-    "Contacted": [
-      {"value": "Unreachable", "label": "Unreachable"},
-      {"value": "No further response", "label": "No further response"},
-    ],
-    "Not Contacted": [],
-    "Visited": [
-      {"value": "Met PIC", "label": "Met PIC"},
-      {"value": "Failed to meet PIC", "label": "Failed to meet PIC"},
-    ],
-    "Not Visited": [],
-  };
 
   ContactClientPic createContactPIC() {
     ContactClientPic contactClientPic = ContactClientPic(
