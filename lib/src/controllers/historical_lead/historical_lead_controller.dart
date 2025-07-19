@@ -1,21 +1,26 @@
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/historical_lead_model.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../constant/config.dart';
+import '../../constant/config.dart';
 
 class HistoricalLeadController extends GetxController {
-  var search = Rx<String?>(null);
+  Rx<Map<String, String>?> year1 = Rx<Map<String, String>?>(null);
+  Rx<Map<String, String>?> month1 = Rx<Map<String, String>?>(null);
+  Rx<Map<String, String>?> year2 = Rx<Map<String, String>?>(null);
+  Rx<Map<String, String>?> month2 = Rx<Map<String, String>?>(null);
 
-  final year1 = Rx<Map<String, String>?>(null);
-  final year2 = Rx<Map<String, String>?>(null);
+  Rx<HistoricalLeadModel?> historicalData1 = Rx<HistoricalLeadModel?>(null);
+  Rx<HistoricalLeadModel?> historicalData2 = Rx<HistoricalLeadModel?>(null);
 
-  final month1 = Rx<Map<String, String>?>(null);
-  final month2 = Rx<Map<String, String>?>(null);
+  Rx<bool> isLoading = false.obs;
 
-  final historicalData1 = Rx<HistoricalLeadModel?>(null);
-  final historicalData2 = Rx<HistoricalLeadModel?>(null);
+  Rx<String?> year1Error = Rx<String?>(null);
+  Rx<String?> month1Error = Rx<String?>(null);
+  Rx<String?> year2Error = Rx<String?>(null);
+  Rx<String?> month2Error = Rx<String?>(null);
 
   final UserController userController = Get.find<UserController>();
 
@@ -27,6 +32,8 @@ class HistoricalLeadController extends GetxController {
   }
 
   void submit() async {
+    isLoading(true);
+
     if (year1.value != null && month1.value != null) {
       await fetchHistoricalData(1);
     }
@@ -34,77 +41,38 @@ class HistoricalLeadController extends GetxController {
     if (year2.value != null && month2.value != null) {
       await fetchHistoricalData(2);
     }
+
+    isLoading(false);
   }
 
   Future<void> fetchHistoricalData(int index) async {
     try {
-      // Ambil access token dari AuthenticationController
       String? accessToken = userController.accesToken.value;
 
-      var data = requestData(index);
-
-      // Ambil data dari API
+      final body = requestData(index);
       final response = await dio.get(
         '$baseUrl/dashboard/historical_data_new',
         options: Options(
-          headers: {
-            'Authorization': 'Bearer $accessToken',
-          },
+          headers: {'Authorization': 'Bearer $accessToken'},
         ),
-        data: data,
+        data: body,
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        var responseData = response.data;
-        var historicalData = HistoricalLeadModel.fromJson(responseData['data']);
+        final data = response.data;
+        final historicalData = HistoricalLeadModel.fromJson(data['data']);
 
         if (index == 1) {
           historicalData1.value = historicalData;
         } else if (index == 2) {
           historicalData2.value = historicalData;
         }
-      } else {
-        print("Error: ${response.statusCode}, Message: ${response.statusMessage}");
       }
+    } on DioException catch (e) {
+      debugPrint("Error: ${e.response?.statusCode}, Message: ${e.response?.statusMessage}");
     } catch (e) {
-      print('Error fetching data: $e');
+      debugPrint('Error fetching data: $e');
     }
-  }
-
-  void setSearch(String? query) {
-    search.value = query;
-  }
-
-  List<dynamic> searchData(String select) {
-    List result = [];
-
-    // Debugging
-    print("Current Filter: $select");
-    print("Current Search Query: ${search.value}");
-
-    if (select == 'year') {
-      result = yearList;
-
-      if (search.value != null && search.value!.isNotEmpty) {
-        final query = search.value!.toLowerCase();
-        result = result.where((data) {
-          return data.toLowerCase().contains(query);
-        }).toList();
-      }
-    }
-
-    if (select == 'month') {
-      result = monthList;
-
-      if (search.value != null && search.value!.isNotEmpty) {
-        final query = search.value!.toLowerCase();
-        result = result.where((data) {
-          return data.toLowerCase().contains(query);
-        }).toList();
-      }
-    }
-
-    return result;
   }
 
   void clear() {
@@ -150,7 +118,7 @@ class HistoricalLeadController extends GetxController {
   final monthList = List.generate(
     12,
     (index) => {
-      "value": "${index + 1}", // Value berupa angka bulan (1 - 12)
+      "value": "${index + 1}",
       "label": [
         "January",
         "February",
@@ -164,7 +132,41 @@ class HistoricalLeadController extends GetxController {
         "October",
         "November",
         "December"
-      ][index], // Label berupa nama bulan
+      ][index],
     },
   );
+
+  List<Map<String, String>> getData(HistoricalLeadSelectType type) {
+    switch (type) {
+      case HistoricalLeadSelectType.year:
+        return yearList;
+      case HistoricalLeadSelectType.month:
+        return monthList;
+    }
+  }
+
+  void setValue({
+    required HistoricalLeadSelectType data,
+    required int index,
+    required Map<String, String> value,
+  }) {
+    switch (data) {
+      case HistoricalLeadSelectType.year:
+        if (index == 1) {
+          year1.value = value;
+        } else if (index == 2) {
+          year2.value = value;
+        }
+        break;
+      case HistoricalLeadSelectType.month:
+        if (index == 1) {
+          month1.value = value;
+        } else if (index == 2) {
+          month2.value = value;
+        }
+        break;
+    }
+  }
 }
+
+enum HistoricalLeadSelectType { year, month }

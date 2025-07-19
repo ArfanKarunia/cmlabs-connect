@@ -34,7 +34,6 @@ class DashboardView extends StatefulWidget {
 }
 
 class _DashboardViewState extends State<DashboardView> {
-  // final HistoricalLeadController historicalLeadController = Get.put(HistoricalLeadController());
   final NotificationController notificationController = Get.find<NotificationController>();
 
   final DashboardController dashboardController = Get.find<DashboardController>();
@@ -44,12 +43,6 @@ class _DashboardViewState extends State<DashboardView> {
   final CaseStudiesController caseStudiesController = Get.find<CaseStudiesController>();
   final ContactUsController contactUsController = Get.find<ContactUsController>();
   final FaqController faqController = Get.find<FaqController>();
-
-  @override
-  void initState() {
-    super.initState();
-    // historicalLeadController.clear();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -117,6 +110,7 @@ class _DashboardViewState extends State<DashboardView> {
                       faqController,
                     ],
                     enableFilter: true,
+                    enableHistory: true,
                   ),
                 ],
               ),

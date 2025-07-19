@@ -18,11 +18,12 @@ import 'package:cmlabs_connect/src/view/account/summary/form_summary_view.dart';
 import 'package:cmlabs_connect/src/view/account/summary/summary_view.dart';
 import 'package:cmlabs_connect/src/view/account/volunteer/form_volunteer_view.dart';
 import 'package:cmlabs_connect/src/view/account/volunteer/volunteer_view.dart';
-import 'package:cmlabs_connect/src/view/historical_lead_view.dart';
+import 'package:cmlabs_connect/src/view/historical_lead/historical_lead_view.dart';
 import 'package:cmlabs_connect/src/view/notification/notification_view.dart';
 import 'package:get/get.dart';
 
 import 'controllers/filter/filter_controller.dart';
+import 'controllers/historical_lead/historical_lead_controller.dart';
 import 'controllers/notification/notification_controller.dart';
 import 'models/inbox/case_studies_model.dart';
 import 'models/inbox/property/client_pic_model.dart';
@@ -37,6 +38,7 @@ import 'view/analytics/detail_quotation_trends.dart';
 import 'view/analytics/detail_top_pics_view.dart';
 import 'view/analytics/detail_top_services_view.dart';
 import 'view/filter_view.dart';
+import 'view/historical_lead/historical_lead_select_view.dart';
 import 'view/home_view.dart';
 import 'view/inbox/case_studies/case_studies_detail_view.dart';
 import 'view/inbox/case_studies/case_studies_edit_history_view.dart';
@@ -95,19 +97,14 @@ class AppRoutes {
   static const String editFaqStatus = '/editFaqStatus';
   static const String editFaqSelect = '/editFaqSelect';
 
-  static const String addContactClientPIC = '/addContactClientPIC';
-  static const String editHistoryChangesData = '/editHistoryChangesData';
-  // static const String profile = '/profile';
-
   static const String filter = '/filter';
   static const String filterSelect = '/filterSelect';
-  // static const String editSelect = '/editSelect';
 
   static const String notification = '/notification';
   static const String notificationSelect = '/notificationSelect';
 
   static const String historicalLead = '/historicalLead';
-
+  static const String historicalLeadSelect = '/historicalLeadSelect';
   // account menu
   static const String accountSelectView = '/accountSelectView';
 
@@ -157,6 +154,8 @@ class AppRoutes {
       name: home,
       page: () => const HomeView(),
     ),
+
+    // Filter
     GetPage(
       name: filter,
       page: () => const FilterView(),
@@ -175,21 +174,23 @@ class AppRoutes {
         );
       },
     ),
-    // GetPage(
-    //   name: editSelect,
-    //   page: () {
-    //     final args = Get.arguments as Map<String, dynamic>;
-    //     final String selectData = args['selectData'];
-    //     final dynamic controller = args['controller'];
 
-    //     return SelectEditView(
-    //       selectData: selectData,
-    //       controller: controller,
-    //     );
-    //   },
-    // ),
-    GetPage(name: historicalLead, page: () => HistoricalLeadView()),
+    // Historical Lead
+    GetPage(
+      name: historicalLead,
+      page: () => const HistoricalLeadView(),
+    ),
+    GetPage(
+      name: historicalLeadSelect,
+      page: () {
+        final HistoricalLeadSelectType data = Get.arguments['data'];
+        final int index = Get.arguments['index'];
 
+        return HistoricalLeadSelectView(data: data, index: index);
+      },
+    ),
+
+    // Notification
     GetPage(
       name: notification,
       page: () => const NotificationView(),
@@ -209,6 +210,7 @@ class AppRoutes {
       },
     ),
 
+    // Add Quotation
     GetPage(
       name: addQuotation,
       page: () => const QuotationAddView(),
@@ -256,6 +258,7 @@ class AppRoutes {
       },
     ),
 
+    // Detail Leads
     GetPage(
       name: detailQuotation,
       page: () {
@@ -285,6 +288,7 @@ class AppRoutes {
       },
     ),
 
+    // Edit Leads
     GetPage(
       name: editQuotation,
       page: () {
@@ -314,6 +318,7 @@ class AppRoutes {
       },
     ),
 
+    // Edit Select Leads
     GetPage(
       name: editQuotationSelect,
       page: () {
@@ -403,6 +408,7 @@ class AppRoutes {
       },
     ),
 
+    // Edit Contact Leads
     GetPage(
       name: editQuotationContact,
       page: () {
@@ -446,6 +452,7 @@ class AppRoutes {
       },
     ),
 
+    // Edit History Leads
     GetPage(
       name: editQuotationHistory,
       page: () {
@@ -468,8 +475,6 @@ class AppRoutes {
       },
     ),
 
-    // Account menu route
-
     // CHANGE PASSWORD
     GetPage(
       name: changePasswordView,
@@ -486,12 +491,11 @@ class AppRoutes {
       page: () => AccountSelectView(data: Get.arguments['data']),
     ),
 
-    // SUUMMARY
+    // SUMMARY
     GetPage(
       name: summaryView,
       page: () => const SummaryView(),
     ),
-
     GetPage(
       name: formSummaryView,
       page: () {
@@ -512,10 +516,7 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormExperienceView(
-          status: status,
-          id: id,
-        );
+        return FormExperienceView(status: status, id: id);
       },
     ),
 
@@ -531,12 +532,10 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormEducationView(
-          status: status,
-          id: id,
-        );
+        return FormEducationView(status: status, id: id);
       },
     ),
+
     // CERTIFICATION
     GetPage(
       name: certificationView,
@@ -549,10 +548,7 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormCertificationView(
-          status: status,
-          id: id,
-        );
+        return FormCertificationView(status: status, id: id);
       },
     ),
 
@@ -568,10 +564,7 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormOrganizationView(
-          status: status,
-          id: id,
-        );
+        return FormOrganizationView(status: status, id: id);
       },
     ),
 
@@ -587,10 +580,7 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormAchievementView(
-          status: status,
-          id: id,
-        );
+        return FormAchievementView(status: status, id: id);
       },
     ),
 
@@ -606,10 +596,7 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormVolunteerView(
-          status: status,
-          id: id,
-        );
+        return FormVolunteerView(status: status, id: id);
       },
     ),
 
@@ -625,10 +612,7 @@ class AppRoutes {
         final String status = args['status'];
         final int? id = args['id'] as int?;
 
-        return FormPublicationView(
-          status: status,
-          id: id,
-        );
+        return FormPublicationView(status: status, id: id);
       },
     ),
 

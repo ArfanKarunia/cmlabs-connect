@@ -144,17 +144,12 @@ class SelectStatus extends StatelessWidget {
                     ),
                   ),
                 ),
-              // if (enableFilter && enableHistory) const SizedBox(width: 14),
-              // if (enableHistory)
-              //   CustomButton(
-              //     onPressed: () => Get.toNamed(AppRoutes.historicalLead),
-              //     backgroundColor: Colors.transparent,
-              //     overlayColor: const Color.fromARGB(33, 31, 149, 245),
-              //     child: const Icon(
-              //       Icons.history,
-              //       color: AppColors.text_1,
-              //     ),
-              //   ),
+              if (enableFilter && enableHistory) const SizedBox(width: 10),
+              if (enableHistory)
+                GestureDetector(
+                  onTap: () => Get.toNamed(AppRoutes.historicalLead),
+                  child: const Icon(Icons.history, color: AppColors.text_1),
+                ),
             ],
           ),
         ],

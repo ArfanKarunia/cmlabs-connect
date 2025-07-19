@@ -2,24 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constant/fontstyle.dart';
-import '../../controllers/account/account_controller.dart';
+import '../../controllers/historical_lead/historical_lead_controller.dart';
 import '../../utils/color.dart';
 import '../../utils/string_utils.dart';
 import '../../widgets/custom_submit_button.dart';
 import '../../widgets/default_appbar.dart';
 
-class AccountSelectView extends StatefulWidget {
-  final AccountSelectData data;
-  const AccountSelectView({super.key, required this.data});
+class HistoricalLeadSelectView extends StatefulWidget {
+  final HistoricalLeadSelectType data;
+  final int index;
+  const HistoricalLeadSelectView({
+    super.key,
+    required this.data,
+    required this.index,
+  });
 
   @override
-  State<AccountSelectView> createState() => _AccountSelectViewState();
+  State<HistoricalLeadSelectView> createState() => _HistoricalLeadSelectViewState();
 }
 
-class _AccountSelectViewState extends State<AccountSelectView> {
-  final AccountController controller = Get.find<AccountController>();
+class _HistoricalLeadSelectViewState extends State<HistoricalLeadSelectView> {
+  final HistoricalLeadController controller = Get.find<HistoricalLeadController>();
 
-  Rx<Map<String, dynamic>?> temporaryData = Rx<Map<String, dynamic>?>(null);
+  Rx<Map<String, String>?> temporaryData = Rx<Map<String, String>?>(null);
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +71,7 @@ class _AccountSelectViewState extends State<AccountSelectView> {
                               color: temporaryData.value == point ? AppColors.bgPrimary : AppColors.white_1,
                             ),
                             child: Text(
-                              point['name'] ?? "-",
+                              point['label'] ?? "-",
                               style: regular.copyWith(fontSize: 13, color: AppColors.text_1),
                             ),
                           );
@@ -81,7 +86,11 @@ class _AccountSelectViewState extends State<AccountSelectView> {
                 title: 'Select',
                 onTap: () {
                   if (temporaryData.value != null) {
-                    controller.setValue(data: widget.data, value: temporaryData.value);
+                    controller.setValue(
+                      data: widget.data,
+                      index: widget.index,
+                      value: temporaryData.value ?? {},
+                    );
                     Get.back();
                   }
                 },

@@ -16,7 +16,7 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-  final AuthenticationController authController = Get.put(AuthenticationController());
+  final AuthenticationController authController = Get.find<AuthenticationController>();
 
   bool isFormValid = false;
   TextEditingController emailController = TextEditingController();
