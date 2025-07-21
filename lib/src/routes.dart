@@ -164,11 +164,13 @@ class AppRoutes {
       name: filterSelect,
       page: () {
         final InboxFilterType filter = Get.arguments['filter'];
+        final String title = Get.arguments['title'];
         final bool canSearch = Get.arguments['canSearch'] ?? true;
         final bool isMultipleChoice = Get.arguments['isMultipleChoice'] ?? true;
 
         return SelectFilterView(
           filter: filter,
+          title: title,
           canSearch: canSearch,
           isMultipleChoice: isMultipleChoice,
         );

@@ -153,6 +153,7 @@ class _FilterViewState extends State<FilterView> {
               AppRoutes.filterSelect,
               arguments: {
                 'filter': InboxFilterType.category,
+                'title': 'Category',
                 'isMultipleChoice': true,
               },
             ),
@@ -214,6 +215,7 @@ class _FilterViewState extends State<FilterView> {
               AppRoutes.filterSelect,
               arguments: {
                 'filter': InboxFilterType.pic,
+                'title': 'PIC',
                 'isMultipleChoice': false,
               },
             ),
@@ -258,6 +260,7 @@ class _FilterViewState extends State<FilterView> {
               AppRoutes.filterSelect,
               arguments: {
                 'filter': InboxFilterType.clientSource,
+                'title': 'Client Source',
                 'isMultipleChoice': false,
               },
             ),

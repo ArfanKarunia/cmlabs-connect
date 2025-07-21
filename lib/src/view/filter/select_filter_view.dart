@@ -7,7 +7,6 @@ import 'package:ionicons/ionicons.dart';
 import '../../constant/fontstyle.dart';
 import '../../controllers/filter/filter_controller.dart';
 import '../../utils/color.dart';
-import '../../utils/string_utils.dart';
 import '../../widgets/custom_submit_button.dart';
 import '../../widgets/default_appbar.dart';
 import '../../widgets/empty_state.dart';
@@ -15,11 +14,13 @@ import '../../widgets/tag_button.dart';
 
 class SelectFilterView extends StatefulWidget {
   final InboxFilterType filter;
+  final String title;
   final bool isMultipleChoice;
   final bool canSearch;
   const SelectFilterView({
     super.key,
     required this.filter,
+    required this.title,
     this.canSearch = true,
     this.isMultipleChoice = true,
   });
@@ -54,7 +55,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
-      appBar: defaultAppBar("Filter ${capitalizeFirstLetter(widget.filter.name)}", titleSpacing: 0),
+      appBar: defaultAppBar("Filter ${widget.title}", titleSpacing: 0),
       body: Stack(
         children: [
           ListView(
@@ -74,7 +75,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                     textAlignVertical: TextAlignVertical.center,
                     style: regular.copyWith(fontSize: 12),
                     decoration: InputDecoration(
-                      hintText: "Search ${capitalizeFirstLetter(widget.filter.name)}",
+                      hintText: "Search ${widget.title}",
                       hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
                       suffixIcon: const Icon(Ionicons.search_outline, size: 24),
                       focusColor: AppColors.primary,
@@ -123,7 +124,7 @@ class _SelectFilterViewState extends State<SelectFilterView> {
               ],
               const SizedBox(height: 10),
               Text(
-                "Select ${capitalizeFirstLetter(widget.filter.name)}",
+                "Select ${widget.title}",
                 style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
               ),
               const SizedBox(height: 10),
