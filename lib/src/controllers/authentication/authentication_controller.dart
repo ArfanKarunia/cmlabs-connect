@@ -221,6 +221,7 @@ class AuthenticationController extends GetxController {
       );
 
       if (response.statusCode == 200) {
+        await setPassword(newPassword);
         showSuccessToast("Success: Update new password");
         Get.back();
       }

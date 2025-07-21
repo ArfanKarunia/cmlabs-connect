@@ -35,7 +35,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
         ? "The new password is required"
         : newPassword.text.length < 8
             ? "The new password must contain at least 8 characters"
-            : RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$').hasMatch(newPassword.text)
+            : !RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#\$&*~]).{8,}$').hasMatch(newPassword.text)
                 ? "The new password must contain a mix of uppercase, lowercase, numbers, and symbols"
                 : null;
     confirmPasswordError = confirmPassword.text.isEmpty
