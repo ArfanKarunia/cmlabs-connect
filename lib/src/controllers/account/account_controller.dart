@@ -16,6 +16,8 @@ import 'package:get/get.dart';
 import 'package:dio/dio.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
+import '../../utils/error_utils.dart';
+
 class AccountController extends GetxController {
   final UserController userController = Get.find<UserController>();
   final baseUrl = Config.baseURL;
@@ -129,8 +131,7 @@ class AccountController extends GetxController {
         userController.saveUser(userData);
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch profile'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -153,8 +154,7 @@ class AccountController extends GetxController {
         profileRoleList.value = data.map((item) => {'id': item['id'], 'name': item['name']}).toList();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch role list'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -205,8 +205,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update profile'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -261,8 +260,7 @@ class AccountController extends GetxController {
         summarySpecializationChecked.value = List<bool>.filled(summarySpecializationList.length, false);
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch specialization list'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -308,8 +306,7 @@ class AccountController extends GetxController {
         }
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch summary'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -338,8 +335,7 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Summary");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete summary'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Summary");
       debugPrint('Error fetching status data: $e');
@@ -371,8 +367,7 @@ class AccountController extends GetxController {
         showErrorToast("Failed: add Summary");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to add summary'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -417,8 +412,7 @@ class AccountController extends GetxController {
             .toList();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch project list'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -442,8 +436,7 @@ class AccountController extends GetxController {
         experienceList.refresh();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch experience'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -477,8 +470,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to add experience'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -517,8 +509,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update experience'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -545,8 +536,7 @@ class AccountController extends GetxController {
         showErrorToast("Failed: Delete Experience");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete experience'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -596,8 +586,7 @@ class AccountController extends GetxController {
         educationList.refresh();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch education'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -634,8 +623,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to add education'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -675,8 +663,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update education'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -701,8 +688,7 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Education");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete education'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Education");
       debugPrint('Error fetching status data: $e');
@@ -751,8 +737,7 @@ class AccountController extends GetxController {
         organizationList.refresh();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch organization'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -785,8 +770,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response} ${e.response?.data['message'] ?? 'Failed to add organization'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -822,8 +806,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update organization'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -846,8 +829,7 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Organization");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete organization'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Organization");
       debugPrint('Error fetching status data: $e');
@@ -895,8 +877,7 @@ class AccountController extends GetxController {
         volunteerList.refresh();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch volunteer'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -930,8 +911,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to add volunteer'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -968,8 +948,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update volunteer'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -994,8 +973,7 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Volunteer");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete volunteer'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Volunteer");
       debugPrint('Error fetching status data: $e');
@@ -1044,8 +1022,7 @@ class AccountController extends GetxController {
         certificationList.refresh();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch certification'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1079,8 +1056,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message']}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1117,8 +1093,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update certification'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1141,8 +1116,7 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Certification");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete certification'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Certification");
       debugPrint('Error fetching status data: $e');
@@ -1188,8 +1162,7 @@ class AccountController extends GetxController {
         achievementList.refresh();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch achievement'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1220,8 +1193,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to add achievement'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1255,8 +1227,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update achievement'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1279,8 +1250,7 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Achievement");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete achievement'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Achievement");
       debugPrint('Error fetching status data: $e');
@@ -1323,8 +1293,7 @@ class AccountController extends GetxController {
         publicationList.refresh();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to fetch publication'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1355,8 +1324,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to add publication'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1390,8 +1358,7 @@ class AccountController extends GetxController {
         Get.back();
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to update publication'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1414,8 +1381,7 @@ class AccountController extends GetxController {
         showSuccessToast("Success: Delete Publication");
       }
     } on http.DioException catch (e) {
-      showErrorToast("Error: ${e.response?.data['message'] ?? 'Failed to delete publication'}");
-      debugPrint('Error: ${e.response?.data['message']}');
+      handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Publication");
       debugPrint('Error fetching status data: $e');
