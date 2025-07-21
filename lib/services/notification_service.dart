@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
@@ -30,20 +31,23 @@ class NotificationService {
       criticalAlert: true,
     );
 
-    print("Permission status: ${settings.authorizationStatus}");
+    debugPrint("Permission status: ${settings.authorizationStatus}");
   }
 
   Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
     await _requestPermission();
+    await setupFlutterNotification();
     await _setupMessageHandlers();
 
-    final token = await _messaging.getToken();
-
-    userController.deviceToken.value = token;
-
-    print("Token Device: $token");
+    try {
+      final token = await _messaging.getToken();
+      userController.deviceToken.value = token;
+      debugPrint("Token Device: $token");
+    } catch (e) {
+      debugPrint("Error getting FCM token: $e");
+    }
   }
 
   Future<void> setupFlutterNotification() async {
@@ -64,9 +68,9 @@ class NotificationService {
 
     const initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    final initializationSettingsDarwin = const DarwinInitializationSettings();
+    const initializationSettingsDarwin = DarwinInitializationSettings();
 
-    final initializationSettings = InitializationSettings(
+    const initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
     );
@@ -89,15 +93,16 @@ class NotificationService {
         notification.title,
         notification.body,
         const NotificationDetails(
-            android: AndroidNotificationDetails(
-              'high_importance_channel',
-              'High Importance Notifications',
-              channelDescription: 'This channel is used for important notifications.',
-              importance: Importance.high,
-              priority: Priority.high,
-              icon: '@drawable/ic_notification',
-            ),
-            iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true)),
+          android: AndroidNotificationDetails(
+            'high_importance_channel',
+            'High Importance Notifications',
+            channelDescription: 'This channel is used for important notifications.',
+            importance: Importance.high,
+            priority: Priority.high,
+            icon: '@drawable/ic_notification',
+          ),
+          iOS: DarwinNotificationDetails(presentAlert: true, presentBadge: true, presentSound: true),
+        ),
         payload: message.data.toString(),
       );
     }
