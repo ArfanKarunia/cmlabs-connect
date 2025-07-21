@@ -30,95 +30,97 @@ class _EducationViewState extends State<EducationView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Education', titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Obx(
-            () => controller.educationList.isEmpty
-                ? AccountSettingCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Education",
-                          style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "-",
-                          style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                        )
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.educationList.length,
-                    itemBuilder: (context, index) {
-                      final education = controller.educationList[index];
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            Obx(
+              () => controller.educationList.isEmpty
+                  ? AccountSettingCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Education",
+                            style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "-",
+                            style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                          )
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.educationList.length,
+                      itemBuilder: (context, index) {
+                        final education = controller.educationList[index];
 
-                      return AccountSettingCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              education?.name ?? '-',
-                              style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              "${education?.department ?? "-"} | ${education?.degree ?? "-"}",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "${education?.startTime != null ? DateFormat('d MMM yyyy').format(education!.startTime) : "-"}"
-                              " until "
-                              "${education?.finishTime != null ? DateFormat('d MMM yyyy').format(education!.finishTime!) : "now"}",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Description",
-                              style: bold.copyWith(fontSize: 14, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              education?.description ?? "-",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            AccountActionSection(
-                              onEdit: () => Get.toNamed(
-                                AppRoutes.formEducationView,
-                                arguments: {"status": "edit", "id": education?.id},
+                        return AccountSettingCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                education?.name ?? '-',
+                                style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
                               ),
-                              onDelete: () => deleteBottomSheet(
-                                context,
-                                message: 'Are you sure wanna delete this Education?',
-                                onDelete: () {
-                                  controller.deleteEducation(education?.id ?? 0);
-                                  Get.back();
-                                },
+                              const SizedBox(height: 14),
+                              Text(
+                                "${education?.department ?? "-"} | ${education?.degree ?? "-"}",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          const SizedBox(height: 16),
-          CustomSubmitButton(
-            icon: Ionicons.add_outline,
-            title: "Add Education",
-            onTap: () => Get.toNamed(
-              AppRoutes.formEducationView,
-              arguments: {"status": "add", "id": null},
+                              const SizedBox(height: 10),
+                              Text(
+                                "${education?.startTime != null ? DateFormat('d MMM yyyy').format(education!.startTime) : "-"}"
+                                " until "
+                                "${education?.finishTime != null ? DateFormat('d MMM yyyy').format(education!.finishTime!) : "now"}",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "Description",
+                                style: bold.copyWith(fontSize: 14, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                education?.description ?? "-",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              AccountActionSection(
+                                onEdit: () => Get.toNamed(
+                                  AppRoutes.formEducationView,
+                                  arguments: {"status": "edit", "id": education?.id},
+                                ),
+                                onDelete: () => deleteBottomSheet(
+                                  context,
+                                  message: 'Are you sure wanna delete this Education?',
+                                  onDelete: () {
+                                    controller.deleteEducation(education?.id ?? 0);
+                                    Get.back();
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
             ),
-          ),
-          const SizedBox(height: 200),
-        ],
+            const SizedBox(height: 16),
+            CustomSubmitButton(
+              icon: Ionicons.add_outline,
+              title: "Add Education",
+              onTap: () => Get.toNamed(
+                AppRoutes.formEducationView,
+                arguments: {"status": "add", "id": null},
+              ),
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

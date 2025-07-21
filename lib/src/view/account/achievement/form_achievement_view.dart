@@ -86,107 +86,109 @@ class _FormAchievementViewState extends State<FormAchievementView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar("Achievement", titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Text(
-            "Achievement",
-            style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
-          ),
-
-          const SizedBox(height: 14),
-
-          // Achievement Name
-          InboxAddField(
-            title: 'Achievement Name',
-            isRequired: true,
-            child: CustomFormField(
-              controller: nameController,
-              errorText: nameError,
-              hintText: 'Achievement Name',
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            Text(
+              "Achievement",
+              style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
-          // Institution
-          InboxAddField(
-            title: 'Institution',
-            isRequired: true,
-            child: CustomFormField(
-              controller: institutionController,
-              errorText: institutionError,
-              hintText: 'Institution',
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Date
-          InboxAddField(
-            title: 'Date',
-            isRequired: true,
-            child: CustomSelectField(
-              errorText: dateError,
-              child: InboxTextOnField(
-                title: 'Select Date',
-                selected: achievementDate != null
-                    ? {
-                        'label': formatDate(achievementDate),
-                        'value': formatDate(achievementDate),
-                      }
-                    : null,
+            // Achievement Name
+            InboxAddField(
+              title: 'Achievement Name',
+              isRequired: true,
+              child: CustomFormField(
+                controller: nameController,
+                errorText: nameError,
+                hintText: 'Achievement Name',
               ),
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                );
-                if (pickedDate != null) setState(() => achievementDate = pickedDate);
-              },
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Description
-          InboxAddField(
-            title: 'Description',
-            child: CustomFormField(
-              controller: descriptionController,
-              hintText: 'Description',
+            // Institution
+            InboxAddField(
+              title: 'Institution',
+              isRequired: true,
+              child: CustomFormField(
+                controller: institutionController,
+                errorText: institutionError,
+                hintText: 'Institution',
+              ),
             ),
-          ),
 
-          const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
-          Obx(
-            () => controller.isLoadingAchievement.value
-                ? const CustomLoadingButton()
-                : CustomSubmitButton(
-                    title: 'Save',
-                    onTap: () {
-                      if (validateForm()) {
-                        controller.achievementName.value = nameController.text;
-                        controller.achievementInstitute.value = institutionController.text;
-                        controller.achievementYear.value =
-                            "${achievementDate?.year}-${achievementDate?.month}-${achievementDate?.day}";
-                        controller.achievementDescription.value = descriptionController.text;
-
-                        if (widget.status == "add") {
-                          controller.addAchievement();
-                        } else if (widget.status == "edit") {
-                          controller.updateAchievement(widget.id!);
+            // Date
+            InboxAddField(
+              title: 'Date',
+              isRequired: true,
+              child: CustomSelectField(
+                errorText: dateError,
+                child: InboxTextOnField(
+                  title: 'Select Date',
+                  selected: achievementDate != null
+                      ? {
+                          'label': formatDate(achievementDate),
+                          'value': formatDate(achievementDate),
                         }
-                      }
-                    },
-                  ),
-          ),
+                      : null,
+                ),
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (pickedDate != null) setState(() => achievementDate = pickedDate);
+                },
+              ),
+            ),
 
-          const SizedBox(height: 200),
-        ],
+            const SizedBox(height: 12),
+
+            // Description
+            InboxAddField(
+              title: 'Description',
+              child: CustomFormField(
+                controller: descriptionController,
+                hintText: 'Description',
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            Obx(
+              () => controller.isLoadingAchievement.value
+                  ? const CustomLoadingButton()
+                  : CustomSubmitButton(
+                      title: 'Save',
+                      onTap: () {
+                        if (validateForm()) {
+                          controller.achievementName.value = nameController.text;
+                          controller.achievementInstitute.value = institutionController.text;
+                          controller.achievementYear.value =
+                              "${achievementDate?.year}-${achievementDate?.month}-${achievementDate?.day}";
+                          controller.achievementDescription.value = descriptionController.text;
+
+                          if (widget.status == "add") {
+                            controller.addAchievement();
+                          } else if (widget.status == "edit") {
+                            controller.updateAchievement(widget.id!);
+                          }
+                        }
+                      },
+                    ),
+            ),
+
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

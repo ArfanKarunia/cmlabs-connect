@@ -28,101 +28,103 @@ class _OrganizationViewState extends State<OrganizationView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar("Organization", titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Obx(
-            () => controller.organizationList.isEmpty
-                ? AccountSettingCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Organization",
-                          style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "-",
-                          style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                        )
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.organizationList.length,
-                    itemBuilder: (context, index) {
-                      final organization = controller.organizationList[index];
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            Obx(
+              () => controller.organizationList.isEmpty
+                  ? AccountSettingCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Organization",
+                            style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "-",
+                            style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                          )
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.organizationList.length,
+                      itemBuilder: (context, index) {
+                        final organization = controller.organizationList[index];
 
-                      return AccountSettingCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              organization?.name ?? '-',
-                              style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              organization?.position ?? "-",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "${organization?.startTime != null ? DateFormat('d MMM yyyy').format(organization!.startTime) : "-"}"
-                              " until "
-                              "${organization?.finishTime != null ? DateFormat('d MMM yyyy').format(organization!.finishTime!) : "now"}",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Description",
-                              style: bold.copyWith(fontSize: 14, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              organization?.description ?? "-",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            AccountActionSection(
-                              onEdit: () {
-                                Get.toNamed(
-                                  AppRoutes.formOrganizationView,
-                                  arguments: {"status": "edit", "id": organization?.id},
-                                );
-                              },
-                              onDelete: () {
-                                deleteBottomSheet(
-                                  context,
-                                  message: "Are you sure wanna delete this Organization?",
-                                  onDelete: () {
-                                    controller.deleteOrganization(organization?.id ?? 0);
-                                    Get.back();
-                                  },
-                                );
-                              },
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          const SizedBox(height: 16),
-          CustomSubmitButton(
-            icon: Ionicons.add_outline,
-            title: 'Add Organization',
-            onTap: () {
-              Get.toNamed(
-                AppRoutes.formOrganizationView,
-                arguments: {"status": "add", "id": null},
-              );
-            },
-          ),
-          const SizedBox(height: 200),
-        ],
+                        return AccountSettingCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                organization?.name ?? '-',
+                                style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 14),
+                              Text(
+                                organization?.position ?? "-",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "${organization?.startTime != null ? DateFormat('d MMM yyyy').format(organization!.startTime) : "-"}"
+                                " until "
+                                "${organization?.finishTime != null ? DateFormat('d MMM yyyy').format(organization!.finishTime!) : "now"}",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "Description",
+                                style: bold.copyWith(fontSize: 14, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                organization?.description ?? "-",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              AccountActionSection(
+                                onEdit: () {
+                                  Get.toNamed(
+                                    AppRoutes.formOrganizationView,
+                                    arguments: {"status": "edit", "id": organization?.id},
+                                  );
+                                },
+                                onDelete: () {
+                                  deleteBottomSheet(
+                                    context,
+                                    message: "Are you sure wanna delete this Organization?",
+                                    onDelete: () {
+                                      controller.deleteOrganization(organization?.id ?? 0);
+                                      Get.back();
+                                    },
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            const SizedBox(height: 16),
+            CustomSubmitButton(
+              icon: Ionicons.add_outline,
+              title: 'Add Organization',
+              onTap: () {
+                Get.toNamed(
+                  AppRoutes.formOrganizationView,
+                  arguments: {"status": "add", "id": null},
+                );
+              },
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

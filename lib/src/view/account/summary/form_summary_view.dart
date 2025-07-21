@@ -58,74 +58,76 @@ class _FormSummaryViewState extends State<FormSummaryView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar("${capitalizeFirstLetter(widget.status)} Summary", titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          AccountSettingCard(
-            child: Column(
-              children: [
-                InboxAddField(
-                  title: 'About',
-                  child: CustomFormField(
-                    controller: aboutController,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            AccountSettingCard(
+              child: Column(
+                children: [
+                  InboxAddField(
+                    title: 'About',
+                    child: CustomFormField(
+                      controller: aboutController,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                InboxAddField(
-                  title: 'Spesialization',
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: controller.summarySpecializationList.length,
-                    itemBuilder: (context, index) {
-                      return SizedBox(
-                        height: 35,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Obx(
-                              () => Checkbox(
-                                side: const BorderSide(color: AppColors.text_1, width: 1.5),
-                                activeColor: AppColors.primary,
-                                value: controller.summarySpecializationChecked[index],
-                                onChanged: (value) {
-                                  controller.summarySpecializationChecked[index] = value ?? false;
+                  const SizedBox(height: 16),
+                  InboxAddField(
+                    title: 'Spesialization',
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: controller.summarySpecializationList.length,
+                      itemBuilder: (context, index) {
+                        return SizedBox(
+                          height: 35,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Obx(
+                                () => Checkbox(
+                                  side: const BorderSide(color: AppColors.text_1, width: 1.5),
+                                  activeColor: AppColors.primary,
+                                  value: controller.summarySpecializationChecked[index],
+                                  onChanged: (value) {
+                                    controller.summarySpecializationChecked[index] = value ?? false;
 
-                                  var specialization = controller.summarySpecializationList[index]['name'];
-                                  if (controller.summarySpecialization.contains(specialization)) {
-                                    controller.summarySpecialization.remove(specialization);
-                                  } else {
-                                    controller.summarySpecialization.add(specialization);
-                                  }
-                                },
+                                    var specialization = controller.summarySpecializationList[index]['name'];
+                                    if (controller.summarySpecialization.contains(specialization)) {
+                                      controller.summarySpecialization.remove(specialization);
+                                    } else {
+                                      controller.summarySpecialization.add(specialization);
+                                    }
+                                  },
+                                ),
                               ),
-                            ),
-                            Text(
-                              controller.summarySpecializationList[index]['name'],
-                              style: regular.copyWith(color: AppColors.text_1),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
+                              Text(
+                                controller.summarySpecializationList[index]['name'],
+                                style: regular.copyWith(color: AppColors.text_1),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Obx(
-            () => controller.isLoadingSummary.value
-                ? const CustomLoadingButton()
-                : CustomSubmitButton(
-                    title: "Save",
-                    onTap: () {
-                      controller.summaryAbout.value = aboutController.text;
-                      controller.addSumary();
-                    },
-                  ),
-          ),
-          const SizedBox(height: 200),
-        ],
+            const SizedBox(height: 16),
+            Obx(
+              () => controller.isLoadingSummary.value
+                  ? const CustomLoadingButton()
+                  : CustomSubmitButton(
+                      title: "Save",
+                      onTap: () {
+                        controller.summaryAbout.value = aboutController.text;
+                        controller.addSumary();
+                      },
+                    ),
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

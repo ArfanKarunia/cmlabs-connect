@@ -36,276 +36,281 @@ class _FilterViewState extends State<FilterView> {
           style: bold.copyWith(fontSize: 20),
         ),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          // Title and Clear Filter button
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Select Filter",
-                style: bold.copyWith(fontSize: 16),
-              ),
-              InkWell(
-                onTap: () => controller.clearFilter(),
-                child: Ink(
-                  child: Text(
-                    "Clear filter",
-                    style: regular.copyWith(
-                      fontSize: 12,
-                      color: AppColors.primary,
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // Data Range
-          const Text('Data range', style: bold),
-          const SizedBox(height: 15),
-          SizedBox(
-            child: Row(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            // Title and Clear Filter button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Obx(
-                    () {
-                      return CustomSelectField(
-                        icon: Ionicons.calendar_outline,
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: controller.startDate.value ?? DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) controller.startDate.value = pickedDate;
-                        },
-                        errorText: controller.startDateError.value,
-                        child: InboxTextOnField(
-                          title: 'Select date',
-                          selected: controller.startDate.value != null
-                              ? {
-                                  'value':
-                                      DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
-                                  'label':
-                                      DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
-                                }
-                              : null,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10), // Spasi antar form
                 Text(
-                  "to",
-                  style: regular.copyWith(fontSize: 12),
+                  "Select Filter",
+                  style: bold.copyWith(fontSize: 16),
                 ),
-                const SizedBox(width: 10), // Spasi antar form
-                Expanded(
-                  child: Obx(
-                    () {
-                      return CustomSelectField(
-                        icon: Ionicons.calendar_outline,
-                        onTap: () async {
-                          DateTime? pickedDate = await showDatePicker(
-                            context: context,
-                            initialDate: controller.endDate.value ?? DateTime.now(),
-                            firstDate: DateTime(2000),
-                            lastDate: DateTime(2100),
-                          );
-                          if (pickedDate != null) controller.endDate.value = pickedDate;
-                        },
-                        errorText: controller.endDateError.value,
-                        child: InboxTextOnField(
-                          title: 'Select date',
-                          selected: controller.endDate.value != null
-                              ? {
-                                  'value': DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
-                                  'label': DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
-                                }
-                              : null,
-                        ),
-                      );
-                    },
+                InkWell(
+                  onTap: () => controller.clearFilter(),
+                  child: Ink(
+                    child: Text(
+                      "Clear filter",
+                      style: regular.copyWith(
+                        fontSize: 12,
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.primary,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Filter Category
-          const Text(
-            "Category",
-            style: bold,
-          ),
-          const SizedBox(height: 15),
-          InkWell(
-            onTap: () => Get.toNamed(
-              AppRoutes.filterSelect,
-              arguments: {
-                'filter': InboxFilterType.category,
-                'title': 'Category',
-                'isMultipleChoice': true,
-              },
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.primaryText),
-                borderRadius: BorderRadius.circular(5),
-              ),
+            // Data Range
+            const Text('Data range', style: bold),
+            const SizedBox(height: 15),
+            SizedBox(
               child: Row(
                 children: [
                   Expanded(
                     child: Obx(
                       () {
-                        List<Map<String, String>> categoryList = controller.filterCategoryList;
-                        return categoryList.isEmpty
-                            ? Padding(
-                                padding: const EdgeInsets.all(7),
-                                child: Text(
-                                  'All',
-                                  style: regular.copyWith(color: AppColors.text_3),
-                                ),
-                              )
-                            : Wrap(
-                                clipBehavior: Clip.antiAlias,
-                                children: List.generate(
-                                  categoryList.length,
-                                  (index) {
-                                    Map<String, String> category = categoryList[index];
-
-                                    return FittedBox(
-                                      child: TagButton(
-                                        statusLabel: category['label'].toString(),
-                                        onPressed: () => controller.deleteFilterCategory(category),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                      },
-                    ),
-                  ),
-                  const Icon(Ionicons.chevron_down_outline),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Filter PIC
-          const Text(
-            'PIC',
-            style: bold,
-          ),
-          const SizedBox(height: 15),
-          InkWell(
-            onTap: () => Get.toNamed(
-              AppRoutes.filterSelect,
-              arguments: {
-                'filter': InboxFilterType.pic,
-                'title': 'PIC',
-                'isMultipleChoice': false,
-              },
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.primaryText),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Obx(
-                      () {
-                        Map<String, String>? pic = controller.filterPic.value;
-                        return Padding(
-                          padding: const EdgeInsets.all(7),
-                          child: Text(
-                            pic != null ? pic['label'].toString() : 'All',
-                            style: regular.copyWith(color: pic != null ? AppColors.text_1 : AppColors.text_3),
+                        return CustomSelectField(
+                          icon: Ionicons.calendar_outline,
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: controller.startDate.value ?? DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) controller.startDate.value = pickedDate;
+                          },
+                          errorText: controller.startDateError.value,
+                          child: InboxTextOnField(
+                            title: 'Select date',
+                            selected: controller.startDate.value != null
+                                ? {
+                                    'value':
+                                        DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
+                                    'label':
+                                        DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
+                                  }
+                                : null,
                           ),
                         );
                       },
                     ),
                   ),
-                  const Icon(Ionicons.chevron_down_outline),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Field Client Source
-          const Text(
-            "Client Source",
-            style: bold,
-          ),
-          const SizedBox(height: 15),
-          InkWell(
-            onTap: () => Get.toNamed(
-              AppRoutes.filterSelect,
-              arguments: {
-                'filter': InboxFilterType.clientSource,
-                'title': 'Client Source',
-                'isMultipleChoice': false,
-              },
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: AppColors.primaryText),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Row(
-                children: [
+                  const SizedBox(width: 10), // Spasi antar form
+                  Text(
+                    "to",
+                    style: regular.copyWith(fontSize: 12),
+                  ),
+                  const SizedBox(width: 10), // Spasi antar form
                   Expanded(
                     child: Obx(
                       () {
-                        Map<String, String>? clientSource = controller.filterClientSource.value;
-                        return Padding(
-                          padding: const EdgeInsets.all(7),
-                          child: Text(
-                            clientSource != null ? clientSource['label'].toString() : 'All',
-                            style: regular.copyWith(color: clientSource != null ? AppColors.text_1 : AppColors.text_3),
+                        return CustomSelectField(
+                          icon: Ionicons.calendar_outline,
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: controller.endDate.value ?? DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) controller.endDate.value = pickedDate;
+                          },
+                          errorText: controller.endDateError.value,
+                          child: InboxTextOnField(
+                            title: 'Select date',
+                            selected: controller.endDate.value != null
+                                ? {
+                                    'value':
+                                        DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
+                                    'label':
+                                        DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
+                                  }
+                                : null,
                           ),
                         );
                       },
                     ),
                   ),
-                  const Icon(Ionicons.chevron_down_outline),
                 ],
               ),
             ),
-          ),
 
-          const SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-          // Button Search
-          Obx(
-            () {
-              return controller.isLoading.isTrue
-                  ? const CustomLoadingButton()
-                  : CustomSubmitButton(
-                      title: 'Search',
-                      onTap: () => controller.applyFilter(),
-                    );
-            },
-          ),
-        ],
+            // Filter Category
+            const Text(
+              "Category",
+              style: bold,
+            ),
+            const SizedBox(height: 15),
+            InkWell(
+              onTap: () => Get.toNamed(
+                AppRoutes.filterSelect,
+                arguments: {
+                  'filter': InboxFilterType.category,
+                  'title': 'Category',
+                  'isMultipleChoice': true,
+                },
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.primaryText),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () {
+                          List<Map<String, String>> categoryList = controller.filterCategoryList;
+                          return categoryList.isEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.all(7),
+                                  child: Text(
+                                    'All',
+                                    style: regular.copyWith(color: AppColors.text_3),
+                                  ),
+                                )
+                              : Wrap(
+                                  clipBehavior: Clip.antiAlias,
+                                  children: List.generate(
+                                    categoryList.length,
+                                    (index) {
+                                      Map<String, String> category = categoryList[index];
+
+                                      return FittedBox(
+                                        child: TagButton(
+                                          statusLabel: category['label'].toString(),
+                                          onPressed: () => controller.deleteFilterCategory(category),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                        },
+                      ),
+                    ),
+                    const Icon(Ionicons.chevron_down_outline),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Filter PIC
+            const Text(
+              'PIC',
+              style: bold,
+            ),
+            const SizedBox(height: 15),
+            InkWell(
+              onTap: () => Get.toNamed(
+                AppRoutes.filterSelect,
+                arguments: {
+                  'filter': InboxFilterType.pic,
+                  'title': 'PIC',
+                  'isMultipleChoice': false,
+                },
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.primaryText),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () {
+                          Map<String, String>? pic = controller.filterPic.value;
+                          return Padding(
+                            padding: const EdgeInsets.all(7),
+                            child: Text(
+                              pic != null ? pic['label'].toString() : 'All',
+                              style: regular.copyWith(color: pic != null ? AppColors.text_1 : AppColors.text_3),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const Icon(Ionicons.chevron_down_outline),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Field Client Source
+            const Text(
+              "Client Source",
+              style: bold,
+            ),
+            const SizedBox(height: 15),
+            InkWell(
+              onTap: () => Get.toNamed(
+                AppRoutes.filterSelect,
+                arguments: {
+                  'filter': InboxFilterType.clientSource,
+                  'title': 'Client Source',
+                  'isMultipleChoice': false,
+                },
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.primaryText),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () {
+                          Map<String, String>? clientSource = controller.filterClientSource.value;
+                          return Padding(
+                            padding: const EdgeInsets.all(7),
+                            child: Text(
+                              clientSource != null ? clientSource['label'].toString() : 'All',
+                              style:
+                                  regular.copyWith(color: clientSource != null ? AppColors.text_1 : AppColors.text_3),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const Icon(Ionicons.chevron_down_outline),
+                  ],
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Button Search
+            Obx(
+              () {
+                return controller.isLoading.isTrue
+                    ? const CustomLoadingButton()
+                    : CustomSubmitButton(
+                        title: 'Search',
+                        onTap: () => controller.applyFilter(),
+                      );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

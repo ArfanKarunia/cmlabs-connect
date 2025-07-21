@@ -82,107 +82,109 @@ class _FormPublicationViewState extends State<FormPublicationView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar("Publication", titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Text(
-            "Publication",
-            style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
-          ),
-
-          const SizedBox(height: 14),
-
-          // Publication Title
-          InboxAddField(
-            title: 'Publication Title',
-            isRequired: true,
-            child: CustomFormField(
-              controller: titleController,
-              errorText: titleError,
-              hintText: 'Publication Title',
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            Text(
+              "Publication",
+              style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
-          // Publication Link
-          InboxAddField(
-            title: 'Publication Link',
-            isRequired: true,
-            child: CustomFormField(
-              controller: urlController,
-              errorText: urlError,
-              hintText: 'Publication Link',
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Date
-          InboxAddField(
-            title: 'Date',
-            isRequired: true,
-            child: CustomSelectField(
-              errorText: dateError,
-              child: InboxTextOnField(
-                title: 'Select Date',
-                selected: publicationDate != null
-                    ? {
-                        'label': formatDate(publicationDate),
-                        'value': formatDate(publicationDate),
-                      }
-                    : null,
+            // Publication Title
+            InboxAddField(
+              title: 'Publication Title',
+              isRequired: true,
+              child: CustomFormField(
+                controller: titleController,
+                errorText: titleError,
+                hintText: 'Publication Title',
               ),
-              onTap: () async {
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                );
-                if (pickedDate != null) setState(() => publicationDate = pickedDate);
-              },
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Description
-          InboxAddField(
-            title: 'Description',
-            child: CustomFormField(
-              controller: descriptionController,
-              hintText: 'Description',
+            // Publication Link
+            InboxAddField(
+              title: 'Publication Link',
+              isRequired: true,
+              child: CustomFormField(
+                controller: urlController,
+                errorText: urlError,
+                hintText: 'Publication Link',
+              ),
             ),
-          ),
 
-          const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
-          Obx(
-            () => controller.isLoadingPublication.value
-                ? const CustomLoadingButton()
-                : CustomSubmitButton(
-                    title: 'Save',
-                    onTap: () {
-                      if (validateForm()) {
-                        controller.publicationTitle.value = titleController.text;
-                        controller.publicationUrl.value = urlController.text;
-                        controller.publicationYear.value =
-                            "${publicationDate?.year}-${publicationDate?.month}-${publicationDate?.day}";
-                        controller.publicationDescription.value = descriptionController.text;
-
-                        if (widget.status == "add") {
-                          controller.addPublication();
-                        } else if (widget.status == "edit") {
-                          controller.updatePublication(widget.id!);
+            // Date
+            InboxAddField(
+              title: 'Date',
+              isRequired: true,
+              child: CustomSelectField(
+                errorText: dateError,
+                child: InboxTextOnField(
+                  title: 'Select Date',
+                  selected: publicationDate != null
+                      ? {
+                          'label': formatDate(publicationDate),
+                          'value': formatDate(publicationDate),
                         }
-                      }
-                    },
-                  ),
-          ),
+                      : null,
+                ),
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (pickedDate != null) setState(() => publicationDate = pickedDate);
+                },
+              ),
+            ),
 
-          const SizedBox(height: 200),
-        ],
+            const SizedBox(height: 12),
+
+            // Description
+            InboxAddField(
+              title: 'Description',
+              child: CustomFormField(
+                controller: descriptionController,
+                hintText: 'Description',
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            Obx(
+              () => controller.isLoadingPublication.value
+                  ? const CustomLoadingButton()
+                  : CustomSubmitButton(
+                      title: 'Save',
+                      onTap: () {
+                        if (validateForm()) {
+                          controller.publicationTitle.value = titleController.text;
+                          controller.publicationUrl.value = urlController.text;
+                          controller.publicationYear.value =
+                              "${publicationDate?.year}-${publicationDate?.month}-${publicationDate?.day}";
+                          controller.publicationDescription.value = descriptionController.text;
+
+                          if (widget.status == "add") {
+                            controller.addPublication();
+                          } else if (widget.status == "edit") {
+                            controller.updatePublication(widget.id!);
+                          }
+                        }
+                      },
+                    ),
+            ),
+
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

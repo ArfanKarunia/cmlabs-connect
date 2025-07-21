@@ -32,164 +32,166 @@ class _HistoricalLeadViewState extends State<HistoricalLeadView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Leads Historical Data New', titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          InboxAddField(
-            title: 'Select Filter Data Range 1',
-            child: Row(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            InboxAddField(
+              title: 'Select Filter Data Range 1',
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InboxAddField(
+                      title: 'Year',
+                      child: CustomSelectField(
+                        onTap: () => Get.toNamed(
+                          AppRoutes.historicalLeadSelect,
+                          arguments: {
+                            'data': HistoricalLeadSelectType.year,
+                            'index': 1,
+                          },
+                        ),
+                        child: Obx(
+                          () => InboxTextOnField(
+                            title: 'Select Year',
+                            selected: controller.year1.value,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: InboxAddField(
+                      title: 'Month',
+                      child: CustomSelectField(
+                        onTap: () => Get.toNamed(
+                          AppRoutes.historicalLeadSelect,
+                          arguments: {
+                            'data': HistoricalLeadSelectType.month,
+                            'index': 1,
+                          },
+                        ),
+                        child: Obx(
+                          () => InboxTextOnField(
+                            title: 'Select Month',
+                            selected: controller.month1.value,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            InboxAddField(
+              title: 'Select Filter Data Range 2',
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InboxAddField(
+                      title: 'Year',
+                      child: CustomSelectField(
+                        onTap: () => Get.toNamed(
+                          AppRoutes.historicalLeadSelect,
+                          arguments: {
+                            'data': HistoricalLeadSelectType.year,
+                            'index': 2,
+                          },
+                        ),
+                        child: Obx(
+                          () => InboxTextOnField(
+                            title: 'Select Year',
+                            selected: controller.year2.value,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: InboxAddField(
+                      title: 'Month',
+                      child: CustomSelectField(
+                        onTap: () => Get.toNamed(
+                          AppRoutes.historicalLeadSelect,
+                          arguments: {
+                            'data': HistoricalLeadSelectType.month,
+                            'index': 2,
+                          },
+                        ),
+                        child: Obx(
+                          () => InboxTextOnField(
+                            title: 'Select Month',
+                            selected: controller.month2.value,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Button Search
+            Obx(
+              () => controller.isLoading.value
+                  ? const CustomLoadingButton()
+                  : CustomSubmitButton(
+                      title: 'Search',
+                      onTap: () {
+                        if (controller.isDatePairFilled()) {
+                          controller.submit();
+                        } else {
+                          showErrorToast("Please fill in one of the month and year combinations!");
+                        }
+                      },
+                    ),
+            ),
+
+            const SizedBox(height: 30),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: InboxAddField(
-                    title: 'Year',
-                    child: CustomSelectField(
-                      onTap: () => Get.toNamed(
-                        AppRoutes.historicalLeadSelect,
-                        arguments: {
-                          'data': HistoricalLeadSelectType.year,
-                          'index': 1,
-                        },
-                      ),
-                      child: Obx(
-                        () => InboxTextOnField(
-                          title: 'Select Year',
-                          selected: controller.year1.value,
-                        ),
-                      ),
-                    ),
-                  ),
+                Text(
+                  "Result",
+                  style: bold.copyWith(fontSize: 18, color: AppColors.text_1),
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: InboxAddField(
-                    title: 'Month',
-                    child: CustomSelectField(
-                      onTap: () => Get.toNamed(
-                        AppRoutes.historicalLeadSelect,
-                        arguments: {
-                          'data': HistoricalLeadSelectType.month,
-                          'index': 1,
-                        },
-                      ),
-                      child: Obx(
-                        () => InboxTextOnField(
-                          title: 'Select Month',
-                          selected: controller.month1.value,
-                        ),
-                      ),
-                    ),
-                  ),
+                const SizedBox(height: 14),
+                Obx(
+                  () {
+                    return controller.isLoading.value
+                        ? const Center(child: CustomLoading())
+                        : Row(
+                            children: [
+                              if (controller.historicalData1.value != null) ...[
+                                ResultDataHistoricalWidget(
+                                  index: 1,
+                                  year: controller.year1.value?['label'] ?? '-',
+                                  month: controller.month1.value?['label'] ?? '-',
+                                )
+                              ],
+                              if (controller.historicalData2.value != null) ...[
+                                ResultDataHistoricalWidget(
+                                  index: 2,
+                                  year: controller.year2.value?['label'] ?? '-',
+                                  month: controller.month2.value?['label'] ?? '-',
+                                )
+                              ],
+                            ],
+                          );
+                  },
                 ),
               ],
             ),
-          ),
-
-          const SizedBox(height: 20),
-
-          InboxAddField(
-            title: 'Select Filter Data Range 2',
-            child: Row(
-              children: [
-                Expanded(
-                  child: InboxAddField(
-                    title: 'Year',
-                    child: CustomSelectField(
-                      onTap: () => Get.toNamed(
-                        AppRoutes.historicalLeadSelect,
-                        arguments: {
-                          'data': HistoricalLeadSelectType.year,
-                          'index': 2,
-                        },
-                      ),
-                      child: Obx(
-                        () => InboxTextOnField(
-                          title: 'Select Year',
-                          selected: controller.year2.value,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: InboxAddField(
-                    title: 'Month',
-                    child: CustomSelectField(
-                      onTap: () => Get.toNamed(
-                        AppRoutes.historicalLeadSelect,
-                        arguments: {
-                          'data': HistoricalLeadSelectType.month,
-                          'index': 2,
-                        },
-                      ),
-                      child: Obx(
-                        () => InboxTextOnField(
-                          title: 'Select Month',
-                          selected: controller.month2.value,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Button Search
-          Obx(
-            () => controller.isLoading.value
-                ? const CustomLoadingButton()
-                : CustomSubmitButton(
-                    title: 'Search',
-                    onTap: () {
-                      if (controller.isDatePairFilled()) {
-                        controller.submit();
-                      } else {
-                        showErrorToast("Please fill in one of the month and year combinations!");
-                      }
-                    },
-                  ),
-          ),
-
-          const SizedBox(height: 30),
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Result",
-                style: bold.copyWith(fontSize: 18, color: AppColors.text_1),
-              ),
-              const SizedBox(height: 14),
-              Obx(
-                () {
-                  return controller.isLoading.value
-                      ? const Center(child: CustomLoading())
-                      : Row(
-                          children: [
-                            if (controller.historicalData1.value != null) ...[
-                              ResultDataHistoricalWidget(
-                                index: 1,
-                                year: controller.year1.value?['label'] ?? '-',
-                                month: controller.month1.value?['label'] ?? '-',
-                              )
-                            ],
-                            if (controller.historicalData2.value != null) ...[
-                              ResultDataHistoricalWidget(
-                                index: 2,
-                                year: controller.year2.value?['label'] ?? '-',
-                                month: controller.month2.value?['label'] ?? '-',
-                              )
-                            ],
-                          ],
-                        );
-                },
-              ),
-            ],
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

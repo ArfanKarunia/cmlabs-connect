@@ -26,87 +26,89 @@ class _SummaryViewState extends State<SummaryView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar("Summary", titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.white_1,
-              borderRadius: BorderRadius.circular(5),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x1E000000),
-                  offset: Offset(3, 3),
-                  blurRadius: 5,
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "About",
-                  style: bold.copyWith(color: AppColors.text_2),
-                ),
-                const SizedBox(height: 8),
-                Obx(
-                  () => Text(
-                    controller.summaryAbout.value ?? "-",
-                    style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.white_1,
+                borderRadius: BorderRadius.circular(5),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x1E000000),
+                    offset: Offset(3, 3),
+                    blurRadius: 5,
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  "Spesialization",
-                  style: bold.copyWith(color: AppColors.text_2),
-                ),
-                const SizedBox(height: 10),
-                Obx(
-                  () => Text(
-                    controller.summarySpecialization.isNotEmpty ? controller.summarySpecialization.join(', ') : "-",
-                    style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "About",
+                    style: bold.copyWith(color: AppColors.text_2),
                   ),
-                ),
-                Obx(
-                  () {
-                    return controller.summaryAbout.value != null || controller.summarySpecialization.isNotEmpty
-                        ? AccountActionSection(
-                            onEdit: () => Get.toNamed(
-                              AppRoutes.formSummaryView,
-                              arguments: "edit",
-                            ),
-                            onDelete: () => deleteBottomSheet(
-                              context,
-                              message: 'Are you sure wanna delete this Summary?',
-                              onDelete: () {
-                                controller.deleteSummary();
-                                controller.summarySpecialization.refresh();
-                                Get.back();
-                              },
-                            ),
-                          )
-                        : const SizedBox.shrink();
-                  },
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Obx(
-            () => CustomSubmitButton(
-              icon: Ionicons.add_outline,
-              title: "Add Summary",
-              isDisabled: controller.summaryAbout.value != null || controller.summarySpecialization.isNotEmpty,
-              onTap: () => Get.toNamed(
-                AppRoutes.formSummaryView,
-                arguments: "add",
+                  const SizedBox(height: 8),
+                  Obx(
+                    () => Text(
+                      controller.summaryAbout.value ?? "-",
+                      style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    "Spesialization",
+                    style: bold.copyWith(color: AppColors.text_2),
+                  ),
+                  const SizedBox(height: 10),
+                  Obx(
+                    () => Text(
+                      controller.summarySpecialization.isNotEmpty ? controller.summarySpecialization.join(', ') : "-",
+                      style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                    ),
+                  ),
+                  Obx(
+                    () {
+                      return controller.summaryAbout.value != null || controller.summarySpecialization.isNotEmpty
+                          ? AccountActionSection(
+                              onEdit: () => Get.toNamed(
+                                AppRoutes.formSummaryView,
+                                arguments: "edit",
+                              ),
+                              onDelete: () => deleteBottomSheet(
+                                context,
+                                message: 'Are you sure wanna delete this Summary?',
+                                onDelete: () {
+                                  controller.deleteSummary();
+                                  controller.summarySpecialization.refresh();
+                                  Get.back();
+                                },
+                              ),
+                            )
+                          : const SizedBox.shrink();
+                    },
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(height: 200),
-        ],
+            const SizedBox(height: 16),
+            Obx(
+              () => CustomSubmitButton(
+                icon: Ionicons.add_outline,
+                title: "Add Summary",
+                isDisabled: controller.summaryAbout.value != null || controller.summarySpecialization.isNotEmpty,
+                onTap: () => Get.toNamed(
+                  AppRoutes.formSummaryView,
+                  arguments: "add",
+                ),
+              ),
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

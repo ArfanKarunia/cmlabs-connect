@@ -30,112 +30,114 @@ class _QuotationAddPicContactViewState extends State<QuotationAddPicContactView>
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Add Contact'),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        children: [
-          Text('Contact ${widget.contactIndex + 1}', style: bold),
-          const SizedBox(height: 7),
-          InboxAddField(
-            title: 'Type',
-            isRequired: true,
-            child: Obx(
-              () => CustomSelectField(
-                onTap: () => Get.toNamed(
-                  AppRoutes.addQuotationSelect,
-                  arguments: {
-                    'title': 'Type',
-                    'data': 'contactType',
-                    'isContactForm': true,
-                  },
-                ),
-                errorText: controller.contactTypeError.value,
-                child: InboxTextOnField(
-                  title: 'Type',
-                  selected: controller.selectedContactType.value,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Contact Info',
-            isRequired: true,
-            child: Obx(
-              () => CustomFormField(
-                controller: controller.contactInfo.value,
-                hintText: 'Fill the contact based on type above',
-                errorText: controller.contactInfoError.value,
-              ),
-            ),
-          ),
-          const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Status',
-            isRequired: true,
-            child: Obx(
-              () => CustomSelectField(
-                onTap: () => Get.toNamed(
-                  AppRoutes.addQuotationSelect,
-                  arguments: {
-                    'title': 'Status',
-                    'data': 'contactStatus',
-                    'isContactForm': true,
-                  },
-                ),
-                errorText: controller.contactStatusError.value,
-                child: InboxTextOnField(
-                  title: 'Status',
-                  selected: controller.selectedContactStatus.value,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          children: [
+            Text('Contact ${widget.contactIndex + 1}', style: bold),
+            const SizedBox(height: 7),
+            InboxAddField(
+              title: 'Type',
+              isRequired: true,
+              child: Obx(
+                () => CustomSelectField(
+                  onTap: () => Get.toNamed(
+                    AppRoutes.addQuotationSelect,
+                    arguments: {
+                      'title': 'Type',
+                      'data': 'contactType',
+                      'isContactForm': true,
+                    },
+                  ),
+                  errorText: controller.contactTypeError.value,
+                  child: InboxTextOnField(
+                    title: 'Type',
+                    selected: controller.selectedContactType.value,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 11),
-          Obx(
-            () => InboxAddField(
-              title: 'Detail Status',
-              isRequired: controller.isDetailStatusRequired,
-              child: CustomSelectField(
-                onTap: () => Get.toNamed(
-                  AppRoutes.addQuotationSelect,
-                  arguments: {
-                    'title': 'Detail Status',
-                    'data': 'contactDetailStatus',
-                    'isContactForm': true,
-                  },
-                ),
-                errorText: controller.contactDetailStatusError.value,
-                child: InboxTextOnField(
-                  title: 'Detail Status',
-                  selected: controller.selectedContactDetailStatus.value,
+            const SizedBox(height: 11),
+            InboxAddField(
+              title: 'Contact Info',
+              isRequired: true,
+              child: Obx(
+                () => CustomFormField(
+                  controller: controller.contactInfo.value,
+                  hintText: 'Fill the contact based on type above',
+                  errorText: controller.contactInfoError.value,
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Note',
-            child: Obx(
-              () => CustomFormField(
-                controller: controller.contactNote.value,
-                hintText: 'Note',
+            const SizedBox(height: 11),
+            InboxAddField(
+              title: 'Status',
+              isRequired: true,
+              child: Obx(
+                () => CustomSelectField(
+                  onTap: () => Get.toNamed(
+                    AppRoutes.addQuotationSelect,
+                    arguments: {
+                      'title': 'Status',
+                      'data': 'contactStatus',
+                      'isContactForm': true,
+                    },
+                  ),
+                  errorText: controller.contactStatusError.value,
+                  child: InboxTextOnField(
+                    title: 'Status',
+                    selected: controller.selectedContactStatus.value,
+                  ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 11),
-          CustomSubmitButton(
-            onTap: () {
-              if (controller.validateForm()) {
-                final contact = controller.createContactPIC();
-                addQuotationController.addClientPicContact(index: widget.contactIndex, contact: contact);
-                addQuotationController.picClients.refresh();
-                Get.back();
-              }
-            },
-            title: 'Add Contact',
-            icon: Ionicons.add,
-          )
-        ],
+            const SizedBox(height: 11),
+            Obx(
+              () => InboxAddField(
+                title: 'Detail Status',
+                isRequired: controller.isDetailStatusRequired,
+                child: CustomSelectField(
+                  onTap: () => Get.toNamed(
+                    AppRoutes.addQuotationSelect,
+                    arguments: {
+                      'title': 'Detail Status',
+                      'data': 'contactDetailStatus',
+                      'isContactForm': true,
+                    },
+                  ),
+                  errorText: controller.contactDetailStatusError.value,
+                  child: InboxTextOnField(
+                    title: 'Detail Status',
+                    selected: controller.selectedContactDetailStatus.value,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 11),
+            InboxAddField(
+              title: 'Note',
+              child: Obx(
+                () => CustomFormField(
+                  controller: controller.contactNote.value,
+                  hintText: 'Note',
+                ),
+              ),
+            ),
+            const SizedBox(height: 11),
+            CustomSubmitButton(
+              onTap: () {
+                if (controller.validateForm()) {
+                  final contact = controller.createContactPIC();
+                  addQuotationController.addClientPicContact(index: widget.contactIndex, contact: contact);
+                  addQuotationController.picClients.refresh();
+                  Get.back();
+                }
+              },
+              title: 'Add Contact',
+              icon: Ionicons.add,
+            )
+          ],
+        ),
       ),
     );
   }

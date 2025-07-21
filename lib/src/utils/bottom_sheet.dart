@@ -13,6 +13,7 @@ Future<void> showCustomBottomSheet(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
+    useSafeArea: true,
     builder: (context) {
       return Container(
         width: double.infinity,

@@ -28,99 +28,101 @@ class _PublicationViewState extends State<PublicationView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar("Publication", titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Obx(
-            () => controller.publicationList.isEmpty
-                ? AccountSettingCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Publication",
-                          style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "-",
-                          style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                        )
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: controller.publicationList.length,
-                    itemBuilder: (context, index) {
-                      final publication = controller.publicationList[index];
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            Obx(
+              () => controller.publicationList.isEmpty
+                  ? AccountSettingCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Publication",
+                            style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "-",
+                            style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                          )
+                        ],
+                      ),
+                    )
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: controller.publicationList.length,
+                      itemBuilder: (context, index) {
+                        final publication = controller.publicationList[index];
 
-                      return AccountSettingCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              publication?.title ?? '-',
-                              style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 14),
-                            Text(
-                              publication?.url ?? "-",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              publication?.year != null ? DateFormat('d MMM yyyy').format(publication!.year!) : "-",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              "Description",
-                              style: bold.copyWith(fontSize: 14, color: AppColors.text_2),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              publication?.description ?? "-",
-                              style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
-                            ),
-                            AccountActionSection(
-                              onEdit: () {
-                                Get.toNamed(
-                                  AppRoutes.formPublicationView,
-                                  arguments: {"status": "edit", "id": publication?.id},
-                                );
-                              },
-                              onDelete: () {
-                                deleteBottomSheet(
-                                  context,
-                                  message: "Are you sure wanna delete this Publication?",
-                                  onDelete: () {
-                                    controller.deletePublication(publication?.id ?? 0);
-                                    Get.back();
-                                  },
-                                );
-                              },
-                            )
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-          ),
-          const SizedBox(height: 16),
-          CustomSubmitButton(
-            icon: Ionicons.add_outline,
-            title: 'Add Publication',
-            onTap: () {
-              Get.toNamed(
-                AppRoutes.formPublicationView,
-                arguments: {"status": "add", "id": null},
-              );
-            },
-          ),
-          const SizedBox(height: 200),
-        ],
+                        return AccountSettingCard(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                publication?.title ?? '-',
+                                style: bold.copyWith(fontSize: 15, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 14),
+                              Text(
+                                publication?.url ?? "-",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                publication?.year != null ? DateFormat('d MMM yyyy').format(publication!.year!) : "-",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                "Description",
+                                style: bold.copyWith(fontSize: 14, color: AppColors.text_2),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                publication?.description ?? "-",
+                                style: regular.copyWith(fontSize: 13, color: AppColors.text_2),
+                              ),
+                              AccountActionSection(
+                                onEdit: () {
+                                  Get.toNamed(
+                                    AppRoutes.formPublicationView,
+                                    arguments: {"status": "edit", "id": publication?.id},
+                                  );
+                                },
+                                onDelete: () {
+                                  deleteBottomSheet(
+                                    context,
+                                    message: "Are you sure wanna delete this Publication?",
+                                    onDelete: () {
+                                      controller.deletePublication(publication?.id ?? 0);
+                                      Get.back();
+                                    },
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            const SizedBox(height: 16),
+            CustomSubmitButton(
+              icon: Ionicons.add_outline,
+              title: 'Add Publication',
+              onTap: () {
+                Get.toNamed(
+                  AppRoutes.formPublicationView,
+                  arguments: {"status": "add", "id": null},
+                );
+              },
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

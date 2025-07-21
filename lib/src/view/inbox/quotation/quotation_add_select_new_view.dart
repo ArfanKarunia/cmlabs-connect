@@ -60,31 +60,33 @@ class _QuotationAddSelectNewViewState extends State<QuotationAddSelectNewView> {
     return Scaffold(
       appBar: defaultAppBar('Add ${widget.title}'),
       backgroundColor: AppColors.scaffoldBgColor2,
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          InboxAddField(
-            title: widget.title,
-            child: CustomFormField(
-              controller: fieldController,
-              errorText: fieldError,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            InboxAddField(
+              title: widget.title,
+              child: CustomFormField(
+                controller: fieldController,
+                errorText: fieldError,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          CustomSubmitButton(
-            title: 'Save',
-            isDisabled: !isFormValid,
-            onTap: () {
-              controller.addValue(
-                data: widget.data,
-                value: fieldController.text,
-              );
-              showSuccessToast('Berhasil menambahkan ${widget.title}: ${fieldController.text}');
-              Get.back();
-            },
-          )
-        ],
+            const SizedBox(height: 20),
+            CustomSubmitButton(
+              title: 'Save',
+              isDisabled: !isFormValid,
+              onTap: () {
+                controller.addValue(
+                  data: widget.data,
+                  value: fieldController.text,
+                );
+                showSuccessToast('Berhasil menambahkan ${widget.title}: ${fieldController.text}');
+                Get.back();
+              },
+            )
+          ],
+        ),
       ),
     );
   }

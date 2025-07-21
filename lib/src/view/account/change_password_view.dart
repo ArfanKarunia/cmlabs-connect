@@ -61,65 +61,67 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar("Edit Password", titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Text(
-            "Edit Password",
-            style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
-          ),
-          const SizedBox(height: 14),
-          InboxAddField(
-            title: "Old Password",
-            isRequired: true,
-            child: CustomFormField(
-              controller: oldPassword,
-              errorText: oldPasswordError,
-              hintText: "Old Password",
-              isPassword: true,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            Text(
+              "Edit Password",
+              style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
             ),
-          ),
-          const SizedBox(height: 12),
-          InboxAddField(
-            title: "New Password",
-            isRequired: true,
-            child: CustomFormField(
-              controller: newPassword,
-              errorText: newPasswordError,
-              hintText: "New Password",
-              isPassword: true,
+            const SizedBox(height: 14),
+            InboxAddField(
+              title: "Old Password",
+              isRequired: true,
+              child: CustomFormField(
+                controller: oldPassword,
+                errorText: oldPasswordError,
+                hintText: "Old Password",
+                isPassword: true,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          InboxAddField(
-            title: "Confirm Password",
-            isRequired: true,
-            child: CustomFormField(
-              controller: confirmPassword,
-              errorText: confirmPasswordError,
-              hintText: "Confirm Password",
-              isPassword: true,
+            const SizedBox(height: 12),
+            InboxAddField(
+              title: "New Password",
+              isRequired: true,
+              child: CustomFormField(
+                controller: newPassword,
+                errorText: newPasswordError,
+                hintText: "New Password",
+                isPassword: true,
+              ),
             ),
-          ),
-          const SizedBox(height: 14),
-          Obx(
-            () => authenticationController.isLoading.value
-                ? const CustomLoadingButton()
-                : CustomSubmitButton(
-                    title: "Save",
-                    onTap: () {
-                      if (validateForm()) {
-                        authenticationController.changePassword(
-                          oldPassword.text,
-                          newPassword.text,
-                          confirmPassword.text,
-                        );
-                      }
-                    },
-                  ),
-          ),
-          const SizedBox(height: 200),
-        ],
+            const SizedBox(height: 12),
+            InboxAddField(
+              title: "Confirm Password",
+              isRequired: true,
+              child: CustomFormField(
+                controller: confirmPassword,
+                errorText: confirmPasswordError,
+                hintText: "Confirm Password",
+                isPassword: true,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Obx(
+              () => authenticationController.isLoading.value
+                  ? const CustomLoadingButton()
+                  : CustomSubmitButton(
+                      title: "Save",
+                      onTap: () {
+                        if (validateForm()) {
+                          authenticationController.changePassword(
+                            oldPassword.text,
+                            newPassword.text,
+                            confirmPassword.text,
+                          );
+                        }
+                      },
+                    ),
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

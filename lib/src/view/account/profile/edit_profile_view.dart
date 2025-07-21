@@ -133,190 +133,192 @@ class _EditProfileViewState extends State<EditProfileView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Edit Profile', titleSpacing: 0),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          // Profile Picture
-          CustomChangeAvatar(
-            radius: 50,
-            newImage: selectedImage,
-            link: user?.picUrl,
-          ),
-          const SizedBox(height: 16),
-          CustomSubmitButton(
-            title: 'Change Photo Profile',
-            color: AppColors.scaffoldBgColor2,
-            borderColor: AppColors.primary,
-            textColor: AppColors.primary,
-            onTap: () async {
-              XFile? pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-              if (pickedImage != null) setState(() => selectedImage = pickedImage);
-            },
-          ),
-
-          const SizedBox(height: 25),
-
-          // Username
-          InboxAddField(
-            title: 'Username',
-            isRequired: true,
-            child: CustomFormField(
-              controller: usernameController,
-              hintText: 'Username',
-              errorText: usernameError,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            // Profile Picture
+            CustomChangeAvatar(
+              radius: 50,
+              newImage: selectedImage,
+              link: user?.picUrl,
             ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Full Name
-          InboxAddField(
-            title: 'Full Name',
-            isRequired: true,
-            child: CustomFormField(
-              controller: fullNameController,
-              hintText: 'Full Name',
-              errorText: fullNameError,
+            const SizedBox(height: 16),
+            CustomSubmitButton(
+              title: 'Change Photo Profile',
+              color: AppColors.scaffoldBgColor2,
+              borderColor: AppColors.primary,
+              textColor: AppColors.primary,
+              onTap: () async {
+                XFile? pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+                if (pickedImage != null) setState(() => selectedImage = pickedImage);
+              },
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 25),
 
-          // Role/Position
-          InboxAddField(
-            title: 'Role/Position',
-            child: CustomSelectField(
-              onTap: () => Get.toNamed(
-                AppRoutes.accountSelectView,
-                arguments: {"data": AccountSelectData.role},
+            // Username
+            InboxAddField(
+              title: 'Username',
+              isRequired: true,
+              child: CustomFormField(
+                controller: usernameController,
+                hintText: 'Username',
+                errorText: usernameError,
               ),
-              child: Obx(
-                () => InboxTextOnField(
-                  title: 'Select Role/Position',
-                  selected: accountController.profileRole.value != null
-                      ? {
-                          'value': accountController.profileRole.value?['name'] ?? '',
-                          'label': accountController.profileRole.value?['name'] ?? '',
-                        }
-                      : null,
+            ),
+
+            const SizedBox(height: 12),
+
+            // Full Name
+            InboxAddField(
+              title: 'Full Name',
+              isRequired: true,
+              child: CustomFormField(
+                controller: fullNameController,
+                hintText: 'Full Name',
+                errorText: fullNameError,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Role/Position
+            InboxAddField(
+              title: 'Role/Position',
+              child: CustomSelectField(
+                onTap: () => Get.toNamed(
+                  AppRoutes.accountSelectView,
+                  arguments: {"data": AccountSelectData.role},
+                ),
+                child: Obx(
+                  () => InboxTextOnField(
+                    title: 'Select Role/Position',
+                    selected: accountController.profileRole.value != null
+                        ? {
+                            'value': accountController.profileRole.value?['name'] ?? '',
+                            'label': accountController.profileRole.value?['name'] ?? '',
+                          }
+                        : null,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Phone Number
-          InboxAddField(
-            title: 'Phone Number',
-            child: CustomFormField(
-              controller: numberController,
-              keyboardType: TextInputType.phone,
-              hintText: 'Phone Number',
-              errorText: numberError,
+            // Phone Number
+            InboxAddField(
+              title: 'Phone Number',
+              child: CustomFormField(
+                controller: numberController,
+                keyboardType: TextInputType.phone,
+                hintText: 'Phone Number',
+                errorText: numberError,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Linkedin Account
-          InboxAddField(
-            title: 'Linkedin Account',
-            child: CustomFormField(
-              controller: linkedinController,
-              hintText: 'Linkedin Account',
-              errorText: linkedinError,
+            // Linkedin Account
+            InboxAddField(
+              title: 'Linkedin Account',
+              child: CustomFormField(
+                controller: linkedinController,
+                hintText: 'Linkedin Account',
+                errorText: linkedinError,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Website Link
-          InboxAddField(
-            title: 'Website Link',
-            child: CustomFormField(
-              controller: weblinkController,
-              hintText: 'Website Link',
-              errorText: weblinkError,
+            // Website Link
+            InboxAddField(
+              title: 'Website Link',
+              child: CustomFormField(
+                controller: weblinkController,
+                hintText: 'Website Link',
+                errorText: weblinkError,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Instagram Account
-          InboxAddField(
-            title: 'Instagram Account',
-            child: CustomFormField(
-              controller: instagramController,
-              hintText: 'Instagram Account',
-              errorText: instagramError,
+            // Instagram Account
+            InboxAddField(
+              title: 'Instagram Account',
+              child: CustomFormField(
+                controller: instagramController,
+                hintText: 'Instagram Account',
+                errorText: instagramError,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Medium Account
-          InboxAddField(
-            title: 'Medium Account',
-            child: CustomFormField(
-              controller: mediumController,
-              hintText: 'Medium Account',
-              errorText: mediumError,
+            // Medium Account
+            InboxAddField(
+              title: 'Medium Account',
+              child: CustomFormField(
+                controller: mediumController,
+                hintText: 'Medium Account',
+                errorText: mediumError,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Quora Account
-          InboxAddField(
-            title: 'Quora Account',
-            child: CustomFormField(
-              controller: quoraController,
-              hintText: 'Quora Account',
-              errorText: quoraError,
+            // Quora Account
+            InboxAddField(
+              title: 'Quora Account',
+              child: CustomFormField(
+                controller: quoraController,
+                hintText: 'Quora Account',
+                errorText: quoraError,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          // Tiktok Account
-          InboxAddField(
-            title: 'Tiktok Account',
-            child: CustomFormField(
-              controller: tiktokController,
-              hintText: 'Tiktok Account',
-              errorText: tiktokError,
+            // Tiktok Account
+            InboxAddField(
+              title: 'Tiktok Account',
+              child: CustomFormField(
+                controller: tiktokController,
+                hintText: 'Tiktok Account',
+                errorText: tiktokError,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 25),
+            const SizedBox(height: 25),
 
-          Obx(
-            () => accountController.isLoadingProfile.value
-                ? const CustomLoadingButton()
-                : CustomSubmitButton(
-                    title: 'Save',
-                    onTap: () {
-                      if (isFormValid()) {
-                        accountController.profileUsername.value = usernameController.text;
-                        accountController.profileFullName.value = fullNameController.text;
-                        accountController.profileNumber.value = numberController.text;
+            Obx(
+              () => accountController.isLoadingProfile.value
+                  ? const CustomLoadingButton()
+                  : CustomSubmitButton(
+                      title: 'Save',
+                      onTap: () {
+                        if (isFormValid()) {
+                          accountController.profileUsername.value = usernameController.text;
+                          accountController.profileFullName.value = fullNameController.text;
+                          accountController.profileNumber.value = numberController.text;
 
-                        accountController.profileLinkedin.value = linkedinController.text;
-                        accountController.profileWebsite.value = weblinkController.text;
-                        accountController.profileInstagram.value = instagramController.text;
+                          accountController.profileLinkedin.value = linkedinController.text;
+                          accountController.profileWebsite.value = weblinkController.text;
+                          accountController.profileInstagram.value = instagramController.text;
 
-                        accountController.profileMedium.value = mediumController.text;
-                        accountController.profileQuora.value = quoraController.text;
-                        accountController.profileTiktok.value = tiktokController.text;
+                          accountController.profileMedium.value = mediumController.text;
+                          accountController.profileQuora.value = quoraController.text;
+                          accountController.profileTiktok.value = tiktokController.text;
 
-                        accountController.editProfile(selectedImage);
-                      }
-                    },
-                  ),
-          ),
-          const SizedBox(height: 200),
-        ],
+                          accountController.editProfile(selectedImage);
+                        }
+                      },
+                    ),
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }
