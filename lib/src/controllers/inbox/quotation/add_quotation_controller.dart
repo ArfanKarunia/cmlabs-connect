@@ -318,8 +318,12 @@ class AddQuotationController extends GetxController {
   }
 
   Future<void> fetchProjectType() async {
-    if (projectStatus.value == null) {
-      projectTypeList.assignAll([]);
+    if (projectStatus.value == null) return;
+
+    if (projectStatus.value?['label'] == 'On-Hold') {
+      projectTypeList.assignAll([
+        {'value': 'On-Hold', 'label': 'On-Hold'}
+      ]);
       return;
     }
 
@@ -443,7 +447,7 @@ class AddQuotationController extends GetxController {
         break;
       case 'projectStatus':
         projectStatus.value = value;
-        projectType.clear();
+        projectType.assignAll([]);
         fetchProjectType();
         break;
       case 'projectType':

@@ -250,8 +250,12 @@ class EditFormController extends GetxController {
   }
 
   Future<void> fetchType() async {
-    if (selectedStatus.value == null) {
-      typeList.assignAll([]);
+    if (selectedStatus.value == null) return;
+
+    if (selectedStatus.value?['label'] == 'On-Hold') {
+      typeList.assignAll([
+        {'value': 'On-Hold', 'label': 'On-Hold'}
+      ]);
       return;
     }
 
@@ -398,7 +402,7 @@ class EditFormController extends GetxController {
         break;
       case 'status':
         selectedStatus.value = value;
-        selectedType.clear();
+        selectedType.assignAll([]);
         fetchType();
         break;
       case 'type':
