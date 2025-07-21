@@ -16,9 +16,9 @@ import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_add_field.dart';
-import '../../../widgets/inbox_add_section.dart';
-import '../../../widgets/inbox_history_tile.dart';
+import '../../../widgets/inbox/inbox_add_field.dart';
+import '../../../widgets/inbox/inbox_add_section.dart';
+import '../../../widgets/inbox/inbox_history_tile.dart';
 import '../../../widgets/tag_button.dart';
 
 class ContactUsEditView extends StatefulWidget {
@@ -60,70 +60,72 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
     return Scaffold(
       appBar: defaultAppBar('Edit Contact Us'),
       backgroundColor: AppColors.scaffoldBgColor2,
-      body: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            children: [
-              basicInformation(),
-              const SizedBox(height: 20),
-              clientPicSection(),
-              const SizedBox(height: 20),
-              activitySection(),
-              const SizedBox(height: 20),
-              Obx(() => urlTrackingSection()),
-              const SizedBox(height: 150),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                color: AppColors.white_1,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(30, 0, 0, 0),
-                    offset: Offset(0, -4),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 140,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColors.text_4,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Obx(
-                    () => controller.isLoading.value
-                        ? const CustomLoadingButton()
-                        : CustomSubmitButton(
-                            title: 'Save',
-                            onTap: () => controller.submitForm(),
-                          ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Click to save all changes",
-                    style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
-                  ),
-                ],
-              ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ListView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                basicInformation(),
+                const SizedBox(height: 20),
+                clientPicSection(),
+                const SizedBox(height: 20),
+                activitySection(),
+                const SizedBox(height: 20),
+                Obx(() => urlTrackingSection()),
+                const SizedBox(height: 150),
+              ],
             ),
-          )
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  color: AppColors.white_1,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(30, 0, 0, 0),
+                      offset: Offset(0, -4),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 140,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.text_4,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () => controller.isLoading.value
+                          ? const CustomLoadingButton()
+                          : CustomSubmitButton(
+                              title: 'Save',
+                              onTap: () => controller.submitForm(),
+                            ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Click to save all changes",
+                      style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -416,14 +418,19 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
                                   ),
                                 );
                               }),
-                              CustomSubmitButton(
-                                title: 'Add More Contact',
-                                icon: Ionicons.add,
-                                onTap: () => Get.toNamed(
-                                  AppRoutes.editContactUsContact,
-                                  arguments: {'clientIndex': index},
+                              if (controller.picClients[index].contacts.length < 3) ...[
+                                CustomSubmitButton(
+                                  title: 'Add More Contact',
+                                  icon: Ionicons.add,
+                                  onTap: () => Get.toNamed(
+                                    AppRoutes.editContactUsContact,
+                                    arguments: {
+                                      'clientIndex': index,
+                                      'currentContactIndex': controller.picClients[index].contacts.length,
+                                    },
+                                  ),
                                 ),
-                              ),
+                              ],
                               const SizedBox(height: 10),
                               CustomSubmitButton(
                                 title: 'Delete PIC ${index + 1}',
@@ -672,14 +679,16 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
               height: 32,
               child: FittedBox(
                 fit: BoxFit.fill,
-                child: Switch(
-                  value: controller.urlTrackingEnabled.value,
-                  onChanged: (value) => setState(() => controller.urlTrackingEnabled(value)),
-                  activeTrackColor: AppColors.primary,
-                  inactiveTrackColor: const Color(0xFFD8DAE5),
-                  trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
-                  inactiveThumbColor: AppColors.white,
-                ),
+                child: controller.isUrlTrackingLoading.value
+                    ? const CustomLoading()
+                    : Switch(
+                        value: controller.urlTrackingEnabled.value,
+                        onChanged: (value) => controller.switchUrlTracking(widget.contactUs.id ?? 0, value),
+                        activeTrackColor: AppColors.primary,
+                        inactiveTrackColor: const Color(0xFFD8DAE5),
+                        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                        inactiveThumbColor: AppColors.white,
+                      ),
               ),
             ),
           ],
@@ -691,13 +700,21 @@ class _ContactUsEditViewState extends State<ContactUsEditView> {
           child: CustomSelectField(
             isEnabled: controller.selectedPic.value != null && controller.urlTrackingEnabled.value,
             icon: null,
-            child: InboxTextOnField(title: 'URL', selected: {'label': '${controller.urlTrackingUrl.value}'}),
+            child: InboxTextOnField(
+              title: 'URL',
+              selected: controller.urlTrackingUrl.value != null
+                  ? {
+                      'label': '${controller.urlTrackingUrl.value}',
+                      'value': '${controller.urlTrackingUrl.value}',
+                    }
+                  : null,
+            ),
           ),
         ),
         const SizedBox(height: 11),
         CustomSubmitButton(
           title: 'Copy URL',
-          isDisabled: !controller.urlTrackingEnabled.value,
+          isDisabled: controller.urlTrackingEnabled.isFalse || controller.urlTrackingUrl.value == null,
           onTap: () async {
             if (controller.urlTrackingUrl.value != null) {
               await Clipboard.setData(ClipboardData(text: controller.urlTrackingUrl.value ?? ''));

@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../utils/string_utils.dart';
 import '../../utils/toast.dart';
 
 abstract class InboxController extends GetxController {
@@ -84,8 +83,8 @@ abstract class InboxController extends GetxController {
   }
 
   void addFilterDate({DateTime? start, DateTime? end}) {
-    filterStartDate.value = start ?? filterStartDate.value;
-    filterEndDate.value = end ?? filterEndDate.value;
+    filterStartDate.value = start;
+    filterEndDate.value = end;
   }
 
   void clearFilterDate() {
@@ -129,14 +128,14 @@ abstract class InboxController extends GetxController {
       queryParams.add('endDate=${Uri.encodeComponent(endDateString)}');
     }
     if (filterPic.value != null) {
-      queryParams.add('pic=${Uri.encodeComponent(StringUtils.toCamelCase(filterPic.value))}');
+      queryParams.add('pic=${Uri.encodeComponent(filterPic.value ?? '')}');
     }
     if (filterClientSource.value != null) {
       String params = url.contains('case-studies') ? 'client_source' : 'clientSource';
-      queryParams.add('$params=${Uri.encodeComponent(StringUtils.toCamelCase(filterClientSource.value))}');
+      queryParams.add('$params=${Uri.encodeComponent(filterClientSource.value ?? '')}');
     }
     if (filterStatus.value != null) {
-      queryParams.add('status=${Uri.encodeComponent(filterStatus.value!)}');
+      queryParams.add('status=${Uri.encodeComponent(filterStatus.value ?? '')}');
     }
 
     // Handle category filter with array format

@@ -2,6 +2,7 @@ import 'package:cmlabs_connect/src/models/inbox/property/client_pic_model.dart';
 import 'package:cmlabs_connect/src/models/inbox/property/client_source_model.dart';
 
 import 'property/project_history_model.dart';
+import 'property/url_tracking.dart';
 
 class Quotation {
   final int? id;
@@ -328,6 +329,7 @@ class DetailQuotation {
   final List<String>? category;
   final AgentData? agent;
   final String? email;
+  final UrlTracking? urlTracking;
   final List<ProjectHistory>? activities;
 
   DetailQuotation({
@@ -350,6 +352,7 @@ class DetailQuotation {
     this.category,
     this.agent,
     this.email,
+    this.urlTracking,
     this.activities,
   });
 
@@ -374,8 +377,11 @@ class DetailQuotation {
       companyWebsite: json['data']['company_website'],
       phoneNumber: json['data']['phone_number'],
       phoneCode: json['data']['phone_code'],
-      typeInformation:
-          json['data']['typeInformation'] != null ? List<String>.from(json['data']['typeInformation']) : null,
+      typeInformation: json['data']['typeInformation'] != null
+          ? json['data']['typeInformation'] is List
+              ? List<String>.from(json['data']['typeInformation'])
+              : [json['data']['typeInformation']]
+          : null,
       clientSource: json['data']['client_source'],
       clientSourceDetail: json['data']['client_source_detail'] != null
           ? ClientSource.fromJson(json['data']['client_source_detail'])
@@ -395,6 +401,7 @@ class DetailQuotation {
           : null,
       // agent: json['data']['agent'] != null ? AgentData.fromJson(json['data']['agent']) : null,
       email: json['data']['email'],
+      urlTracking: json['data']['url_tracking'] != null ? UrlTracking.fromJson(json['data']['url_tracking']) : null,
       activities: activitiesList,
     );
   }
@@ -420,6 +427,7 @@ class DetailQuotation {
       'category': category,
       'agent': agent?.toJson(),
       'email': email,
+      'url_tracking': urlTracking?.toJson(),
       'activities': activities?.map((activity) => activity.toJson()).toList(),
     };
   }
@@ -444,6 +452,7 @@ class DetailQuotation {
     List<String>? category,
     AgentData? agent,
     String? email,
+    UrlTracking? urlTracking,
     List<ProjectHistory>? activities,
   }) {
     return DetailQuotation(
@@ -466,6 +475,7 @@ class DetailQuotation {
       category: category ?? this.category,
       agent: agent ?? this.agent,
       email: email ?? this.email,
+      urlTracking: urlTracking ?? this.urlTracking,
       activities: activities ?? this.activities,
     );
   }

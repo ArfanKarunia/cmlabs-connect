@@ -5,6 +5,6 @@ import 'dashboard_controller.dart';
 class DashboardBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => DashboardController());
+    Get.lazyPut(() => DashboardController(), fenix: true);
   }
 }

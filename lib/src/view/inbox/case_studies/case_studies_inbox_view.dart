@@ -7,7 +7,7 @@ import '../../../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../../../models/inbox/case_studies_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
-import '../../../widgets/inbox_list_tile.dart';
+import '../../../widgets/inbox/inbox_list_tile.dart';
 
 class CaseStudiesInbox extends StatelessWidget {
   final RefreshController refreshController;

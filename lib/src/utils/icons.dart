@@ -1,5 +1,5 @@
 class AppIcons {
-  static const String briefCase_outline = 'assets/icons/briefcase-outline.png';
+  static const String briefcaseIcon = 'assets/icons/briefcase-outline.png';
   static const String summaryIcon = 'assets/icons/icons_interface.png';
   static const String experienceIcon = 'assets/icons/icons_misc.png';
   static const String educationIcon = 'assets/icons/icons_writing.png';

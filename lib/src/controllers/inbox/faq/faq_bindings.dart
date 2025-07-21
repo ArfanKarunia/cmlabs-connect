@@ -7,7 +7,7 @@ import 'faq_controller.dart';
 class FaqBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => FaqController());
+    Get.lazyPut(() => FaqController(), fenix: true);
     Get.lazyPut(() => DetailFaqController(), fenix: true);
     Get.lazyPut(() => EditFaqController(), fenix: true);
   }

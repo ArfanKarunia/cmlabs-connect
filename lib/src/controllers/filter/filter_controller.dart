@@ -44,6 +44,22 @@ class FilterController extends GetxController {
   Rx<DateTime?> startDate = Rx<DateTime?>(null);
   Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
+  bool get isFilterApplied =>
+      filterClientSource.value != null ||
+      filterPic.value != null ||
+      filterCategoryList.isNotEmpty ||
+      startDate.value != null ||
+      endDate.value != null;
+
+  // Error message variables
+  Rx<String?> startDateError = null.obs;
+  Rx<String?> endDateError = null.obs;
+  void validateDateFields() {
+    if (startDate.value == null && endDate.value != null) {
+      startDateError.value = 'Start date must be filled';
+    }
+  }
+
   // Loading
   Rx<bool> isLoading = false.obs;
 
@@ -207,6 +223,14 @@ class FilterController extends GetxController {
     search.value = '';
   }
 
+  void clearAll() {
+    setDateRange(null, null);
+    clearFilterCategory();
+    clearFilterClientSource();
+    clearFilterPic();
+    clearSearch();
+  }
+
   List<Map<String, String>> searchData(InboxFilterType filter) {
     switch (filter) {
       case InboxFilterType.clientSource:
@@ -234,6 +258,11 @@ class FilterController extends GetxController {
       }
       dashboardController.clearFilterClientSource();
       dashboardController.addFilterClientSource(filterClientSource.value!['value'].toString());
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterClientSource();
+      }
+      dashboardController.clearFilterClientSource();
     }
   }
 
@@ -245,17 +274,31 @@ class FilterController extends GetxController {
       }
       dashboardController.clearFilterPic();
       dashboardController.addFilterPic(filterPic.value!['value'].toString());
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterPic();
+      }
+      dashboardController.clearFilterPic();
     }
   }
 
   void filterByCategory() {
-    for (Map<String, String> category in filterCategoryList) {
+    if (filterCategoryList.isNotEmpty) {
       for (InboxController controller in inboxController) {
         controller.clearFilterCategory();
-        controller.addFilterCategory(category['value'].toString().toLowerCase());
+        for (Map<String, String> category in filterCategoryList) {
+          controller.addFilterCategory(category['value'].toString());
+        }
       }
       dashboardController.clearFilterCategory();
-      dashboardController.addFilterCategory(category['value'].toString());
+      for (Map<String, String> category in filterCategoryList) {
+        dashboardController.addFilterCategory(category['value'].toString());
+      }
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterCategory();
+      }
+      dashboardController.clearFilterCategory();
     }
   }
 
@@ -281,6 +324,9 @@ class FilterController extends GetxController {
 
     isLoading(true);
 
+    validateDateFields();
+    if (startDateError.value != null || endDateError.value != null) return;
+
     filterByClientSource();
     filterByPic();
     filterByCategory();
@@ -300,6 +346,7 @@ class FilterController extends GetxController {
 
     isLoading(true);
 
+    clearAll();
     for (InboxController controller in inboxController) {
       controller.clearAll();
       await controller.fetchList();

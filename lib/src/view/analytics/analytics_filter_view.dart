@@ -45,87 +45,89 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Filter', titleSpacing: 0),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Filter',
-                      style: bold.copyWith(fontSize: 16),
-                    ),
-                    GestureDetector(
-                      onTap: () => widget.controller.resetFilter(),
-                      child: Text(
-                        'Reset Filters',
-                        style: regular.copyWith(
-                          fontSize: 13,
-                          color: AppColors.primary,
-                          decoration: TextDecoration.underline,
-                          decorationColor: AppColors.primary,
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Select Filter',
+                        style: bold.copyWith(fontSize: 16),
+                      ),
+                      GestureDetector(
+                        onTap: () => widget.controller.resetFilter(),
+                        child: Text(
+                          'Reset Filters',
+                          style: regular.copyWith(
+                            fontSize: 13,
+                            color: AppColors.primary,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.primary,
+                          ),
                         ),
                       ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Select Date
+                  buildDateRange(context),
+                  const Divider(height: 40, color: Color(0xFFD9D9D9)),
+
+                  // Category
+                  if (widget.analyticsType != AnalyticsType.topServices) ...[
+                    AnalyticsFilterSection(
+                      title: 'Category',
+                      type: AnalyticsFilterType.category,
+                      controller: widget.controller,
                     ),
+                    const Divider(height: 40, color: Color(0xFFD9D9D9)),
                   ],
-                ),
 
-                const SizedBox(height: 24),
+                  // PIC & Client Source
+                  if (widget.analyticsType == AnalyticsType.quotationTraffic) ...[
+                    AnalyticsFilterSection(
+                      title: 'PIC',
+                      type: AnalyticsFilterType.pic,
+                      controller: widget.controller,
+                    ),
+                    const Divider(height: 40, color: Color(0xFFD9D9D9)),
+                    AnalyticsFilterSection(
+                      title: 'Client Source',
+                      type: AnalyticsFilterType.clientSource,
+                      controller: widget.controller,
+                    ),
+                    const Divider(height: 40, color: Color(0xFFD9D9D9)),
+                  ],
 
-                // Select Date
-                buildDateRange(context),
-                const Divider(height: 40, color: Color(0xFFD9D9D9)),
-
-                // Category
-                if (widget.analyticsType != AnalyticsType.topServices) ...[
+                  // UTM Source and Medium
                   AnalyticsFilterSection(
-                    title: 'Category',
-                    type: AnalyticsFilterType.category,
+                    title: 'UTM Source and Medium',
+                    type: AnalyticsFilterType.utm,
                     controller: widget.controller,
                   ),
                   const Divider(height: 40, color: Color(0xFFD9D9D9)),
+
+                  // Status
+                  AnalyticsFilterSection(
+                    title: 'Status',
+                    type: AnalyticsFilterType.status,
+                    controller: widget.controller,
+                  ),
+
+                  const SizedBox(height: 24),
                 ],
-
-                // PIC & Client Source
-                if (widget.analyticsType == AnalyticsType.quotationTraffic) ...[
-                  AnalyticsFilterSection(
-                    title: 'PIC',
-                    type: AnalyticsFilterType.pic,
-                    controller: widget.controller,
-                  ),
-                  const Divider(height: 40, color: Color(0xFFD9D9D9)),
-                  AnalyticsFilterSection(
-                    title: 'Client Source',
-                    type: AnalyticsFilterType.clientSource,
-                    controller: widget.controller,
-                  ),
-                  const Divider(height: 40, color: Color(0xFFD9D9D9)),
-                ],
-
-                // UTM Source and Medium
-                AnalyticsFilterSection(
-                  title: 'UTM Source and Medium',
-                  type: AnalyticsFilterType.utm,
-                  controller: widget.controller,
-                ),
-                const Divider(height: 40, color: Color(0xFFD9D9D9)),
-
-                // Status
-                AnalyticsFilterSection(
-                  title: 'Status',
-                  type: AnalyticsFilterType.status,
-                  controller: widget.controller,
-                ),
-
-                const SizedBox(height: 24),
-              ],
+              ),
             ),
-          ),
-          buildSaveBottomSheet(),
-        ],
+            buildSaveBottomSheet(),
+          ],
+        ),
       ),
     );
   }

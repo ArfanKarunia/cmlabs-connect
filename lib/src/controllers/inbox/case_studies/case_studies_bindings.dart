@@ -8,7 +8,7 @@ import 'edit_history_case_studies_controller.dart';
 class CaseStudiesBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => CaseStudiesController());
+    Get.lazyPut(() => CaseStudiesController(), fenix: true);
     Get.lazyPut(() => DetailCaseStudiesController(), fenix: true);
     Get.lazyPut(() => EditCaseStudiesController(), fenix: true);
     Get.lazyPut(() => EditHistoryCaseStudiesController(), fenix: true);

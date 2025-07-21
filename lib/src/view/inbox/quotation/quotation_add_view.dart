@@ -15,8 +15,8 @@ import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_add_field.dart';
-import '../../../widgets/inbox_add_section.dart';
+import '../../../widgets/inbox/inbox_add_field.dart';
+import '../../../widgets/inbox/inbox_add_section.dart';
 import '../../../widgets/tag_button.dart';
 
 class QuotationAddView extends StatefulWidget {
@@ -78,76 +78,78 @@ class _QuotationAddViewState extends State<QuotationAddView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Add Quotation'),
-      body: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            children: [
-              quotationFormSection(),
-              const SizedBox(height: 20),
-              projectInformationSection(),
-              const SizedBox(height: 20),
-              activitySection(),
-              const SizedBox(height: 20),
-              Obx(() {
-                return Column(
-                  children: List.generate(controller.picNameControllers.length, (i) => picSection(i)),
-                );
-              }),
-              const SizedBox(height: 150),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                color: AppColors.white_1,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(30, 0, 0, 0),
-                    offset: Offset(0, -4),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 140,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColors.text_4,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Obx(
-                    () {
-                      return controller.isLoading.value
-                          ? const CustomLoadingButton()
-                          : CustomSubmitButton(
-                              title: 'Save',
-                              onTap: () => controller.submitQuotation(pickedFile.value),
-                            );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Click to save all changes",
-                    style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
-                  ),
-                ],
-              ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ListView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                quotationFormSection(),
+                const SizedBox(height: 20),
+                projectInformationSection(),
+                const SizedBox(height: 20),
+                activitySection(),
+                const SizedBox(height: 20),
+                Obx(() {
+                  return Column(
+                    children: List.generate(controller.picNameControllers.length, (i) => picSection(i)),
+                  );
+                }),
+                const SizedBox(height: 150),
+              ],
             ),
-          )
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  color: AppColors.white_1,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(30, 0, 0, 0),
+                      offset: Offset(0, -4),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 140,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.text_4,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () {
+                        return controller.isLoading.value
+                            ? const CustomLoadingButton()
+                            : CustomSubmitButton(
+                                title: 'Save',
+                                onTap: () => controller.submitQuotation(pickedFile.value),
+                              );
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Click to save all changes",
+                      style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

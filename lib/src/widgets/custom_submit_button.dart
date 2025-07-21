@@ -13,7 +13,9 @@ class CustomSubmitButton extends StatelessWidget {
   final Color color;
   final Color disabledColor;
   final Color? borderColor;
+  final double borderRadius;
   final Color textColor;
+  final double textSize;
   final VoidCallback? onTap;
   final double padding;
   const CustomSubmitButton({
@@ -26,7 +28,9 @@ class CustomSubmitButton extends StatelessWidget {
     this.color = AppColors.primary,
     this.disabledColor = AppColors.lightPrimaryColor,
     this.borderColor,
+    this.borderRadius = 10,
     this.textColor = AppColors.white,
+    this.textSize = 14,
     this.onTap,
     this.padding = 17.5,
   });
@@ -39,7 +43,7 @@ class CustomSubmitButton extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(borderRadius),
           border: borderColor != null ? Border.all(color: borderColor!) : null,
           color: !isDisabled ? color : disabledColor,
         ),
@@ -52,7 +56,9 @@ class CustomSubmitButton extends StatelessWidget {
             ],
             Text(
               title,
-              style: isTitleBold ? bold.copyWith(color: textColor) : regular.copyWith(color: textColor),
+              style: isTitleBold
+                  ? bold.copyWith(color: textColor, fontSize: textSize)
+                  : regular.copyWith(color: textColor, fontSize: textSize),
             ),
           ],
         ),
