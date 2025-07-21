@@ -10,7 +10,7 @@ import 'quotation_controller.dart';
 class QuotationBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => QuotationController());
+    Get.lazyPut(() => QuotationController(), fenix: true);
     Get.lazyPut(() => AddQuotationController(), fenix: true);
     Get.lazyPut(() => ClientPicContactController(), fenix: true);
     Get.lazyPut(() => DetailQuotationController(), fenix: true);

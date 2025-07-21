@@ -155,23 +155,28 @@ class FaqController extends InboxController {
     }
   }
 
+  @override
+  String constructFilteredUrl(String url) {
+    String finalUrl = '$url?start=${start.value}&limit=${limit.value}';
+    if (filterStatus.value != null) {
+      finalUrl += 'status=${Uri.encodeComponent(filterStatus.value!)}';
+    }
+
+    return finalUrl;
+  }
+
   List<Faq> get filteredFaq {
     List<Faq> result = List.from(faqList);
 
-    // Jika search tidak kosong, lakukan pencarian berdasarkan nama atau field lain
-    // Filter berdasarkan pencarian (search) jika search tidak kosong
     if (search.value != null && search.value!.isNotEmpty) {
       final query = search.value!.toLowerCase();
 
       result = result.where((faq) {
         return (faq.email?.toLowerCase().contains(query) ?? false) ||
-            (faq.section?.toLowerCase().contains(query) ?? false) ||
+            (faq.whatsappNumber?.toLowerCase().contains(query) ?? false) ||
+            (faq.companyName?.toLowerCase().contains(query) ?? false) ||
             (faq.question?.toLowerCase().contains(query) ?? false) ||
-            (faq.shortQuestion?.toLowerCase().contains(query) ?? false) ||
-            (faq.data?.companyName?.toLowerCase().contains(query) ?? false) ||
-            (faq.data?.name?.toLowerCase().contains(query) ?? false);
-        // (faq.data.category.any((cat) => cat!.toLowerCase().contains(query))) ||
-        // (faq.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
+            (faq.shortQuestion?.toLowerCase().contains(query) ?? false);
       }).toList();
     }
 

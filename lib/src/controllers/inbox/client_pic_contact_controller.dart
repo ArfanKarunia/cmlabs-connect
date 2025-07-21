@@ -3,13 +3,43 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ClientPicContactController extends GetxController {
-  var search = Rx<String?>(null);
+  Rx<String?> search = Rx<String?>(null);
+
+  RxList<Map<String, String>> contactType = <Map<String, String>>[
+    {"value": "Email", "label": "Email"},
+    {"value": "WhatsApp", "label": "WhatsApp"},
+    {"value": "Phone Number", "label": "Phone Number"},
+    {"value": "Telegram", "label": "Telegram"},
+    {"value": "LinkedIn", "label": "LinkedIn"},
+  ].obs;
+  RxList<Map<String, String>> contactStatus = <Map<String, String>>[
+    {"value": "Contacted", "label": "Contacted"},
+    {"value": "Not Contacted", "label": "Not Contacted"},
+    {"value": "Visited", "label": "Visited"},
+    {"value": "Not Visited", "label": "Not Visited"},
+  ].obs;
+  RxMap<String, List<Map<String, String>>> contactDetailStatus = <String, List<Map<String, String>>>{
+    "Contacted": [
+      {"value": "Unreachable", "label": "Unreachable"},
+      {"value": "No further response", "label": "No further response"},
+    ],
+    "Not Contacted": [],
+    "Visited": [
+      {"value": "Met PIC", "label": "Met PIC"},
+      {"value": "Failed to meet PIC", "label": "Failed to meet PIC"},
+    ],
+    "Not Visited": [],
+  }.obs;
 
   Rx<Map<String, String>?> selectedContactType = Rx<Map<String, String>?>(null);
   Rx<TextEditingController> contactInfo = TextEditingController().obs;
   Rx<Map<String, String>?> selectedContactStatus = Rx<Map<String, String>?>(null);
   Rx<Map<String, String>?> selectedContactDetailStatus = Rx<Map<String, String>?>(null);
   Rx<TextEditingController> contactNote = TextEditingController().obs;
+
+  bool get isDetailStatusRequired =>
+      selectedContactStatus.value?['value'] != 'Not Contacted' &&
+      selectedContactStatus.value?['value'] != 'Not Visited';
 
   RxList<Map<String, String>> statusList = <Map<String, String>>[].obs;
   RxList<Map<String, String>> detailStatusList = <Map<String, String>>[].obs;
@@ -30,8 +60,14 @@ class ClientPicContactController extends GetxController {
   bool validateForm() {
     contactTypeError.value = selectedContactType.value == null ? 'The Contact Type must not be empty.' : null;
     contactStatusError.value = selectedContactStatus.value == null ? 'The Contact Status must not be empty.' : null;
-    contactDetailStatusError.value =
-        selectedContactDetailStatus.value == null ? 'The Detail Status must not be empty.' : null;
+
+    if (isDetailStatusRequired) {
+      contactDetailStatusError.value =
+          selectedContactDetailStatus.value == null ? 'The Detail Status must not be empty.' : null;
+    } else {
+      contactDetailStatusError.value = null;
+    }
+
     contactInfoError.value = contactInfo.value.text.isEmpty ? 'The Contact Info must not be empty.' : null;
 
     return contactTypeError.value == null &&
@@ -42,20 +78,13 @@ class ClientPicContactController extends GetxController {
 
   void addType(Map<String, String> type) {
     selectedContactType.value = type;
-    updateTypeStatus(type['value'] ?? '');
   }
 
-  // Status Contact LIST
   void addStatus(Map<String, String> status) {
     selectedContactStatus.value = status;
     updateDetailStatus(status["value"] ?? '');
   }
 
-  void updateTypeStatus(String typeValue) {
-    statusList.value = contactStatus[typeValue] ?? [];
-  }
-
-  // Detail Status Contact LIST
   void addDetailStatus(Map<String, String> status) {
     selectedContactDetailStatus.value = status;
   }
@@ -87,18 +116,11 @@ class ClientPicContactController extends GetxController {
   List<dynamic> searchData(String select) {
     List result = [];
 
-    // Debugging
-    print("Current Filter: $select");
-    print("Current Search Query: ${search.value}");
-
     if (select.toLowerCase() == 'type_contact') {
       result = contactType;
-
-      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((type) {
-          // print("Checking status: ${status['value']} - ${status['label']}");
           return type['value'].toLowerCase().contains(query) || type['label'].toLowerCase().contains(query);
         }).toList();
       }
@@ -106,12 +128,9 @@ class ClientPicContactController extends GetxController {
 
     if (select.toLowerCase() == 'status_contact') {
       result = statusList;
-
-      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((type) {
-          // print("Checking status: ${status['value']} - ${status['label']}");
           return type['value'].toLowerCase().contains(query) || type['label'].toLowerCase().contains(query);
         }).toList();
       }
@@ -119,12 +138,9 @@ class ClientPicContactController extends GetxController {
 
     if (select.toLowerCase() == 'detail_contact') {
       result = detailStatusList;
-
-      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
       if (search.value != null && search.value!.isNotEmpty) {
         final query = search.value!.toLowerCase();
         result = result.where((type) {
-          // print("Checking status: ${status['value']} - ${status['label']}");
           return type['value'].toLowerCase().contains(query) || type['label'].toLowerCase().contains(query);
         }).toList();
       }
@@ -132,60 +148,6 @@ class ClientPicContactController extends GetxController {
 
     return result;
   }
-
-  final contactType = [
-    {"value": "Email", "label": "Email"},
-    {"value": "WhatsApp", "label": "WhatsApp"},
-    {"value": "Phone Number", "label": "Phone Number"},
-    {"value": "Telegram", "label": "Telegram"},
-    {"value": "LinkedIn", "label": "LinkedIn"},
-  ];
-
-  final contactStatus = {
-    "Email": [
-      {"value": "Contacted", "label": "Contacted"},
-      {"value": "Not Contacted", "label": "Not Contacted"},
-      {"value": "Visited", "label": "Visited"},
-      {"value": "Not Visited", "label": "Not Visited"},
-    ],
-    "WhatsApp": [
-      {"value": "Contacted", "label": "Contacted"},
-      {"value": "Not Contacted", "label": "Not Contacted"},
-      {"value": "Visited", "label": "Visited"},
-      {"value": "Not Visited", "label": "Not Visited"},
-    ],
-    "Phone Number": [
-      {"value": "Contacted", "label": "Contacted"},
-      {"value": "Not Contacted", "label": "Not Contacted"},
-      {"value": "Visited", "label": "Visited"},
-      {"value": "Not Visited", "label": "Not Visited"},
-    ],
-    "Telegram": [
-      {"value": "Contacted", "label": "Contacted"},
-      {"value": "Not Contacted", "label": "Not Contacted"},
-      {"value": "Visited", "label": "Visited"},
-      {"value": "Not Visited", "label": "Not Visited"},
-    ],
-    "LinkedIn": [
-      {"value": "Contacted", "label": "Contacted"},
-      {"value": "Not Contacted", "label": "Not Contacted"},
-      {"value": "Visited", "label": "Visited"},
-      {"value": "Not Visited", "label": "Not Visited"},
-    ],
-  };
-
-  Map<String, List<Map<String, String>>> contactDetailStatus = {
-    "Contacted": [
-      {"value": "Unreachable", "label": "Unreachable"},
-      {"value": "No further response", "label": "No further response"},
-    ],
-    "Not Contacted": [],
-    "Visited": [
-      {"value": "Met PIC", "label": "Met PIC"},
-      {"value": "Failed to meet PIC", "label": "Failed to meet PIC"},
-    ],
-    "Not Visited": [],
-  };
 
   ContactClientPic createContactPIC() {
     ContactClientPic contactClientPic = ContactClientPic(
@@ -204,7 +166,7 @@ class ClientPicContactController extends GetxController {
       case 'contactType':
         return contactType;
       case 'contactStatus':
-        return contactStatus[selectedContactType.value?["value"]] ?? [];
+        return contactStatus;
       case 'contactDetailStatus':
         return contactDetailStatus[selectedContactStatus.value?["value"]] ?? [];
       default:
@@ -219,8 +181,6 @@ class ClientPicContactController extends GetxController {
     switch (data) {
       case 'contactType':
         selectedContactType.value = value;
-        selectedContactStatus.value = null;
-        selectedContactDetailStatus.value = null;
         break;
       case 'contactStatus':
         selectedContactStatus.value = value;

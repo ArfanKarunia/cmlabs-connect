@@ -10,12 +10,13 @@ import '../../../controllers/inbox/quotation/add_quotation_controller.dart';
 import '../../../routes.dart';
 import '../../../utils/bottom_sheet.dart';
 import '../../../utils/color.dart';
+import '../../../utils/toast.dart';
 import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_add_field.dart';
-import '../../../widgets/inbox_add_section.dart';
+import '../../../widgets/inbox/inbox_add_field.dart';
+import '../../../widgets/inbox/inbox_add_section.dart';
 import '../../../widgets/tag_button.dart';
 
 class QuotationAddView extends StatefulWidget {
@@ -45,13 +46,23 @@ class _QuotationAddViewState extends State<QuotationAddView> {
 
   Future<void> _selectFile() async {
     try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf', 'docs', 'xlsx', 'csv', 'ppt'],
-      );
+      FilePickerResult? result = await FilePicker.platform.pickFiles();
 
       if (result != null) {
         PlatformFile file = result.files.first;
+        String extension = file.extension?.toLowerCase() ?? '';
+        List<String> allowedExtensions = ['jpg', 'jpeg', 'png', 'pdf', 'docs', 'xlsx', 'csv', 'ppt'];
+
+        if (!allowedExtensions.contains(extension)) {
+          showErrorToast('The format file must be ${allowedExtensions.join(", ")}!');
+          return;
+        }
+
+        if (file.size > 2 * 1024 * 1024) {
+          showErrorToast('The maximum of file size is 2 MB!');
+          return;
+        }
+
         pickedFile.value = File(file.path!);
         setState(() => fileNameController.text = file.name);
       } else {
@@ -67,76 +78,78 @@ class _QuotationAddViewState extends State<QuotationAddView> {
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Add Quotation'),
-      body: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            children: [
-              quotationFormSection(),
-              const SizedBox(height: 20),
-              projectInformationSection(),
-              const SizedBox(height: 20),
-              activitySection(),
-              const SizedBox(height: 20),
-              Obx(() {
-                return Column(
-                  children: List.generate(controller.picNameControllers.length, (i) => picSection(i)),
-                );
-              }),
-              const SizedBox(height: 150),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                color: AppColors.white_1,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(30, 0, 0, 0),
-                    offset: Offset(0, -4),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 140,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColors.text_4,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Obx(
-                    () {
-                      return controller.isLoading.value
-                          ? const CustomLoadingButton()
-                          : CustomSubmitButton(
-                              title: 'Save',
-                              onTap: () => controller.submitQuotation(pickedFile.value),
-                            );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Click to save all changes",
-                    style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
-                  ),
-                ],
-              ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ListView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                quotationFormSection(),
+                const SizedBox(height: 20),
+                projectInformationSection(),
+                const SizedBox(height: 20),
+                activitySection(),
+                const SizedBox(height: 20),
+                Obx(() {
+                  return Column(
+                    children: List.generate(controller.picNameControllers.length, (i) => picSection(i)),
+                  );
+                }),
+                const SizedBox(height: 150),
+              ],
             ),
-          )
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  color: AppColors.white_1,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(30, 0, 0, 0),
+                      offset: Offset(0, -4),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 140,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.text_4,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () {
+                        return controller.isLoading.value
+                            ? const CustomLoadingButton()
+                            : CustomSubmitButton(
+                                title: 'Save',
+                                onTap: () => controller.submitQuotation(pickedFile.value),
+                              );
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Click to save all changes",
+                      style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -548,7 +561,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Type',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].type.toString(),
+                                title: controller.picClients[index].contacts[i].type ?? '',
                                 selected: null,
                               ),
                             ),
@@ -558,7 +571,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Contact Info',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].info.toString(),
+                                title: controller.picClients[index].contacts[i].info ?? '',
                                 selected: null,
                               ),
                             ),
@@ -568,7 +581,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Status',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].status.toString(),
+                                title: controller.picClients[index].contacts[i].status ?? '',
                                 selected: null,
                               ),
                             ),
@@ -578,7 +591,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Detail Status',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].detail.toString(),
+                                title: controller.picClients[index].contacts[i].detail ?? '',
                                 selected: null,
                               ),
                             ),
@@ -588,7 +601,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                             title: 'Note',
                             child: CustomSelectField(
                               child: InboxTextOnField(
-                                title: controller.picClients[index].contacts[i].note.toString(),
+                                title: controller.picClients[index].contacts[i].note ?? '',
                                 selected: null,
                               ),
                             ),
@@ -617,16 +630,28 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                       ),
                     );
                   }),
-                  CustomSubmitButton(
-                    title: 'Add More Contact',
-                    icon: Ionicons.add,
-                    onTap: () => Get.toNamed(AppRoutes.addQuotationContact, arguments: {'contactIndex': index}),
-                  ),
+                  if (controller.picClients[index].contacts.length < 3) ...[
+                    CustomSubmitButton(
+                      title: 'Add More Contact',
+                      icon: Ionicons.add,
+                      onTap: () => Get.toNamed(AppRoutes.addQuotationContact, arguments: {'contactIndex': index}),
+                    ),
+                  ],
                   if (index > 0) ...[
                     const SizedBox(height: 10),
                     CustomSubmitButton(
                       title: 'Delete PIC ${index + 1}',
-                      onTap: () => controller.removeClientPIC(index),
+                      onTap: () {
+                        deleteBottomSheet(
+                          context,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          message: 'Are you sure wanna delete this Client PIC ${index + 1}?',
+                          onDelete: () {
+                            controller.removeClientPIC(index);
+                            Get.back();
+                          },
+                        );
+                      },
                       color: AppColors.bgDanger,
                       textColor: AppColors.danger,
                     ),

@@ -2,11 +2,15 @@ import 'package:dio/dio.dart' as http;
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+// import '../../../models/inbox/property/url_tracking.dart';
 import '../../../utils/toast.dart';
 import '../edit_form_controller.dart';
+import 'detail_quotation_controller.dart';
 
 class EditQuotationController extends EditFormController {
   int quotationId = 0;
+
+  final DetailQuotationController parent = Get.find<DetailQuotationController>();
 
   @override
   Future<void> deleteHistory(int? id) async {
@@ -45,22 +49,30 @@ class EditQuotationController extends EditFormController {
 
     try {
       isLoading(true);
+
+      final isFormValid = await validateForm();
+      if (!isFormValid) {
+        isLoading(false);
+        return;
+      }
+
       final data = {
         "project_tracker": "true",
 
         // General
-        "pic": selectedPic.value?['value'],
-        "status": selectedStatus.value?['value'],
-        "priority": selectedPriority.value?['value'],
-        "type": selectedType.map((type) => type['value']).toList(),
+        "pic": selectedPic.value?['value'].toString(),
+        "status": selectedStatus.value?['value'].toString(),
+        "priority": selectedPriority.value?['value'].toString(),
+        "type": selectedType.map((type) => type['value'].toString()).toList(),
         "client_pic": picClients.asMap().map((index, picClient) => MapEntry(index.toString(), picClient.toJson())),
+
         // Activity
         "meeting_topic": activityName.map((name) => name.text).toList(),
         "meeting_schedule": activitySchedule
             .map((schedule) => schedule != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(schedule) : null)
             .toList(),
-        "meeting_status": activityStatus.map((status) => status?['value']).toList(),
-        "meeting_type": activityType.map((type) => [type?['value']]).toList(),
+        "meeting_status": activityStatus.map((status) => status?['value'].toString()).toList(),
+        "meeting_type": activityType.map((type) => type?['value']).toList(),
         "meeting_available_to_user":
             activityAvailableToUser.map((availableToUser) => availableToUser ? "1" : "0").toList(),
         "meeting_note": activityNote.map((note) => note.text).toList(),
@@ -73,8 +85,6 @@ class EditQuotationController extends EditFormController {
         "password": urlTrackingPassword.value.text,
         "validity": selectedValidity.value?['value'],
       };
-
-      print(data);
 
       final response = await dio.put(
         '$baseUrl/quotation/update/$quotationId',
@@ -91,29 +101,24 @@ class EditQuotationController extends EditFormController {
 
       if (response.statusCode == 200) {
         showSuccessToast('Berhasil mengubah Quotation!');
+        parent.fetchDetails(quotationId);
+        // parent.quotation.value = parent.quotation.value?.copyWith(
+        //   cmlabspic: selectedPic.value?['value'],
+        //   status: int.tryParse(selectedStatus.value?['value'] ?? '0'),
+        //   priority: int.tryParse(selectedPriority.value?['value'] ?? '0'),
+        //   typeInformation: selectedType.map((type) => type['value'].toString()).toList(),
+        //   clientPic: picClients,
+        //   activities: historyList,
+        //   urlTracking: UrlTracking(
+        //     url: urlTrackingUrl.value,
+        //     password: urlTrackingPassword.value.text,
+        //   ),
+        // );
         Get.back();
       }
     } on http.DioException catch (e) {
       isLoading(false);
-      final errors = e.response?.data['message'];
-      print(e.response?.statusCode);
-      print(errors);
-
-      if (errors is Map) {
-        errors.forEach(
-          (key, value) {
-            if (value is List) {
-              for (var errorMessage in value) {
-                Get.snackbar('Error', errorMessage, duration: const Duration(seconds: 1));
-              }
-            } else {
-              Get.snackbar('Error', value, duration: const Duration(seconds: 1));
-            }
-          },
-        );
-      } else {
-        Get.snackbar('Error', errors, duration: const Duration(seconds: 1));
-      }
+      showErrorToast('Error: ${e.response?.data}');
     } catch (e) {
       isLoading(false);
       Get.snackbar('Error', e.toString());

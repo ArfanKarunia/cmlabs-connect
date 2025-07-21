@@ -16,9 +16,9 @@ import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_add_field.dart';
-import '../../../widgets/inbox_add_section.dart';
-import '../../../widgets/inbox_history_tile.dart';
+import '../../../widgets/inbox/inbox_add_field.dart';
+import '../../../widgets/inbox/inbox_add_section.dart';
+import '../../../widgets/inbox/inbox_history_tile.dart';
 import '../../../widgets/tag_button.dart';
 
 class CaseStudiesEditView extends StatefulWidget {
@@ -59,71 +59,73 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
     return Scaffold(
       appBar: defaultAppBar('Edit Case Studies'),
       backgroundColor: AppColors.scaffoldBgColor2,
-      body: Stack(
-        children: [
-          ListView(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-            children: [
-              basicInformation(),
-              const SizedBox(height: 20),
-              clientPicSection(),
-              const SizedBox(height: 20),
-              activitySection(),
-              const SizedBox(height: 20),
-              Obx(() => urlTrackingSection()),
-              const SizedBox(height: 150),
-            ],
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-                color: AppColors.white_1,
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromARGB(30, 0, 0, 0),
-                    offset: Offset(0, -4),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 140,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: AppColors.text_4,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Obx(
-                    () => controller.isLoading.value
-                        ? const CustomLoadingButton()
-                        : CustomSubmitButton(
-                            title: 'Save',
-                            isDisabled: controller.selectedPic.value == null,
-                            onTap: () => controller.submitForm(),
-                          ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "Click to save all changes",
-                    style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
-                  ),
-                ],
-              ),
+      body: SafeArea(
+        child: Stack(
+          children: [
+            ListView(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                basicInformation(),
+                const SizedBox(height: 20),
+                clientPicSection(),
+                const SizedBox(height: 20),
+                activitySection(),
+                const SizedBox(height: 20),
+                Obx(() => urlTrackingSection()),
+                const SizedBox(height: 150),
+              ],
             ),
-          )
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                  color: AppColors.white_1,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromARGB(30, 0, 0, 0),
+                      offset: Offset(0, -4),
+                      blurRadius: 10,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.fromLTRB(15, 25, 15, 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 140,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: AppColors.text_4,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Obx(
+                      () => controller.isLoading.value
+                          ? const CustomLoadingButton()
+                          : CustomSubmitButton(
+                              title: 'Save',
+                              isDisabled: controller.selectedPic.value == null,
+                              onTap: () => controller.submitForm(),
+                            ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Click to save all changes",
+                      style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -134,8 +136,10 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
       children: [
         InboxAddField(
           title: 'PIC',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
+              errorText: controller.projectPicError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editCaseStudiesSelect,
                 arguments: {
@@ -153,9 +157,11 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Priority',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectPriorityError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editCaseStudiesSelect,
                 arguments: {
@@ -173,9 +179,11 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Status',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectStatusError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editCaseStudiesSelect,
                 arguments: {
@@ -193,9 +201,11 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
         const SizedBox(height: 11),
         InboxAddField(
           title: 'Type',
+          isRequired: true,
           child: Obx(
             () => CustomSelectField(
               isEnabled: controller.selectedPic.value != null,
+              errorText: controller.projectTypeError.value,
               onTap: () => Get.toNamed(
                 AppRoutes.editCaseStudiesSelect,
                 arguments: {
@@ -243,11 +253,12 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                   children: [
                     InboxAddField(
                       title: 'PIC Name',
-                      // isRequired: true,
+                      isRequired: true,
                       child: CustomFormField(
                         isEnabled: controller.selectedPic.value != null,
                         controller: controller.picNameControllers[index],
                         hintText: 'PIC Name',
+                        errorText: controller.picNameErrors[index],
                       ),
                     ),
                     const SizedBox(height: 11),
@@ -257,6 +268,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                         isEnabled: controller.selectedPic.value != null,
                         controller: controller.picPositionControllers[index],
                         hintText: 'Position',
+                        errorText: controller.picPositionErrors[index],
                       ),
                     ),
                     const SizedBox(height: 11),
@@ -264,10 +276,22 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                       () {
                         return InboxAddField(
                           title: 'Contact',
-                          // isRequired: true,
+                          isRequired: true,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (controller.picContactErrors[index] != null) ...[
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(
+                                    controller.picContactErrors[index].toString(),
+                                    style: regular.copyWith(color: AppColors.danger),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                              ],
                               ...List.generate(controller.picClients[index].contacts.length, (i) {
                                 return Obx(
                                   () => InboxAddField(
@@ -280,7 +304,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].type.toString(),
+                                              title: controller.picClients[index].contacts[i].type ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
@@ -296,7 +320,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].info.toString(),
+                                              title: controller.picClients[index].contacts[i].info ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
@@ -312,7 +336,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].status.toString(),
+                                              title: controller.picClients[index].contacts[i].status ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
@@ -328,7 +352,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].detail.toString(),
+                                              title: controller.picClients[index].contacts[i].detail ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
@@ -344,7 +368,7 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                           child: CustomSelectField(
                                             isEnabled: controller.selectedPic.value != null,
                                             child: InboxTextOnField(
-                                              title: controller.picClients[index].contacts[i].note.toString(),
+                                              title: controller.picClients[index].contacts[i].note ?? '',
                                               selected: null,
                                             ),
                                             onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
@@ -379,17 +403,33 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
                                   ),
                                 );
                               }),
-                              CustomSubmitButton(
-                                title: 'Add More Contact',
-                                icon: Ionicons.add,
-                                onTap: () => Get.toNamed(AppRoutes.editCaseStudiesContact, arguments: {
-                                  'clientIndex': index,
-                                }),
-                              ),
+                              if (controller.picClients[index].contacts.length < 3) ...[
+                                CustomSubmitButton(
+                                  title: 'Add More Contact',
+                                  icon: Ionicons.add,
+                                  onTap: () => Get.toNamed(
+                                    AppRoutes.editCaseStudiesContact,
+                                    arguments: {
+                                      'clientIndex': index,
+                                      'currentContactIndex': controller.picClients[index].contacts.length,
+                                    },
+                                  ),
+                                ),
+                              ],
                               const SizedBox(height: 10),
                               CustomSubmitButton(
                                 title: 'Delete PIC ${index + 1}',
-                                onTap: () => controller.removeClientPIC(index),
+                                onTap: () {
+                                  deleteBottomSheet(
+                                    context,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    message: 'Are you sure wanna delete this Client PIC ${index + 1}?',
+                                    onDelete: () {
+                                      controller.removeClientPIC(index);
+                                      Get.back();
+                                    },
+                                  );
+                                },
                                 color: AppColors.bgDanger,
                                 textColor: AppColors.danger,
                               ),
@@ -623,14 +663,16 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
               height: 32,
               child: FittedBox(
                 fit: BoxFit.fill,
-                child: Switch(
-                  value: controller.urlTrackingEnabled.value,
-                  onChanged: (value) => setState(() => controller.urlTrackingEnabled(value)),
-                  activeTrackColor: AppColors.primary,
-                  inactiveTrackColor: const Color(0xFFD8DAE5),
-                  trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
-                  inactiveThumbColor: AppColors.white,
-                ),
+                child: controller.isUrlTrackingLoading.value
+                    ? const CustomLoading()
+                    : Switch(
+                        value: controller.urlTrackingEnabled.value,
+                        onChanged: (value) => controller.switchUrlTracking(widget.caseStudies.id ?? 0, value),
+                        activeTrackColor: AppColors.primary,
+                        inactiveTrackColor: const Color(0xFFD8DAE5),
+                        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                        inactiveThumbColor: AppColors.white,
+                      ),
               ),
             ),
           ],
@@ -642,13 +684,21 @@ class _CaseStudiesEditViewState extends State<CaseStudiesEditView> {
           child: CustomSelectField(
             isEnabled: controller.selectedPic.value != null && controller.urlTrackingEnabled.value,
             icon: null,
-            child: InboxTextOnField(title: 'URL', selected: {'label': '${controller.urlTrackingUrl.value}'}),
+            child: InboxTextOnField(
+              title: 'URL',
+              selected: controller.urlTrackingUrl.value != null
+                  ? {
+                      'label': '${controller.urlTrackingUrl.value}',
+                      'value': '${controller.urlTrackingUrl.value}',
+                    }
+                  : null,
+            ),
           ),
         ),
         const SizedBox(height: 11),
         CustomSubmitButton(
           title: 'Copy URL',
-          isDisabled: !controller.urlTrackingEnabled.value,
+          isDisabled: controller.urlTrackingEnabled.isFalse || controller.urlTrackingUrl.value == null,
           onTap: () async {
             if (controller.urlTrackingUrl.value != null) {
               await Clipboard.setData(ClipboardData(text: controller.urlTrackingUrl.value ?? ''));

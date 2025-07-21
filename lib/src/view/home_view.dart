@@ -4,10 +4,10 @@ import 'package:double_tap_to_exit/double_tap_to_exit.dart';
 
 import '../constant/fontstyle.dart';
 import '../utils/color.dart';
-import 'account_view.dart';
+import 'account/account_view.dart';
 import 'analytics/analytics_view.dart';
 import 'dashboard_view.dart';
-import 'inbox_view.dart';
+import 'inbox/inbox_view.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -24,6 +24,11 @@ class _HomeViewState extends State<HomeView> {
   }
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       DashboardView(updateIndex: updateIndex),
@@ -35,9 +40,7 @@ class _HomeViewState extends State<HomeView> {
     return DoubleTapToExit(
       snackBar: const SnackBar(content: Text('Double tap to exit')),
       child: Scaffold(
-        body: SafeArea(
-          child: pages[_currentIndex],
-        ),
+        body: SafeArea(child: pages[_currentIndex]),
         bottomNavigationBar: Container(
           decoration: const BoxDecoration(
             boxShadow: [

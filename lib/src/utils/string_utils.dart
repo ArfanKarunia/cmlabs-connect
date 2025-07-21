@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class StringUtils {
   // Static method to convert a hyphenated string to camel case
   static String toCamelCase(String? input) {
@@ -53,6 +55,10 @@ class StringUtils {
   }
 }
 
+String capitalizeFirstLetter(String input) {
+  return input[0].toUpperCase() + input.substring(1);
+}
+
 String formatPICName(String name) {
   try {
     return name.split('-').map((word) => word.isEmpty ? word : word[0].toUpperCase() + word.substring(1)).join(' ');
@@ -67,4 +73,9 @@ String formatServiceName(String name) {
   } catch (e) {
     return name;
   }
+}
+
+String formatDate(DateTime? date) {
+  if (date == null) return '-';
+  return DateFormat('d MMM yyyy').format(date);
 }

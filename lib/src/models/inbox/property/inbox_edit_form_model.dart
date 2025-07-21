@@ -1,6 +1,7 @@
 import 'project_activity_model.dart';
 import 'project_history_model.dart';
 import 'client_pic_model.dart';
+import 'url_tracking.dart';
 
 class InboxEditForm {
   final String? pic;
@@ -44,7 +45,9 @@ class InboxEditForm {
       remarks: json['remarks'],
       additionalNotes: json['additional_notes'],
       projectActivity: projectActivity,
-      urlTracking: json['url_tracking'] == null ? null : UrlTracking.fromJson(json['url_tracking']),
+      urlTracking: json['url_tracking'] == null || json['url_tracking']['URL'] == null
+          ? null
+          : UrlTracking.fromJson(json['url_tracking']),
       projectHistory: projectHistory,
     );
   }
@@ -61,38 +64,6 @@ class InboxEditForm {
       "activity": projectActivity == null ? [] : List<dynamic>.from(projectActivity!.map((x) => x.toJson())),
       "url_tracking": urlTracking?.toJson(),
       "project_activity": projectHistory == null ? [] : List<dynamic>.from(projectHistory!.map((x) => x.toJson())),
-    };
-  }
-}
-
-class UrlTracking {
-  final String? url;
-  final String? password;
-  final DateTime? validity;
-  final DateTime? expiredAt;
-
-  UrlTracking({
-    this.url,
-    this.password,
-    this.validity,
-    this.expiredAt,
-  });
-
-  factory UrlTracking.fromJson(Map<String, dynamic> json) {
-    return UrlTracking(
-      url: json["URL"],
-      password: json["password"],
-      validity: json["validity"] == null ? null : DateTime.parse(json["validity"]),
-      expiredAt: json["Expired_at"] == null ? null : DateTime.parse(json["Expired_at"]),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "URL": url,
-      "password": password,
-      "validity": validity?.toIso8601String(),
-      "Expired_at": expiredAt?.toIso8601String(),
     };
   }
 }

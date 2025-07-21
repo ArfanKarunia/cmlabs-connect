@@ -8,7 +8,7 @@ import 'edit_history_contact_us_controller.dart';
 class ContactUsBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => ContactUsController());
+    Get.lazyPut(() => ContactUsController(), fenix: true);
     Get.lazyPut(() => DetailContactUsController(), fenix: true);
     Get.lazyPut(() => EditContactUsController(), fenix: true);
     Get.lazyPut(() => EditHistoryContactUsController(), fenix: true);

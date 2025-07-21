@@ -200,7 +200,8 @@ class QuotationController extends InboxController {
             (quotation.data?.company?.toLowerCase().contains(query) ?? false) ||
             (quotation.data?.name?.toLowerCase().contains(query) ?? false) ||
             (quotation.data?.category?.any((cat) => cat.toLowerCase().contains(query)) ?? false) ||
-            (quotation.data?.clientSource?.value?.toLowerCase().contains(query) ?? false);
+            (quotation.data?.clientSource?.value?.toLowerCase().contains(query) ?? false) ||
+            (quotation.data?.phoneNumber?.toLowerCase().contains(query) ?? false);
       }).toList();
     }
 

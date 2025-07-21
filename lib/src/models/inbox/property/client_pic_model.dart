@@ -91,8 +91,8 @@ class ContactClientPic {
     return ContactClientPic(
       type: type ?? this.type,
       info: info ?? this.info,
-      status: status ?? this.status,
-      detail: detail ?? this.detail,
+      status: this.status,
+      detail: this.detail,
       note: note ?? this.note,
     );
   }

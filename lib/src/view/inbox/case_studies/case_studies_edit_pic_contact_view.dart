@@ -12,7 +12,7 @@ import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
-import '../../../widgets/inbox_add_field.dart';
+import '../../../widgets/inbox/inbox_add_field.dart';
 
 class CaseStudiesEditPicContactView extends StatefulWidget {
   final int clientIndex;
@@ -46,123 +46,128 @@ class _CaseStudiesEditPicContactViewState extends State<CaseStudiesEditPicContac
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor2,
       appBar: defaultAppBar('Add Contact'),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        children: [
-          Text('Contact ${widget.clientIndex + 1}', style: bold),
-          const SizedBox(height: 7),
-          InboxAddField(
-            title: 'Type',
-            isRequired: true,
-            child: Obx(
-              () => CustomSelectField(
-                onTap: () => Get.toNamed(
-                  AppRoutes.editCaseStudiesSelect,
-                  arguments: {
-                    'title': 'Type',
-                    'data': 'contactType',
-                    'isContactForm': true,
-                  },
-                ),
-                errorText: controller.contactTypeError.value,
-                child: InboxTextOnField(
-                  title: 'Type',
-                  selected: controller.selectedContactType.value,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          children: [
+            Text(
+              'Contact ${widget.currentContact != null ? (widget.currentContactIndex ?? 0) + 1 : (widget.currentContactIndex ?? 0) + 1}',
+              style: bold,
+            ),
+            const SizedBox(height: 7),
+            InboxAddField(
+              title: 'Type',
+              isRequired: true,
+              child: Obx(
+                () => CustomSelectField(
+                  onTap: () => Get.toNamed(
+                    AppRoutes.editCaseStudiesSelect,
+                    arguments: {
+                      'title': 'Type',
+                      'data': 'contactType',
+                      'isContactForm': true,
+                    },
+                  ),
+                  errorText: controller.contactTypeError.value,
+                  child: InboxTextOnField(
+                    title: 'Type',
+                    selected: controller.selectedContactType.value,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Contact Info',
-            isRequired: true,
-            child: Obx(
-              () => CustomFormField(
-                controller: controller.contactInfo.value,
-                hintText: 'Fill the contact based on type above',
-                errorText: controller.contactInfoError.value,
-              ),
-            ),
-          ),
-          const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Status',
-            isRequired: true,
-            child: Obx(
-              () => CustomSelectField(
-                onTap: () => Get.toNamed(
-                  AppRoutes.editCaseStudiesSelect,
-                  arguments: {
-                    'title': 'Status',
-                    'data': 'contactStatus',
-                    'isContactForm': true,
-                  },
-                ),
-                errorText: controller.contactStatusError.value,
-                child: InboxTextOnField(
-                  title: 'Status',
-                  selected: controller.selectedContactStatus.value,
+            const SizedBox(height: 11),
+            InboxAddField(
+              title: 'Contact Info',
+              isRequired: true,
+              child: Obx(
+                () => CustomFormField(
+                  controller: controller.contactInfo.value,
+                  hintText: 'Fill the contact based on type above',
+                  errorText: controller.contactInfoError.value,
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Detail Status',
-            isRequired: true,
-            child: Obx(
-              () => CustomSelectField(
-                onTap: () => Get.toNamed(
-                  AppRoutes.editCaseStudiesSelect,
-                  arguments: {
-                    'title': 'Detail Status',
-                    'data': 'contactDetailStatus',
-                    'isContactForm': true,
-                  },
-                ),
-                errorText: controller.contactDetailStatusError.value,
-                child: InboxTextOnField(
-                  title: 'Detail Status',
-                  selected: controller.selectedContactDetailStatus.value,
+            const SizedBox(height: 11),
+            InboxAddField(
+              title: 'Status',
+              isRequired: true,
+              child: Obx(
+                () => CustomSelectField(
+                  onTap: () => Get.toNamed(
+                    AppRoutes.editCaseStudiesSelect,
+                    arguments: {
+                      'title': 'Status',
+                      'data': 'contactStatus',
+                      'isContactForm': true,
+                    },
+                  ),
+                  errorText: controller.contactStatusError.value,
+                  child: InboxTextOnField(
+                    title: 'Status',
+                    selected: controller.selectedContactStatus.value,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 11),
-          InboxAddField(
-            title: 'Note',
-            child: Obx(
-              () => CustomFormField(
-                controller: controller.contactNote.value,
-                hintText: 'Note',
+            const SizedBox(height: 11),
+            Obx(
+              () => InboxAddField(
+                title: 'Detail Status',
+                isRequired: controller.isDetailStatusRequired,
+                child: CustomSelectField(
+                  onTap: () => Get.toNamed(
+                    AppRoutes.editCaseStudiesSelect,
+                    arguments: {
+                      'title': 'Detail Status',
+                      'data': 'contactDetailStatus',
+                      'isContactForm': true,
+                    },
+                  ),
+                  errorText: controller.contactDetailStatusError.value,
+                  child: InboxTextOnField(
+                    title: 'Detail Status',
+                    selected: controller.selectedContactDetailStatus.value,
+                  ),
+                ),
               ),
             ),
-          ),
-          const SizedBox(height: 11),
-          CustomSubmitButton(
-            onTap: () {
-              if (controller.validateForm()) {
-                final contact = controller.createContactPIC();
-                if (widget.currentContact != null) {
-                  editCaseStudiesController.editClientPicContact(
-                    clientIndex: widget.clientIndex,
-                    contactIndex: widget.currentContactIndex!,
-                    contact: contact,
-                  );
-                } else {
-                  editCaseStudiesController.addClientPicContact(
-                    index: widget.clientIndex,
-                    contact: contact,
-                  );
+            const SizedBox(height: 11),
+            InboxAddField(
+              title: 'Note',
+              child: Obx(
+                () => CustomFormField(
+                  controller: controller.contactNote.value,
+                  hintText: 'Note',
+                ),
+              ),
+            ),
+            const SizedBox(height: 11),
+            CustomSubmitButton(
+              onTap: () {
+                if (controller.validateForm()) {
+                  final contact = controller.createContactPIC();
+                  if (widget.currentContact != null) {
+                    editCaseStudiesController.editClientPicContact(
+                      clientIndex: widget.clientIndex,
+                      contactIndex: widget.currentContactIndex!,
+                      contact: contact,
+                    );
+                  } else {
+                    editCaseStudiesController.addClientPicContact(
+                      index: widget.clientIndex,
+                      contact: contact,
+                    );
+                  }
+                  editCaseStudiesController.picClients.refresh();
+                  Get.back();
                 }
-                editCaseStudiesController.picClients.refresh();
-                Get.back();
-              }
-            },
-            title: 'Add Contact',
-            icon: Ionicons.add,
-          )
-        ],
+              },
+              title: 'Add Contact',
+              icon: Ionicons.add,
+            )
+          ],
+        ),
       ),
     );
   }

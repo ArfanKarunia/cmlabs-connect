@@ -21,6 +21,7 @@ class AddQuotationController extends GetxController {
     'label': 'IDN (+62)',
     'value': '+62',
   });
+  RxList<Map<String, String>> countryCodeList = <Map<String, String>>[].obs;
   Rx<TextEditingController> phoneNumber = TextEditingController().obs;
 
   // Project Information
@@ -76,6 +77,7 @@ class AddQuotationController extends GetxController {
   void onReady() {
     fetchCompanyName();
     fetchCompanyWebsite();
+    countryCodeList.assignAll(internationalPhoneCodes);
     fetchProjectService();
     fetchProjectPic();
     fetchProjectPriority();
@@ -316,8 +318,12 @@ class AddQuotationController extends GetxController {
   }
 
   Future<void> fetchProjectType() async {
-    if (projectStatus.value == null) {
-      projectTypeList.assignAll([]);
+    if (projectStatus.value == null) return;
+
+    if (projectStatus.value?['label'] == 'On-Hold') {
+      projectTypeList.assignAll([
+        {'value': 'On-Hold', 'label': 'On-Hold'}
+      ]);
       return;
     }
 
@@ -368,7 +374,7 @@ class AddQuotationController extends GetxController {
       case 'companyWebsite':
         return companyWebsiteList;
       case 'countryCode':
-        return internationalPhoneCodes;
+        return countryCodeList;
       case 'projectService':
         return projectServiceList;
       case 'projectPic':
@@ -441,7 +447,7 @@ class AddQuotationController extends GetxController {
         break;
       case 'projectStatus':
         projectStatus.value = value;
-        projectType.clear();
+        projectType.assignAll([]);
         fetchProjectType();
         break;
       case 'projectType':
@@ -532,24 +538,7 @@ class AddQuotationController extends GetxController {
       }
     } on http.DioException catch (e) {
       isLoading(false);
-
-      final errors = e.response?.data['message'];
-
-      if (errors is Map) {
-        errors.forEach(
-          (key, value) {
-            if (value is List) {
-              for (var errorMessage in value) {
-                Get.snackbar('Error', errorMessage, duration: const Duration(seconds: 1));
-              }
-            } else {
-              Get.snackbar('Error', value, duration: const Duration(seconds: 1));
-            }
-          },
-        );
-      } else {
-        Get.snackbar('Error', errors, duration: const Duration(seconds: 1));
-      }
+      showErrorToast('Error: ${e.response?.data}');
     } catch (e) {
       isLoading(false);
       Get.snackbar('Error', e.toString());

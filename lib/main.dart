@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'firebase_options.dart';
 import 'services/firebase_analytics_service.dart';
 import 'services/notification_service.dart';
 import 'src/controllers/app_bindings.dart';
@@ -11,13 +12,20 @@ import 'src/routes.dart';
 import 'src/utils/custom_http_overrides.dart';
 
 Future<void> main() async {
+  // Ensure the widgets is initialized
   WidgetsFlutterBinding.ensureInitialized();
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
-  await Firebase.initializeApp();
+  // Initialize the notification service
   await NotificationService.instance.initialize();
 
+  // Set the HTTP overrides
   HttpOverrides.global = CustomHttpOverrides();
 
+  // Run the app
   runApp(const MyApp());
 }
 

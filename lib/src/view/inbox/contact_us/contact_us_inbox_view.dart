@@ -7,7 +7,7 @@ import '../../../controllers/inbox/contact_us/contact_us_controller.dart';
 import '../../../models/inbox/contact_us_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
-import '../../../widgets/inbox_list_tile.dart';
+import '../../../widgets/inbox/inbox_list_tile.dart';
 
 class ContactUsInbox extends StatelessWidget {
   final RefreshController refreshController;

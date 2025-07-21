@@ -1,9 +1,10 @@
-import 'package:cmlabs_connect/src/widgets/inbox_add_field.dart';
+import 'package:cmlabs_connect/src/widgets/inbox/inbox_add_field.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../controllers/inbox/quotation/add_quotation_controller.dart';
 import '../../../utils/color.dart';
+import '../../../utils/toast.dart';
 import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_submit_button.dart';
 import '../../../widgets/default_appbar.dart';
@@ -59,30 +60,33 @@ class _QuotationAddSelectNewViewState extends State<QuotationAddSelectNewView> {
     return Scaffold(
       appBar: defaultAppBar('Add ${widget.title}'),
       backgroundColor: AppColors.scaffoldBgColor2,
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          InboxAddField(
-            title: widget.title,
-            child: CustomFormField(
-              controller: fieldController,
-              errorText: fieldError,
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            InboxAddField(
+              title: widget.title,
+              child: CustomFormField(
+                controller: fieldController,
+                errorText: fieldError,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          CustomSubmitButton(
-            title: 'Save',
-            isDisabled: !isFormValid,
-            onTap: () {
-              controller.addValue(
-                data: widget.data,
-                value: fieldController.text,
-              );
-              Get.back();
-            },
-          )
-        ],
+            const SizedBox(height: 20),
+            CustomSubmitButton(
+              title: 'Save',
+              isDisabled: !isFormValid,
+              onTap: () {
+                controller.addValue(
+                  data: widget.data,
+                  value: fieldController.text,
+                );
+                showSuccessToast('Berhasil menambahkan ${widget.title}: ${fieldController.text}');
+                Get.back();
+              },
+            )
+          ],
+        ),
       ),
     );
   }

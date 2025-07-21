@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../utils/string_utils.dart';
 import '../../utils/toast.dart';
 
 abstract class InboxController extends GetxController {
@@ -93,8 +92,8 @@ abstract class InboxController extends GetxController {
   }
 
   void addFilterDate({DateTime? start, DateTime? end}) {
-    filterStartDate.value = start ?? filterStartDate.value;
-    filterEndDate.value = end ?? filterEndDate.value;
+    filterStartDate.value = start;
+    filterEndDate.value = end;
   }
 
   void clearFilterDate() {
@@ -139,14 +138,14 @@ abstract class InboxController extends GetxController {
       queryParams.add('endDate=${Uri.encodeComponent(endDateString)}');
     }
     if (filterPic.value != null) {
-      queryParams.add('pic=${Uri.encodeComponent(StringUtils.toCamelCase(filterPic.value))}');
+      queryParams.add('pic=${Uri.encodeComponent(filterPic.value ?? '')}');
     }
     if (filterClientSource.value != null) {
       String params = url.contains('case-studies') ? 'client_source' : 'clientSource';
-      queryParams.add('$params=${Uri.encodeComponent(StringUtils.toCamelCase(filterClientSource.value))}');
+      queryParams.add('$params=${Uri.encodeComponent(filterClientSource.value ?? '')}');
     }
     if (filterStatus.value != null) {
-      queryParams.add('status=${Uri.encodeComponent(filterStatus.value!)}');
+      queryParams.add('status=${Uri.encodeComponent(filterStatus.value ?? '')}');
     }
      if (filterUtm.value != null) {
       queryParams.add('utm[]=${Uri.encodeComponent(filterUtm.value!)}'); // Asumsi format UTM adalah array
@@ -180,17 +179,25 @@ abstract class InboxController extends GetxController {
   }
 
   Future<void> redirectToWhatsapp({
-    required String? phoneCode,
-    required String? phoneNumber,
+    String? phoneCode,
+    required String phoneNumber,
   }) async {
-    if (phoneCode == null || phoneNumber == null || phoneCode.isEmpty || phoneNumber.isEmpty) {
+    if (phoneNumber.isEmpty) {
       showErrorToast('Nomor telepon tidak tersedia');
       return;
     }
 
-    phoneCode.replaceAll('+', '');
+    if (phoneCode == null || phoneCode.isEmpty) {
+      await launchUrl(Uri.parse("https://wa.me/$phoneNumber"), mode: LaunchMode.externalApplication);
+      return;
+    }
+
     String modifiedNumber = phoneNumber;
-    if (!(phoneNumber.startsWith(phoneCode))) modifiedNumber = '$phoneCode$phoneNumber';
+    if (phoneNumber.startsWith('0')) {
+      modifiedNumber = '$phoneCode${phoneNumber.substring(1)}';
+    } else if (!(phoneNumber.startsWith(phoneCode) || phoneNumber.startsWith('+$phoneCode'))) {
+      modifiedNumber = '$phoneCode$phoneNumber';
+    }
 
     final url = Uri.parse("https://wa.me/$modifiedNumber");
 

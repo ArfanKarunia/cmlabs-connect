@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/inbox/property/inbox_edit_form_model.dart';
@@ -44,8 +43,11 @@ class EditContactUsController extends EditFormController {
       }
 
       final response = await dio.delete(
-        '$baseUrl/contact-us/delete-history-activity/$id',
+        '$baseUrl/quotation/delete_history_byId',
         options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: {
+          'id': id,
+        },
       );
 
       if (response.statusCode == 200 && response.data != null) {
@@ -73,6 +75,12 @@ class EditContactUsController extends EditFormController {
     try {
       isLoading(true);
 
+      final isFormValid = await validateForm();
+      if (!isFormValid) {
+        isLoading(false);
+        return;
+      }
+
       final data = {
         "project_tracker": "true",
         "pic": selectedPic.value?['value'],
@@ -89,8 +97,6 @@ class EditContactUsController extends EditFormController {
         "validity": selectedValidity.value?['value'],
       };
 
-      debugPrint(data.toString());
-
       final response = await dio.post(
         '$baseUrl/contact-us/save-form-detail-contact-us/$contactUsId',
         data: data,
@@ -101,34 +107,15 @@ class EditContactUsController extends EditFormController {
           },
         ),
       );
-
-      debugPrint(response.toString());
-
       isLoading(false);
 
-      if (response.statusCode == 200) {
-        showSuccessToast('Berhasil mengubah Case Study!');
+      if (response.statusCode == 200 && response.data != null) {
+        showSuccessToast('Berhasil mengubah Contact Us!');
         Get.back();
       }
     } on http.DioException catch (e) {
       isLoading(false);
-      final errors = e.response?.data['message'];
-
-      if (errors is Map) {
-        errors.forEach(
-          (key, value) {
-            if (value is List) {
-              for (var errorMessage in value) {
-                Get.snackbar('Error', errorMessage, duration: const Duration(seconds: 1));
-              }
-            } else {
-              Get.snackbar('Error', value, duration: const Duration(seconds: 1));
-            }
-          },
-        );
-      } else {
-        Get.snackbar('Error', errors, duration: const Duration(seconds: 1));
-      }
+      showErrorToast('Error: ${e.response?.data}');
     } catch (e) {
       isLoading(false);
       Get.snackbar('Error', e.toString());

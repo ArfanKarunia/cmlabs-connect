@@ -202,17 +202,9 @@ class AuthenticationController extends GetxController {
   }
 
   Future<void> changePassword(String oldPassword, String newPassword, String confirmPassword) async {
-    var requestData = {
-      "id": userController.user.value?.id,
-      "password_old": oldPassword,
-      "password": newPassword,
-      "password_confirmation": confirmPassword,
-    };
-
-    var body = jsonEncode(requestData);
-
+    isLoading(true);
     try {
-      var response = await dio.post(
+      final response = await dio.post(
         '$baseUrl/profile/change-password',
         options: Options(
           headers: {
@@ -220,21 +212,27 @@ class AuthenticationController extends GetxController {
             'Content-Type': 'application/json',
           },
         ),
-        data: body,
+        data: {
+          "id": userController.user.value?.id,
+          "password_old": oldPassword,
+          "password": newPassword,
+          "password_confirmation": confirmPassword,
+        },
       );
 
       if (response.statusCode == 200) {
+        await setPassword(newPassword);
         showSuccessToast("Success: Update new password");
         Get.back();
-      } else {
-        String errorMessage = "Failed to change password";
-
-        showErrorToast(errorMessage);
-        debugPrint('Response body: ${response.data}');
       }
+    } on DioException catch (e) {
+      showErrorToast("Error: ${(e.response?.data['message'] ?? 'Failed to change password')}");
+      debugPrint('Error fetching status data: $e');
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
+    } finally {
+      isLoading(false);
     }
   }
 

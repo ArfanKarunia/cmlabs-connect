@@ -166,7 +166,8 @@ class CaseStudiesController extends InboxController {
             (caseStudies.section?.toLowerCase().contains(query) ?? false) ||
             (caseStudies.data?.company?.toLowerCase().contains(query) ?? false) ||
             (caseStudies.data?.name?.toLowerCase().contains(query) ?? false) ||
-            (caseStudies.data?.category?.any((e) => e.contains(query)) ?? false);
+            (caseStudies.data?.category?.any((e) => e.toLowerCase().contains(query)) ?? false) ||
+            (caseStudies.data?.phoneNumber?.toLowerCase().contains(query) ?? false);
         // || (caseStudies.data.clientSource?.value?.toLowerCase().contains(query) ?? false);
       }).toList();
     }

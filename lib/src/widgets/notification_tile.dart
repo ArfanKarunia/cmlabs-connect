@@ -1,43 +1,40 @@
-// import 'package:cmlabs_connect/src/controllers/detail_quotation_controller.dart';
 import 'package:cmlabs_connect/src/utils/color.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-class NotificationTile extends StatelessWidget {
-  NotificationTile({
-    super.key,
-    required this.id,
-    required this.name,
-    required this.date,
-    required this.isReminder,
-    required this.isRead,
-  });
+import '../constant/fontstyle.dart';
+import '../models/inbox/quotation_model.dart';
+import '../routes.dart';
+import 'custom_submit_button.dart';
 
+class NotificationTile extends StatelessWidget {
   final int id;
   final String name;
   final DateTime date;
   final bool isReminder;
   final bool isRead;
 
-  // final DetailQuotationController detailQuotationController = Get.put(DetailQuotationController());
+  const NotificationTile({
+    super.key,
+    required this.id,
+    required this.name,
+    required this.date,
+    this.isReminder = false,
+    this.isRead = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(14),
-      margin: EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-          color: AppColors.white_1,
-          borderRadius: BorderRadius.circular(5),
-          border: !isRead
-              ? Border.all(
-                  color: AppColors.primary,
-                  width: 1,
-                )
-              : null,
-          boxShadow: [BoxShadow(offset: Offset(2, 2), blurRadius: 30, color: Color.fromRGBO(0, 0, 0, 0.05))]),
+        color: AppColors.white_1,
+        borderRadius: BorderRadius.circular(5),
+        border: !isRead ? Border.all(color: AppColors.primary, width: 1) : null,
+        boxShadow: const [BoxShadow(offset: Offset(2, 2), blurRadius: 30, color: Color(0x0D000000))],
+      ),
       child: Column(
         children: [
           Row(
@@ -47,102 +44,53 @@ class NotificationTile extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  isReminder
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Reminder',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_1,
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                          ],
-                        )
-                      : SizedBox(),
+                  if (isReminder) ...[
+                    Text(
+                      'Reminder',
+                      style: bold.copyWith(color: AppColors.text_1),
+                    ),
+                    const SizedBox(height: 5),
+                  ],
                   Text(
                     'You have a new quotation from: ',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.text_3,
-                      fontSize: 12,
-                    ),
+                    style: regular.copyWith(fontSize: 12, color: AppColors.text_3),
                   ),
-                  SizedBox(
-                    height: 5,
-                  ),
+                  const SizedBox(height: 5),
                   Text(
                     name,
-                    style:
-                        GoogleFonts.plusJakartaSans(color: AppColors.text_1, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: bold.copyWith(
+                      fontSize: 16,
+                      color: AppColors.text_1,
+                    ),
                   ),
-                  isReminder
-                      ? Column(
-                          children: [
-                            SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              'that need to follow up',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.text_3,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        )
-                      : SizedBox.shrink(),
+                  if (isReminder) ...[
+                    const SizedBox(height: 5),
+                    Text(
+                      'that need to follow up',
+                      style: regular.copyWith(fontSize: 12, color: AppColors.text_3),
+                    ),
+                  ],
                 ],
               ),
-              Container(
-                padding: EdgeInsets.only(top: 2),
-                child: Text(
-                  DateFormat('dd/MM/yy HH:mm').format(date),
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.text_4,
-                    fontSize: 10,
-                  ),
-                ),
+              Text(
+                DateFormat('dd/MM/yy HH:mm').format(date),
+                style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
               ),
             ],
           ),
-          SizedBox(
-            height: 20,
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () async {
-                // await detailQuotationController.fetchDetailQuotation(id);
-                Get.toNamed(
-                  '/detailQuotation',
-                );
-              },
-              style: ButtonStyle(
-                backgroundColor: WidgetStatePropertyAll(AppColors.white_1),
-                foregroundColor: WidgetStatePropertyAll(AppColors.primary),
-                overlayColor: WidgetStatePropertyAll(Colors.black12),
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    side: BorderSide(
-                      color: AppColors.primary,
-                      width: 1,
-                    ),
-                  ),
-                ),
-              ),
-              child: Text(
-                "View details",
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                ),
-              ),
-            ),
+          const SizedBox(height: 20),
+          CustomSubmitButton(
+            title: 'View Details',
+            color: AppColors.white_1,
+            borderColor: AppColors.primary,
+            textColor: AppColors.primary,
+            textSize: 12,
+            isTitleBold: false,
+            padding: 12,
+            borderRadius: 5,
+            onTap: () async {
+              Get.toNamed(AppRoutes.detailQuotation, arguments: {'quotation': Quotation(id: id)});
+            },
           ),
         ],
       ),

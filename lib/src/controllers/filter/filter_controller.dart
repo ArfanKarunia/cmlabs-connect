@@ -8,17 +8,34 @@ import 'package:dio/dio.dart';
 import '../../constant/config.dart';
 import '../../routes.dart';
 import '../inbox/case_studies/case_studies_controller.dart';
+import '../inbox/contact_us/contact_us_controller.dart';
+import '../inbox/faq/faq_controller.dart';
 import '../inbox/inbox_controller.dart';
+
+enum InboxFilterType {
+  clientSource,
+  pic,
+  category,
+  utm,
+}
 
 class FilterController extends GetxController {
   // Fetched Filter List
-  RxList<Map<String, String>> categoryList = <Map<String, String>>[].obs;
-  RxList<Map<String, String>> picList = <Map<String, String>>[].obs;
-  RxList<Map<String, String>> clientSourceList = <Map<String, String>>[].obs;
-  RxList<Map<String, String>> utmList = <Map<String, String>>[].obs;
+  RxList<Map<String, String>> categoryList = <Map<String, String>>[
+    {'value': 'all', 'label': 'All'},
+  ].obs;
+  RxList<Map<String, String>> picList = <Map<String, String>>[
+    {'value': 'all', 'label': 'All'},
+  ].obs;
+  RxList<Map<String, String>> clientSourceList = <Map<String, String>>[
+    {'value': 'all', 'label': 'All'},
+  ].obs;
+  RxList<Map<String, String>> utmList = <Map<String, String>>[
+    {'value': 'all', 'label': 'All'},
+  ].obs;
 
   // Choosed Filter List
-  Rx<String?> search = Rx<String?>(null);
+  Rx<String> search = ''.obs;
   RxList<Map<String, String>> filterCategoryList = <Map<String, String>>[].obs;
   Rx<Map<String, String>?> filterPic = Rx<Map<String, String>?>(null);
   Rx<Map<String, String>?> filterClientSource = Rx<Map<String, String>?>(null);
@@ -28,6 +45,22 @@ class FilterController extends GetxController {
   Rx<DateTime?> startDate = Rx<DateTime?>(null);
   Rx<DateTime?> endDate = Rx<DateTime?>(null);
 
+  bool get isFilterApplied =>
+      filterClientSource.value != null ||
+      filterPic.value != null ||
+      filterCategoryList.isNotEmpty ||
+      startDate.value != null ||
+      endDate.value != null;
+
+  // Error message variables
+  Rx<String?> startDateError = null.obs;
+  Rx<String?> endDateError = null.obs;
+  void validateDateFields() {
+    if (startDate.value == null && endDate.value != null) {
+      startDateError.value = 'Start date must be filled';
+    }
+  }
+
   // Loading
   Rx<bool> isLoading = false.obs;
 
@@ -35,6 +68,8 @@ class FilterController extends GetxController {
   final List<InboxController> inboxController = [
     Get.find<QuotationController>(),
     Get.find<CaseStudiesController>(),
+    Get.find<ContactUsController>(),
+    Get.find<FaqController>(),
   ];
   final DashboardController dashboardController = Get.find<DashboardController>();
   final UserController userController = Get.find<UserController>();
@@ -50,22 +85,20 @@ class FilterController extends GetxController {
     fetchUtmFilter();
   }
 
-  Future<void> fetchFilter(String filter) async {
+  Future<void> fetchFilter(InboxFilterType filter) async {
     try {
-      switch (filter.toLowerCase()) {
-        case 'client_source':
+      switch (filter) {
+        case InboxFilterType.clientSource:
           await fetchClientSourceFilter();
           break;
-        case 'pic':
+        case InboxFilterType.pic:
           await fetchPicFilter();
           break;
-        case 'category':
+        case InboxFilterType.category:
           await fetchCategoryFilter();
           break;
-        case 'utm':
+        case InboxFilterType.utm:
           await fetchUtmFilter();
-          break;
-        default:
           break;
       }
     } catch (e) {
@@ -109,9 +142,6 @@ class FilterController extends GetxController {
         };
       }).toList();
 
-      picList.clear();
-
-      picList.add({'value': 'all', 'label': 'All'});
       picList.addAll(data);
     }
   }
@@ -132,17 +162,14 @@ class FilterController extends GetxController {
         };
       }).toList();
 
-      categoryList.clear();
-
-      categoryList.add({'value': 'all', 'label': 'All'});
       categoryList.addAll(data);
     }
   }
 
-    Future<void> fetchUtmFilter() async {
+  Future<void> fetchUtmFilter() async {
     try {
       final response = await dio.get(
-        '$baseUrl/filter/utm', // Sesuaikan dengan endpoint UTM Anda
+        '$baseUrl/filter/utm',
         options: Options(
           headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
         ),
@@ -151,22 +178,21 @@ class FilterController extends GetxController {
       if (response.statusCode == 200 && response.data != null) {
         final data = response.data['data'].map<Map<String, String>>((utm) {
           return {
-            'value': utm['value']?.toString() ?? '', // Sesuaikan field jika berbeda
-            'label': utm['label']?.toString() ?? '', // Sesuaikan field jika berbeda
+            'value': utm['value']?.toString() ?? '',
+            'label': utm['label']?.toString() ?? '',
           };
         }).toList();
 
-        utmList.clear();
-        utmList.add({'value': 'all', 'label': 'All'});
         utmList.addAll(data);
       }
     } catch (e) {
       debugPrint('Error fetching UTM filter: $e');
-      // Anda bisa menambahkan logic fallback ke data statis di sini jika diperlukan
     }
   }
 
-  void addFilterClientSource(Map<String, String> clientSource) {
+  void addFilterClientSource(Map<String, String>? clientSource) {
+    if (clientSource == null) return;
+
     if (clientSource['value'] == "all") {
       clearFilterClientSource();
     } else {
@@ -178,7 +204,9 @@ class FilterController extends GetxController {
     filterClientSource.value = null;
   }
 
-  void addFilterPic(Map<String, String> pic) {
+  void addFilterPic(Map<String, String>? pic) {
+    if (pic == null) return;
+
     if (pic['value'] == "all") {
       clearFilterPic();
     } else {
@@ -190,10 +218,11 @@ class FilterController extends GetxController {
     filterPic.value = null;
   }
 
-  void addFilterCategory(Map<String, String> category) {
+  void addFilterCategory(Map<String, String>? category) {
+    if (category == null) return;
+
     if (category['value'] == "all") {
       clearFilterCategory();
-      // filterCategoryList.add(category);
     } else {
       if (filterCategoryList.any((element) => element['value'] == "all")) {
         filterCategoryList.removeWhere((element) => element['value'] == "all");
@@ -221,93 +250,48 @@ class FilterController extends GetxController {
     }
   }
 
-    void clearFilterUtm() {
+  void clearFilterUtm() {
     filterUtm.value = null;
   }
 
-  void setSearch(String? query) {
+  void setSearch(String query) {
     search.value = query;
   }
 
-  List<dynamic> searchData(String filter) {
-    List result = [];
-    // fetchFilter();
+  void clearSearch() {
+    search.value = '';
+  }
 
-    // Debugging
-    print("Current Filter: $filter");
-    print("Current Search Query: ${search.value}");
+  void clearAll() {
+    setDateRange(null, null);
+    clearFilterCategory();
+    clearFilterClientSource();
+    clearFilterPic();
+    clearSearch();
+  }
 
-    // if (filter.toLowerCase() == 'status') {
-    //   result = statusList;
-
-    //   // Debugging
-    //   // print("Status List: $statusList");
-
-    //   // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
-    //   if (search.value != null && search.value!.isNotEmpty) {
-    //     final query = search.value!.toLowerCase();
-    //     result = result.where((status) {
-    //       // print("Checking status: ${status['value']} - ${status['label']}");
-    //       return status['value'].toLowerCase().contains(query) || status['label'].toLowerCase().contains(query);
-    //     }).toList();
-    //   }
-    // } else
-    if (filter.toLowerCase() == 'client_source') {
-      result = clientSourceList;
-
-      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
-      if (search.value != null && search.value!.isNotEmpty) {
-        final query = search.value!.toLowerCase();
-        result = result.where((clientSource) {
-          print("Checking client source: ${clientSource['value']} - ${clientSource['label']}");
-          return clientSource['value'].toLowerCase().contains(query) ||
-              clientSource['label'].toLowerCase().contains(query);
-        }).toList();
-      }
-
-      // Filter PIC
-    } else if (filter.toLowerCase() == 'pic') {
-      result = picList;
-
-      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
-      if (search.value != null && search.value!.isNotEmpty) {
-        final query = search.value!.toLowerCase();
-        result = result.where((pic) {
-          print("Checking PIC: ${pic['value']} - ${pic['label']}");
-          return pic['value'].toLowerCase().contains(query) || pic['label'].toLowerCase().contains(query);
-        }).toList();
-      }
-
-      // Filter Category
-    } else if (filter.toLowerCase() == 'category') {
-      result = categoryList;
-
-      // Jika search tidak kosong, lakukan pencarian berdasarkan 'value' atau 'label'
-      if (search.value != null && search.value!.isNotEmpty) {
-        final query = search.value!.toLowerCase();
-        result = result.where((category) {
-          print("Checking Category: ${category['value']} - ${category['label']}");
-          return category['value'].toLowerCase().contains(query) || category['label'].toLowerCase().contains(query);
-        }).toList();
-      }
+  List<Map<String, String>> searchData(InboxFilterType filter) {
+    switch (filter) {
+      case InboxFilterType.clientSource:
+        return clientSourceList
+            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .toList();
+      case InboxFilterType.pic:
+        return picList
+            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .toList();
+      case InboxFilterType.category:
+        return categoryList
+            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .toList();
+      case InboxFilterType.utm:
+        return utmList
+            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .toList();
     }
-
-    return result;
   }
 
   void filterByClientSource() {
-    // quotationController.clearFilterClientSource();
-    // dashboardController.clearFilterClientSource();
-
-    // if (filterClientSource.value != null) {
-    //   String clientSourceValue = filterClientSource.value!['value'].toString();
-
-    //   quotationController.addFilterClientSource(clientSourceValue);
-    //   dashboardController.addFilterClientSource(clientSourceValue);
-    // }
-
-    // clearFilterClientSource();
-
     if (filterClientSource.value != null) {
       for (InboxController controller in inboxController) {
         controller.clearFilterClientSource();
@@ -315,20 +299,15 @@ class FilterController extends GetxController {
       }
       dashboardController.clearFilterClientSource();
       dashboardController.addFilterClientSource(filterClientSource.value!['value'].toString());
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterClientSource();
+      }
+      dashboardController.clearFilterClientSource();
     }
   }
 
   void filterByPic() {
-    // quotationController.clearFilterPic();
-    // dashboardController.clearFilterPic();
-
-    // if (filterPic.value != null) {
-    //   String picValue = filterPic.value!['value'].toString();
-    //   quotationController.addFilterPic(picValue);
-    //   dashboardController.addFilterPic(picValue);
-    // }
-
-    // clearFilterPic();
     if (filterPic.value != null) {
       for (InboxController controller in inboxController) {
         controller.clearFilterPic();
@@ -336,40 +315,42 @@ class FilterController extends GetxController {
       }
       dashboardController.clearFilterPic();
       dashboardController.addFilterPic(filterPic.value!['value'].toString());
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterPic();
+      }
+      dashboardController.clearFilterPic();
     }
   }
 
   void filterByCategory() {
-    // quotationController.clearFilterCategory();
-    // dashboardController.clearFilterCategory();
-
-    // for (var data in filterCategoryList) {
-    //   // Convert both values to lowercase to ensure case-insensitive comparison
-    //   String categoryValue = data['value'].toString();
-
-    //   quotationController.addFilterCategory(categoryValue);
-    //   dashboardController.addFilterCategory(categoryValue);
-    // }
-
-    // clearFilterCategory();
-    for (Map<String, String> category in filterCategoryList) {
+    if (filterCategoryList.isNotEmpty) {
       for (InboxController controller in inboxController) {
         controller.clearFilterCategory();
-        controller.addFilterCategory(category['value'].toString().toLowerCase());
+        for (Map<String, String> category in filterCategoryList) {
+          controller.addFilterCategory(category['value'].toString());
+        }
       }
       dashboardController.clearFilterCategory();
-      dashboardController.addFilterCategory(category['value'].toString());
+      for (Map<String, String> category in filterCategoryList) {
+        dashboardController.addFilterCategory(category['value'].toString());
+      }
+    } else {
+      for (InboxController controller in inboxController) {
+        controller.clearFilterCategory();
+      }
+      dashboardController.clearFilterCategory();
     }
   }
 
-void filterByUtm() {
+  void filterByUtm() {
     if (filterUtm.value != null) {
       for (InboxController controller in inboxController) {
-        controller.clearFilterUtm(); // Asumsi ada clearFilterUtm di InboxController
-        controller.addFilterUtm(filterUtm.value!['value'].toString()); // Asumsi ada addFilterUtm di InboxController
+        controller.clearFilterUtm();
+        controller.addFilterUtm(filterUtm.value!['value'].toString());
       }
-      dashboardController.clearFilterUtm(); // Asumsi ada clearFilterUtm di DashboardController
-      dashboardController.addFilterUtm(filterUtm.value!['value'].toString()); // Asumsi ada addFilterUtm di DashboardController
+      dashboardController.clearFilterUtm();
+      dashboardController.addFilterUtm(filterUtm.value!['value'].toString());
     }
   }
 
@@ -382,17 +363,6 @@ void filterByUtm() {
   }
 
   void filterByDateRange() {
-    // quotationController.clearFilterDate();
-    // dashboardController.clearFilterDate();
-
-    // quotationController.filterStartDate.value = startDate.value;
-    // quotationController.filterEndDate.value = endDate.value;
-
-    // dashboardController.filterStartDate.value = startDate.value;
-    // dashboardController.filterEndDate.value = endDate.value;
-
-    // startDate.value = null;
-    // endDate.value = null;
     for (InboxController controller in inboxController) {
       controller.clearFilterDate();
       controller.addFilterDate(start: startDate.value, end: endDate.value);
@@ -419,9 +389,9 @@ void filterByUtm() {
       // Filter category
     } else if (filter.toLowerCase() == 'category') {
       filterByCategory();
-    
+
       // Filter UTM
-    } else if (filter.toLowerCase() == 'utm') { 
+    } else if (filter.toLowerCase() == 'utm') {
       filterByUtm();
     }
 
@@ -434,6 +404,9 @@ void filterByUtm() {
     if (isLoading.isTrue) return;
 
     isLoading(true);
+
+    validateDateFields();
+    if (startDateError.value != null || endDateError.value != null) return;
 
     filterByClientSource();
     filterByPic();
@@ -455,6 +428,7 @@ void filterByUtm() {
 
     isLoading(true);
 
+    clearAll();
     for (InboxController controller in inboxController) {
       controller.clearAll();
       await controller.fetchList();

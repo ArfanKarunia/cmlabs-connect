@@ -47,15 +47,24 @@ class EditFormController extends GetxController {
   Rx<TextEditingController> urlTrackingPassword = TextEditingController().obs;
   Rx<DateTime?> urlTrackingExpired = Rx<DateTime?>(null);
   RxList<Map<String, String>> validityList = <Map<String, String>>[
-    {'value': '1', 'label': '1 month'},
-    {'value': '2', 'label': '2 months'},
-    {'value': '3', 'label': '3 months'},
-    {'value': '6', 'label': '6 months'},
+    {'value': '1 month', 'label': '1 month'},
+    {'value': '2 months', 'label': '2 months'},
+    {'value': '3 months', 'label': '3 months'},
+    {'value': '6 months', 'label': '6 months'},
   ].obs;
   Rx<Map<String, String>?> selectedValidity = Rx<Map<String, String>?>(null);
 
   // History
   RxList<ProjectHistory> historyList = <ProjectHistory>[].obs;
+
+  // Error Text
+  Rx<String?> projectPicError = Rx<String?>(null);
+  Rx<String?> projectPriorityError = Rx<String?>(null);
+  Rx<String?> projectStatusError = Rx<String?>(null);
+  Rx<String?> projectTypeError = Rx<String?>(null);
+  RxList<String?> picNameErrors = <String?>[].obs;
+  RxList<String?> picPositionErrors = <String?>[].obs;
+  RxList<String?> picContactErrors = <String?>[].obs;
 
   Rx<bool> isLoading = false.obs;
   Rx<bool> isUrlTrackingLoading = false.obs;
@@ -92,6 +101,35 @@ class EditFormController extends GetxController {
     fetchActivityType();
   }
 
+  Future<bool> validateForm() async {
+    projectPicError.value = selectedPic.value == null ? 'The CMLABS PIC must not be empty.' : null;
+    projectPriorityError.value = selectedPriority.value == null ? 'The priority must not be empty.' : null;
+    projectStatusError.value = selectedStatus.value == null ? 'The status must not be empty.' : null;
+    projectTypeError.value = selectedType.isEmpty ? 'The type must not be empty.' : null;
+
+    for (int i = 0; i < picNameControllers.length; i++) {
+      picNameErrors[i] = picNameControllers[i].text.isEmpty
+          ? 'The PIC name must not be empty.'
+          : picNameControllers[i].text.length > 25
+              ? 'The maximum character of PIC name is 25 characters.'
+              : null;
+      picPositionErrors[i] = picPositionControllers[i].text.isEmpty
+          ? null
+          : picPositionControllers[i].text.length > 20
+              ? 'The maximum character of position is 20 characters.'
+              : null;
+      picContactErrors[i] = picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
+    }
+
+    return projectPicError.value == null &&
+        projectPriorityError.value == null &&
+        projectStatusError.value == null &&
+        projectTypeError.value == null &&
+        picNameErrors.every((picNameError) => picNameError == null) &&
+        picPositionErrors.every((picPositionError) => picPositionError == null) &&
+        picContactErrors.every((picContactError) => picContactError == null);
+  }
+
   void addNewActivity() {
     activityName.add(TextEditingController());
     activitySchedule.add(null);
@@ -115,8 +153,11 @@ class EditFormController extends GetxController {
 
   void addClientPic() {
     picNameControllers.add(TextEditingController());
+    picNameErrors.add(null);
     picPositionControllers.add(TextEditingController());
+    picPositionErrors.add(null);
     picClients.add(ClientPic(contacts: []));
+    picContactErrors.add(null);
   }
 
   void addClientPicContact({required int index, required ContactClientPic contact}) {
@@ -130,8 +171,7 @@ class EditFormController extends GetxController {
     required int contactIndex,
     required ContactClientPic contact,
   }) {
-    final indexed = picClients[clientIndex].contacts[contactIndex];
-    picClients[clientIndex].contacts[contactIndex] = indexed.copyWith(
+    picClients[clientIndex].contacts[contactIndex] = ContactClientPic(
       type: contact.type,
       info: contact.info,
       status: contact.status,
@@ -147,6 +187,9 @@ class EditFormController extends GetxController {
     picNameControllers.removeAt(index);
     picPositionControllers.removeAt(index);
     picClients.removeAt(index);
+    picNameErrors.removeAt(index);
+    picPositionErrors.removeAt(index);
+    picContactErrors.removeAt(index);
   }
 
   Future<void> fetchPic() async {
@@ -207,8 +250,12 @@ class EditFormController extends GetxController {
   }
 
   Future<void> fetchType() async {
-    if (selectedStatus.value == null) {
-      typeList.assignAll([]);
+    if (selectedStatus.value == null) return;
+
+    if (selectedStatus.value?['label'] == 'On-Hold') {
+      typeList.assignAll([
+        {'value': 'On-Hold', 'label': 'On-Hold'}
+      ]);
       return;
     }
 
@@ -282,7 +329,10 @@ class EditFormController extends GetxController {
     for (final clientPic in inboxEditForm.picClientSide!) {
       picClients.add(clientPic);
       picNameControllers.add(TextEditingController(text: clientPic.name));
+      picNameErrors.add(null);
       picPositionControllers.add(TextEditingController(text: clientPic.position));
+      picPositionErrors.add(null);
+      picContactErrors.add(null);
     }
 
     if (inboxEditForm.projectActivity != null) {
@@ -302,8 +352,8 @@ class EditFormController extends GetxController {
         activityNote.add(TextEditingController(text: projectActivity.meetingNote));
       }
     }
-    activityRemarks.value.text = inboxEditForm.remarks.toString();
-    activityAdditionalNotes.value.text = inboxEditForm.additionalNotes.toString();
+    activityRemarks.value.text = inboxEditForm.remarks ?? '';
+    activityAdditionalNotes.value.text = inboxEditForm.additionalNotes ?? '';
 
     urlTrackingEnabled.value = inboxEditForm.urlTracking != null;
     urlTrackingUrl.value = inboxEditForm.urlTracking?.url;
@@ -352,7 +402,7 @@ class EditFormController extends GetxController {
         break;
       case 'status':
         selectedStatus.value = value;
-        selectedType.clear();
+        selectedType.assignAll([]);
         fetchType();
         break;
       case 'type':
@@ -438,7 +488,7 @@ class EditFormController extends GetxController {
   }
 
   Future<void> switchUrlTracking(int id, bool value) async {
-    if (urlTrackingUrl.value == null) {
+    if (urlTrackingUrl.value == null && value == true) {
       isUrlTrackingLoading(true);
       urlTrackingUrl.value = await fetchUrlTracking(id);
       isUrlTrackingLoading(false);
