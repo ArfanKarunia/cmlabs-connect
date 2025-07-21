@@ -21,6 +21,7 @@ class AddQuotationController extends GetxController {
     'label': 'IDN (+62)',
     'value': '+62',
   });
+  RxList<Map<String, String>> countryCodeList = <Map<String, String>>[].obs;
   Rx<TextEditingController> phoneNumber = TextEditingController().obs;
 
   // Project Information
@@ -76,6 +77,7 @@ class AddQuotationController extends GetxController {
   void onReady() {
     fetchCompanyName();
     fetchCompanyWebsite();
+    countryCodeList.assignAll(internationalPhoneCodes);
     fetchProjectService();
     fetchProjectPic();
     fetchProjectPriority();
@@ -368,7 +370,7 @@ class AddQuotationController extends GetxController {
       case 'companyWebsite':
         return companyWebsiteList;
       case 'countryCode':
-        return internationalPhoneCodes;
+        return countryCodeList;
       case 'projectService':
         return projectServiceList;
       case 'projectPic':
