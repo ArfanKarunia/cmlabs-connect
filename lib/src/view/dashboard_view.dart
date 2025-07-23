@@ -306,8 +306,8 @@ class _DashboardViewState extends State<DashboardView> {
   SliverToBoxAdapter _buildDashboardOverview(User? user) {
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.all(28),
-        padding: const EdgeInsets.all(23),
+        margin: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
           color: AppColors.white,

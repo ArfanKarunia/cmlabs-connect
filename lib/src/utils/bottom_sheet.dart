@@ -13,24 +13,25 @@ Future<void> showCustomBottomSheet(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
-    useSafeArea: true,
     builder: (context) {
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: crossAxisAlignment,
-          children: [
-            ...children,
-            Center(
-              child: Text(
-                "Swipe down or Tap the screen to close",
-                style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+      return SafeArea(
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: crossAxisAlignment,
+            children: [
+              ...children,
+              Center(
+                child: Text(
+                  "Swipe down or Tap the screen to close",
+                  style: regular.copyWith(fontSize: 10, color: AppColors.text_2),
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-          ],
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       );
     },

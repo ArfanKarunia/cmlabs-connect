@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/analytics/top_pics_model.dart';
+import '../../../utils/file_utils.dart';
+import '../../../utils/permission_utils.dart';
+import '../../../utils/toast.dart';
 import '../analytics_controller.dart';
 
 class TopPICsController extends AnalyticsController {
@@ -16,14 +19,20 @@ class TopPICsController extends AnalyticsController {
   @override
   Rx<DateType?> selectedDateType = (DateType.weekly).obs;
 
+  @override
+  Rx<SortOption?> selectedSortOption = (SortOption.totalMost).obs;
+
   TopPICs? get data => topPICs.value;
   int get dataLength => data?.topPics.length ?? 0;
 
   @override
-  Rx<SortOption?> selectedSortOption = (SortOption.totalMost).obs;
+  void onReady() {
+    super.onReady();
+    fetchData();
+  }
 
   @override
-  Future<void> fetchData({DateType? dateType}) async {
+  Future<void> fetchData() async {
     try {
       String? accessToken = userController.accesToken.value;
 
@@ -31,7 +40,7 @@ class TopPICsController extends AnalyticsController {
         constructFilteredUrl(
           '$baseUrl/quotation/getTopPIC',
           analyticsType: AnalyticsType.topPICs,
-          dateType: dateType ?? selectedDateType.value,
+          dateType: selectedDateType.value,
         ),
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
       );
@@ -41,6 +50,46 @@ class TopPICsController extends AnalyticsController {
       }
     } catch (e) {
       debugPrint('Error fetching top PICs data: $e');
+    }
+  }
+
+  @override
+  Future<void> exportData() async {
+    if (isExportLoading.isTrue) return;
+    isExportLoading(true);
+
+    try {
+      String? accessToken = userController.accesToken.value;
+
+      await PermissionUtils().requestStoragePermission();
+
+      final response = await dio.get(
+        constructFilteredUrl(
+          '$baseUrl/quotation/exportTopPICExcel',
+          analyticsType: AnalyticsType.topPICs,
+          dateType: selectedDateType.value,
+        ),
+        options: Options(
+          headers: {'Authorization': 'Bearer $accessToken'},
+          responseType: ResponseType.bytes,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final fileName = FileUtils.getFilenameFromResponse(response);
+        final filePath = await FileUtils.saveFile(response.data, fileName);
+
+        showSuccessToast('Data tersimpan di $filePath');
+        FileUtils.openFile(filePath);
+      }
+    } on DioException catch (e) {
+      showErrorToast('Failed to export data: ${e.message}');
+      debugPrint('Error fetching data: $e');
+    } catch (e) {
+      showErrorToast('Failed to export data: ${e.toString()}');
+      debugPrint('Error fetching data: $e');
+    } finally {
+      isExportLoading(false);
     }
   }
 }

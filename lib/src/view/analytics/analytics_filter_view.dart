@@ -157,7 +157,10 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
                 ? const CustomLoadingButton()
                 : CustomSubmitButton(
                     title: 'Save',
-                    onTap: () => widget.controller.applyFilters(),
+                    onTap: () async {
+                      await widget.controller.applyFilters();
+                      Get.back();
+                    },
                   ),
           ),
           const SizedBox(height: 10),

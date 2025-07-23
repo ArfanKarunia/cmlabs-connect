@@ -10,6 +10,7 @@ abstract class InboxController extends GetxController {
   Rx<String?> filterStatus = Rx<String?>(null);
   Rx<String?> filterClientSource = Rx<String?>(null);
   Rx<String?> filterPic = Rx<String?>(null);
+  Rx<String?> filterUtm = Rx<String?>(null);
 
   Rx<DateTime?> filterStartDate = Rx<DateTime?>(null);
   Rx<DateTime?> filterEndDate = Rx<DateTime?>(null);
@@ -70,6 +71,14 @@ abstract class InboxController extends GetxController {
     filterPic.value = null;
   }
 
+  void addFilterUtm(String utm) {
+    filterUtm.value = utm;
+  }
+
+  void clearFilterUtm() {
+    filterUtm.value = null;
+  }
+
   void addFilterCategory(String category) {
     filterCategory.add(category);
   }
@@ -104,6 +113,7 @@ abstract class InboxController extends GetxController {
     clearFilterStatus();
     clearFilterClientSource();
     clearFilterPic();
+    clearFilterUtm();
     clearFilterCategory();
     clearFilterDate();
     clearSearch();
@@ -137,6 +147,10 @@ abstract class InboxController extends GetxController {
     if (filterStatus.value != null) {
       queryParams.add('status=${Uri.encodeComponent(filterStatus.value ?? '')}');
     }
+     if (filterUtm.value != null) {
+      queryParams.add('utm[]=${Uri.encodeComponent(filterUtm.value!)}'); // Asumsi format UTM adalah array
+    }
+
 
     // Handle category filter with array format
     if (filterCategory.isNotEmpty) {

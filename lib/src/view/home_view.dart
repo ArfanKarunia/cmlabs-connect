@@ -24,11 +24,6 @@ class _HomeViewState extends State<HomeView> {
   }
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final List<Widget> pages = [
       DashboardView(updateIndex: updateIndex),
@@ -37,56 +32,58 @@ class _HomeViewState extends State<HomeView> {
       const AccountView(),
     ];
 
-    return DoubleTapToExit(
-      snackBar: const SnackBar(content: Text('Double tap to exit')),
-      child: Scaffold(
-        body: SafeArea(child: pages[_currentIndex]),
-        bottomNavigationBar: Container(
-          decoration: const BoxDecoration(
-            boxShadow: [
-              BoxShadow(
-                offset: Offset(0, -4),
-                blurRadius: 20,
-                color: Color.fromARGB(12, 53, 53, 53),
-              ),
-            ],
-            color: Colors.white,
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: HomeMenu(
-                  icon: Ionicons.cube_outline,
-                  label: 'Home',
-                  isActive: _currentIndex == 0,
-                  onTap: () => setState(() => _currentIndex = 0),
+    return SafeArea(
+      child: DoubleTapToExit(
+        snackBar: const SnackBar(content: Text('Double tap to exit')),
+        child: Scaffold(
+          body: pages[_currentIndex],
+          bottomNavigationBar: Container(
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, -4),
+                  blurRadius: 20,
+                  color: Color.fromARGB(12, 53, 53, 53),
                 ),
-              ),
-              Expanded(
-                child: HomeMenu(
-                  icon: Ionicons.file_tray_full_outline,
-                  label: 'Inbox Lead',
-                  isActive: _currentIndex == 1,
-                  onTap: () => setState(() => _currentIndex = 1),
+              ],
+              color: Colors.white,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: HomeMenu(
+                    icon: Ionicons.cube_outline,
+                    label: 'Home',
+                    isActive: _currentIndex == 0,
+                    onTap: () => setState(() => _currentIndex = 0),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: HomeMenu(
-                  icon: Ionicons.stats_chart,
-                  label: 'Analytics',
-                  isActive: _currentIndex == 2,
-                  onTap: () => setState(() => _currentIndex = 2),
+                Expanded(
+                  child: HomeMenu(
+                    icon: Ionicons.file_tray_full_outline,
+                    label: 'Inbox Lead',
+                    isActive: _currentIndex == 1,
+                    onTap: () => setState(() => _currentIndex = 1),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: HomeMenu(
-                  icon: Ionicons.person_outline,
-                  label: 'Account',
-                  isActive: _currentIndex == 3,
-                  onTap: () => setState(() => _currentIndex = 3),
+                Expanded(
+                  child: HomeMenu(
+                    icon: Ionicons.stats_chart,
+                    label: 'Analytics',
+                    isActive: _currentIndex == 2,
+                    onTap: () => setState(() => _currentIndex = 2),
+                  ),
                 ),
-              ),
-            ],
+                Expanded(
+                  child: HomeMenu(
+                    icon: Ionicons.person_outline,
+                    label: 'Account',
+                    isActive: _currentIndex == 3,
+                    onTap: () => setState(() => _currentIndex = 3),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

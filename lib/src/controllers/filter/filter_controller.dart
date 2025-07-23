@@ -12,15 +12,7 @@ import '../inbox/contact_us/contact_us_controller.dart';
 import '../inbox/faq/faq_controller.dart';
 import '../inbox/inbox_controller.dart';
 
-enum InboxFilterType {
-  year,
-  month,
-  days,
-  timeRange,
-  clientSource,
-  pic,
-  category,
-}
+enum InboxFilterType { clientSource, pic, category }
 
 class FilterController extends GetxController {
   // Fetched Filter List
@@ -39,6 +31,7 @@ class FilterController extends GetxController {
   RxList<Map<String, String>> filterCategoryList = <Map<String, String>>[].obs;
   Rx<Map<String, String>?> filterPic = Rx<Map<String, String>?>(null);
   Rx<Map<String, String>?> filterClientSource = Rx<Map<String, String>?>(null);
+  Rx<Map<String, String>?> filterUtm = Rx<Map<String, String>?>(null);
 
   // Date Filter
   Rx<DateTime?> startDate = Rx<DateTime?>(null);
@@ -94,8 +87,6 @@ class FilterController extends GetxController {
           break;
         case InboxFilterType.category:
           await fetchCategoryFilter();
-          break;
-        default:
           break;
       }
     } catch (e) {
@@ -245,8 +236,6 @@ class FilterController extends GetxController {
         return categoryList
             .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
             .toList();
-      default:
-        return [];
     }
   }
 
@@ -317,6 +306,24 @@ class FilterController extends GetxController {
     }
     dashboardController.clearFilterDate();
     dashboardController.addFilterDate(start: startDate.value, end: endDate.value);
+  }
+
+  void searchFilter(String filter) {
+    if (filter.toLowerCase() == "all") {
+      filterByDateRange();
+      filterByCategory();
+      filterByClientSource();
+      filterByPic();
+    } else if (filter.toLowerCase() == 'client source') {
+      filterByClientSource();
+    } else if (filter.toLowerCase() == 'pic') {
+      filterByPic();
+    } else if (filter.toLowerCase() == 'category') {
+      filterByCategory();
+    }
+    dashboardController.fetchDashboardData();
+
+    Get.until((route) => Get.currentRoute == AppRoutes.home);
   }
 
   Future<void> applyFilter() async {

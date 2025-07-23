@@ -240,12 +240,6 @@ class _SelectFilterViewState extends State<SelectFilterView> {
                               isDisabled: !canSelect.value,
                               onTap: () {
                                 switch (widget.filter) {
-                                  case InboxFilterType.year || InboxFilterType.month || InboxFilterType.days:
-                                    Get.back(result: tempData.value);
-                                    break;
-                                  case InboxFilterType.timeRange:
-                                    Get.back(result: tempData.value?['value']);
-                                    break;
                                   case InboxFilterType.category:
                                     for (Map<String, String>? data in tempMapData.value) {
                                       controller.addFilterCategory(data);

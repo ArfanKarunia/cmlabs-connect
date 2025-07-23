@@ -20,8 +20,8 @@ class TopServicesCard extends StatefulWidget {
 
 class _TopServicesCardState extends State<TopServicesCard> {
   final controller = Get.find<TopServicesController>();
+  String? _selectedService;
 
-  late List<bool> _isVisible;
   List<Color> colors = [
     const Color(0xFFFFB300), // Deep amber yellow
     const Color(0xFFFFA000), // Dark amber
@@ -39,62 +39,82 @@ class _TopServicesCardState extends State<TopServicesCard> {
   Widget build(BuildContext context) {
     return Obx(
       () {
-        _isVisible = List.filled(controller.topServices.value?.topServices.length ?? 0, true);
+        List<TopServicesData> rawData = controller.topServices.value?.topServices ?? [];
+        List<TopServicesData> filteredData = [];
 
-        return controller.topServices.value == null || controller.topServices.value?.topServices.isEmpty == true
-            ? EmptyChartCard(
-                title: 'Top Services',
-                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
-                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+        if (_selectedService == null) {
+          filteredData = rawData;
+        } else {
+          filteredData = rawData.where((serviceData) => serviceData.serviceName == _selectedService).toList();
+        }
+
+        int totalFilteredQuotations = filteredData.fold(0, (sum, item) => sum + item.quotationCount);
+        if (totalFilteredQuotations == 0) {
+          return EmptyChartCard(
+            title: 'Top Services',
+            subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+            onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+          );
+        }
+
+        List<TopServicesData> chartDataWithPercentages = filteredData.map((serviceData) {
+          double percentage =
+              totalFilteredQuotations > 0 ? (serviceData.quotationCount / totalFilteredQuotations) * 100 : 0;
+          return TopServicesData(
+            serviceName: serviceData.serviceName,
+            quotationCount: serviceData.quotationCount,
+            percentage: percentage,
+          );
+        }).toList();
+
+        return ChartCard(
+          title: 'Top Services',
+          subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+          chart: SfCircularChart(
+            tooltipBehavior: TooltipBehavior(enable: true),
+            series: [
+              DoughnutSeries<TopServicesData, String>(
+                dataSource: chartDataWithPercentages,
+                xValueMapper: (d, _) => formatServiceName(d.serviceName),
+                yValueMapper: (d, _) => d.quotationCount,
+                pointColorMapper: (d, i) => colors[rawData.indexOf(
+                  rawData.firstWhere((element) => element.serviceName == d.serviceName),
+                )],
+                dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
+                dataLabelSettings: DataLabelSettings(
+                  isVisible: true,
+                  textStyle: bold.copyWith(fontSize: 16, color: Colors.white),
+                ),
+                explode: true,
               )
-            : ChartCard(
-                title: 'Top Services',
-                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
-                chart: SfCircularChart(
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: [
-                    DoughnutSeries<TopServicesData, String>(
-                      dataSource: List.generate(
-                        controller.topServices.value?.topServices.length ?? 0,
-                        (i) => _isVisible[i]
-                            ? controller.topServices.value?.topServices[i] ??
-                                TopServicesData(
-                                  serviceName: '',
-                                  quotationCount: 0,
-                                  percentage: 0,
-                                )
-                            : TopServicesData(
-                                serviceName: '',
-                                quotationCount: 0,
-                                percentage: 0,
-                              ),
-                      ),
-                      xValueMapper: (d, _) => formatServiceName(d.serviceName),
-                      yValueMapper: (d, _) => d.quotationCount,
-                      pointColorMapper: (d, i) => colors[i],
-                      dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
-                      dataLabelSettings: DataLabelSettings(
-                        isVisible: true,
-                        textStyle: bold.copyWith(fontSize: 16, color: Colors.white),
-                      ),
-                      explode: true,
-                    )
-                  ],
-                ),
-                chartDescriptions: List.generate(
-                  controller.topServices.value?.topServices.length ?? 0,
-                  (index) => ChartDataDescription(
-                    label: formatServiceName(controller.topServices.value?.topServices[index].serviceName ?? ''),
-                    color: colors[index],
-                    isSelected: _isVisible[index],
-                    onTap: () {
-                      setState(() => _isVisible[index] = !_isVisible[index]);
-                    },
-                  ),
-                ),
-                onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+            ],
+          ),
+          chartDescriptions: List.generate(
+            rawData.length,
+            (index) {
+              String serviceName = rawData[index].serviceName;
+
+              return ChartDataDescription(
+                label: formatServiceName(serviceName),
+                color: colors[index],
+                isSelected: _selectedService == null || _selectedService == serviceName,
+                onTap: () {
+                  setState(() => _selectedService = _selectedService == serviceName ? null : serviceName);
+                },
               );
+            },
+          ),
+          onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+          onTapExport: () async {
+            await controller.exportData();
+            Get.back();
+          },
+        );
       },
     );
+  }
+
+  String formatServiceName(String serviceName) {
+    return StringUtils.toTitleCase(serviceName.replaceAll('-', ' '));
   }
 }

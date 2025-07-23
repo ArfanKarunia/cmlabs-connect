@@ -28,6 +28,7 @@ enum AnalyticsFilterType { category, pic, clientSource, utm, status }
 
 class AnalyticsController extends GetxController {
   RxBool isFilterLoading = false.obs;
+  RxBool isExportLoading = false.obs;
   Rx<SortOption?> selectedSortOption = Rx<SortOption?>(SortOption.newestDate);
 
   Rx<DateType?> initialDateType = (DateType.daily).obs;
@@ -36,10 +37,29 @@ class AnalyticsController extends GetxController {
   Rx<DateTime?> selectedStartDate = Rx<DateTime?>(null);
   Rx<DateTime?> selectedEndDate = Rx<DateTime?>(null);
   RxMap<String, String> selectedCategory = {'label': 'All', 'value': 'all'}.obs;
+  RxList<Map<String, String>> categoryList = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'}
+  ].obs;
   RxMap<String, String> selectedPic = {'label': 'All', 'value': 'all'}.obs;
+  RxList<Map<String, String>> picList = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'}
+  ].obs;
   RxMap<String, String> selectedClientSource = {'label': 'All', 'value': 'all'}.obs;
+  RxList<Map<String, String>> clientSourceList = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'}
+  ].obs;
   RxMap<String, String> selectedUtm = {'label': 'All', 'value': 'all'}.obs;
+  RxList<Map<String, String>> utmList = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'}
+  ].obs;
   RxMap<String, String> selectedStatus = {'label': 'All', 'value': 'all'}.obs;
+  RxList<Map<String, String>> statusList = <Map<String, String>>[
+    {'label': 'All', 'value': 'all'},
+    {'label': 'New', 'value': '0'},
+    {'label': 'Followed Up', 'value': '1'},
+    {'label': 'Accepted', 'value': '2'},
+    {'label': 'Rejected', 'value': '3'},
+  ].obs;
 
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
@@ -48,10 +68,116 @@ class AnalyticsController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchData(dateType: selectedDateType.value);
+    fetchAllFilter();
   }
 
-  Future<void> fetchData({DateType? dateType}) async {}
+  void fetchAllFilter() {
+    fetchCategoryFilter();
+    fetchPicFilter();
+    fetchClientSourceFilter();
+    fetchUtmFilter();
+  }
+
+  Future<void> fetchCategoryFilter() async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/filter/data_services',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'].map<Map<String, String>>((category) {
+          return {
+            'value': category['id']?.toString() ?? '',
+            'label': category['text']?.toString() ?? '',
+          };
+        }).toList();
+
+        categoryList.addAll(data);
+      }
+    } catch (_) {
+      categoryList.assignAll(dummyCategoriesOptions);
+    }
+  }
+
+  Future<void> fetchPicFilter() async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/filter/pic',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'].map<Map<String, String>>((pic) {
+          return {
+            'value': pic['value']?.toString() ?? '',
+            'label': pic['label']?.toString() ?? '',
+          };
+        }).toList();
+
+        picList.addAll(data);
+      }
+    } catch (e) {
+      picList.assignAll(dummyPicOptions);
+    }
+  }
+
+  Future<void> fetchClientSourceFilter() async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/filter/client_source',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data['data'].map<Map<String, String>>((clientSource) {
+          return {
+            'value': clientSource['value']?.toString() ?? '',
+            'label': clientSource['label']?.toString() ?? '',
+          };
+        }).toList();
+
+        clientSourceList.assignAll(data);
+      }
+    } catch (e) {
+      clientSourceList.assignAll(dummyClientSourceOptions);
+    }
+  }
+
+  Future<void> fetchUtmFilter() async {
+    try {
+      final response = await dio.get(
+        '$baseUrl/quotation/fetch/get-all-utm',
+        options: Options(
+          headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
+        ),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final data = (response.data as List<dynamic>).map<Map<String, String>>((utm) {
+          final label = utm.toString().replaceAll('&', ' & ');
+          return {
+            'value': utm.toString(),
+            'label': label,
+          };
+        }).toList();
+
+        utmList.addAll(data);
+      }
+    } catch (e) {
+      utmList.assignAll(dummyUtmOptions);
+    }
+  }
+
+  Future<void> fetchData() async {}
+
+  Future<void> exportData() async {}
 
   String constructFilteredUrl(
     String baseUrl, {
@@ -213,15 +339,15 @@ class AnalyticsController extends GetxController {
   }) {
     switch (type) {
       case AnalyticsFilterType.category:
-        return categoriesOptions;
+        return categoryList;
       case AnalyticsFilterType.pic:
-        return picOptions;
+        return picList;
       case AnalyticsFilterType.clientSource:
-        return clientSourceOptions;
+        return clientSourceList;
       case AnalyticsFilterType.utm:
-        return utmOptions;
+        return utmList;
       case AnalyticsFilterType.status:
-        return statusOptions;
+        return statusList;
     }
   }
 
@@ -248,7 +374,7 @@ class AnalyticsController extends GetxController {
       selectedStartDate.value = null;
       selectedEndDate.value = null;
     }
-    fetchData(dateType: dateType);
+    fetchData();
   }
 
   void setSelectedFilterOption({
@@ -276,14 +402,13 @@ class AnalyticsController extends GetxController {
 
   void setAnalyticsSortOption({required SortOption sortOption}) {
     selectedSortOption.value = sortOption;
-    fetchData(dateType: selectedDateType.value);
+    fetchData();
   }
 
   Future<void> applyFilters() async {
     isFilterLoading(true);
-    await fetchData(dateType: selectedDateType.value);
+    await fetchData();
     isFilterLoading(false);
-    Get.back();
   }
 
   void resetFilter() {
@@ -305,43 +430,149 @@ class AnalyticsController extends GetxController {
 }
 
 // Dummy Data
-final List<Map<String, String>> categoriesOptions = [
+final List<Map<String, String>> dummyCategoriesOptions = [
   {'label': 'All', 'value': 'all'},
-  {'label': 'SEO Services', 'value': 'seo-services'},
-  {'label': 'SEO Content Writing', 'value': 'seo-content-writing'},
-  {'label': 'SEM', 'value': 'sem'},
-  {'label': 'Social Media Management', 'value': 'social-media-management'},
-  {'label': 'Digital Marketing', 'value': 'digital-marketing'},
+  {'label': 'SEO Content Writing', 'value': 'SEO Content Writing'},
+  {'label': 'SEO Services', 'value': 'SEO Services'},
+  {'label': 'SEM', 'value': 'SEM'},
+  {'label': 'Social Media Management', 'value': 'Social Media Management'},
+  {'label': 'Digital Marketing', 'value': 'Digital Marketing'},
+  {'label': 'Ads', 'value': 'Ads'},
+  {'label': 'VISUWISU', 'value': 'VISUWISU'},
+  {'label': 'Christmas', 'value': 'Christmas'},
+  {'label': 'Embis Reborn', 'value': 'Embis Reborn'},
+  {'label': 'Ramadan 2024', 'value': 'Ramadan 2024'},
+  {'label': 'New amber', 'value': 'new-amber'},
+  {'label': 'Expert Writing', 'value': 'Expert Writing'},
+  {'label': 'Press Release', 'value': 'Press Release'},
+  {'label': 'Website Copywriting', 'value': 'Website Copywriting'},
+  {'label': 'Social Media Copywriting', 'value': 'Social Media Copywriting'},
+  {'label': 'Technical Writing', 'value': 'Technical Writing'},
+  {'label': 'SEO Article', 'value': 'SEO Article'},
+  {'label': 'Evergreen Writing', 'value': 'Evergreen Writing'},
+  {'label': 'Evergreen Media Buying', 'value': 'Evergreen Media Buying'},
+  {'label': 'Evergreen SEO', 'value': 'Evergreen SEO'},
+  {'label': 'Kemerdekaan 2024', 'value': 'Kemerdekaan 2024'},
+  {'label': 'SEO', 'value': 'SEO'},
+  {'label': 'White Label SEO', 'value': 'White Label SEO'},
+  {'label': 'Company Group', 'value': 'Company Group'},
+  {'label': 'SEO Training', 'value': 'SEO Training'},
+  {
+    'label': 'Program Afiliasi | Kemitraan Eksklusif dari cmlabs',
+    'value': 'Program Afiliasi | Kemitraan Eksklusif dari cmlabs'
+  },
+  {'label': 'Agensi Digital', 'value': 'Agensi Digital'},
+  {'label': 'Backlink Partnership', 'value': 'Backlink Partnership'},
+  {'label': 'Pelatihan SEO', 'value': 'Pelatihan SEO'},
+  {'label': 'Program Afiliasi', 'value': 'Program Afiliasi'},
+  {'label': 'Digital Agency', 'value': 'Digital Agency'},
+  {'label': 'Sapi', 'value': 'sapi'},
+  {'label': 'VISUWISU Ignition', 'value': 'VISUWISU Ignition'},
+  {'label': 'Franchise Organizations', 'value': 'Franchise Organizations'},
+  {'label': 'New service', 'value': 'new-service'},
+  {'label': 'Press release', 'value': 'press-release'},
+  {'label': 'Media partnership', 'value': 'media-partnership'},
+  {'label': 'Media buying', 'value': 'media-buying'},
+  {'label': 'Visuwisu', 'value': 'visuwisu'},
+  {'label': 'Ramadhan 2024', 'value': 'ramadhan-2024'},
+  {'label': 'Expert writing', 'value': 'expert-writing'},
+  {'label': 'Christmas', 'value': 'christmas'},
+  {'label': 'Seo article', 'value': 'seo-article'},
+  {'label': 'Technical writing', 'value': 'technical-writing'},
+  {'label': 'Website development', 'value': 'website-development'},
+  {'label': 'Social media copywriting', 'value': 'social-media-copywriting'}
 ];
-final List<Map<String, String>> picOptions = [
+final List<Map<String, String>> dummyPicOptions = [
   {'label': 'All', 'value': 'all'},
-  {'label': 'Vanessa', 'value': 'vanessa'},
-  {'label': 'Larasati', 'value': 'larasati'},
-  {'label': 'Agita Ayudya', 'value': 'agita_ayudya'},
-  {'label': 'Bobby Pranata', 'value': 'bobby_pranata'},
-  {'label': 'Arfan', 'value': 'arfan'},
-  {'label': 'Naufal', 'value': 'naufal'},
-  {'label': 'Pasha', 'value': 'pasha'},
+  {'label': 'Super Admin', 'value': 'Super Admin'},
+  {'label': 'Tria Bagus', 'value': 'Tria Bagus'},
+  {'label': 'Magang Dev', 'value': 'Magang Dev'},
+  {'label': 'Talita Nur', 'value': 'Talita Nur'},
+  {'label': 'Rian Febriansyah', 'value': 'Rian Febriansyah'},
+  {'label': 'Wahyu Siwananda', 'value': 'Wahyu Siwananda'},
+  {'label': 'Backlink Super Admin', 'value': 'Backlink Super Admin'},
+  {'label': 'Rifqi Ardhian', 'value': 'Rifqi Ardhian'},
+  {'label': 'Imanna Twin', 'value': 'Imanna Twin'},
+  {'label': 'Hadi Cahyono', 'value': 'Hadi Cahyono'},
+  {'label': 'Agita Ayudya', 'value': 'Agita Ayudya'},
+  {'label': 'Lady', 'value': 'Lady'},
+  {'label': 'Lady', 'value': 'Lady'},
+  {'label': 'Wahyu Siwananda', 'value': 'Wahyu Siwananda'},
+  {'label': 'Backlink Vendor', 'value': 'Backlink Vendor'},
+  {'label': 'Backlink Transmedia', 'value': 'Backlink Transmedia'},
+  {'label': 'Finance', 'value': 'Finance'},
+  {'label': 'Lady Y', 'value': 'Lady Y'},
+  {'label': 'Wahyu Siwananda', 'value': 'Wahyu Siwananda'},
+  {'label': 'Lady', 'value': 'Lady'},
+  {'label': 'Vendor Jawa POS', 'value': 'Vendor Jawa POS'},
+  {'label': 'Wahyu Siwananda', 'value': 'Wahyu Siwananda'},
+  {'label': 'HR', 'value': 'HR'},
+  {'label': 'Said Robby', 'value': 'Said Robby'},
+  {'label': 'Recruitment', 'value': 'Recruitment'},
+  {'label': 'Rochman Maarif', 'value': 'Rochman Maarif'},
+  {'label': 'Yuliana Kusumawati', 'value': 'Yuliana Kusumawati'},
+  {'label': 'Rizal', 'value': 'Rizal'},
+  {'label': 'Staging cmlabsco', 'value': 'Staging cmlabsco'},
+  {'label': 'SEO', 'value': 'SEO'},
+  {'label': 'Marketing', 'value': 'Marketing'},
+  {'label': 'Haziq', 'value': 'Haziq'},
+  {'label': 'Testing Fullname', 'value': 'Testing Fullname'},
+  {'label': 'akbar', 'value': 'akbar'},
+  {'label': 'Intern HR', 'value': 'Intern HR'},
+  {'label': 'Hendi Arsanto', 'value': 'Hendi Arsanto'},
+  {'label': 'Saffana Fadila', 'value': 'Saffana Fadila'},
+  {'label': 'Selsi Selvia', 'value': 'Selsi Selvia'},
+  {'label': 'Fernika Windi Ristantika', 'value': 'Fernika Windi Ristantika'},
+  {'label': 'Achmad Faris Fadhail', 'value': 'Achmad Faris Fadhail'},
+  {'label': 'Alfian Jufri', 'value': 'Alfian Jufri'},
+  {'label': 'Alvin Hendrawan', 'value': 'Alvin Hendrawan'},
+  {'label': 'Al Mulki', 'value': 'Al Mulki'},
+  {'label': 'Khairunnisa Andari', 'value': 'Khairunnisa Andari'},
+  {'label': 'Nur Fadilah Kurnia', 'value': 'Nur Fadilah Kurnia'},
+  {'label': 'Rifqi Ardhian', 'value': 'Rifqi Ardhian'},
+  {'label': 'Mahendra Dwi', 'value': 'Mahendra Dwi'},
+  {'label': 'Haekal Ammarsyad', 'value': 'Haekal Ammarsyad'},
+  {'label': 'Final Review', 'value': 'Final Review'},
+  {'label': 'Gita Kartika', 'value': 'Gita Kartika'},
+  {'label': 'pentest', 'value': 'pentest'},
+  {'label': 'mobile-rifqi', 'value': 'mobile-rifqi'},
+  {'label': 'QA Lady', 'value': 'QA Lady'}
 ];
-final List<Map<String, String>> clientSourceOptions = [
+final List<Map<String, String>> dummyClientSourceOptions = [
   {'label': 'All', 'value': 'all'},
-  {'label': 'Direct Email', 'value': 'direct_email'},
-  {'label': 'Web WhatsApp', 'value': 'web_whatsapp'},
-  {'label': 'SEM', 'value': 'sem'},
-  {'label': 'Direct LinkedIn', 'value': 'direct_linkedin'},
-  {'label': 'Direct Partnership', 'value': 'direct_partnership'},
+  {'label': 'Direct Email', 'value': 'Direct Email'},
+  {'label': 'Web WhatsApp', 'value': 'Web WhatsApp'},
+  {'label': 'Direct Linkedin', 'value': 'Direct Linkedin'},
+  {'label': 'Direct Partnership', 'value': 'Direct Partnership'},
+  {'label': 'Direct Visit', 'value': 'Direct Visit'},
+  {'label': 'Direct WhatsApp', 'value': 'Direct WhatsApp'},
+  {'label': 'Direct Call', 'value': 'Direct Call'},
+  {'label': 'Partnership Vendor', 'value': 'Partnership Vendor'},
+  {'label': 'Referral', 'value': 'Referral'}
 ];
-final List<Map<String, String>> utmOptions = [
+final List<Map<String, String>> dummyUtmOptions = [
   {'label': 'All', 'value': 'all'},
-  {'label': 'Google & GDN', 'value': 'Google%26GDN'},
-  {'label': 'Google & CPC', 'value': 'Google%26CPC'},
-  {'label': 'Meta & GDN', 'value': 'Meta%26GDN'},
-  {'label': 'Meta & Carousel', 'value': 'Meta%26Carousel'},
-];
-final List<Map<String, String>> statusOptions = [
-  {'label': 'All', 'value': 'all'},
-  {'label': 'New', 'value': '0'},
-  {'label': 'Followed Up', 'value': '1'},
-  {'label': 'Accepted', 'value': '2'},
-  {'label': 'Rejected', 'value': '3'},
+  {'label': 'FB & FB', 'value': 'FB&FB'},
+  {'label': 'Gads & Cpc', 'value': 'gads&cpc'},
+  {'label': 'Google & Banner', 'value': 'google&banner'},
+  {'label': 'Meta & Banner', 'value': 'meta&banner'},
+  {'label': 'Google & Cpc', 'value': 'google&cpc'},
+  {'label': 'Meta & Cpc', 'value': 'meta&cpc'},
+  {'label': 'Meta & Carousel', 'value': 'Meta&carousel'},
+  {'label': 'Google & Conversion', 'value': 'google&Conversion'},
+  {'label': '- & -', 'value': '-&-'},
+  {'label': '- & Medium', 'value': '-&Medium'},
+  {'label': 'Google Ads & -', 'value': 'Google Ads&-'},
+  {'label': 'Google & Banner', 'value': 'Google&Banner'},
+  {'label': 'Google & Carousel', 'value': 'Google&carousel'},
+  {'label': 'Google & Cpc', 'value': 'Google&cpc'},
+  {'label': 'Google & Gdn', 'value': 'Google&gdn'},
+  {'label': 'Googleads & Carousel', 'value': 'Googleads&carousel'},
+  {'label': 'Googleads & Cpc', 'value': 'Googleads&cpc'},
+  {'label': 'Googleads & Gdn', 'value': 'Googleads&gdn'},
+  {'label': 'Meta & CPC', 'value': 'Meta&CPC'},
+  {'label': 'Meta & Cpc', 'value': 'Meta&cpc'},
+  {'label': 'Meta & Gdn', 'value': 'Meta&gdn'},
+  {'label': 'Source & Medium', 'value': 'Source&Medium'},
+  {'label': 'Wizarding World & Through Your Wand', 'value': 'Wizarding World&Through your wand'},
 ];

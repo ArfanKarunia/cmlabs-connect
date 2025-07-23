@@ -15,6 +15,17 @@ class StringUtils {
     }).join(' '); // Join words with spaces
   }
 
+  static String toTitleCase(String text) {
+    if (text.isEmpty) {
+      return text;
+    }
+    return text
+        .split(' ')
+        .map((word) =>
+            word.isEmpty ? word : word[0].toUpperCase() + word.substring(1).toLowerCase())
+        .join(' ');
+  }
+
   static String setPitchDuration(int? value) {
     if (value == null) return '-'; // Return '-' if value is null
     if (value == 0) return "today"; // Return 'today' if value is 0

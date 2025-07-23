@@ -8,6 +8,8 @@ environment:
   sdk: ">=3.5.0-234.0.dev <4.0.0"
 
 dependencies:
+  screenshot: ^3.0.0
+  image_gallery_saver_plus: ^4.0.1  
   cached_network_image: ^3.4.1
   calendar_date_picker2: ^1.1.7
   cupertino_icons: ^1.0.8
