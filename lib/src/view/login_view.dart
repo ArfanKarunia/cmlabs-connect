@@ -109,6 +109,8 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: AppColors.scaffoldBgColor,
       body: SafeArea(
@@ -138,7 +140,7 @@ class _LoginViewState extends State<LoginView> {
             // Login Page
             ListView(
               children: [
-                SizedBox(height: MediaQuery.of(context).size.height / 10),
+                SizedBox(height: deviceHeight / 15),
                 Container(
                   margin: const EdgeInsets.all(16),
                   child: Column(
