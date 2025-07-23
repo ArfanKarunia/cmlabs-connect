@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../../controllers/analytics/analytics_controller.dart';
 import '../../utils/color.dart';
 import '../../widgets/analytics/quotation_traffic_card.dart';
 import '../../widgets/analytics/quotation_trends_card.dart';
@@ -15,6 +17,8 @@ class AnalyticsView extends StatefulWidget {
 }
 
 class _AnalyticsViewState extends State<AnalyticsView> {
+  final AnalyticsController controller = Get.find<AnalyticsController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

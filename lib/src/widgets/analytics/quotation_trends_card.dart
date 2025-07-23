@@ -61,6 +61,10 @@ class _QuotationTrendsCardState extends State<QuotationTrendsCard> {
               ),
               chartDescriptions: const [],
               onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrendsView) : null,
+              onTapExport: () async {
+                await controller.exportData();
+                Get.back();
+              },
             ),
     );
   }

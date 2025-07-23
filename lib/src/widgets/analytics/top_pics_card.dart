@@ -7,7 +7,6 @@ import '../../controllers/analytics/analytics_controller.dart';
 import '../../controllers/analytics/top_pics/top_pics_controller.dart';
 import '../../models/analytics/top_pics_model.dart';
 import '../../routes.dart';
-import '../../utils/color.dart';
 import '../../utils/string_utils.dart';
 import 'charts_card.dart';
 
@@ -21,8 +20,7 @@ class TopPICsCard extends StatefulWidget {
 
 class _TopPICsCardState extends State<TopPICsCard> {
   final controller = Get.find<TopPICsController>();
-
-   String? _selectedPIC;
+  String? _selectedPIC;
 
   List<Color> colors = [
     const Color(0xFF4596D7),
@@ -37,12 +35,6 @@ class _TopPICsCardState extends State<TopPICsCard> {
     const Color(0xFFB5DDFF),
   ];
 
-   @override
-  void initState() {
-    super.initState();
-    _selectedPIC = null; // Inisialisasi: semua PIC ditampilkan
-  }
-
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -51,19 +43,12 @@ class _TopPICsCardState extends State<TopPICsCard> {
         List<TopPICsData> filteredData = [];
 
         if (_selectedPIC == null) {
-          // Jika tidak ada PIC yang dipilih, tampilkan semua data asli
           filteredData = rawData;
         } else {
-          // Jika ada PIC yang dipilih, hanya tampilkan PIC tersebut
-          filteredData = rawData
-              .where((picData) => picData.picName == _selectedPIC)
-              .toList();
+          filteredData = rawData.where((picData) => picData.picName == _selectedPIC).toList();
         }
 
-        // Hitung total kuotasi dari data yang sudah difilter
         int totalFilteredQuotations = filteredData.fold(0, (sum, item) => sum + item.quotationCount);
-
-        // Jika tidak ada data atau total kuotasi 0 setelah filter, tampilkan EmptyChartCard
         if (totalFilteredQuotations == 0) {
           return EmptyChartCard(
             title: 'Top PICs',
@@ -72,10 +57,9 @@ class _TopPICsCardState extends State<TopPICsCard> {
           );
         }
 
-        // Hitung ulang persentase untuk data yang difilter agar akurat
         List<TopPICsData> chartDataWithPercentages = filteredData.map((picData) {
-          // Pastikan tidak ada pembagian dengan nol
-          double percentage = totalFilteredQuotations > 0 ? (picData.quotationCount / totalFilteredQuotations) * 100 : 0;
+          double percentage =
+              totalFilteredQuotations > 0 ? (picData.quotationCount / totalFilteredQuotations) * 100 : 0;
           return TopPICsData(
             picName: picData.picName,
             quotationCount: picData.quotationCount,
@@ -88,7 +72,6 @@ class _TopPICsCardState extends State<TopPICsCard> {
           );
         }).toList();
 
-
         return ChartCard(
           title: 'Top PICs',
           subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
@@ -99,7 +82,9 @@ class _TopPICsCardState extends State<TopPICsCard> {
                 dataSource: chartDataWithPercentages,
                 xValueMapper: (d, _) => formatPICName(d.picName),
                 yValueMapper: (d, _) => d.quotationCount,
-                pointColorMapper: (d, i) => colors[rawData.indexOf(rawData.firstWhere((element) => element.picName == d.picName))], // Pastikan warna konsisten
+                pointColorMapper: (d, i) => colors[rawData.indexOf(
+                  rawData.firstWhere((element) => element.picName == d.picName),
+                )],
                 dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
                 dataLabelSettings: DataLabelSettings(
                   isVisible: true,
@@ -110,29 +95,24 @@ class _TopPICsCardState extends State<TopPICsCard> {
             ],
           ),
           chartDescriptions: List.generate(
-            rawData.length, // Tetap iterasi semua rawData untuk legend
+            rawData.length,
             (index) {
               String picName = rawData[index].picName;
               return ChartDataDescription(
                 label: formatPICName(picName),
                 color: colors[index],
-                // isSelected berarti item ini sedang dipilih secara eksklusif,
-                // atau jika tidak ada yang dipilih (_selectedPIC == null)
-                // maka semua item dianggap terpilih (untuk highlight)
                 isSelected: _selectedPIC == null || _selectedPIC == picName,
                 onTap: () {
-                  setState(() {
-                    if (_selectedPIC == picName) {
-                      _selectedPIC = null; // Jika yang diklik sama, reset (tampilkan semua)
-                    } else {
-                      _selectedPIC = picName; // Jika yang diklik berbeda, pilih item ini saja
-                    }
-                  });
+                  setState(() => _selectedPIC = _selectedPIC == picName ? null : picName);
                 },
               );
             },
           ),
           onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopPICsView) : null,
+          onTapExport: () async {
+            await controller.exportData();
+            Get.back();
+          },
         );
       },
     );

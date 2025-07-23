@@ -20,8 +20,7 @@ class TopServicesCard extends StatefulWidget {
 
 class _TopServicesCardState extends State<TopServicesCard> {
   final controller = Get.find<TopServicesController>();
-
-String? _selectedService;
+  String? _selectedService;
 
   List<Color> colors = [
     const Color(0xFFFFB300), // Deep amber yellow
@@ -36,12 +35,6 @@ String? _selectedService;
     const Color(0xFFFFB74D), // Light amber
   ];
 
-   @override
-  void initState() {
-    super.initState();
-    _selectedService = null; // Inisialisasi: semua service ditampilkan
-  }
-
   @override
   Widget build(BuildContext context) {
     return Obx(
@@ -50,19 +43,12 @@ String? _selectedService;
         List<TopServicesData> filteredData = [];
 
         if (_selectedService == null) {
-          // Jika tidak ada service yang dipilih, tampilkan semua data asli
           filteredData = rawData;
         } else {
-          // Jika ada service yang dipilih, hanya tampilkan service tersebut
-          filteredData = rawData
-              .where((serviceData) => serviceData.serviceName == _selectedService)
-              .toList();
+          filteredData = rawData.where((serviceData) => serviceData.serviceName == _selectedService).toList();
         }
 
-        // Hitung total kuotasi dari data yang sudah difilter
         int totalFilteredQuotations = filteredData.fold(0, (sum, item) => sum + item.quotationCount);
-
-        // Jika tidak ada data atau total kuotasi 0 setelah filter, tampilkan EmptyChartCard
         if (totalFilteredQuotations == 0) {
           return EmptyChartCard(
             title: 'Top Services',
@@ -71,10 +57,9 @@ String? _selectedService;
           );
         }
 
-        // Hitung ulang persentase untuk data yang difilter agar akurat
         List<TopServicesData> chartDataWithPercentages = filteredData.map((serviceData) {
-          // Pastikan tidak ada pembagian dengan nol
-          double percentage = totalFilteredQuotations > 0 ? (serviceData.quotationCount / totalFilteredQuotations) * 100 : 0;
+          double percentage =
+              totalFilteredQuotations > 0 ? (serviceData.quotationCount / totalFilteredQuotations) * 100 : 0;
           return TopServicesData(
             serviceName: serviceData.serviceName,
             quotationCount: serviceData.quotationCount,
@@ -92,7 +77,9 @@ String? _selectedService;
                 dataSource: chartDataWithPercentages,
                 xValueMapper: (d, _) => formatServiceName(d.serviceName),
                 yValueMapper: (d, _) => d.quotationCount,
-                pointColorMapper: (d, i) => colors[rawData.indexOf(rawData.firstWhere((element) => element.serviceName == d.serviceName))], // Pastikan warna konsisten
+                pointColorMapper: (d, i) => colors[rawData.indexOf(
+                  rawData.firstWhere((element) => element.serviceName == d.serviceName),
+                )],
                 dataLabelMapper: (d, _) => d.percentage > 0 ? '${d.percentage.toInt()}%' : '',
                 dataLabelSettings: DataLabelSettings(
                   isVisible: true,
@@ -103,35 +90,31 @@ String? _selectedService;
             ],
           ),
           chartDescriptions: List.generate(
-            rawData.length, // Tetap iterasi semua rawData untuk legend
+            rawData.length,
             (index) {
               String serviceName = rawData[index].serviceName;
+
               return ChartDataDescription(
                 label: formatServiceName(serviceName),
                 color: colors[index],
-                // isSelected berarti item ini sedang dipilih secara eksklusif,
-                // atau jika tidak ada yang dipilih (_selectedService == null)
-                // maka semua item dianggap terpilih (untuk highlight)
                 isSelected: _selectedService == null || _selectedService == serviceName,
                 onTap: () {
-                  setState(() {
-                    if (_selectedService == serviceName) {
-                      _selectedService = null; // Jika yang diklik sama, reset (tampilkan semua)
-                    } else {
-                      _selectedService = serviceName; // Jika yang diklik berbeda, pilih item ini saja
-                    }
-                  });
+                  setState(() => _selectedService = _selectedService == serviceName ? null : serviceName);
                 },
               );
             },
           ),
           onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+          onTapExport: () async {
+            await controller.exportData();
+            Get.back();
+          },
         );
       },
     );
   }
 
   String formatServiceName(String serviceName) {
-    return StringUtils.toTitleCase(serviceName.replaceAll('_', ' '));
+    return StringUtils.toTitleCase(serviceName.replaceAll('-', ' '));
   }
 }

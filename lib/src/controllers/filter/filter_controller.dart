@@ -12,12 +12,7 @@ import '../inbox/contact_us/contact_us_controller.dart';
 import '../inbox/faq/faq_controller.dart';
 import '../inbox/inbox_controller.dart';
 
-enum InboxFilterType {
-  clientSource,
-  pic,
-  category,
-  utm,
-}
+enum InboxFilterType { clientSource, pic, category }
 
 class FilterController extends GetxController {
   // Fetched Filter List
@@ -28,9 +23,6 @@ class FilterController extends GetxController {
     {'value': 'all', 'label': 'All'},
   ].obs;
   RxList<Map<String, String>> clientSourceList = <Map<String, String>>[
-    {'value': 'all', 'label': 'All'},
-  ].obs;
-  RxList<Map<String, String>> utmList = <Map<String, String>>[
     {'value': 'all', 'label': 'All'},
   ].obs;
 
@@ -82,7 +74,6 @@ class FilterController extends GetxController {
     fetchClientSourceFilter();
     fetchPicFilter();
     fetchCategoryFilter();
-    fetchUtmFilter();
   }
 
   Future<void> fetchFilter(InboxFilterType filter) async {
@@ -96,9 +87,6 @@ class FilterController extends GetxController {
           break;
         case InboxFilterType.category:
           await fetchCategoryFilter();
-          break;
-        case InboxFilterType.utm:
-          await fetchUtmFilter();
           break;
       }
     } catch (e) {
@@ -166,30 +154,6 @@ class FilterController extends GetxController {
     }
   }
 
-  Future<void> fetchUtmFilter() async {
-    try {
-      final response = await dio.get(
-        '$baseUrl/filter/utm',
-        options: Options(
-          headers: {'Authorization': 'Bearer ${userController.accesToken.value}'},
-        ),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data'].map<Map<String, String>>((utm) {
-          return {
-            'value': utm['value']?.toString() ?? '',
-            'label': utm['label']?.toString() ?? '',
-          };
-        }).toList();
-
-        utmList.addAll(data);
-      }
-    } catch (e) {
-      debugPrint('Error fetching UTM filter: $e');
-    }
-  }
-
   void addFilterClientSource(Map<String, String>? clientSource) {
     if (clientSource == null) return;
 
@@ -242,18 +206,6 @@ class FilterController extends GetxController {
     filterCategoryList.clear();
   }
 
-  void addFilterUtm(Map<String, String> utm) {
-    if (utm['value'] == "all") {
-      clearFilterUtm();
-    } else {
-      filterUtm.value = utm;
-    }
-  }
-
-  void clearFilterUtm() {
-    filterUtm.value = null;
-  }
-
   void setSearch(String query) {
     search.value = query;
   }
@@ -282,10 +234,6 @@ class FilterController extends GetxController {
             .toList();
       case InboxFilterType.category:
         return categoryList
-            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
-            .toList();
-      case InboxFilterType.utm:
-        return utmList
             .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
             .toList();
     }
@@ -343,17 +291,6 @@ class FilterController extends GetxController {
     }
   }
 
-  void filterByUtm() {
-    if (filterUtm.value != null) {
-      for (InboxController controller in inboxController) {
-        controller.clearFilterUtm();
-        controller.addFilterUtm(filterUtm.value!['value'].toString());
-      }
-      dashboardController.clearFilterUtm();
-      dashboardController.addFilterUtm(filterUtm.value!['value'].toString());
-    }
-  }
-
   void setDateRange(DateTime? start, DateTime? end) {
     if (start != null && end == null) {
       end = DateTime.now();
@@ -377,24 +314,13 @@ class FilterController extends GetxController {
       filterByCategory();
       filterByClientSource();
       filterByPic();
-
-      // Filter Client Source
     } else if (filter.toLowerCase() == 'client source') {
       filterByClientSource();
-
-      // Filter PIC
     } else if (filter.toLowerCase() == 'pic') {
       filterByPic();
-
-      // Filter category
     } else if (filter.toLowerCase() == 'category') {
       filterByCategory();
-
-      // Filter UTM
-    } else if (filter.toLowerCase() == 'utm') {
-      filterByUtm();
     }
-
     dashboardController.fetchDashboardData();
 
     Get.until((route) => Get.currentRoute == AppRoutes.home);
@@ -411,7 +337,6 @@ class FilterController extends GetxController {
     filterByClientSource();
     filterByPic();
     filterByCategory();
-    filterByUtm();
     filterByDateRange();
     for (InboxController controller in inboxController) {
       await controller.fetchList();

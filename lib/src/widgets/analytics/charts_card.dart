@@ -1,14 +1,15 @@
-// ignore_for_file: library_private_types_in_public_api
+import 'package:get/get.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../../constant/fontstyle.dart';
+import '../../utils/bottom_sheet.dart';
 import '../../utils/color.dart';
+import '../../utils/permission_utils.dart';
+import '../../utils/toast.dart';
+import '../custom_submit_button.dart';
 import '../empty_state.dart';
-import 'package:get/get.dart';
 
 class ChartCard extends StatefulWidget {
   final String title;
@@ -33,86 +34,38 @@ class ChartCard extends StatefulWidget {
   });
 
   @override
-  _ChartCardState createState() => _ChartCardState();
+  State<ChartCard> createState() => _ChartCardState();
 }
 
 class _ChartCardState extends State<ChartCard> {
+  final ScreenshotController screenshotController = ScreenshotController();
 
- ScreenshotController screenshotController = ScreenshotController();
+  Future<void> exportToImage() async {
+    await PermissionUtils().requestStoragePermission();
 
-  // Fungsi untuk mengambil screenshot dan menyimpannya
-  Future<void> _takeScreenshotAndSave() async {
-    // Meminta izin penyimpanan
-    var status = await Permission.storage.request();
-    if (status.isGranted) {
-      // Mengambil screenshot dari widget yang dibungkus oleh Screenshot
-      screenshotController.capture(delay: const Duration(milliseconds: 10)).then((Uint8List? image) async {
-        if (image != null) {
-          try {
-            // Menyimpan gambar ke galeri
-            final result = await ImageGallerySaverPlus.saveImage(
-              image,
-              quality: 90,
-              name: "${widget.title.replaceAll(' ', '_').toLowerCase()}_chart_${DateTime.now().millisecondsSinceEpoch}",
-            );
-            debugPrint("Image saved to gallery: $result");
-            Get.snackbar(
-              'Sukses',
-              'Gambar grafik berhasil disimpan ke galeri!',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-            );
-          } catch (e) {
-            debugPrint("Error saving image: $e");
-            Get.snackbar(
-              'Error',
-              'Gagal menyimpan gambar: $e',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
-            );
-          }
-        } else {
-          debugPrint("Failed to capture screenshot.");
-          Get.snackbar(
-            'Gagal',
-            'Gagal mengambil screenshot grafik.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.orange,
-            colorText: Colors.white,
-          );
-        }
-      }).catchError((onError) {
-        debugPrint("Error capturing screenshot: $onError");
-        Get.snackbar(
-          'Error',
-          'Terjadi kesalahan saat mengambil screenshot: $onError',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
+    final image = await screenshotController.capture(delay: const Duration(milliseconds: 10)).catchError((e) {
+      showErrorToast("Error capturing screenshot: $e");
+      return null;
+    });
+
+    if (image != null) {
+      try {
+        await ImageGallerySaverPlus.saveImage(
+          image,
+          quality: 90,
+          name: "${widget.title.replaceAll(' ', '_').toLowerCase()}_chart_${DateTime.now().millisecondsSinceEpoch}",
         );
-      });
-    } else {
-      debugPrint("Storage permission denied.");
-      Get.snackbar(
-        'Izin Ditolak',
-        'Izin penyimpanan diperlukan untuk menyimpan gambar.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.yellow,
-        colorText: Colors.black,
-        mainButton: TextButton(
-          onPressed: () => openAppSettings(), // Membuka pengaturan aplikasi
-          child: Text('Buka Pengaturan', style: TextStyle(color: Colors.blue)),
-        ),
-      );
+
+        showSuccessToast("Image saved to gallery!");
+      } catch (e) {
+        showErrorToast("Error saving image: $e");
+      }
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Screenshot( // Bungkus seluruh card dengan Screenshot widget
+    return Screenshot(
       controller: screenshotController,
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -122,7 +75,7 @@ class _ChartCardState extends State<ChartCard> {
           border: Border.all(color: const Color(0xFFF3F3F3)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05), // Gunakan withOpacity
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -131,7 +84,6 @@ class _ChartCardState extends State<ChartCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title + Button (View Details / Export)
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -159,49 +111,77 @@ class _ChartCardState extends State<ChartCard> {
                     ],
                   ),
                 ),
+
                 const SizedBox(width: 12),
-                // Logika kondisional untuk View Details atau Export
-                if (widget.onTapViewDetails != null)
-                  InkWell(
-                    onTap: widget.onTapViewDetails,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF31393C),
-                        borderRadius: BorderRadius.circular(30),
+
+                // View Details or Export
+                widget.onTapViewDetails != null
+                    ? InkWell(
+                        onTap: widget.onTapViewDetails,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF31393C),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Text(
+                            'View Details',
+                            style: regular.copyWith(fontSize: 12, color: AppColors.white),
+                          ),
+                        ),
+                      )
+                    : InkWell(
+                        onTap: () {
+                          showCustomBottomSheet(
+                            context,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Export Analytics",
+                                style: bold.copyWith(fontSize: 18),
+                              ),
+                              const SizedBox(height: 10),
+                              const Text(
+                                'Choose the format you want to export',
+                                style: regular,
+                              ),
+                              const SizedBox(height: 12),
+                              CustomSubmitButton(
+                                title: 'Excel (.xlsx)',
+                                onTap: widget.onTapExport,
+                              ),
+                              const SizedBox(height: 10),
+                              CustomSubmitButton(
+                                title: 'Image (.png)',
+                                onTap: () async {
+                                  await exportToImage();
+                                  Get.back();
+                                },
+                              ),
+                              const SizedBox(height: 10),
+                            ],
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Image.asset(
+                            'assets/icons/icons_export.png',
+                            width: 24,
+                            height: 24,
+                          ),
+                        ),
                       ),
-                      child: Text(
-                        'View Details',
-                        style: regular.copyWith(fontSize: 12, color: AppColors.white),
-                      ),
-                    ),
-                  )
-                else // Jika onTapViewDetails null, tampilkan tombol export
-                  InkWell(
-                    onTap: () {
-                      _takeScreenshotAndSave(); // Panggil fungsi export di sini
-                      // Jika Anda memiliki onTapExport dari parent, Anda bisa panggil juga:
-                      // widget.onTapExport?.call();
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8), // Padding lebih kecil untuk ikon
-                      decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 255, 255, 255), // Warna latar belakang tombol
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Image.asset(
-                        'assets/icons/icons_export.png', // Sesuaikan path icon Anda
-                        width: 24, // Ukuran ikon
-                        height: 24, // Ukuran ikon
-                      ),
-                    ),
-                  ),
               ],
             ),
-
             const SizedBox(height: 8),
-            widget.chart, // Chart itu sendiri
 
+            widget.chart,
+
+            // Chart Description
             if (widget.chartDescriptions.isNotEmpty) ...[
               const SizedBox(height: 16),
               Wrap(

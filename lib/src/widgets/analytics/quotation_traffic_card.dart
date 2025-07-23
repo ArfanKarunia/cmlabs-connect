@@ -71,6 +71,10 @@ class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
                 ),
                 onTapViewDetails:
                     widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
+                onTapExport: () async {
+                  await controller.exportData();
+                  Get.back();
+                },
               );
       },
     );
