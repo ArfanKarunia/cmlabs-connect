@@ -49,7 +49,9 @@ class _FormExperienceViewState extends State<FormExperienceView> {
         ? null
         : toDate == null
             ? "The 'To' field is required"
-            : null;
+            : toDate!.isBefore(fromDate!)
+                ? "The 'To' date must be after the 'From' date"
+                : null;
     setState(() {});
 
     return jobTitleError == null &&
