@@ -23,6 +23,18 @@ class _FormSummaryViewState extends State<FormSummaryView> {
   final AccountController controller = Get.find<AccountController>();
 
   final TextEditingController aboutController = TextEditingController();
+  String? aboutError;
+
+  bool validateForm() {
+    aboutError = aboutController.text.isEmpty
+        ? "The 'About' field is required"
+        : aboutController.text.length > 1000
+            ? "The maximum character of 'About' is 1000 characters"
+            : null;
+    setState(() {});
+
+    return aboutError == null;
+  }
 
   @override
   void initState() {
@@ -69,6 +81,7 @@ class _FormSummaryViewState extends State<FormSummaryView> {
                     title: 'About',
                     child: CustomFormField(
                       controller: aboutController,
+                      errorText: aboutError,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -120,8 +133,10 @@ class _FormSummaryViewState extends State<FormSummaryView> {
                   : CustomSubmitButton(
                       title: "Save",
                       onTap: () {
-                        controller.summaryAbout.value = aboutController.text;
-                        controller.addSumary();
+                        if (validateForm()) {
+                          controller.summaryAbout.value = aboutController.text;
+                          controller.addSummary();
+                        }
                       },
                     ),
             ),
