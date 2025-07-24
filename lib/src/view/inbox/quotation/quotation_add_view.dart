@@ -230,6 +230,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                   flex: 2,
                   child: CustomFormField(
                     controller: controller.phoneNumber.value,
+                    keyboardType: TextInputType.phone,
                     hintText: '8xxxxxxx',
                     errorText: controller.phoneNumberError.value,
                   ),
