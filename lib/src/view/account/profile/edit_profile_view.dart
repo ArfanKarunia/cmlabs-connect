@@ -7,6 +7,7 @@ import '../../../controllers/user/user_controller.dart';
 import '../../../models/user_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
+import '../../../utils/toast.dart';
 import '../../../widgets/custom_avatar.dart';
 import '../../../widgets/custom_formfield.dart';
 import '../../../widgets/custom_select_field.dart';
@@ -56,7 +57,9 @@ class _EditProfileViewState extends State<EditProfileView> {
         ? "The 'Full Name' field is required"
         : fullNameController.text.length > 20
             ? "The maximum character of name is 20 characters"
-            : null;
+            : !RegExp(r'^[a-zA-Z\s]+$').hasMatch(fullNameController.text)
+                ? "The name must contain only letters and spaces"
+                : null;
     numberError = numberController.text.length > 13
         ? "The maximum digits of phone number is 13 digits"
         : (!RegExp(r'^[0-9]+$').hasMatch(numberController.text))
@@ -87,7 +90,7 @@ class _EditProfileViewState extends State<EditProfileView> {
         : null;
     setState(() {});
 
-    return usernameError == null &&
+    bool isFormValid = usernameError == null &&
         fullNameError == null &&
         numberError == null &&
         linkedinError == null &&
@@ -96,6 +99,12 @@ class _EditProfileViewState extends State<EditProfileView> {
         mediumError == null &&
         quoraError == null &&
         tiktokError == null;
+
+    if (!isFormValid) {
+      showErrorToast("Error: Please check the form and try again!");
+    }
+
+    return isFormValid;
   }
 
   @override
