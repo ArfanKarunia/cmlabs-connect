@@ -13,10 +13,10 @@ void handleDioException(DioException e) {
     if (firstError is List && firstError.isNotEmpty) {
       showErrorToast("Error: ${firstError.first}");
     } else {
-      showErrorToast("Error: ${e.response?.data ?? 'Failed to update profile'}");
+      showErrorToast("Error: ${e.response?.data ?? 'An unexpected error occurred.'}");
     }
   } else {
-    showErrorToast("Error: ${e.response?.data ?? 'Failed to update profile'}");
+    showErrorToast("Error: ${e.response?.data ?? 'An unexpected error occurred.'}");
   }
   debugPrint('Error: ${e.response?.data}');
 }

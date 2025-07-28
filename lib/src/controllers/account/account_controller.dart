@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
@@ -14,7 +14,6 @@ import 'package:cmlabs_connect/src/utils/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as http;
-import 'package:image_picker/image_picker.dart';
 
 import '../../utils/error_utils.dart';
 
@@ -161,7 +160,7 @@ class AccountController extends GetxController {
     }
   }
 
-  Future<void> editProfile(XFile? selectedImage) async {
+  Future<void> editProfile(File? selectedImage) async {
     isLoadingProfile(true);
 
     try {
@@ -201,7 +200,7 @@ class AccountController extends GetxController {
       if (response.statusCode == 200) {
         await fetchProfile();
 
-        showSuccessToast("Success: update basic information in profile");
+        showSuccessToast("Success: Profile Updated!");
         Get.back();
       }
     } on http.DioException catch (e) {
@@ -268,8 +267,6 @@ class AccountController extends GetxController {
   }
 
   Future<void> fetchSummary() async {
-    isLoadingSummary(true);
-
     try {
       String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value?.id ?? 0;
@@ -310,8 +307,6 @@ class AccountController extends GetxController {
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
-    } finally {
-      isLoadingSummary(false);
     }
   }
 
@@ -332,45 +327,47 @@ class AccountController extends GetxController {
         summarySpecialization.clear();
         fetchSummary();
 
-        showSuccessToast("Success: Delete Summary");
-      }
-    } on http.DioException catch (e) {
-      handleDioException(e);
-    } catch (e) {
-      showErrorToast("Failed: Delete Summary");
-      debugPrint('Error fetching status data: $e');
-    }
-  }
-
-  Future<void> addSumary() async {
-    try {
-      String? accessToken = userController.accesToken.value;
-      int idUser = userController.user.value?.id ?? 0;
-
-      final data = {
-        "id": idUser,
-        "about": summaryAbout.value,
-        "specialization": summarySpecialization,
-      };
-
-      final response = await dio.post(
-        '$baseUrl/profile/update-summary',
-        options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
-        data: jsonEncode(data),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        fetchSummary();
-        showSuccessToast("Success: add Summary");
-        Get.back();
-      } else {
-        showErrorToast("Failed: add Summary");
+        showSuccessToast("Success: Summary Deleted!");
       }
     } on http.DioException catch (e) {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addSummary() async {
+    isLoadingSummary(true);
+
+    try {
+      String? accessToken = userController.accesToken.value;
+      int idUser = userController.user.value?.id ?? 0;
+
+      final response = await dio.post(
+        '$baseUrl/profile/update-summary',
+        options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: {
+          "id": idUser,
+          "about": summaryAbout.value,
+          "specialization": summarySpecialization,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        fetchSummary();
+        showSuccessToast("Success: Summary Added!");
+        Get.back();
+      } else {
+        showErrorToast("Error: An unexpected error occurred.");
+      }
+    } on http.DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+      debugPrint('Error fetching status data: $e');
+    } finally {
+      isLoadingSummary(false);
     }
   }
 

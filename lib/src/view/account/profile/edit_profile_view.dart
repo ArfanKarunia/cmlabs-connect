@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../../controllers/account/account_controller.dart';
 import '../../../controllers/user/user_controller.dart';
 import '../../../models/user_model.dart';
 import '../../../routes.dart';
 import '../../../utils/color.dart';
+import '../../../utils/image_utils.dart';
 import '../../../utils/toast.dart';
 import '../../../widgets/custom_avatar.dart';
 import '../../../widgets/custom_formfield.dart';
@@ -26,7 +28,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   final UserController userController = Get.find<UserController>();
   final AccountController accountController = Get.find<AccountController>();
 
-  XFile? selectedImage;
+  File? selectedImage;
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
@@ -147,10 +149,16 @@ class _EditProfileViewState extends State<EditProfileView> {
           padding: const EdgeInsets.all(20),
           children: [
             // Profile Picture
-            CustomChangeAvatar(
-              radius: 50,
-              newImage: selectedImage,
-              link: user?.picUrl,
+            SizedBox(
+              height: 150,
+              width: 150,
+              child: FittedBox(
+                child: CustomChangeAvatar(
+                  radius: 75,
+                  newImage: selectedImage,
+                  link: user?.picUrl,
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             CustomSubmitButton(
@@ -159,8 +167,8 @@ class _EditProfileViewState extends State<EditProfileView> {
               borderColor: AppColors.primary,
               textColor: AppColors.primary,
               onTap: () async {
-                XFile? pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-                if (pickedImage != null) setState(() => selectedImage = pickedImage);
+                final img = await ImageUtils().pickImage();
+                if (img != null) setState(() => selectedImage = img);
               },
             ),
 

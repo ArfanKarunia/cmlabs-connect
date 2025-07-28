@@ -11,12 +11,13 @@ Tracking leads masuk dari berbagai channel yang dimiliki oleh cmlabs.co
 
 ## Getting Started
 
-### Prequisites
+### Prerequisites
 
-- Flutter SDK: Version 3.0 or higher
-- Dart: Version 2.17 or Higher
+- Flutter SDK: Version 3.5.0 or higher
+- Dart: Version 3.5.0 or higher
 - JDK: Version 11 (Ensure JAVA_HOME is set to JDK 11)
-- Android Studio / Xcode: For Android/Ios Development
+- Android Studio / Xcode: For Android/iOS Development
+- Firebase Project: For analytics, messaging, and core services
 
 ### Installation
 
@@ -24,27 +25,27 @@ Tracking leads masuk dari berbagai channel yang dimiliki oleh cmlabs.co
 
 - Clone project from repository
 
-  ```
+  ```bash
   git clone https://github.com/sequence-project/cmlabs-connect-app.git
   ```
 
 - Open project directory
 
-  ```
+  ```bash
   cd cmlabs-connect-app
   ```
 
-#### Install Depedenscies
+#### Install Dependencies
 
-- in terminal type this command
+- In terminal type this command
 
-  ```
+  ```bash
   flutter pub get
   ```
 
 #### Set up Configuration
 
-- open file config.dart in "/lib/src/constant/config.dart"
+- The configuration file is located at `/lib/src/constant/config.dart`
 
   ```
   lib/
@@ -53,19 +54,27 @@ Tracking leads masuk dari berbagai channel yang dimiliki oleh cmlabs.co
           |- config.dart  # Application configuration
   ```
 
-- add the link api server
+- The current configuration includes:
 
-  ```
-  class Config{
-      static const String baseURL = 'https://your-API-here.com';
+  ```dart
+  class Config {
+    static const String baseURL = 'https://your-API-here.com';
   }
   ```
+
+- Update the `baseURL` if you need to point to a different API server.
+
+#### Firebase Setup
+
+- Ensure you have `firebase_options.dart` configured for your Firebase project
+- Place `google-services.json` in the `android/app/` directory for Android
+- Place `GoogleService-Info.plist` in the `ios/Runner/` directory for iOS
 
 #### Run the Application
 
 - Open your Emulator (virtual/real device)
-- run the project app
-```
+- Run the project app
+```bash
 flutter run
 ```
 
@@ -80,6 +89,18 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
+## Features
+
+The CMLABS Connect app includes the following main features:
+
+- **Dashboard**: Overview of leads and quotations
+- **Analytics**: Traffic analysis, trends, top services, and performance metrics
+- **Inbox Management**: Handle quotations, contact us forms, case studies, and FAQs
+- **Lead Tracking**: Historical lead management and filtering
+- **Account Management**: User profiles, achievements, certifications, education, and experience
+- **Notifications**: Real-time push notifications and local alerts
+- **Authentication**: Secure login and password management
+
 ## Deployment
 
 ### Android
@@ -88,65 +109,87 @@ samples, guidance on mobile development, and a full API reference.
 
    - Debugging
 
-   ```
+   ```bash
    flutter build apk --debug
    ```
 
    - Release
 
-   ```
+   ```bash
    flutter build apk --release
    ```
 
 2. The APK will be available at `build/app/outputs/flutter-apk/app-release.apk`.
 
-### IOS
+### iOS
 
 1. Open the iOS folder in Xcode:
 
-```
+```bash
 open ios/Runner.xcworkspace
 ```
 
 2. Configure signing and build for release.
 
-## Key Component
+## Key Components
 
 ### State Management
 
-- `GetX`: Used for efficient state management, routing, and dependency injection.
+- **GetX** (^4.6.6): Used for efficient state management, routing, and dependency injection.
 
 ### Local Storage
 
-- `Hive`: Provides offline data storage for enhanced performance.
+- **flutter_secure_storage** (^9.2.4): Provides secure storage for sensitive data.
 
 ### Networking
 
-- `DIO` & `Http`: Ensures robust API communication with error handling.
+- **DIO** (^5.7.0): Ensures robust API communication with error handling and interceptors.
 
-### Push Notification
+### Firebase Services
 
-- `firebase_messaging`: Real-time push notifications.
+- **firebase_core** (^3.8.1): Firebase integration setup.
+- **firebase_messaging** (^15.1.6): Real-time push notifications.
+- **firebase_analytics** (^11.4.6): App analytics and user behavior tracking.
 
-- `firebase_core`: Firebase integration setup.
+### Notifications
 
-- `flutter_local_notifications`: Manage local notifications.
+- **flutter_local_notifications** (^18.0.1): Manage local notifications.
 
-### Essential Package
+### UI & Charts
+
+- **syncfusion_flutter_charts** (^29.1.39): Advanced charting capabilities for analytics.
+- **cached_network_image** (^3.4.1): Efficient image loading and caching.
+- **calendar_date_picker2** (^1.1.7): Enhanced date picker widgets.
+
+### Essential Packages
 
 The following packages are integral to the functionality and design of the application:
 
-- `sentry_flutter`: Error tracking and reporting.
+- **screenshot** (^3.0.0): Capture and save screenshots.
+- **image_gallery_saver_plus** (^4.0.1): Save images to device gallery.
+- **file_picker** (^10.1.9): File selection from device storage.
+- **image_picker** (^1.1.2): Camera and gallery image selection.
+- **image_cropper** (^9.1.0): Image cropping functionality.
+- **flutter_slidable** (^4.0.0): Swipeable list items.
+- **flutter_sticky_header** (^0.7.0): Sticky headers for lists.
+- **intl** (^0.19.0): Internationalization and date formatting.
+- **timeago** (^3.7.0): Human-readable time differences.
+- **url_launcher** (^6.3.1): Launch URLs and external applications.
+- **permission_handler** (^11.4.0): Handle device permissions.
+- **device_info_plus** (^11.3.0): Access device information.
+- **pull_to_refresh_new** (^2.0.5): Pull-to-refresh functionality.
+- **loading_animation_widget** (^1.3.0): Loading animations.
+- **fluttertoast** (^8.2.12): Toast notifications.
+- **ionicons** (^0.2.2): iOS-style icons.
+- **double_tap_to_exit** (^1.0.2): Double tap to exit confirmation.
+- **open_filex** (^4.7.0): Open files with external applications.
+- **path_provider** (^2.1.5): Access device file system paths.
+- **safe_password_generator** (^1.0.0): Generate secure passwords.
 
-- `intl`: Internationalization and date formatting.
+### Development Tools
 
-- `google_fonts`: Custom font integration.
-
-- `flutter_launcher_icons`: Simplify app icon customization.
-
-- `flutter_native_splash`: Configurable splash screens.
-
-- `calendar_date_picker2`: Enhanced date picker widgets.
+- **flutter_launcher_icons** (^0.14.1): Simplify app icon customization.
+- **flutter_native_splash** (^2.4.3): Configurable splash screens.
 
 ## CMLABS Connect - Master Design
 
