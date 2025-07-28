@@ -309,7 +309,11 @@ class AnalyticsController extends GetxController {
       queryParams.add('client_source=${selectedClientSource['value']}');
     }
     if (selectedUtm['value'] != 'all') {
-      queryParams.add('utm[]=${selectedUtm['value']}');
+      if (analyticsType == AnalyticsType.quotationTraffic) {
+        queryParams.add('utm[]=${selectedUtm['value']}');
+      } else {
+        queryParams.add('utm=${selectedUtm['value']}');
+      }
     }
     if (selectedStatus['value'] != 'all') {
       queryParams.add('status=${selectedStatus['value']}');
@@ -411,7 +415,7 @@ class AnalyticsController extends GetxController {
     isFilterLoading(false);
   }
 
-  void resetFilter() {
+  Future<void> resetFilter() async {
     selectedDateType.value = initialDateType.value;
     selectedStartDate.value = null;
     selectedEndDate.value = null;
@@ -421,7 +425,8 @@ class AnalyticsController extends GetxController {
     selectedUtm.value = {'label': 'All', 'value': 'all'};
     selectedStatus.value = {'label': 'All', 'value': 'all'};
 
-    applyFilters();
+    await applyFilters();
+    Get.back();
   }
 
   void resetSortOption() {

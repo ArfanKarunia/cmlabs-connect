@@ -538,18 +538,16 @@ class AddQuotationController extends GetxController {
         ),
       );
 
-      isLoading(false);
-
       if (response.statusCode == 200) {
         showSuccessToast('Berhasil menambahkan Quotation!');
         Get.back();
       }
     } on http.DioException catch (e) {
-      isLoading(false);
       showErrorToast('Error: ${e.response?.data}');
     } catch (e) {
-      isLoading(false);
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading(false);
     }
   }
 }

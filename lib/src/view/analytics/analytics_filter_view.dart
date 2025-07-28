@@ -59,16 +59,23 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
                         'Select Filter',
                         style: bold.copyWith(fontSize: 16),
                       ),
-                      GestureDetector(
-                        onTap: () => widget.controller.resetFilter(),
-                        child: Text(
-                          'Reset Filters',
-                          style: regular.copyWith(
-                            fontSize: 13,
-                            color: AppColors.primary,
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.primary,
-                          ),
+                      Obx(
+                        () => SizedBox(
+                          height: 32,
+                          child: widget.controller.isFilterLoading.value
+                              ? const CustomLoading()
+                              : GestureDetector(
+                                  onTap: () async => await widget.controller.resetFilter(),
+                                  child: Text(
+                                    'Reset Filters',
+                                    style: regular.copyWith(
+                                      fontSize: 13,
+                                      color: AppColors.primary,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ],
