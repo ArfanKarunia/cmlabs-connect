@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../models/notification_setting_model.dart';
+import '../../utils/toast.dart';
+
 enum NotificationFilterType { timeRange, days }
 
 class NotificationController extends GetxController {
@@ -36,7 +39,10 @@ class NotificationController extends GetxController {
   Rx<int> unreadReminder = 0.obs;
 
   // Configuration
-  RxList<Map<String, String>?> quiteDay = <Map<String, String>?>[].obs;
+  Rx<bool> isNotificationSettingLoading = false.obs;
+  RxList<Map<String, String>?> quiteModeDays = <Map<String, String>?>[].obs;
+  Rx<TimeOfDay?> quietModeStartTime = Rx<TimeOfDay?>(null);
+  Rx<TimeOfDay?> quietModeEndTime = Rx<TimeOfDay?>(null);
   Rx<bool> pushNotifNewQuotation = false.obs;
   Rx<bool> pushNotifFollowedUpQuotation = false.obs;
   Rx<bool> emailNotifNewQuotation = false.obs;
@@ -46,6 +52,7 @@ class NotificationController extends GetxController {
   void onReady() {
     super.onReady();
     fetchNotification();
+    fetchNotificationSetting();
     Timer.periodic(const Duration(seconds: 10), (timer) {
       fetchNotification();
     });
@@ -88,11 +95,97 @@ class NotificationController extends GetxController {
   }
 
   void setDays(List<Map<String, String>?> value) {
-    quiteDay.clear();
+    quiteModeDays.clear();
     for (var data in value) {
-      quiteDay.add(data);
+      quiteModeDays.add(data);
     }
-    quiteDay.refresh();
+    quiteModeDays.refresh();
+  }
+
+  Future<void> fetchNotificationSetting() async {
+    try {
+      String? accessToken = userController.accesToken.value;
+      final response = await dio.get(
+        '$baseUrl/notification/notification_setting?user_id=${userController.user.value?.id}',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final rawData = response.data;
+        if (rawData is Map) {
+          final notificationSetting = NotificationSetting.fromJson(rawData as Map<String, dynamic>);
+
+          pushNotifNewQuotation.value = notificationSetting.newQuotationInboxPush ?? false;
+          pushNotifFollowedUpQuotation.value = notificationSetting.followUpReminderPush ?? false;
+          emailNotifNewQuotation.value = notificationSetting.newQuotationInboxEmail ?? false;
+          emailNotifFollowedUpQuotation.value = notificationSetting.followUpReminderEmail ?? false;
+          quiteModeDays.value = notificationSetting.quietModeDays?.map((e) => {'value': e, 'label': e}).toList() ?? [];
+          quietModeStartTime.value = notificationSetting.quietModeStartTime != null
+              ? TimeOfDay(
+                  hour: int.parse(notificationSetting.quietModeStartTime!.split(':')[0]),
+                  minute: int.parse(notificationSetting.quietModeStartTime!.split(':')[1]),
+                )
+              : null;
+          quietModeEndTime.value = notificationSetting.quietModeEndTime != null
+              ? TimeOfDay(
+                  hour: int.parse(notificationSetting.quietModeEndTime!.split(':')[0]),
+                  minute: int.parse(notificationSetting.quietModeEndTime!.split(':')[1]),
+                )
+              : null;
+
+          quiteModeDays.refresh();
+          quietModeStartTime.refresh();
+          quietModeEndTime.refresh();
+          pushNotifNewQuotation.refresh();
+          pushNotifFollowedUpQuotation.refresh();
+          emailNotifNewQuotation.refresh();
+          emailNotifFollowedUpQuotation.refresh();
+        }
+      }
+    } on DioException catch (e) {
+      debugPrint('Error fetching notification setting: ${e.response?.data}');
+    } catch (e) {
+      debugPrint('Error fetching notification setting: $e');
+    }
+  }
+
+  Future<void> updateNotificationSetting() async {
+    isNotificationSettingLoading(true);
+
+    try {
+      String? accessToken = userController.accesToken.value;
+
+      final response = await dio.post(
+        '$baseUrl/notification/notification_setting',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: {
+          'user_id': userController.user.value?.id,
+          'new_quotation_inbox_push': pushNotifNewQuotation.value,
+          'follow_up_reminder_push': pushNotifFollowedUpQuotation.value,
+          'new_quotation_inbox_email': emailNotifNewQuotation.value,
+          'follow_up_reminder_email': emailNotifFollowedUpQuotation.value,
+          'quiet_mode_days': quiteModeDays.map((e) => e?['value']).toList(),
+          'quiet_mode_start_time': quietModeStartTime.value != null
+              ? '${quietModeStartTime.value?.hour.toString().padLeft(2, '0')}:${quietModeStartTime.value?.minute.toString().padLeft(2, '0')}:00'
+              : null,
+          'quiet_mode_end_time': quietModeEndTime.value != null
+              ? '${quietModeEndTime.value?.hour.toString().padLeft(2, '0')}:${quietModeEndTime.value?.minute.toString().padLeft(2, '0')}:00'
+              : null,
+        },
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        await fetchNotificationSetting();
+        showSuccessToast('Notification setting updated successfully!');
+        Get.back();
+      }
+    } on DioException catch (e) {
+      debugPrint('Error updating notification setting: ${e.response?.data}');
+    } catch (e) {
+      debugPrint('Error updating notification setting: $e');
+    } finally {
+      isNotificationSettingLoading(false);
+    }
   }
 
   Future<void> fetchNotification({
@@ -306,8 +399,14 @@ class NotificationController extends GetxController {
     }
   }
 
-  void clearQuiteDay() {
-    quiteDay.clear();
+  void clearQuiteMode() {
+    quiteModeDays.clear();
+    quietModeStartTime.value = null;
+    quietModeEndTime.value = null;
+
+    quiteModeDays.refresh();
+    quietModeStartTime.refresh();
+    quietModeEndTime.refresh();
   }
 
   final List<Map<String, String>> timeRangeList = [
