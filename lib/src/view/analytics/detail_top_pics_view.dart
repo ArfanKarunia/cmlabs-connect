@@ -36,14 +36,28 @@ class _DetailTopPICsViewState extends State<DetailTopPICsView> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              icon: Image.asset('assets/icons/icon_filter.png', height: 32, width: 32),
-              onPressed: () => Get.toNamed(
-                AppRoutes.analyticsFilterView,
-                arguments: {
-                  'analyticsType': AnalyticsType.topPICs,
-                  'controller': controller,
-                },
+            child: Obx(
+              () => Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  IconButton(
+                    icon: const ImageIcon(
+                      AssetImage('assets/icons/icon_filter.png'),
+                      size: 32,
+                      color: AppColors.text_1,
+                    ),
+                    onPressed: () => Get.toNamed(
+                      AppRoutes.analyticsFilterView,
+                      arguments: {
+                        'analyticsType': AnalyticsType.quotationTraffic,
+                        'controller': controller,
+                      },
+                    ),
+                  ),
+                  if (controller.isFilterApplied) ...[
+                    const CircleAvatar(radius: 7, backgroundColor: AppColors.primary),
+                  ],
+                ],
               ),
             ),
           ),

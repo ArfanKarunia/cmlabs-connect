@@ -61,6 +61,15 @@ class AnalyticsController extends GetxController {
     {'label': 'Rejected', 'value': '3'},
   ].obs;
 
+  bool get isFilterApplied =>
+      selectedStartDate.value != null ||
+      selectedEndDate.value != null ||
+      selectedCategory['value'] != 'all' ||
+      selectedPic['value'] != 'all' ||
+      selectedClientSource['value'] != 'all' ||
+      selectedUtm['value'] != 'all' ||
+      selectedStatus['value'] != 'all';
+
   final Dio dio = Dio();
   final baseUrl = Config.baseURL;
   final UserController userController = Get.find<UserController>();
@@ -161,10 +170,9 @@ class AnalyticsController extends GetxController {
 
       if (response.statusCode == 200 && response.data != null) {
         final data = (response.data as List<dynamic>).map<Map<String, String>>((utm) {
-          final label = utm.toString().replaceAll('&', ' & ');
           return {
-            'value': utm.toString(),
-            'label': label,
+            'value': utm.toString().replaceAll('&', '%26'),
+            'label': utm.toString().replaceAll('&', ' & '),
           };
         }).toList();
 
@@ -557,27 +565,22 @@ final List<Map<String, String>> dummyClientSourceOptions = [
 ];
 final List<Map<String, String>> dummyUtmOptions = [
   {'label': 'All', 'value': 'all'},
-  {'label': 'FB & FB', 'value': 'FB&FB'},
-  {'label': 'Gads & Cpc', 'value': 'gads&cpc'},
-  {'label': 'Google & Banner', 'value': 'google&banner'},
-  {'label': 'Meta & Banner', 'value': 'meta&banner'},
-  {'label': 'Google & Cpc', 'value': 'google&cpc'},
-  {'label': 'Meta & Cpc', 'value': 'meta&cpc'},
-  {'label': 'Meta & Carousel', 'value': 'Meta&carousel'},
-  {'label': 'Google & Conversion', 'value': 'google&Conversion'},
-  {'label': '- & -', 'value': '-&-'},
-  {'label': '- & Medium', 'value': '-&Medium'},
-  {'label': 'Google Ads & -', 'value': 'Google Ads&-'},
-  {'label': 'Google & Banner', 'value': 'Google&Banner'},
-  {'label': 'Google & Carousel', 'value': 'Google&carousel'},
-  {'label': 'Google & Cpc', 'value': 'Google&cpc'},
-  {'label': 'Google & Gdn', 'value': 'Google&gdn'},
-  {'label': 'Googleads & Carousel', 'value': 'Googleads&carousel'},
-  {'label': 'Googleads & Cpc', 'value': 'Googleads&cpc'},
-  {'label': 'Googleads & Gdn', 'value': 'Googleads&gdn'},
-  {'label': 'Meta & CPC', 'value': 'Meta&CPC'},
-  {'label': 'Meta & Cpc', 'value': 'Meta&cpc'},
-  {'label': 'Meta & Gdn', 'value': 'Meta&gdn'},
-  {'label': 'Source & Medium', 'value': 'Source&Medium'},
-  {'label': 'Wizarding World & Through Your Wand', 'value': 'Wizarding World&Through your wand'},
+  {'label': 'FB & FB', 'value': 'FB%26FB'},
+  {'label': 'Gads & Cpc', 'value': 'gads%26cpc'},
+  {'label': 'Google & Banner', 'value': 'google%26banner'},
+  {'label': 'Meta & Banner', 'value': 'meta%26banner'},
+  {'label': 'Google & Cpc', 'value': 'google%26cpc'},
+  {'label': 'Meta & Cpc', 'value': 'meta%26cpc'},
+  {'label': 'Meta & Carousel', 'value': 'Meta%26carousel'},
+  {'label': 'Google & Conversion', 'value': 'google%26Conversion'},
+  {'label': 'Google & Banner', 'value': 'Google%26Banner'},
+  {'label': 'Google & Carousel', 'value': 'Google%26carousel'},
+  {'label': 'Google & Cpc', 'value': 'Google%26cpc'},
+  {'label': 'Google & Gdn', 'value': 'Google%26gdn'},
+  {'label': 'Googleads & Carousel', 'value': 'Googleads%26carousel'},
+  {'label': 'Googleads & Cpc', 'value': 'Googleads%26cpc'},
+  {'label': 'Googleads & Gdn', 'value': 'Googleads%26gdn'},
+  {'label': 'Meta & CPC', 'value': 'Meta%26CPC'},
+  {'label': 'Meta & Gdn', 'value': 'Meta%26gdn'},
+  {'label': 'Source & Medium', 'value': 'Source%26Medium'},
 ];
