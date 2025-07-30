@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../constant/fontstyle.dart';
+import '../controllers/notification/notification_controller.dart';
 import '../models/inbox/quotation_model.dart';
 import '../routes.dart';
 import 'custom_submit_button.dart';
@@ -26,6 +27,8 @@ class NotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<NotificationController>();
+
     return Container(
       padding: const EdgeInsets.all(14),
       margin: const EdgeInsets.only(bottom: 10),
@@ -89,6 +92,7 @@ class NotificationTile extends StatelessWidget {
             padding: 12,
             borderRadius: 5,
             onTap: () async {
+              controller.updateReadParam(id);
               Get.toNamed(AppRoutes.detailQuotation, arguments: {'quotation': Quotation(id: id)});
             },
           ),

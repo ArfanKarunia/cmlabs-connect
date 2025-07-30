@@ -311,17 +311,14 @@ class NotificationController extends GetxController {
     String? accessToken = userController.accesToken.value;
 
     try {
-      final response = await dio.put(
+      await dio.put(
         "$baseUrl/notification/update_notification",
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-        data: {
-          "id": id,
-        },
+        data: {"id": id},
       );
-
-      debugPrint(response.data);
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint("Error: $e");
+      debugPrint("Stack Trace: $stackTrace");
     }
   }
 

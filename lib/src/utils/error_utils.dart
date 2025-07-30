@@ -16,7 +16,7 @@ void handleDioException(DioException e) {
       showErrorToast("Error: ${e.response?.data ?? 'An unexpected error occurred.'}");
     }
   } else {
-    showErrorToast("Error: ${e.response?.data ?? 'An unexpected error occurred.'}");
+    showErrorToast("Error: ${e.response?.data['message'] ?? 'An unexpected error occurred.'}");
   }
   debugPrint('Error: ${e.response?.data}');
 }

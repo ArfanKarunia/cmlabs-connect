@@ -129,8 +129,8 @@ class AccountController extends GetxController {
         User userData = User.fromMap(data);
         userController.saveUser(userData);
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -152,8 +152,8 @@ class AccountController extends GetxController {
         final data = response.data['data'] as List;
         profileRoleList.value = data.map((item) => {'id': item['id'], 'name': item['name']}).toList();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -258,8 +258,8 @@ class AccountController extends GetxController {
 
         summarySpecializationChecked.value = List<bool>.filled(summarySpecializationList.length, false);
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -302,8 +302,8 @@ class AccountController extends GetxController {
           summarySpecializationChecked.value = List<bool>.filled(summarySpecializationList.length, false);
         }
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -408,8 +408,8 @@ class AccountController extends GetxController {
                 })
             .toList();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -432,8 +432,8 @@ class AccountController extends GetxController {
         experienceList.value = data.map<ExperienceModel?>((item) => ExperienceModel.fromJson(item)).toList();
         experienceList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -582,8 +582,8 @@ class AccountController extends GetxController {
         educationList.value = data.map<EducationModel?>((item) => EducationModel.fromJson(item)).toList();
         educationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -733,8 +733,8 @@ class AccountController extends GetxController {
         organizationList.value = data.map<OrganizationModel?>((item) => OrganizationModel.fromJson(item)).toList();
         organizationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -873,8 +873,8 @@ class AccountController extends GetxController {
         volunteerList.value = data.map<VolunteerModel?>((item) => VolunteerModel.fromJson(item)).toList();
         volunteerList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1018,8 +1018,8 @@ class AccountController extends GetxController {
         certificationList.value = data.map<CertificationModel?>((item) => CertificationModel.fromJson(item)).toList();
         certificationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1158,8 +1158,8 @@ class AccountController extends GetxController {
         achievementList.value = data.map<AchievementModel?>((item) => AchievementModel.fromJson(item)).toList();
         achievementList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
@@ -1289,8 +1289,8 @@ class AccountController extends GetxController {
         publicationList.value = data.map<PublicationModel?>((item) => PublicationModel.fromJson(item)).toList();
         publicationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
       debugPrint('Error fetching status data: $e');
