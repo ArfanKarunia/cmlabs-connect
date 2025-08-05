@@ -48,7 +48,7 @@ class _DetailQuotationTrendsViewState extends State<DetailQuotationTrendsView> {
                     onPressed: () => Get.toNamed(
                       AppRoutes.analyticsFilterView,
                       arguments: {
-                        'analyticsType': AnalyticsType.quotationTraffic,
+                        'analyticsType': AnalyticsType.quotationTrends,
                         'controller': controller,
                       },
                     ),

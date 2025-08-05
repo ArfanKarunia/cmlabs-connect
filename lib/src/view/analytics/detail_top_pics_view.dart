@@ -49,7 +49,7 @@ class _DetailTopPICsViewState extends State<DetailTopPICsView> {
                     onPressed: () => Get.toNamed(
                       AppRoutes.analyticsFilterView,
                       arguments: {
-                        'analyticsType': AnalyticsType.quotationTraffic,
+                        'analyticsType': AnalyticsType.topPICs,
                         'controller': controller,
                       },
                     ),
@@ -152,7 +152,7 @@ class _DetailTopPICsViewState extends State<DetailTopPICsView> {
                       ),
                       const SizedBox(width: 16),
                       GestureDetector(
-                        onTap: () => showQuotationTrafficSortModal(context, controller: controller),
+                        onTap: () => showTopPICsSortModal(context, controller: controller),
                         child: Row(
                           children: [
                             Text(

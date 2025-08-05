@@ -47,7 +47,7 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
                     onPressed: () => Get.toNamed(
                       AppRoutes.analyticsFilterView,
                       arguments: {
-                        'analyticsType': AnalyticsType.quotationTraffic,
+                        'analyticsType': AnalyticsType.topServices,
                         'controller': controller,
                       },
                     ),
@@ -68,6 +68,11 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
             Obx(
               () => Row(
                 children: [
+                  DateTypeButton(
+                    title: 'This Week',
+                    isSelected: controller.selectedDateType.value == DateType.weekly,
+                    onTap: () => controller.setDateType(dateType: DateType.weekly),
+                  ),
                   DateTypeButton(
                     title: 'This Month',
                     isSelected: controller.selectedDateType.value == DateType.monthly,
