@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/notification_setting_model.dart';
+import '../../utils/error_utils.dart';
 import '../../utils/toast.dart';
 
 enum NotificationFilterType { timeRange, days }
@@ -44,9 +45,15 @@ class NotificationController extends GetxController {
   Rx<TimeOfDay?> quietModeStartTime = Rx<TimeOfDay?>(null);
   Rx<TimeOfDay?> quietModeEndTime = Rx<TimeOfDay?>(null);
   Rx<bool> pushNotifNewQuotation = false.obs;
-  Rx<bool> pushNotifFollowedUpQuotation = false.obs;
+  Rx<bool> pushNotifNewCaseStudies = false.obs;
+  Rx<bool> pushNotifNewContactUs = false.obs;
+  Rx<bool> pushNotifNewFAQ = false.obs;
+  Rx<bool> pushNotifFollowedUpReminder = false.obs;
   Rx<bool> emailNotifNewQuotation = false.obs;
-  Rx<bool> emailNotifFollowedUpQuotation = false.obs;
+  Rx<bool> emailNotifNewCaseStudies = false.obs;
+  Rx<bool> emailNotifNewContactUs = false.obs;
+  Rx<bool> emailNotifNewFAQ = false.obs;
+  Rx<bool> emailNotifFollowedUpReminder = false.obs;
 
   @override
   void onReady() {
@@ -115,10 +122,21 @@ class NotificationController extends GetxController {
         if (rawData is Map) {
           final notificationSetting = NotificationSetting.fromJson(rawData as Map<String, dynamic>);
 
+          // Push
           pushNotifNewQuotation.value = notificationSetting.newQuotationInboxPush ?? false;
-          pushNotifFollowedUpQuotation.value = notificationSetting.followUpReminderPush ?? false;
+          pushNotifNewCaseStudies.value = notificationSetting.newCaseStudiesInboxPush ?? false;
+          pushNotifNewContactUs.value = notificationSetting.newContactUsInboxPush ?? false;
+          pushNotifNewFAQ.value = notificationSetting.newFaqInboxInboxPush ?? false;
+          pushNotifFollowedUpReminder.value = notificationSetting.followUpReminderPush ?? false;
+
+          // Email
           emailNotifNewQuotation.value = notificationSetting.newQuotationInboxEmail ?? false;
-          emailNotifFollowedUpQuotation.value = notificationSetting.followUpReminderEmail ?? false;
+          emailNotifNewCaseStudies.value = notificationSetting.newCaseStudiesInboxEmail ?? false;
+          emailNotifNewContactUs.value = notificationSetting.newContactUsInboxEmail ?? false;
+          emailNotifNewFAQ.value = notificationSetting.newFaqInboxInboxEmail ?? false;
+          emailNotifFollowedUpReminder.value = notificationSetting.followUpReminderEmail ?? false;
+
+          // Quiet mode
           quiteModeDays.value = notificationSetting.quietModeDays?.map((e) => {'value': e, 'label': e}).toList() ?? [];
           quietModeStartTime.value = notificationSetting.quietModeStartTime != null
               ? TimeOfDay(
@@ -132,14 +150,6 @@ class NotificationController extends GetxController {
                   minute: int.parse(notificationSetting.quietModeEndTime!.split(':')[1]),
                 )
               : null;
-
-          quiteModeDays.refresh();
-          quietModeStartTime.refresh();
-          quietModeEndTime.refresh();
-          pushNotifNewQuotation.refresh();
-          pushNotifFollowedUpQuotation.refresh();
-          emailNotifNewQuotation.refresh();
-          emailNotifFollowedUpQuotation.refresh();
         }
       }
     } on DioException catch (e) {
@@ -160,10 +170,22 @@ class NotificationController extends GetxController {
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
         data: {
           'user_id': userController.user.value?.id,
+
+          // Push
           'new_quotation_inbox_push': pushNotifNewQuotation.value,
-          'follow_up_reminder_push': pushNotifFollowedUpQuotation.value,
+          'new_case_studies_inbox_push': pushNotifNewCaseStudies.value,
+          'new_contact_us_inbox_push': pushNotifNewContactUs.value,
+          'new_faq_inbox_inbox_push': pushNotifNewFAQ.value,
+          'follow_up_reminder_push': pushNotifFollowedUpReminder.value,
+
+          // Email
           'new_quotation_inbox_email': emailNotifNewQuotation.value,
-          'follow_up_reminder_email': emailNotifFollowedUpQuotation.value,
+          'new_case_studies_inbox_email': emailNotifNewCaseStudies.value,
+          'new_contact_us_inbox_email': emailNotifNewContactUs.value,
+          'new_faq_inbox_inbox_email': emailNotifNewFAQ.value,
+          'follow_up_reminder_email': emailNotifFollowedUpReminder.value,
+
+          // Quite Mode
           'quiet_mode_days': quiteModeDays.map((e) => e?['value']).toList(),
           'quiet_mode_start_time': quietModeStartTime.value != null
               ? '${quietModeStartTime.value?.hour.toString().padLeft(2, '0')}:${quietModeStartTime.value?.minute.toString().padLeft(2, '0')}:00'
@@ -180,7 +202,7 @@ class NotificationController extends GetxController {
         Get.back();
       }
     } on DioException catch (e) {
-      debugPrint('Error updating notification setting: ${e.response?.data}');
+      handleDioException(e);
     } catch (e) {
       debugPrint('Error updating notification setting: $e');
     } finally {
@@ -415,12 +437,12 @@ class NotificationController extends GetxController {
   ];
 
   final dayList = [
-    {'value': "Monday", 'label': "Monday"},
-    {'value': "Tuesday", 'label': "Tuesday"},
-    {'value': "Wednesday", 'label': "Wednesday"},
-    {'value': "Thursday", 'label': "Thursday"},
-    {'value': "Friday", 'label': "Friday"},
-    {'value': "Saturday", 'label': "Saturday"},
-    {'value': "Sunday", 'label': "Sunday"},
+    {'value': "Senin", 'label': "Senin"},
+    {'value': "Selasa", 'label': "Selasa"},
+    {'value': "Rabu", 'label': "Rabu"},
+    {'value': "Kamis", 'label': "Kamis"},
+    {'value': "Jumat", 'label': "Jumat"},
+    {'value': "Sabtu", 'label': "Sabtu"},
+    {'value': "Minggu", 'label': "Minggu"},
   ];
 }

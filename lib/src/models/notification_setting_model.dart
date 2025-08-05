@@ -10,6 +10,12 @@ class NotificationSetting {
   String? quietModeEndTime;
   DateTime? createdAt;
   DateTime? updatedAt;
+  bool? newCaseStudiesInboxPush;
+  bool? newContactUsInboxPush;
+  bool? newFaqInboxInboxPush;
+  bool? newCaseStudiesInboxEmail;
+  bool? newContactUsInboxEmail;
+  bool? newFaqInboxInboxEmail;
 
   NotificationSetting({
     this.id,
@@ -23,6 +29,12 @@ class NotificationSetting {
     this.quietModeEndTime,
     this.createdAt,
     this.updatedAt,
+    this.newCaseStudiesInboxPush,
+    this.newContactUsInboxPush,
+    this.newFaqInboxInboxPush,
+    this.newCaseStudiesInboxEmail,
+    this.newContactUsInboxEmail,
+    this.newFaqInboxInboxEmail,
   });
 
   NotificationSetting.fromJson(Map<String, dynamic> json) {
@@ -37,6 +49,12 @@ class NotificationSetting {
     quietModeEndTime = json['quiet_mode_end_time'];
     createdAt = json['created_at'] != null ? DateTime.parse(json['created_at']) : DateTime.now();
     updatedAt = json['updated_at'] != null ? DateTime.parse(json['updated_at']) : DateTime.now();
+    newCaseStudiesInboxPush = json['new_case_studies_inbox_push'];
+    newContactUsInboxPush = json['new_contact_us_inbox_push'];
+    newFaqInboxInboxPush = json['new_faq_inbox_inbox_push'];
+    newCaseStudiesInboxEmail = json['new_case_studies_inbox_email'];
+    newContactUsInboxEmail = json['new_contact_us_inbox_email'];
+    newFaqInboxInboxEmail = json['new_faq_inbox_inbox_email'];
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +69,12 @@ class NotificationSetting {
       'quiet_mode_end_time': quietModeEndTime,
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
+      'new_case_studies_inbox_push': newCaseStudiesInboxPush,
+      'new_contact_us_inbox_push': newContactUsInboxPush,
+      'new_faq_inbox_inbox_push': newFaqInboxInboxPush,
+      'new_case_studies_inbox_email': newCaseStudiesInboxEmail,
+      'new_contact_us_inbox_email': newContactUsInboxEmail,
+      'new_faq_inbox_inbox_email': newFaqInboxInboxEmail,
     };
   }
 }

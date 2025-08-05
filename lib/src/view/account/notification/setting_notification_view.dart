@@ -20,7 +20,7 @@ class SettingNotificationView extends StatefulWidget {
 }
 
 class _SettingNotificationViewState extends State<SettingNotificationView> {
-  final NotificationController notificationController = Get.find<NotificationController>();
+  final NotificationController controller = Get.find<NotificationController>();
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +48,77 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                         child: FittedBox(
                           fit: BoxFit.fill,
                           child: Switch(
-                            value: notificationController.pushNotifNewQuotation.value,
-                            onChanged: (value) => notificationController.pushNotifNewQuotation.value = value,
+                            value: controller.pushNotifNewQuotation.value,
+                            onChanged: (value) => controller.pushNotifNewQuotation.value = value,
+                            activeTrackColor: AppColors.primary,
+                            inactiveTrackColor: const Color(0xFFD8DAE5),
+                            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                            inactiveThumbColor: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    const Text('New Case Studies Inbox', style: regular),
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => SizedBox(
+                        height: 32,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: controller.pushNotifNewCaseStudies.value,
+                            onChanged: (value) => controller.pushNotifNewCaseStudies.value = value,
+                            activeTrackColor: AppColors.primary,
+                            inactiveTrackColor: const Color(0xFFD8DAE5),
+                            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                            inactiveThumbColor: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    const Text('New Contact Us Inbox', style: regular),
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => SizedBox(
+                        height: 32,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: controller.pushNotifNewContactUs.value,
+                            onChanged: (value) => controller.pushNotifNewContactUs.value = value,
+                            activeTrackColor: AppColors.primary,
+                            inactiveTrackColor: const Color(0xFFD8DAE5),
+                            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                            inactiveThumbColor: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    const Text('New FAQ Inbox', style: regular),
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => SizedBox(
+                        height: 32,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: controller.pushNotifNewFAQ.value,
+                            onChanged: (value) => controller.pushNotifNewFAQ.value = value,
                             activeTrackColor: AppColors.primary,
                             inactiveTrackColor: const Color(0xFFD8DAE5),
                             trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -71,8 +140,8 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                         child: FittedBox(
                           fit: BoxFit.fill,
                           child: Switch(
-                            value: notificationController.pushNotifFollowedUpQuotation.value,
-                            onChanged: (value) => notificationController.pushNotifFollowedUpQuotation.value = value,
+                            value: controller.pushNotifFollowedUpReminder.value,
+                            onChanged: (value) => controller.pushNotifFollowedUpReminder.value = value,
                             activeTrackColor: AppColors.primary,
                             inactiveTrackColor: const Color(0xFFD8DAE5),
                             trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -105,7 +174,7 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                       style: bold.copyWith(fontSize: 14, color: AppColors.text_1),
                     ),
                     GestureDetector(
-                      onTap: () => notificationController.clearQuiteMode(),
+                      onTap: () => controller.clearQuiteMode(),
                       child: Text(
                         "Clear",
                         style: regular.copyWith(
@@ -132,19 +201,19 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                   },
                   child: Obx(
                     () {
-                      return notificationController.quiteModeDays.isEmpty
+                      return controller.quiteModeDays.isEmpty
                           ? const InboxTextOnField(title: 'Choose Days', selected: null)
                           : Wrap(
                               clipBehavior: Clip.antiAlias,
                               children: List.generate(
-                                notificationController.quiteModeDays.length,
+                                controller.quiteModeDays.length,
                                 (index) {
-                                  Map<String, String>? day = notificationController.quiteModeDays[index];
+                                  Map<String, String>? day = controller.quiteModeDays[index];
 
                                   return FittedBox(
                                     child: TagButton(
                                       statusLabel: day?['label'] ?? '',
-                                      onPressed: () => notificationController.quiteModeDays.removeAt(index),
+                                      onPressed: () => controller.quiteModeDays.removeAt(index),
                                     ),
                                   );
                                 },
@@ -161,8 +230,8 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                 const SizedBox(height: 14),
                 Obx(
                   () {
-                    TimeOfDay? fromTime = notificationController.quietModeStartTime.value;
-                    TimeOfDay? endTime = notificationController.quietModeEndTime.value;
+                    TimeOfDay? fromTime = controller.quietModeStartTime.value;
+                    TimeOfDay? endTime = controller.quietModeEndTime.value;
 
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +262,7 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                                   },
                                 );
 
-                                if (pickedTime != null) notificationController.quietModeStartTime.value = pickedTime;
+                                if (pickedTime != null) controller.quietModeStartTime.value = pickedTime;
                               },
                             ),
                           ),
@@ -225,7 +294,7 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                                   },
                                 );
 
-                                if (pickedTime != null) notificationController.quietModeEndTime.value = pickedTime;
+                                if (pickedTime != null) controller.quietModeEndTime.value = pickedTime;
                               },
                             ),
                           ),
@@ -253,8 +322,77 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                         child: FittedBox(
                           fit: BoxFit.fill,
                           child: Switch(
-                            value: notificationController.emailNotifNewQuotation.value,
-                            onChanged: (value) => notificationController.emailNotifNewQuotation.value = value,
+                            value: controller.emailNotifNewQuotation.value,
+                            onChanged: (value) => controller.emailNotifNewQuotation.value = value,
+                            activeTrackColor: AppColors.primary,
+                            inactiveTrackColor: const Color(0xFFD8DAE5),
+                            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                            inactiveThumbColor: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 7),
+                Row(
+                  children: [
+                    const Text('New Case Studies Inbox', style: regular),
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => SizedBox(
+                        height: 32,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: controller.emailNotifNewCaseStudies.value,
+                            onChanged: (value) => controller.emailNotifNewCaseStudies.value = value,
+                            activeTrackColor: AppColors.primary,
+                            inactiveTrackColor: const Color(0xFFD8DAE5),
+                            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                            inactiveThumbColor: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 7),
+                Row(
+                  children: [
+                    const Text('New Contact Us Inbox', style: regular),
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => SizedBox(
+                        height: 32,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: controller.emailNotifNewContactUs.value,
+                            onChanged: (value) => controller.emailNotifNewContactUs.value = value,
+                            activeTrackColor: AppColors.primary,
+                            inactiveTrackColor: const Color(0xFFD8DAE5),
+                            trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+                            inactiveThumbColor: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 7),
+                Row(
+                  children: [
+                    const Text('New FAQ Inbox', style: regular),
+                    const SizedBox(width: 10),
+                    Obx(
+                      () => SizedBox(
+                        height: 32,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: controller.emailNotifNewFAQ.value,
+                            onChanged: (value) => controller.emailNotifNewFAQ.value = value,
                             activeTrackColor: AppColors.primary,
                             inactiveTrackColor: const Color(0xFFD8DAE5),
                             trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -276,8 +414,8 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                         child: FittedBox(
                           fit: BoxFit.fill,
                           child: Switch(
-                            value: notificationController.emailNotifFollowedUpQuotation.value,
-                            onChanged: (value) => notificationController.emailNotifFollowedUpQuotation.value = value,
+                            value: controller.emailNotifFollowedUpReminder.value,
+                            onChanged: (value) => controller.emailNotifFollowedUpReminder.value = value,
                             activeTrackColor: AppColors.primary,
                             inactiveTrackColor: const Color(0xFFD8DAE5),
                             trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
@@ -288,6 +426,8 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                     ),
                   ],
                 ),
+
+                const SizedBox(height: 200),
               ],
             ),
             Align(
@@ -322,11 +462,11 @@ class _SettingNotificationViewState extends State<SettingNotificationView> {
                     ),
                     const SizedBox(height: 20),
                     Obx(
-                      () => notificationController.isNotificationSettingLoading.value
+                      () => controller.isNotificationSettingLoading.value
                           ? const CustomLoadingButton()
                           : CustomSubmitButton(
                               title: 'Save',
-                              onTap: () => notificationController.updateNotificationSetting(),
+                              onTap: () => controller.updateNotificationSetting(),
                             ),
                     ),
                     const SizedBox(height: 10),
