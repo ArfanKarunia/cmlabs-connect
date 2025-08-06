@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:854108264405:android:4a9eaf3d82edd12a9d0f5c",
+        "mobilesdk_app_id": "1:854108264405:android:918b0f64ec7b48489d0f5c",
         "android_client_info": {
-          "package_name": "com.example.cmlabs_connect"
+          "package_name": "com.cmlabs.connect"
         }
       },
       "oauth_client": [],
@@ -26,9 +26,9 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:854108264405:android:7eda018dcef58ce79d0f5c",
+        "mobilesdk_app_id": "1:854108264405:android:4a9eaf3d82edd12a9d0f5c",
         "android_client_info": {
-          "package_name": "com.example.quotation_app"
+          "package_name": "com.example.cmlabs_connect"
         }
       },
       "oauth_client": [],
