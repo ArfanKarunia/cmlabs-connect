@@ -103,7 +103,7 @@ class AuthenticationController extends GetxController {
       userController.saveUser(user);
       userController.password.value = password;
 
-      await storeDeviceToken(userController.deviceToken.value!, userController.user.value!.id.toString());
+      await storeDeviceToken(userController.deviceToken.value ?? '', userController.user.value!.id.toString());
 
       if (isRememberMe.value) {
         await setEmail(email);

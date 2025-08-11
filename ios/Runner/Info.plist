@@ -52,5 +52,19 @@
     <true/>
     <key>UIStatusBarHidden</key>
     <false/>
+    
+    <!-- Camera and Photo Library Permissions -->
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs access to camera to take photos for profile and uploads.</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>This app needs access to photo library to select photos for profile and uploads.</string>
+    
+    <!-- File Access Permissions -->
+    <key>NSDocumentDirectory</key>
+    <string>This app needs to access documents to save and manage files.</string>
+    
+    <!-- Microphone Permission (if needed for notifications) -->
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app may need access to microphone for certain features.</string>
   </dict>
 </plist>
