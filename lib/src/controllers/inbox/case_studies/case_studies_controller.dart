@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
@@ -59,9 +58,7 @@ class CaseStudiesController extends InboxController {
           if (refreshData) limit.value = 10;
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   @override
@@ -90,10 +87,8 @@ class CaseStudiesController extends InboxController {
       }
     } on DioException catch (e) {
       showErrorToast('Failed to export data: ${e.message}');
-      debugPrint('Error fetching data: $e');
     } catch (e) {
       showErrorToast('Failed to export data: ${e.toString()}');
-      debugPrint('Error fetching data: $e');
     } finally {
       isExportLoading(false);
     }
@@ -112,9 +107,7 @@ class CaseStudiesController extends InboxController {
       if (response.statusCode == 200 && response.data != null) {
         totalLeads.value = response.data['data'];
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   @override

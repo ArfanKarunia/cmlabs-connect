@@ -1,7 +1,6 @@
 // ignore_for_file: overridden_fields
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/analytics/quotation_traffic_model.dart';
@@ -45,9 +44,7 @@ class QuotationTrafficController extends AnalyticsController {
       if (response.statusCode == 200) {
         quotationTraffic.value = QuotationTraffic.fromJson(response.data);
       }
-    } catch (e) {
-      debugPrint('Error fetching quotation traffic data: $e');
-    }
+    } catch (_) {}
   }
 
   @override
@@ -81,10 +78,8 @@ class QuotationTrafficController extends AnalyticsController {
       }
     } on DioException catch (e) {
       showErrorToast('Failed to export data: ${e.message}');
-      debugPrint('Error fetching data: $e');
     } catch (e) {
       showErrorToast('Failed to export data: ${e.toString()}');
-      debugPrint('Error fetching data: $e');
     } finally {
       isExportLoading(false);
     }

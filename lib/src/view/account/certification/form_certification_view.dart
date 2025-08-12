@@ -86,9 +86,7 @@ class _FormCertificationViewState extends State<FormCertificationView> {
           fromDate = certification.startTime;
           toDate = certification.finishTime;
         }
-      } catch (e) {
-        debugPrint('Error fetching experience: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearCertification();
     }

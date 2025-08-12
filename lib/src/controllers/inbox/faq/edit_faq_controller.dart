@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 
 import '../../../utils/toast.dart';
@@ -32,7 +32,6 @@ class EditFaqController extends EditFormController {
         ),
       );
 
-      debugPrint(response.toString());
 
       isLoading(false);
       if (response.statusCode == 200 && response.data['success']) {

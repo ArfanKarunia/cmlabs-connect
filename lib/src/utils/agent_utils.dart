@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 
 class AgentUtils {
@@ -18,7 +17,6 @@ class AgentUtils {
         return '-';
       }
     } catch (e) {
-      debugPrint('Error getting device info: $e');
       return '-';
     }
   }
@@ -33,7 +31,6 @@ class AgentUtils {
         return _getLocalIp();
       }
     } catch (e) {
-      debugPrint('Error getting IP address: $e');
       return _getLocalIp();
     }
   }
@@ -50,7 +47,6 @@ class AgentUtils {
       }
       return '-';
     } catch (e) {
-      debugPrint('Error getting local IP: $e');
       return '-';
     }
   }

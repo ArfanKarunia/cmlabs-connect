@@ -1,7 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/dashboard/dashboard_controller.dart';
 import 'package:cmlabs_connect/src/controllers/inbox/quotation/quotation_controller.dart';
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart';
 
@@ -89,9 +88,7 @@ class FilterController extends GetxController {
           await fetchCategoryFilter();
           break;
       }
-    } catch (e) {
-      debugPrint('Error fetching status data: $e');
-    }
+    } catch (_) {}
   }
 
   Future<void> fetchClientSourceFilter() async {

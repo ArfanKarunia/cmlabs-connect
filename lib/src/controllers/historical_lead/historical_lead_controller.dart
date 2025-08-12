@@ -1,7 +1,6 @@
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:cmlabs_connect/src/models/historical_lead_model.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constant/config.dart';
@@ -68,11 +67,7 @@ class HistoricalLeadController extends GetxController {
           historicalData2.value = historicalData;
         }
       }
-    } on DioException catch (e) {
-      debugPrint("Error: ${e.response?.statusCode}, Message: ${e.response?.statusMessage}");
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } on DioException catch (_) {} catch (_) {}
   }
 
   void clear() {

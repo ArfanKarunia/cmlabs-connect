@@ -78,9 +78,7 @@ class _FormOrganizationViewState extends State<FormOrganizationView> {
           fromDate = organization.startTime;
           toDate = organization.finishTime;
         }
-      } catch (e) {
-        debugPrint('Error fetching organization: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearOrganization();
     }

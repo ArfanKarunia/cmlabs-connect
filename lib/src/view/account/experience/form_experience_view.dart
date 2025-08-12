@@ -81,9 +81,7 @@ class _FormExperienceViewState extends State<FormExperienceView> {
           controller.experienceProject.value = experience.company;
           controller.experienceLevel.value = experience.type;
         }
-      } catch (e) {
-        debugPrint('Error fetching experience: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearExperience();
     }

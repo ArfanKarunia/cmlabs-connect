@@ -2,16 +2,23 @@ import 'dart:io';
 
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 
+/// Background entry point invoked by Firebase Messaging when a push
+/// notification is received and the app is in the background/terminated.
+///
+/// This ensures the local notifications plugin is initialized and then
+/// displays the incoming notification.
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await NotificationService.instance.setupFlutterNotification();
   await NotificationService.instance.showNotification(message);
 }
 
+/// Service responsible for configuring push notifications (FCM),
+/// handling iOS APNS specifics, and showing local notifications
+/// while the app is in the foreground/background.
 class NotificationService {
   UserController userController = Get.put(UserController());
 
@@ -23,7 +30,7 @@ class NotificationService {
   bool _isFlutterLocalNotificationInitialized = false;
 
   Future<void> _requestPermission() async {
-    final settings = await _messaging.requestPermission(
+    await _messaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
@@ -32,10 +39,17 @@ class NotificationService {
       carPlay: true,
       criticalAlert: true,
     );
-
-    debugPrint("Permission status: ${settings.authorizationStatus}");
   }
 
+  /// Initializes Firebase Messaging and the local notifications plugin.
+  ///
+  /// Steps:
+  /// - Registers the background handler
+  /// - Requests notification permissions
+  /// - Initializes local notification channels/settings
+  /// - Sets up foreground/background message listeners
+  /// - On iOS, handles APNS token availability and presentation options
+  /// - Retrieves and stores the FCM token, and listens for token refreshes
   Future<void> initialize() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -53,38 +67,30 @@ class NotificationService {
       final token = await _messaging.getToken();
       if (token != null) {
         userController.deviceToken.value = token;
-        debugPrint("FCM Token: $token");
-      } else {
-        debugPrint("FCM Token is null");
       }
-    } catch (e) {
-      if (Platform.isIOS && e.toString().contains('apns-token-not-set')) {
-        debugPrint("APNS token not available - this is expected on iOS Simulator");
-        debugPrint("FCM token cannot be generated without APNS token on iOS");
-        debugPrint("To test push notifications, use a physical iOS device");
-      } else {
-        debugPrint("Error getting FCM token: $e");
-      }
+    } catch (_) {
+      // Intentionally ignore token retrieval errors. On iOS Simulator, APNS
+      // is unavailable, and therefore FCM token generation will fail.
     }
 
     // Listen for token refresh
     _messaging.onTokenRefresh.listen((fcmToken) {
-      debugPrint("FCM Token refreshed: $fcmToken");
       userController.deviceToken.value = fcmToken;
-    }).onError((err) {
-      debugPrint("Error listening to token refresh: $err");
-    });
+    }).onError((_) {});
   }
 
+  /// Ensures APNS token and iOS foreground presentation behavior are handled.
+  ///
+  /// On Simulator, APNS is not available; presentation options are still set
+  /// so that running on device later will behave correctly. On a physical
+  /// device, attempts to acquire the APNS token with a simple retry strategy
+  /// before setting foreground presentation options.
   Future<void> _handleAPNSToken() async {
     try {
       // Check if running on simulator
       bool isSimulator = await _isRunningOnSimulator();
       
       if (isSimulator) {
-        debugPrint("Running on iOS Simulator - APNS tokens are not available");
-        debugPrint("Push notifications will not work on simulator. Use a physical device for testing.");
-        
         // Set foreground notification options anyway for when it runs on device
         _messaging.setForegroundNotificationPresentationOptions(
           alert: true,
@@ -97,20 +103,14 @@ class NotificationService {
       // Get APNS token with retry mechanism (only on physical device)
       String? apnsToken = await _getAPNSTokenWithRetry();
       if (apnsToken != null) {
-        debugPrint("APNS Token: $apnsToken");
         // Set the APNS token to Firebase Messaging
         _messaging.setForegroundNotificationPresentationOptions(
           alert: true,
           badge: true,
           sound: true,
         );
-      } else {
-        debugPrint("APNS token not available after retry attempts");
-        debugPrint("Make sure you're running on a physical iOS device and have proper certificates configured");
       }
-    } catch (e) {
-      debugPrint("Error handling APNS token: $e");
-    }
+    } catch (_) {}
   }
 
   Future<bool> _isRunningOnSimulator() async {
@@ -136,6 +136,9 @@ class NotificationService {
     }
   }
 
+  /// Attempts to retrieve an APNS token several times with delay between tries.
+  ///
+  /// Returns the token if available, otherwise `null` after all attempts.
   Future<String?> _getAPNSTokenWithRetry({
     int retries = 5,
     Duration delay = const Duration(seconds: 2),
@@ -146,9 +149,8 @@ class NotificationService {
         if (apnsToken != null && apnsToken.isNotEmpty) {
           return apnsToken;
         }
-        debugPrint("APNS token attempt ${i + 1}/$retries: null or empty");
-      } catch (error) {
-        debugPrint("Error getting APNS token on attempt ${i + 1}/$retries: $error");
+      } catch (_) {
+        return null;
       }
       
       if (i < retries - 1) {
@@ -158,6 +160,11 @@ class NotificationService {
     return null;
   }
 
+  /// Initializes local notifications on both Android and iOS.
+  ///
+  /// On Android, creates a high-importance notification channel used to
+  /// display heads-up notifications. On iOS, requests the relevant
+  /// presentation permissions.
   Future<void> setupFlutterNotification() async {
     if (_isFlutterLocalNotificationInitialized) {
       return;
@@ -198,6 +205,11 @@ class NotificationService {
     _isFlutterLocalNotificationInitialized = true;
   }
 
+  /// Displays a local notification for an incoming [RemoteMessage].
+  ///
+  /// Only shows the notification if it contains an Android notification
+  /// payload. On iOS, display behavior is governed by foreground
+  /// presentation options set earlier.
   Future<void> showNotification(RemoteMessage message) async {
     RemoteNotification? notification = message.notification;
     AndroidNotification? android = message.notification?.android;
@@ -223,6 +235,11 @@ class NotificationService {
     }
   }
 
+  /// Wires up listeners for foreground and background notification events.
+  ///
+  /// - Foreground: shows a local notification
+  /// - Background/opened: delegates to background message handler
+  /// - App launch via notification: handles the initial notification
   Future<void> _setupMessageHandlers() async {
     // foreground message
     FirebaseMessaging.onMessage.listen(
@@ -241,6 +258,8 @@ class NotificationService {
     }
   }
 
+  /// Handles navigation or side-effects when a notification is tapped
+  /// and the app is brought to the foreground from background/terminated.
   void _handleBackgroundMessage(RemoteMessage message) {
     if (message.data['type'] == 'chat') {
       // open spesific screen

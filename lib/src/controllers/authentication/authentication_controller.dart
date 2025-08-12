@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
@@ -159,7 +158,7 @@ class AuthenticationController extends GetxController {
     var body = jsonEncode(requestData);
 
     try {
-      var response = await dio.post(
+      await dio.post(
         apiUrl,
         options: Options(
           headers: {
@@ -170,11 +169,8 @@ class AuthenticationController extends GetxController {
         data: body,
       );
 
-      if (response.statusCode == 200) {
-        debugPrint("Device Token berhasil di kirim");
-      }
-    } catch (e) {
-      debugPrint(e.toString());
+    } catch (_) {
+
     }
   }
 
@@ -195,9 +191,8 @@ class AuthenticationController extends GetxController {
         userController.accesToken.value = '';
         userController.tokenType.value = '';
       }
-    } catch (e) {
+    } catch (_) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -227,10 +222,10 @@ class AuthenticationController extends GetxController {
       }
     } on DioException catch (e) {
       showErrorToast("Error: ${(e.response?.data['message'] ?? 'Failed to change password')}");
-      debugPrint('Error fetching status data: $e');
-    } catch (e) {
+      
+    } catch (_) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
+      
     } finally {
       isLoading(false);
     }

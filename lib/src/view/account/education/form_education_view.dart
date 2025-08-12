@@ -94,9 +94,7 @@ class _FormEducationViewState extends State<FormEducationView> {
           fromDate = education.startTime;
           toDate = education.finishTime;
         }
-      } catch (e) {
-        debugPrint('Error fetching experience: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearEducation();
     }

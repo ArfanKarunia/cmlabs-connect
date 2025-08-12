@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../constant/config.dart';
@@ -327,7 +326,6 @@ class AnalyticsController extends GetxController {
       queryParams.add('status=${selectedStatus['value']}');
     }
 
-    debugPrint('$baseUrl?${queryParams.join('&')}');
     return '$baseUrl?${queryParams.join('&')}';
   }
 

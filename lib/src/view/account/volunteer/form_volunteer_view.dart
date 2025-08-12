@@ -90,9 +90,7 @@ class _FormVolunteerViewState extends State<FormVolunteerView> {
           fromDate = volunteer.startTime;
           toDate = volunteer.finishTime;
         }
-      } catch (e) {
-        debugPrint('Error fetching experience: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearVolunteer();
     }

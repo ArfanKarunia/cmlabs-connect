@@ -152,11 +152,7 @@ class NotificationController extends GetxController {
               : null;
         }
       }
-    } on DioException catch (e) {
-      debugPrint('Error fetching notification setting: ${e.response?.data}');
-    } catch (e) {
-      debugPrint('Error fetching notification setting: $e');
-    }
+    } on DioException catch (_) {} catch (_) {}
   }
 
   Future<void> updateNotificationSetting() async {
@@ -203,9 +199,7 @@ class NotificationController extends GetxController {
       }
     } on DioException catch (e) {
       handleDioException(e);
-    } catch (e) {
-      debugPrint('Error updating notification setting: $e');
-    } finally {
+    } catch (_) {} finally {
       isNotificationSettingLoading(false);
     }
   }
@@ -276,9 +270,7 @@ class NotificationController extends GetxController {
           monthNotification.refresh();
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   Future<void> fetchAmountUnreadNotification() async {
@@ -324,9 +316,7 @@ class NotificationController extends GetxController {
           }
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   Future<void> updateReadParam(int id) async {
@@ -338,10 +328,7 @@ class NotificationController extends GetxController {
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
         data: {"id": id},
       );
-    } catch (e, stackTrace) {
-      debugPrint("Error: $e");
-      debugPrint("Stack Trace: $stackTrace");
-    }
+    } catch (_) {}
   }
 
   void setSearch(String? query) {
@@ -388,9 +375,7 @@ class NotificationController extends GetxController {
           }).toList();
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
 
     return filteredData;
   }

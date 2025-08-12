@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 
 import 'toast.dart';
 
 void handleDioException(DioException e) {
+  try {
+    
   if (e.response?.data is Map && e.response?.data['errors'] != null) {
     final errors = e.response?.data['errors'] as Map;
     final firstError = errors.values.firstWhere(
@@ -16,7 +17,9 @@ void handleDioException(DioException e) {
       showErrorToast("Error: ${e.response?.data ?? 'An unexpected error occurred.'}");
     }
   } else {
-    showErrorToast("Error: ${e.response?.data['message'] ?? 'An unexpected error occurred.'}");
+    showErrorToast("Error: ${e.response?.data['message'] ?? '${e.response?.statusCode} - An unexpected error occurred.'}");
   }
-  debugPrint('Error: ${e.response?.data}');
+  } catch (_) {
+    showErrorToast("Error: ${e.response?.statusCode} - An unexpected error occurred.");
+  }
 }

@@ -11,7 +11,6 @@ import 'package:cmlabs_connect/src/models/account/publication_model.dart';
 import 'package:cmlabs_connect/src/models/user_model.dart';
 import 'package:cmlabs_connect/src/models/account/volunteer_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as http;
 
@@ -133,7 +132,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -156,7 +154,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -207,7 +204,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingProfile(false);
     }
@@ -262,7 +258,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -306,7 +301,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -333,7 +327,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -365,7 +358,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingSummary(false);
     }
@@ -412,7 +404,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -436,7 +427,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -470,7 +460,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingExperience(false);
     }
@@ -509,7 +498,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingExperience(false);
     }
@@ -536,7 +524,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -586,7 +573,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -623,7 +609,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingEducation(false);
     }
@@ -663,7 +648,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingEducation(false);
     }
@@ -688,7 +672,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Education");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -737,7 +720,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -770,7 +752,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingOrganization(false);
     }
@@ -806,7 +787,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingOrganization(false);
     }
@@ -829,7 +809,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Organization");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -877,7 +856,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -911,7 +889,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingVolunteer(false);
     }
@@ -948,7 +925,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingVolunteer(false);
     }
@@ -973,7 +949,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Volunteer");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1022,7 +997,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1056,7 +1030,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingCertification(false);
     }
@@ -1093,7 +1066,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingCertification(false);
     }
@@ -1116,7 +1088,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Certification");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1162,7 +1133,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1193,7 +1163,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingAchievement(false);
     }
@@ -1227,7 +1196,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingAchievement(false);
     }
@@ -1250,7 +1218,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Achievement");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1293,7 +1260,6 @@ class AccountController extends GetxController {
       // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1324,7 +1290,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingPublication(false);
     }
@@ -1358,7 +1323,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingPublication(false);
     }
@@ -1381,7 +1345,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Publication");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
