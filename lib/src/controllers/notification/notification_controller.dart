@@ -8,6 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
+import '../../models/notification_setting_model.dart';
+import '../../utils/error_utils.dart';
+import '../../utils/toast.dart';
+
 enum NotificationFilterType { timeRange, days }
 
 class NotificationController extends GetxController {
@@ -36,16 +40,26 @@ class NotificationController extends GetxController {
   Rx<int> unreadReminder = 0.obs;
 
   // Configuration
-  RxList<Map<String, String>?> quiteDay = <Map<String, String>?>[].obs;
+  Rx<bool> isNotificationSettingLoading = false.obs;
+  RxList<Map<String, String>?> quiteModeDays = <Map<String, String>?>[].obs;
+  Rx<TimeOfDay?> quietModeStartTime = Rx<TimeOfDay?>(null);
+  Rx<TimeOfDay?> quietModeEndTime = Rx<TimeOfDay?>(null);
   Rx<bool> pushNotifNewQuotation = false.obs;
-  Rx<bool> pushNotifFollowedUpQuotation = false.obs;
+  Rx<bool> pushNotifNewCaseStudies = false.obs;
+  Rx<bool> pushNotifNewContactUs = false.obs;
+  Rx<bool> pushNotifNewFAQ = false.obs;
+  Rx<bool> pushNotifFollowedUpReminder = false.obs;
   Rx<bool> emailNotifNewQuotation = false.obs;
-  Rx<bool> emailNotifFollowedUpQuotation = false.obs;
+  Rx<bool> emailNotifNewCaseStudies = false.obs;
+  Rx<bool> emailNotifNewContactUs = false.obs;
+  Rx<bool> emailNotifNewFAQ = false.obs;
+  Rx<bool> emailNotifFollowedUpReminder = false.obs;
 
   @override
   void onReady() {
     super.onReady();
     fetchNotification();
+    fetchNotificationSetting();
     Timer.periodic(const Duration(seconds: 10), (timer) {
       fetchNotification();
     });
@@ -88,11 +102,106 @@ class NotificationController extends GetxController {
   }
 
   void setDays(List<Map<String, String>?> value) {
-    quiteDay.clear();
+    quiteModeDays.clear();
     for (var data in value) {
-      quiteDay.add(data);
+      quiteModeDays.add(data);
     }
-    quiteDay.refresh();
+    quiteModeDays.refresh();
+  }
+
+  Future<void> fetchNotificationSetting() async {
+    try {
+      String? accessToken = userController.accesToken.value;
+      final response = await dio.get(
+        '$baseUrl/notification/notification_setting?user_id=${userController.user.value?.id}',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        final rawData = response.data;
+        if (rawData is Map) {
+          final notificationSetting = NotificationSetting.fromJson(rawData as Map<String, dynamic>);
+
+          // Push
+          pushNotifNewQuotation.value = notificationSetting.newQuotationInboxPush ?? false;
+          pushNotifNewCaseStudies.value = notificationSetting.newCaseStudiesInboxPush ?? false;
+          pushNotifNewContactUs.value = notificationSetting.newContactUsInboxPush ?? false;
+          pushNotifNewFAQ.value = notificationSetting.newFaqInboxInboxPush ?? false;
+          pushNotifFollowedUpReminder.value = notificationSetting.followUpReminderPush ?? false;
+
+          // Email
+          emailNotifNewQuotation.value = notificationSetting.newQuotationInboxEmail ?? false;
+          emailNotifNewCaseStudies.value = notificationSetting.newCaseStudiesInboxEmail ?? false;
+          emailNotifNewContactUs.value = notificationSetting.newContactUsInboxEmail ?? false;
+          emailNotifNewFAQ.value = notificationSetting.newFaqInboxInboxEmail ?? false;
+          emailNotifFollowedUpReminder.value = notificationSetting.followUpReminderEmail ?? false;
+
+          // Quiet mode
+          quiteModeDays.value = notificationSetting.quietModeDays?.map((e) => {'value': e, 'label': e}).toList() ?? [];
+          quietModeStartTime.value = notificationSetting.quietModeStartTime != null
+              ? TimeOfDay(
+                  hour: int.parse(notificationSetting.quietModeStartTime!.split(':')[0]),
+                  minute: int.parse(notificationSetting.quietModeStartTime!.split(':')[1]),
+                )
+              : null;
+          quietModeEndTime.value = notificationSetting.quietModeEndTime != null
+              ? TimeOfDay(
+                  hour: int.parse(notificationSetting.quietModeEndTime!.split(':')[0]),
+                  minute: int.parse(notificationSetting.quietModeEndTime!.split(':')[1]),
+                )
+              : null;
+        }
+      }
+    } on DioException catch (_) {} catch (_) {}
+  }
+
+  Future<void> updateNotificationSetting() async {
+    isNotificationSettingLoading(true);
+
+    try {
+      String? accessToken = userController.accesToken.value;
+
+      final response = await dio.post(
+        '$baseUrl/notification/notification_setting',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: {
+          'user_id': userController.user.value?.id,
+
+          // Push
+          'new_quotation_inbox_push': pushNotifNewQuotation.value,
+          'new_case_studies_inbox_push': pushNotifNewCaseStudies.value,
+          'new_contact_us_inbox_push': pushNotifNewContactUs.value,
+          'new_faq_inbox_inbox_push': pushNotifNewFAQ.value,
+          'follow_up_reminder_push': pushNotifFollowedUpReminder.value,
+
+          // Email
+          'new_quotation_inbox_email': emailNotifNewQuotation.value,
+          'new_case_studies_inbox_email': emailNotifNewCaseStudies.value,
+          'new_contact_us_inbox_email': emailNotifNewContactUs.value,
+          'new_faq_inbox_inbox_email': emailNotifNewFAQ.value,
+          'follow_up_reminder_email': emailNotifFollowedUpReminder.value,
+
+          // Quite Mode
+          'quiet_mode_days': quiteModeDays.map((e) => e?['value']).toList(),
+          'quiet_mode_start_time': quietModeStartTime.value != null
+              ? '${quietModeStartTime.value?.hour.toString().padLeft(2, '0')}:${quietModeStartTime.value?.minute.toString().padLeft(2, '0')}:00'
+              : null,
+          'quiet_mode_end_time': quietModeEndTime.value != null
+              ? '${quietModeEndTime.value?.hour.toString().padLeft(2, '0')}:${quietModeEndTime.value?.minute.toString().padLeft(2, '0')}:00'
+              : null,
+        },
+      );
+
+      if (response.statusCode == 200 && response.data != null) {
+        await fetchNotificationSetting();
+        showSuccessToast('Notification setting updated successfully!');
+        Get.back();
+      }
+    } on DioException catch (e) {
+      handleDioException(e);
+    } catch (_) {} finally {
+      isNotificationSettingLoading(false);
+    }
   }
 
   Future<void> fetchNotification({
@@ -161,9 +270,7 @@ class NotificationController extends GetxController {
           monthNotification.refresh();
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   Future<void> fetchAmountUnreadNotification() async {
@@ -209,27 +316,19 @@ class NotificationController extends GetxController {
           }
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   Future<void> updateReadParam(int id) async {
     String? accessToken = userController.accesToken.value;
 
     try {
-      final response = await dio.put(
+      await dio.put(
         "$baseUrl/notification/update_notification",
         options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-        data: {
-          "id": id,
-        },
+        data: {"id": id},
       );
-
-      debugPrint(response.data);
-    } catch (e) {
-      debugPrint("Error: $e");
-    }
+    } catch (_) {}
   }
 
   void setSearch(String? query) {
@@ -276,9 +375,7 @@ class NotificationController extends GetxController {
           }).toList();
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
 
     return filteredData;
   }
@@ -306,8 +403,14 @@ class NotificationController extends GetxController {
     }
   }
 
-  void clearQuiteDay() {
-    quiteDay.clear();
+  void clearQuiteMode() {
+    quiteModeDays.clear();
+    quietModeStartTime.value = null;
+    quietModeEndTime.value = null;
+
+    quiteModeDays.refresh();
+    quietModeStartTime.refresh();
+    quietModeEndTime.refresh();
   }
 
   final List<Map<String, String>> timeRangeList = [
@@ -319,12 +422,12 @@ class NotificationController extends GetxController {
   ];
 
   final dayList = [
-    {'value': "Monday", 'label': "Monday"},
-    {'value': "Tuesday", 'label': "Tuesday"},
-    {'value': "Wednesday", 'label': "Wednesday"},
-    {'value': "Thursday", 'label': "Thursday"},
-    {'value': "Friday", 'label': "Friday"},
-    {'value': "Saturday", 'label': "Saturday"},
-    {'value': "Sunday", 'label': "Sunday"},
+    {'value': "Senin", 'label': "Senin"},
+    {'value': "Selasa", 'label': "Selasa"},
+    {'value': "Rabu", 'label': "Rabu"},
+    {'value': "Kamis", 'label': "Kamis"},
+    {'value': "Jumat", 'label': "Jumat"},
+    {'value': "Sabtu", 'label': "Sabtu"},
+    {'value': "Minggu", 'label': "Minggu"},
   ];
 }

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -20,9 +19,7 @@ class FileUtils {
         else if (contentDisposition.contains('filename=')) {
           return contentDisposition.split('filename=')[1].split(';')[0].trim();
         }
-      } catch (e) {
-        debugPrint('Error parsing filename from header: $e');
-      }
+      } catch (_) {}
     }
     return null;
   }

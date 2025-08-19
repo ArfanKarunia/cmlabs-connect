@@ -129,7 +129,9 @@ class AddQuotationController extends GetxController {
           ? 'The PIC name must not be empty.'
           : picNameControllers[i].text.length > 25
               ? 'The maximum character of PIC name is 25 characters.'
-              : null;
+              : !RegExp(r'^[a-zA-Z\s]+$').hasMatch(picNameControllers[i].text)
+                  ? 'The PIC name can only contain letters and spaces.'
+                  : null;
       picPositionErrors[i] = picPositionControllers[i].text.isEmpty
           ? null
           : picPositionControllers[i].text.length > 20
@@ -138,7 +140,7 @@ class AddQuotationController extends GetxController {
       picContactErrors[i] = picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
     }
 
-    return companyNameError.value == null &&
+    bool isFormValid = companyNameError.value == null &&
         companyWebsiteError.value == null &&
         phoneNumberError.value == null &&
         projectServiceError.value == null &&
@@ -153,6 +155,12 @@ class AddQuotationController extends GetxController {
         picNameErrors.every((picNameError) => picNameError == null) &&
         picPositionErrors.every((picPositionError) => picPositionError == null) &&
         picContactErrors.every((picContactError) => picContactError == null);
+
+    if (!isFormValid) {
+      showErrorToast("Error: Please check the form and try again!");
+    }
+
+    return isFormValid;
   }
 
   void addClientPic() {
@@ -530,18 +538,16 @@ class AddQuotationController extends GetxController {
         ),
       );
 
-      isLoading(false);
-
       if (response.statusCode == 200) {
         showSuccessToast('Berhasil menambahkan Quotation!');
         Get.back();
       }
     } on http.DioException catch (e) {
-      isLoading(false);
       showErrorToast('Error: ${e.response?.data}');
     } catch (e) {
-      isLoading(false);
       Get.snackbar('Error', e.toString());
+    } finally {
+      isLoading(false);
     }
   }
 }

@@ -65,9 +65,7 @@ class _FormAchievementViewState extends State<FormAchievementView> {
           descriptionController.text = achievement.description ?? "";
           achievementDate = achievement.year;
         }
-      } catch (e) {
-        debugPrint('Error fetching achievement: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearAchievement();
     }

@@ -1,10 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../utils/color.dart';
-import '../utils/network_image.dart';
+import '../utils/image_utils.dart';
 
 class CustomAvatar extends StatefulWidget {
   final String? link;
@@ -30,7 +29,7 @@ class _CustomAvatarState extends State<CustomAvatar> {
       radius: widget.radius,
       backgroundColor: AppColors.white,
       backgroundImage: link != null || (link ?? '').isNotEmpty
-          ? getImageProvider(link.toString())
+          ? ImageUtils().getImageProvider(link.toString())
           : const AssetImage("assets/icons/cmlabs_icon.png"),
       onBackgroundImageError: (e, stackTrace) => setState(() => link = null),
     );
@@ -38,7 +37,7 @@ class _CustomAvatarState extends State<CustomAvatar> {
 }
 
 class CustomChangeAvatar extends StatefulWidget {
-  final XFile? newImage;
+  final File? newImage;
   final String? link;
   final double radius;
   const CustomChangeAvatar({super.key, this.newImage, this.link, this.radius = 20});
@@ -62,9 +61,9 @@ class _CustomChangeAvatarState extends State<CustomChangeAvatar> {
       radius: widget.radius,
       backgroundColor: AppColors.white,
       backgroundImage: widget.newImage != null
-          ? FileImage(File(widget.newImage!.path))
+          ? FileImage(widget.newImage!)
           : (link != null && (link ?? '').isNotEmpty)
-              ? getImageProvider(link.toString())
+              ? ImageUtils().getImageProvider(link.toString())
               : const AssetImage("assets/icons/cmlabs_icon.png"),
       onBackgroundImageError: (e, stackTrace) => setState(() => link = null),
     );

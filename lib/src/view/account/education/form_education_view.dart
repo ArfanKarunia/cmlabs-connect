@@ -61,7 +61,9 @@ class _FormEducationViewState extends State<FormEducationView> {
         ? null
         : toDate == null
             ? "The 'To' field is required"
-            : null;
+            : toDate!.isBefore(fromDate!)
+                ? "The 'To' date must be after the 'From' date"
+                : null;
     setState(() {});
 
     return instituteError == null &&
@@ -92,9 +94,7 @@ class _FormEducationViewState extends State<FormEducationView> {
           fromDate = education.startTime;
           toDate = education.finishTime;
         }
-      } catch (e) {
-        debugPrint('Error fetching experience: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearEducation();
     }

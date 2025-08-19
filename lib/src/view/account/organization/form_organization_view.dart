@@ -51,7 +51,9 @@ class _FormOrganizationViewState extends State<FormOrganizationView> {
         ? null
         : toDate == null
             ? "The 'To' field is required"
-            : null;
+            : toDate!.isBefore(fromDate!)
+                ? "The 'To' date must be after the 'From' date"
+                : null;
     setState(() {});
 
     return nameError == null && levelError == null && fromDateError == null && toDateError == null;
@@ -76,9 +78,7 @@ class _FormOrganizationViewState extends State<FormOrganizationView> {
           fromDate = organization.startTime;
           toDate = organization.finishTime;
         }
-      } catch (e) {
-        debugPrint('Error fetching organization: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearOrganization();
     }

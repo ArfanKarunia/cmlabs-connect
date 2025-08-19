@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCRsI80qCsJHVZu3qfIJ5bZP42xxPr4tWk',
-    appId: '1:854108264405:android:4a9eaf3d82edd12a9d0f5c',
+    appId: '1:854108264405:android:918b0f64ec7b48489d0f5c',
     messagingSenderId: '854108264405',
     projectId: 'cmlabs-connect',
     storageBucket: 'cmlabs-connect.firebasestorage.app',
@@ -59,11 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyBMHF-6ge92OetVa8moqRzlWwOkPthTMpU',
-    appId: '1:854108264405:ios:15734ec91a17aea89d0f5c',
+    appId: '1:854108264405:ios:67e83516a2f70e839d0f5c',
     messagingSenderId: '854108264405',
     projectId: 'cmlabs-connect',
     storageBucket: 'cmlabs-connect.firebasestorage.app',
-    iosBundleId: 'com.example.cmlabsConnect',
+    iosBundleId: 'com.cmlabs.connect',
   );
 
 }

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
@@ -62,9 +61,7 @@ class QuotationController extends InboxController {
           if (refreshData) limit.value = 10;
         }
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   @override
@@ -80,9 +77,7 @@ class QuotationController extends InboxController {
       if (response.statusCode == 200 && response.data != null) {
         if (response.data['status'] == 'success') totalLeads.value = response.data['data'];
       }
-    } catch (e) {
-      debugPrint('Error fetching data: $e');
-    }
+    } catch (_) {}
   }
 
   // Quotation cannot be exported

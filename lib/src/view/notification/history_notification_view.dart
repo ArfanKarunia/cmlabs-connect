@@ -155,9 +155,7 @@ class _HistoryNotificationViewState extends State<HistoryNotificationView> {
     try {
       final notifications = await controller.fetchHistoryNotification();
       filteredNotification.value = notifications;
-    } catch (e) {
-      debugPrint('Error loading filtered notifications: $e');
-    }
+    } catch (_) {}
   }
 
   Future<void> _selectDateRange(BuildContext context) async {

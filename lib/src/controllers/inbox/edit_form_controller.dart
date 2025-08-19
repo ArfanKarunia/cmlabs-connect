@@ -7,6 +7,7 @@ import '../../constant/config.dart';
 import '../../models/inbox/property/client_pic_model.dart';
 import '../../models/inbox/property/inbox_edit_form_model.dart';
 import '../../models/inbox/property/project_history_model.dart';
+import '../../utils/toast.dart';
 import '../user/user_controller.dart';
 
 class EditFormController extends GetxController {
@@ -112,7 +113,9 @@ class EditFormController extends GetxController {
           ? 'The PIC name must not be empty.'
           : picNameControllers[i].text.length > 25
               ? 'The maximum character of PIC name is 25 characters.'
-              : null;
+              : !RegExp(r'^[a-zA-Z\s]+$').hasMatch(picNameControllers[i].text)
+                  ? 'The PIC name can only contain letters and spaces.'
+                  : null;
       picPositionErrors[i] = picPositionControllers[i].text.isEmpty
           ? null
           : picPositionControllers[i].text.length > 20
@@ -121,13 +124,19 @@ class EditFormController extends GetxController {
       picContactErrors[i] = picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
     }
 
-    return projectPicError.value == null &&
+    bool isFormValid = projectPicError.value == null &&
         projectPriorityError.value == null &&
         projectStatusError.value == null &&
         projectTypeError.value == null &&
         picNameErrors.every((picNameError) => picNameError == null) &&
         picPositionErrors.every((picPositionError) => picPositionError == null) &&
         picContactErrors.every((picContactError) => picContactError == null);
+
+    if (!isFormValid) {
+      showErrorToast("Error: Please check the form and try again!");
+    }
+
+    return isFormValid;
   }
 
   void addNewActivity() {

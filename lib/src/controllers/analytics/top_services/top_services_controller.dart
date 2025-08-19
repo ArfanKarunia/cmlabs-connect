@@ -1,7 +1,6 @@
 // ignore_for_file: overridden_fields
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/analytics/top_services_model.dart';
@@ -13,11 +12,11 @@ import '../analytics_controller.dart';
 class TopServicesController extends AnalyticsController {
   Rx<TopServices?> topServices = Rx<TopServices?>(null);
 
-  // Monthly or Yearly
+  // Weekly, Monthly or Yearly
   @override
-  Rx<DateType?> initialDateType = (DateType.monthly).obs;
+  Rx<DateType?> initialDateType = (DateType.weekly).obs;
   @override
-  Rx<DateType?> selectedDateType = (DateType.monthly).obs;
+  Rx<DateType?> selectedDateType = (DateType.weekly).obs;
 
   @override
   Rx<SortOption?> selectedSortOption = (SortOption.totalMost).obs;
@@ -52,11 +51,7 @@ class TopServicesController extends AnalyticsController {
       if (e.response?.statusCode == 404) {
         topServices.value = null;
       }
-
-      debugPrint('Error fetching top services data: ${e.response?.data}');
-    } catch (e) {
-      debugPrint('Error fetching top services data: $e');
-    }
+    } catch (_) {}
   }
 
   @override
@@ -90,10 +85,8 @@ class TopServicesController extends AnalyticsController {
       }
     } on DioException catch (e) {
       showErrorToast('Failed to export data: ${e.message}');
-      debugPrint('Error fetching data: $e');
     } catch (e) {
       showErrorToast('Failed to export data: ${e.toString()}');
-      debugPrint('Error fetching data: $e');
     } finally {
       isExportLoading(false);
     }

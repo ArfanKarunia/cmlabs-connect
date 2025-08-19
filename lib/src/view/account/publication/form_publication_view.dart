@@ -61,9 +61,7 @@ class _FormPublicationViewState extends State<FormPublicationView> {
           descriptionController.text = publication.description ?? "";
           publicationDate = publication.year;
         }
-      } catch (e) {
-        debugPrint('Error fetching publication: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearPublication();
     }

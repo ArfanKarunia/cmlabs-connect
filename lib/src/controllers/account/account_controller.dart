@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
@@ -11,10 +11,8 @@ import 'package:cmlabs_connect/src/models/account/publication_model.dart';
 import 'package:cmlabs_connect/src/models/user_model.dart';
 import 'package:cmlabs_connect/src/models/account/volunteer_model.dart';
 import 'package:cmlabs_connect/src/utils/toast.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dio/dio.dart' as http;
-import 'package:image_picker/image_picker.dart';
 
 import '../../utils/error_utils.dart';
 
@@ -130,11 +128,10 @@ class AccountController extends GetxController {
         User userData = User.fromMap(data);
         userController.saveUser(userData);
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -153,15 +150,14 @@ class AccountController extends GetxController {
         final data = response.data['data'] as List;
         profileRoleList.value = data.map((item) => {'id': item['id'], 'name': item['name']}).toList();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
-  Future<void> editProfile(XFile? selectedImage) async {
+  Future<void> editProfile(File? selectedImage) async {
     isLoadingProfile(true);
 
     try {
@@ -201,14 +197,13 @@ class AccountController extends GetxController {
       if (response.statusCode == 200) {
         await fetchProfile();
 
-        showSuccessToast("Success: update basic information in profile");
+        showSuccessToast("Success: Profile Updated!");
         Get.back();
       }
     } on http.DioException catch (e) {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingProfile(false);
     }
@@ -259,17 +254,14 @@ class AccountController extends GetxController {
 
         summarySpecializationChecked.value = List<bool>.filled(summarySpecializationList.length, false);
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
   Future<void> fetchSummary() async {
-    isLoadingSummary(true);
-
     try {
       String? accessToken = userController.accesToken.value;
       int idUser = userController.user.value?.id ?? 0;
@@ -305,13 +297,10 @@ class AccountController extends GetxController {
           summarySpecializationChecked.value = List<bool>.filled(summarySpecializationList.length, false);
         }
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
-    } finally {
-      isLoadingSummary(false);
     }
   }
 
@@ -332,45 +321,45 @@ class AccountController extends GetxController {
         summarySpecialization.clear();
         fetchSummary();
 
-        showSuccessToast("Success: Delete Summary");
-      }
-    } on http.DioException catch (e) {
-      handleDioException(e);
-    } catch (e) {
-      showErrorToast("Failed: Delete Summary");
-      debugPrint('Error fetching status data: $e');
-    }
-  }
-
-  Future<void> addSumary() async {
-    try {
-      String? accessToken = userController.accesToken.value;
-      int idUser = userController.user.value?.id ?? 0;
-
-      final data = {
-        "id": idUser,
-        "about": summaryAbout.value,
-        "specialization": summarySpecialization,
-      };
-
-      final response = await dio.post(
-        '$baseUrl/profile/update-summary',
-        options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
-        data: jsonEncode(data),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        fetchSummary();
-        showSuccessToast("Success: add Summary");
-        Get.back();
-      } else {
-        showErrorToast("Failed: add Summary");
+        showSuccessToast("Success: Summary Deleted!");
       }
     } on http.DioException catch (e) {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
+    }
+  }
+
+  Future<void> addSummary() async {
+    isLoadingSummary(true);
+
+    try {
+      String? accessToken = userController.accesToken.value;
+      int idUser = userController.user.value?.id ?? 0;
+
+      final response = await dio.post(
+        '$baseUrl/profile/update-summary',
+        options: http.Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: {
+          "id": idUser,
+          "about": summaryAbout.value,
+          "specialization": summarySpecialization,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        fetchSummary();
+        showSuccessToast("Success: Summary Added!");
+        Get.back();
+      } else {
+        showErrorToast("Error: An unexpected error occurred.");
+      }
+    } on http.DioException catch (e) {
+      handleDioException(e);
+    } catch (e) {
+      showErrorToast("Error: An unexpected error occurred.");
+    } finally {
+      isLoadingSummary(false);
     }
   }
 
@@ -411,11 +400,10 @@ class AccountController extends GetxController {
                 })
             .toList();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -435,11 +423,10 @@ class AccountController extends GetxController {
         experienceList.value = data.map<ExperienceModel?>((item) => ExperienceModel.fromJson(item)).toList();
         experienceList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -473,7 +460,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingExperience(false);
     }
@@ -512,7 +498,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingExperience(false);
     }
@@ -539,7 +524,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -585,11 +569,10 @@ class AccountController extends GetxController {
         educationList.value = data.map<EducationModel?>((item) => EducationModel.fromJson(item)).toList();
         educationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -626,7 +609,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingEducation(false);
     }
@@ -666,7 +648,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingEducation(false);
     }
@@ -691,7 +672,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Education");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -736,11 +716,10 @@ class AccountController extends GetxController {
         organizationList.value = data.map<OrganizationModel?>((item) => OrganizationModel.fromJson(item)).toList();
         organizationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -773,7 +752,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingOrganization(false);
     }
@@ -809,7 +787,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingOrganization(false);
     }
@@ -832,7 +809,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Organization");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -876,11 +852,10 @@ class AccountController extends GetxController {
         volunteerList.value = data.map<VolunteerModel?>((item) => VolunteerModel.fromJson(item)).toList();
         volunteerList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -914,7 +889,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingVolunteer(false);
     }
@@ -951,7 +925,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingVolunteer(false);
     }
@@ -976,7 +949,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Volunteer");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1021,11 +993,10 @@ class AccountController extends GetxController {
         certificationList.value = data.map<CertificationModel?>((item) => CertificationModel.fromJson(item)).toList();
         certificationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1059,7 +1030,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingCertification(false);
     }
@@ -1096,7 +1066,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingCertification(false);
     }
@@ -1119,7 +1088,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Certification");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1161,11 +1129,10 @@ class AccountController extends GetxController {
         achievementList.value = data.map<AchievementModel?>((item) => AchievementModel.fromJson(item)).toList();
         achievementList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1196,7 +1163,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingAchievement(false);
     }
@@ -1230,7 +1196,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingAchievement(false);
     }
@@ -1253,7 +1218,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Achievement");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1292,11 +1256,10 @@ class AccountController extends GetxController {
         publicationList.value = data.map<PublicationModel?>((item) => PublicationModel.fromJson(item)).toList();
         publicationList.refresh();
       }
-    } on http.DioException catch (e) {
-      handleDioException(e);
+    } on http.DioException catch (_) {
+      // handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     }
   }
 
@@ -1327,7 +1290,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingPublication(false);
     }
@@ -1361,7 +1323,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Error: An unexpected error occurred.");
-      debugPrint('Error fetching status data: $e');
     } finally {
       isLoadingPublication(false);
     }
@@ -1384,7 +1345,6 @@ class AccountController extends GetxController {
       handleDioException(e);
     } catch (e) {
       showErrorToast("Failed: Delete Publication");
-      debugPrint('Error fetching status data: $e');
     }
   }
 

@@ -55,9 +55,17 @@ class QuotationTrendsData {
       period: json['period'] as String,
       count: json['count'] as int,
       percentChange: json['percent_change'] != null ? (json['percent_change'] as num).toDouble() : null,
-      kategoriLayanan: Map<String, int>.from(json['kategori_layanan'] as Map),
+      kategoriLayanan: json['kategori_layanan'] != null
+          ? json['kategori_layanan'] is Map
+              ? Map<String, int>.from(json['kategori_layanan'] as Map)
+              : {}
+          : {},
       status: json['status'] is List ? List<int>.from(json['status'] as List) : [],
-      utmCounts: Map<String, int>.from(json['utm_counts'] as Map),
+      utmCounts: json['utm_counts'] != null
+          ? json['utm_counts'] is Map
+              ? Map<String, int>.from(json['utm_counts'] as Map)
+              : {}
+          : {},
     );
   }
 

@@ -15,6 +15,7 @@ AppBar defaultAppBar(
     backgroundColor: AppColors.scaffoldBgColor2,
     surfaceTintColor: AppColors.scaffoldBgColor2,
     titleSpacing: titleSpacing,
+    centerTitle: false,
     title: Text(
       title,
       style: bold.copyWith(fontSize: 20),

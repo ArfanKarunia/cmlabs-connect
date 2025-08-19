@@ -65,12 +65,8 @@ class _QuotationAddViewState extends State<QuotationAddView> {
 
         pickedFile.value = File(file.path!);
         setState(() => fileNameController.text = file.name);
-      } else {
-        debugPrint("File selection canceled");
       }
-    } catch (e) {
-      debugPrint("Error picking file: $e");
-    }
+    } catch (_) {}
   }
 
   @override
@@ -230,6 +226,7 @@ class _QuotationAddViewState extends State<QuotationAddView> {
                   flex: 2,
                   child: CustomFormField(
                     controller: controller.phoneNumber.value,
+                    keyboardType: TextInputType.phone,
                     hintText: '8xxxxxxx',
                     errorText: controller.phoneNumberError.value,
                   ),

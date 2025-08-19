@@ -55,12 +55,8 @@ class _QuotationEditHistoryViewState extends State<QuotationEditHistoryView> {
         PlatformFile file = result.files.first;
         pickedFile.value = File(file.path!);
         setState(() => fileNameController.text = file.name);
-      } else {
-        debugPrint("File selection canceled");
       }
-    } catch (e) {
-      debugPrint("Error picking file: $e");
-    }
+    } catch (_) {}
   }
 
   @override

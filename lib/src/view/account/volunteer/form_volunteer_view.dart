@@ -58,7 +58,9 @@ class _FormVolunteerViewState extends State<FormVolunteerView> {
         ? null
         : toDate == null
             ? "The 'To' field is required"
-            : null;
+            : toDate!.isBefore(fromDate!)
+                ? "The 'To' date must be after the 'From' date"
+                : null;
     setState(() {});
 
     return nameError == null &&
@@ -88,9 +90,7 @@ class _FormVolunteerViewState extends State<FormVolunteerView> {
           fromDate = volunteer.startTime;
           toDate = volunteer.finishTime;
         }
-      } catch (e) {
-        debugPrint('Error fetching experience: $e');
-      }
+      } catch (_) {}
     } else {
       controller.clearVolunteer();
     }

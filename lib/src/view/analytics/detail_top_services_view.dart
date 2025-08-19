@@ -34,14 +34,28 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 8),
-            child: IconButton(
-              icon: Image.asset('assets/icons/icon_filter.png', height: 32, width: 32),
-              onPressed: () => Get.toNamed(
-                AppRoutes.analyticsFilterView,
-                arguments: {
-                  'analyticsType': AnalyticsType.topServices,
-                  'controller': controller,
-                },
+            child: Obx(
+              () => Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  IconButton(
+                    icon: const ImageIcon(
+                      AssetImage('assets/icons/icon_filter.png'),
+                      size: 32,
+                      color: AppColors.text_1,
+                    ),
+                    onPressed: () => Get.toNamed(
+                      AppRoutes.analyticsFilterView,
+                      arguments: {
+                        'analyticsType': AnalyticsType.topServices,
+                        'controller': controller,
+                      },
+                    ),
+                  ),
+                  if (controller.isFilterApplied) ...[
+                    const CircleAvatar(radius: 7, backgroundColor: AppColors.primary),
+                  ],
+                ],
               ),
             ),
           ),
@@ -54,6 +68,11 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
             Obx(
               () => Row(
                 children: [
+                  DateTypeButton(
+                    title: 'This Week',
+                    isSelected: controller.selectedDateType.value == DateType.weekly,
+                    onTap: () => controller.setDateType(dateType: DateType.weekly),
+                  ),
                   DateTypeButton(
                     title: 'This Month',
                     isSelected: controller.selectedDateType.value == DateType.monthly,
