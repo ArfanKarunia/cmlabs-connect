@@ -152,7 +152,7 @@ class FaqController extends InboxController {
   String constructFilteredUrl(String url) {
     String finalUrl = '$url?start=${start.value}&limit=${limit.value}';
     if (filterStatus.value != null) {
-      finalUrl += 'status=${Uri.encodeComponent(filterStatus.value!)}';
+      finalUrl += '&status=${Uri.encodeComponent(filterStatus.value ?? '')}';
     }
 
     return finalUrl;
