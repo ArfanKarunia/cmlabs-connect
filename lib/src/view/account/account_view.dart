@@ -13,7 +13,6 @@ import 'package:ionicons/ionicons.dart';
 import '../../constant/fontstyle.dart';
 import '../../widgets/custom_avatar.dart';
 import '../../widgets/custom_submit_button.dart';
-import '../../widgets/default_appbar.dart';
 
 class AccountView extends StatefulWidget {
   const AccountView({super.key});
@@ -30,152 +29,175 @@ class _AccountViewState extends State<AccountView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.scaffoldBgColor2,
-      appBar: defaultAppBar('Account Setting'),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Obx(
-              () => Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Page Title
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text('Account Setting', style: bold.copyWith(fontSize: 20)),
+        ),
+
+        const SizedBox(height: 20),
+
+        // Page Content
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            children: [
+              //
+              // User Info
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Obx(
+                  () => Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomAvatar(
-                        radius: 24,
-                        link: userController.user.value?.picUrl,
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomAvatar(
+                              radius: 24,
+                              link: userController.user.value?.picUrl,
+                            ),
+                            const SizedBox(width: 24),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userController.user.value?.name ?? 'cmlabs User',
+                                    style: bold.copyWith(fontSize: 16),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    userController.roleName.value,
+                                    style: regular.copyWith(fontSize: 13, color: AppColors.text_3),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    userController.user.value?.email ?? 'user@cmlabs.co',
+                                    style: regular.copyWith(fontSize: 12, color: AppColors.primary),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 24),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                      Stack(
+                        alignment: Alignment.center,
                         children: [
-                          Text(
-                            userController.user.value?.name ?? 'cmlabs User',
-                            style: bold.copyWith(fontSize: 16),
+                          IconButton(
+                            onPressed: () => Get.toNamed(AppRoutes.notification),
+                            icon: const Icon(
+                              Ionicons.notifications_outline,
+                              color: AppColors.text_1,
+                              size: 28,
+                            ),
                           ),
-                          const SizedBox(height: 2),
-                          Text(
-                            userController.roleName.value,
-                            style: regular.copyWith(fontSize: 13, color: AppColors.text_3),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            userController.user.value?.email ?? 'user@cmlabs.co',
-                            style: regular.copyWith(fontSize: 12, color: AppColors.primary),
+                          Obx(
+                            () => notificationController.unreadAll.value != 0
+                                ? Positioned(
+                                    top: 10,
+                                    right: 13,
+                                    child: Container(
+                                      height: 10,
+                                      width: 10,
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppColors.danger,
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                           ),
                         ],
                       ),
                     ],
                   ),
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      IconButton(
-                        onPressed: () => Get.toNamed(AppRoutes.notification),
-                        icon: const Icon(
-                          Ionicons.notifications_outline,
-                          color: AppColors.text_1,
-                          size: 28,
-                        ),
-                      ),
-                      Obx(
-                        () => notificationController.unreadAll.value != 0
-                            ? Positioned(
-                                top: 10,
-                                right: 13,
-                                child: Container(
-                                  height: 10,
-                                  width: 10,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColors.danger,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                ],
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
+              CustomSubmitButton(
+                title: 'Edit Profile',
+                onTap: () async => Get.toNamed(AppRoutes.editProfileView),
+              ),
+              const SizedBox(height: 20),
+              AccountMenu(
+                title: 'Summary',
+                iconUrl: AppIcons.summaryIcon,
+                onTap: () => Get.toNamed(AppRoutes.summaryView),
+              ),
+              AccountMenu(
+                title: 'Experiences',
+                iconUrl: AppIcons.experienceIcon,
+                onTap: () => Get.toNamed(AppRoutes.experienceView),
+              ),
+              AccountMenu(
+                title: 'Education',
+                iconUrl: AppIcons.educationIcon,
+                onTap: () => Get.toNamed(AppRoutes.educationView),
+              ),
+              AccountMenu(
+                title: 'Organization',
+                iconUrl: AppIcons.organizationIcon,
+                onTap: () => Get.toNamed(AppRoutes.organizationView),
+              ),
+              AccountMenu(
+                title: 'Volunteer',
+                iconUrl: AppIcons.volunteerIcon,
+                onTap: () => Get.toNamed(AppRoutes.volunteerView),
+              ),
+              AccountMenu(
+                title: 'Certification',
+                iconUrl: AppIcons.certificationIcon,
+                onTap: () => Get.toNamed(AppRoutes.certificationView),
+              ),
+              AccountMenu(
+                title: 'Achievement',
+                iconUrl: AppIcons.achievementIcon,
+                onTap: () => Get.toNamed(AppRoutes.achievementView),
+              ),
+              AccountMenu(
+                title: 'Publication',
+                iconUrl: AppIcons.publicationIcon,
+                onTap: () => Get.toNamed(AppRoutes.publicationView),
+              ),
+              AccountMenu(
+                title: 'Notification Setting',
+                iconUrl: AppIcons.setNotification,
+                onTap: () => Get.toNamed(AppRoutes.settingNotification),
+              ),
+              const SizedBox(height: 20),
+              CustomSubmitButton(
+                title: "Change Password",
+                onTap: () => Get.toNamed(AppRoutes.changePasswordView),
+                color: Colors.transparent,
+                borderColor: AppColors.primary,
+                textColor: AppColors.primary,
+              ),
+              const SizedBox(height: 20),
+              CustomSubmitButton(
+                icon: Ionicons.log_out_outline,
+                title: "Sign Out",
+                onTap: () => signOutBottomSheet(
+                  context,
+                  onSignOut: () => authenticationController.logout(),
+                ),
+                color: AppColors.bgDanger,
+                textColor: AppColors.danger,
+              ),
+              const SizedBox(height: 50),
+            ],
           ),
-          const SizedBox(height: 20),
-          CustomSubmitButton(
-            title: 'Edit Profile',
-            onTap: () async => Get.toNamed(AppRoutes.editProfileView),
-          ),
-          const SizedBox(height: 20),
-          AccountMenu(
-            title: 'Summary',
-            iconUrl: AppIcons.summaryIcon,
-            onTap: () => Get.toNamed(AppRoutes.summaryView),
-          ),
-          AccountMenu(
-            title: 'Experiences',
-            iconUrl: AppIcons.experienceIcon,
-            onTap: () => Get.toNamed(AppRoutes.experienceView),
-          ),
-          AccountMenu(
-            title: 'Education',
-            iconUrl: AppIcons.educationIcon,
-            onTap: () => Get.toNamed(AppRoutes.educationView),
-          ),
-          AccountMenu(
-            title: 'Organization',
-            iconUrl: AppIcons.organizationIcon,
-            onTap: () => Get.toNamed(AppRoutes.organizationView),
-          ),
-          AccountMenu(
-            title: 'Volunteer',
-            iconUrl: AppIcons.volunteerIcon,
-            onTap: () => Get.toNamed(AppRoutes.volunteerView),
-          ),
-          AccountMenu(
-            title: 'Certification',
-            iconUrl: AppIcons.certificationIcon,
-            onTap: () => Get.toNamed(AppRoutes.certificationView),
-          ),
-          AccountMenu(
-            title: 'Achievement',
-            iconUrl: AppIcons.achievementIcon,
-            onTap: () => Get.toNamed(AppRoutes.achievementView),
-          ),
-          AccountMenu(
-            title: 'Publication',
-            iconUrl: AppIcons.publicationIcon,
-            onTap: () => Get.toNamed(AppRoutes.publicationView),
-          ),
-          AccountMenu(
-            title: 'Notification Setting',
-            iconUrl: AppIcons.setNotification,
-            onTap: () => Get.toNamed(AppRoutes.settingNotification),
-          ),
-          const SizedBox(height: 20),
-          CustomSubmitButton(
-            title: "Change Password",
-            onTap: () => Get.toNamed(AppRoutes.changePasswordView),
-            color: Colors.transparent,
-            borderColor: AppColors.primary,
-            textColor: AppColors.primary,
-          ),
-          const SizedBox(height: 20),
-          CustomSubmitButton(
-            icon: Ionicons.log_out_outline,
-            title: "Sign Out",
-            onTap: () => signOutBottomSheet(context, onSignOut: () => authenticationController.logout()),
-            color: AppColors.bgDanger,
-            textColor: AppColors.danger,
-          ),
-          const SizedBox(height: 50),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

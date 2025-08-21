@@ -58,10 +58,15 @@ class NotificationController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchNotification();
     fetchNotificationSetting();
+
+    // run immediately
+    fetchNotification();
+    fetchAmountUnreadNotification();
+    // then run every 10 seconds
     Timer.periodic(const Duration(seconds: 10), (timer) {
       fetchNotification();
+      fetchAmountUnreadNotification();
     });
   }
 
@@ -137,7 +142,9 @@ class NotificationController extends GetxController {
           emailNotifFollowedUpReminder.value = notificationSetting.followUpReminderEmail ?? false;
 
           // Quiet mode
-          quiteModeDays.value = notificationSetting.quietModeDays?.map((e) => {'value': e, 'label': e}).toList() ?? [];
+          quiteModeDays.value =
+              notificationSetting.quietModeDays?.map((e) => {'value': e, 'label': e}).toList() ??
+                  [];
           quietModeStartTime.value = notificationSetting.quietModeStartTime != null
               ? TimeOfDay(
                   hour: int.parse(notificationSetting.quietModeStartTime!.split(':')[0]),
@@ -152,7 +159,8 @@ class NotificationController extends GetxController {
               : null;
         }
       }
-    } on DioException catch (_) {} catch (_) {}
+    } on DioException catch (_) {
+    } catch (_) {}
   }
 
   Future<void> updateNotificationSetting() async {
@@ -199,7 +207,8 @@ class NotificationController extends GetxController {
       }
     } on DioException catch (e) {
       handleDioException(e);
-    } catch (_) {} finally {
+    } catch (_) {
+    } finally {
       isNotificationSettingLoading(false);
     }
   }
