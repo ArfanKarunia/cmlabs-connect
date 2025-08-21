@@ -66,15 +66,21 @@ class EditHistoryController extends GetxController {
           'label': type,
         };
       }).toList();
+      mapTypes.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       activityTypeList.assignAll(mapTypes);
     }
   }
 
   Future<bool> validateForm(File? file) async {
-    activityNameError.value = activityName.value.text.isEmpty ? 'The activity name must not be empty.' : null;
+    activityNameError.value =
+        activityName.value.text.isEmpty ? 'The activity name must not be empty.' : null;
     if (file != null) {
       final fileSize = await file.length();
-      activityFileError.value = fileSize > 2 * 1024 * 1024 ? 'The maximum of file size is 2 MB !' : null;
+      activityFileError.value =
+          fileSize > 2 * 1024 * 1024 ? 'The maximum of file size is 2 MB !' : null;
     }
 
     return activityNameError.value == null && activityFileError.value == null;

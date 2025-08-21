@@ -96,14 +96,17 @@ class AnalyticsController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data'].map<Map<String, String>>((category) {
+        final categories = (response.data['data'] as List<dynamic>).map((category) {
           return {
             'value': category['id']?.toString() ?? '',
             'label': category['text']?.toString() ?? '',
           };
         }).toList();
+        categories.sort(
+          (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+        );
 
-        categoryList.addAll(data);
+        categoryList.addAll(categories);
       }
     } catch (_) {
       categoryList.assignAll(dummyCategoriesOptions);
@@ -120,14 +123,17 @@ class AnalyticsController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data'].map<Map<String, String>>((pic) {
+        final pics = (response.data['data'] as List<dynamic>).map((pic) {
           return {
             'value': pic['value']?.toString() ?? '',
             'label': pic['label']?.toString() ?? '',
           };
         }).toList();
+        pics.sort(
+          (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+        );
 
-        picList.addAll(data);
+        picList.addAll(pics);
       }
     } catch (e) {
       picList.assignAll(dummyPicOptions);
@@ -144,14 +150,17 @@ class AnalyticsController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data'].map<Map<String, String>>((clientSource) {
+        final clientSources = (response.data['data'] as List<dynamic>).map((clientSource) {
           return {
             'value': clientSource['value']?.toString() ?? '',
             'label': clientSource['label']?.toString() ?? '',
           };
         }).toList();
+        clientSources.sort(
+          (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+        );
 
-        clientSourceList.assignAll(data);
+        clientSourceList.assignAll(clientSources);
       }
     } catch (e) {
       clientSourceList.assignAll(dummyClientSourceOptions);
@@ -168,14 +177,17 @@ class AnalyticsController extends GetxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = (response.data as List<dynamic>).map<Map<String, String>>((utm) {
+        final utms = (response.data as List<dynamic>).map<Map<String, String>>((utm) {
           return {
             'value': utm.toString().replaceAll('&', '%26'),
             'label': utm.toString().replaceAll('&', ' & '),
           };
         }).toList();
+        utms.sort(
+          (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+        );
 
-        utmList.addAll(data);
+        utmList.addAll(utms);
       }
     } catch (e) {
       utmList.assignAll(dummyUtmOptions);
