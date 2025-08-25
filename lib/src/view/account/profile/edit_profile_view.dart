@@ -67,20 +67,23 @@ class _EditProfileViewState extends State<EditProfileView> {
         : (!RegExp(r'^[0-9]+$').hasMatch(numberController.text))
             ? "The phone number must contain only digits"
             : null;
-    linkedinError = linkedinController.text.length > 64 ? "The maximum character of Linkedin is 64 Characters" : null;
+    linkedinError = linkedinController.text.length > 64
+        ? "The maximum character of Linkedin is 64 Characters"
+        : null;
     weblinkError = weblinkController.text.isEmpty
         ? null
-        : !weblinkController.text.contains("http") || !weblinkController.text.contains("https")
-            ? "The Website Link must contain http or https"
+        : !weblinkController.text.startsWith("http")
+            ? "The Website Link must start with http or https"
             : !RegExp(r"^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,6}(:[0-9]{1,5})?(\/.*)?$")
                     .hasMatch(weblinkController.text)
                 ? "The format link is invalid!"
                 : null;
-    instagramError = instagramController.text.contains("http") || instagramController.text.contains("https")
-        ? "The Instagram account must not contain http or https"
-        : instagramController.text.length > 30
-            ? "The maximum characters of instagram is 30 characters"
-            : null;
+    instagramError =
+        instagramController.text.contains("http") || instagramController.text.contains("https")
+            ? "The Instagram account must not contain http or https"
+            : instagramController.text.length > 30
+                ? "The maximum characters of instagram is 30 characters"
+                : null;
     mediumError = mediumController.text.contains("http") || mediumController.text.contains("https")
         ? "The Medium account must not contain http or https"
         : null;

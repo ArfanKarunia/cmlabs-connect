@@ -104,8 +104,12 @@ class AddQuotationController extends GetxController {
   Future<bool> validateForm(File? file) async {
     companyNameError.value =
         companyName.value == null ? 'The company name must not be empty.' : null;
-    companyWebsiteError.value =
-        companyWebsite.value == null ? 'The company website must not be empty.' : null;
+    companyWebsiteError.value = companyWebsite.value == null
+        ? 'The company website must not be empty.'
+        : !((companyWebsite.value?['value'] ?? '').startsWith("http") ||
+                (companyWebsite.value?['value'] ?? '').startsWith("https"))
+            ? "The company website must start with http or https"
+            : null;
     phoneNumberError.value = phoneNumber.value.text.isEmpty
         ? 'The company phone number must not be empty.'
         : phoneNumber.value.text.length > 13
