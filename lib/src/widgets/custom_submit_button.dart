@@ -68,7 +68,13 @@ class CustomSubmitButton extends StatelessWidget {
 }
 
 class CustomLoadingButton extends StatelessWidget {
-  const CustomLoadingButton({super.key});
+  final Color color;
+  final Color textColor;
+  const CustomLoadingButton({
+    super.key,
+    this.color = AppColors.primary,
+    this.textColor = AppColors.white,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -77,15 +83,15 @@ class CustomLoadingButton extends StatelessWidget {
       padding: const EdgeInsets.all(13.5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: AppColors.primary,
+        color: color,
       ),
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
             height: 28,
             width: 28,
-            child: CustomLoading(color: AppColors.white_1, size: 28),
+            child: CustomLoading(color: textColor, size: 28),
           ),
         ],
       ),

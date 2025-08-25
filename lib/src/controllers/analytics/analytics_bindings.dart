@@ -9,7 +9,7 @@ import 'top_services/top_services_bindings.dart';
 class AnalyticsBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => AnalyticsController());
+    Get.lazyPut(() => AnalyticsController(), fenix: true);
 
     QuotationTrafficBindings().dependencies();
     TopServicesBindings().dependencies();

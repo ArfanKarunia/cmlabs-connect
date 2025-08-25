@@ -183,15 +183,28 @@ class _AccountViewState extends State<AccountView> {
                 textColor: AppColors.primary,
               ),
               const SizedBox(height: 20),
-              CustomSubmitButton(
-                icon: Ionicons.log_out_outline,
-                title: "Sign Out",
-                onTap: () => signOutBottomSheet(
-                  context,
-                  onSignOut: () => authenticationController.logout(),
-                ),
-                color: AppColors.bgDanger,
-                textColor: AppColors.danger,
+              Obx(
+                () => authenticationController.isLogoutLoading.isTrue
+                    ? const CustomLoadingButton(
+                        color: AppColors.bgDanger,
+                        textColor: AppColors.danger,
+                      )
+                    : CustomSubmitButton(
+                        icon: Ionicons.log_out_outline,
+                        title: "Sign Out",
+                        onTap: () {
+                          if (authenticationController.isLogoutLoading.isFalse) {
+                            signOutBottomSheet(context, onSignOut: () {
+                              Get.back();
+                              Future.delayed(Durations.medium1, () {
+                                authenticationController.logout();
+                              });
+                            });
+                          }
+                        },
+                        color: AppColors.bgDanger,
+                        textColor: AppColors.danger,
+                      ),
               ),
               const SizedBox(height: 50),
             ],

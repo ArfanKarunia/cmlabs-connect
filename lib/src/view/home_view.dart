@@ -4,6 +4,7 @@ import 'package:double_tap_to_exit/double_tap_to_exit.dart';
 
 import '../constant/fontstyle.dart';
 import '../utils/color.dart';
+import '../widgets/lazy_animated_indexed_stack.dart';
 import 'account/account_view.dart';
 import 'analytics/analytics_view.dart';
 import 'dashboard_view.dart';
@@ -43,7 +44,7 @@ class _HomeViewState extends State<HomeView> {
           backgroundColor: _currentIndex == 0 ? AppColors.primary : AppColors.scaffoldBgColor2,
           surfaceTintColor: _currentIndex == 0 ? AppColors.primary : AppColors.scaffoldBgColor2,
         ),
-        body: IndexedStack(
+        body: LazyAnimatedIndexedStack(
           index: _currentIndex,
           children: pages,
         ),
