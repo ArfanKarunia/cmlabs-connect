@@ -42,16 +42,6 @@ class FilterController extends GetxController {
       filterCategoryList.isNotEmpty ||
       startDate.value != null ||
       endDate.value != null;
-
-  // Error message variables
-  Rx<String?> startDateError = null.obs;
-  Rx<String?> endDateError = null.obs;
-  void validateDateFields() {
-    if (startDate.value == null && endDate.value != null) {
-      startDateError.value = 'Start date must be filled';
-    }
-  }
-
   // Loading
   Rx<bool> isLoading = false.obs;
 
@@ -337,11 +327,7 @@ class FilterController extends GetxController {
 
   Future<void> applyFilter() async {
     if (isLoading.isTrue) return;
-
     isLoading(true);
-
-    validateDateFields();
-    if (startDateError.value != null || endDateError.value != null) return;
 
     filterByClientSource();
     filterByPic();
