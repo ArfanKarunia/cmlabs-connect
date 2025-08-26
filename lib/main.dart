@@ -36,13 +36,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: "CMLABS CONNECT",
-      theme: ThemeData(
-        primaryColor: Colors.blueGrey,
-        primarySwatch: Colors.blueGrey,
-      ),
 
       // Start with routing to Home View
-      initialRoute: AppRoutes.loginForm,
+      initialRoute: AppRoutes.first,
       initialBinding: AppBindings(),
 
       // Routing of the app

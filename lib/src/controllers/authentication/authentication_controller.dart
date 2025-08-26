@@ -59,7 +59,16 @@ class AuthenticationController extends GetxController {
       final email = await getEmail();
       final password = await getPassword();
 
-      if (email != null && password != null) await login(email, password);
+      if (email != null && password != null) {
+        final response = await login(email, password);
+        if (response['code'] == '400') {
+          Get.offAllNamed(AppRoutes.home);
+        } else {
+          Get.offAllNamed(AppRoutes.login);
+        }
+      } else {
+        Get.offAllNamed(AppRoutes.login);
+      }
     } finally {
       isLoading(false);
     }
@@ -105,14 +114,14 @@ class AuthenticationController extends GetxController {
       userController.password.value = password;
 
       await storeDeviceToken(
-          userController.deviceToken.value ?? '', userController.user.value!.id.toString());
+        token: userController.deviceToken.value ?? '',
+        userId: userController.user.value?.id.toString() ?? '',
+      );
 
       if (isRememberMe.value) {
         await setEmail(email);
         await setPassword(password);
       }
-
-      Get.offAndToNamed(AppRoutes.home);
 
       await analyticsService.logEvent(
         'login_success',
@@ -148,28 +157,20 @@ class AuthenticationController extends GetxController {
     }
   }
 
-  Future<void> storeDeviceToken(String token, String userId) async {
-    Dio dio = Dio();
-
-    final apiUrl = "$baseUrl/notification/store_device_token";
-
-    var requestData = {
-      "token": token,
-      "user_id": userId,
-    };
-
-    var body = jsonEncode(requestData);
-
+  Future<void> storeDeviceToken({required String token, required String userId}) async {
     try {
       await dio.post(
-        apiUrl,
+        '$baseUrl/notification/store_device_token',
         options: Options(
           headers: {
             'Authorization': 'Bearer ${userController.accesToken.value}',
             'Content-Type': 'application/json',
           },
         ),
-        data: body,
+        data: jsonEncode({
+          "token": token,
+          "user_id": userId,
+        }),
       );
     } catch (_) {}
   }
@@ -190,7 +191,7 @@ class AuthenticationController extends GetxController {
         await clearPassword();
 
         showSuccessToast('Success: Logout');
-        Get.offAllNamed(AppRoutes.loginForm);
+        Get.offAllNamed(AppRoutes.login);
         userController.user.value = null;
         userController.accesToken.value = '';
         userController.tokenType.value = '';

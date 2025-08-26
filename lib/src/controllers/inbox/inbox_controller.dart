@@ -147,14 +147,14 @@ abstract class InboxController extends GetxController {
     if (filterStatus.value != null) {
       queryParams.add('status=${Uri.encodeComponent(filterStatus.value ?? '')}');
     }
-     if (filterUtm.value != null) {
-      queryParams.add('utm[]=${Uri.encodeComponent(filterUtm.value!)}'); // Asumsi format UTM adalah array
+    if (filterUtm.value != null) {
+      queryParams.add('utm[]=${Uri.encodeComponent(filterUtm.value ?? '')}');
     }
-
 
     // Handle category filter with array format
     if (filterCategory.isNotEmpty) {
-      queryParams.addAll(filterCategory.map((category) => 'category[]=${Uri.encodeComponent(category)}'));
+      queryParams
+          .addAll(filterCategory.map((category) => 'category[]=${Uri.encodeComponent(category)}'));
     }
 
     // Combine all query parameters
@@ -173,7 +173,8 @@ abstract class InboxController extends GetxController {
 
   String constructExportUrl(String url, {required String feature}) {
     String queryString = filterQueryString(url);
-    final finalUrl = queryString.isEmpty ? '$url?feature=$feature' : '$url?$queryString&feature=$feature';
+    final finalUrl =
+        queryString.isEmpty ? '$url?feature=$feature' : '$url?$queryString&feature=$feature';
 
     return finalUrl;
   }
@@ -188,7 +189,8 @@ abstract class InboxController extends GetxController {
     }
 
     if (phoneCode == null || phoneCode.isEmpty) {
-      await launchUrl(Uri.parse("https://wa.me/$phoneNumber"), mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse("https://wa.me/$phoneNumber"),
+          mode: LaunchMode.externalApplication);
       return;
     }
 
