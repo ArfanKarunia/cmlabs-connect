@@ -24,7 +24,6 @@ abstract class InboxController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchTotalLeads();
     fetchList();
     // checkNewQuotationsPeriodically();
   }
@@ -42,9 +41,6 @@ abstract class InboxController extends GetxController {
   }
 
   Future<void> exportData();
-
-  // Total Leads
-  Future<void> fetchTotalLeads();
 
   // Filter
   void addFilterStatus(String status) {

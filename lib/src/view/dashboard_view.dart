@@ -11,7 +11,6 @@ import '../models/inbox/faq_model.dart';
 import '../routes.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/dashboard/dashboard_controller.dart';
-// import '../controllers/historical_lead_controller.dart';
 import '../controllers/notification/notification_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../controllers/user/user_controller.dart';
@@ -85,10 +84,17 @@ class _DashboardViewState extends State<DashboardView> {
                     Row(
                       children: [
                         Obx(
-                          () => Text(
-                            "${quotationController.totalLeads.value} ",
-                            style: regular.copyWith(fontSize: 12, color: AppColors.primary),
-                          ),
+                          () {
+                            final totalLeads = quotationController.totalLeads.value +
+                                caseStudiesController.totalLeads.value +
+                                contactUsController.totalLeads.value +
+                                faqController.totalLeads.value;
+
+                            return Text(
+                              "$totalLeads ",
+                              style: regular.copyWith(fontSize: 12, color: AppColors.primary),
+                            );
+                          },
                         ),
                         Text(
                           "Leads",
@@ -126,21 +132,29 @@ class _DashboardViewState extends State<DashboardView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Quotations',
-                                style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
-                              ),
-                              GestureDetector(
-                                onTap: () => widget.updateIndex(1),
-                                child: Text(
-                                  "View all",
-                                  style: regular.copyWith(
-                                    fontSize: 12,
-                                    color: AppColors.primary,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: AppColors.primary,
+                              Row(
+                                children: [
+                                  Text(
+                                    'Quotations',
+                                    style: bold.copyWith(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${quotationController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              DashboardViewAllInbox(
+                                onTap: () => widget.updateIndex(1),
                               ),
                             ],
                           ),
@@ -168,9 +182,26 @@ class _DashboardViewState extends State<DashboardView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Case Studies',
-                                style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Case Studies',
+                                    style: bold.copyWith(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${caseStudiesController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               DashboardViewAllInbox(
                                 onTap: () => widget.updateIndex(1),
@@ -200,9 +231,26 @@ class _DashboardViewState extends State<DashboardView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Contact Us',
-                                style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Contact Us',
+                                    style: bold.copyWith(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${contactUsController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               DashboardViewAllInbox(
                                 onTap: () => widget.updateIndex(1),
@@ -232,9 +280,24 @@ class _DashboardViewState extends State<DashboardView> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'FAQ',
-                                style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
+                              Row(
+                                children: [
+                                  Text(
+                                    'FAQ',
+                                    style:
+                                        bold.copyWith(fontSize: 20, color: AppColors.primaryText),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${faqController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                               DashboardViewAllInbox(
                                 onTap: () => widget.updateIndex(1),

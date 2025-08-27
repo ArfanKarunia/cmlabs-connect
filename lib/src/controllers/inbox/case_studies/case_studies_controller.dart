@@ -42,8 +42,12 @@ class CaseStudiesController extends InboxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final rawData = response.data['data'];
+        if (!isLoadMore) {
+          final res = response.data['total'];
+          totalLeads.value = res;
+        }
 
+        final rawData = response.data['data'];
         if (rawData != null && rawData is List) {
           List<CaseStudies> caseStudies = rawData.map<CaseStudies>((item) {
             return CaseStudies.fromJson(item);
@@ -92,22 +96,6 @@ class CaseStudiesController extends InboxController {
     } finally {
       isExportLoading(false);
     }
-  }
-
-  @override
-  Future<void> fetchTotalLeads() async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/case-studies/count-all-case-study',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        totalLeads.value = response.data['data'];
-      }
-    } catch (_) {}
   }
 
   @override

@@ -45,6 +45,11 @@ class FaqController extends InboxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
+        if (!isLoadMore) {
+          final res = response.data['pagination']['total'];
+          totalLeads.value = res;
+        }
+
         final rawData = response.data['data'];
 
         if (rawData != null && rawData is List) {
@@ -71,22 +76,6 @@ class FaqController extends InboxController {
 
     clearAll();
     await fetchList();
-  }
-
-  @override
-  Future<void> fetchTotalLeads() async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/faq/count-all-faq',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        totalLeads.value = response.data['data'];
-      }
-    } catch (_) {}
   }
 
   @override
