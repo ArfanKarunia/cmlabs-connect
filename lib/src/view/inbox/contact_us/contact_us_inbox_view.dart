@@ -8,6 +8,7 @@ import '../../../models/inbox/contact_us_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/inbox/inbox_list_tile.dart';
+import '../../../widgets/inbox/inbox_loading_tile.dart';
 
 class ContactUsInbox extends StatelessWidget {
   final RefreshController refreshController;
@@ -56,40 +57,46 @@ class ContactUsInbox extends StatelessWidget {
             refreshController.loadComplete();
           },
           controller: refreshController,
-          child: contactUsList.isEmpty
-              ? const EmptyState()
-              : ListView(
-                  controller: scrollController,
-                  children: [
-                    ...contactUsList.map((contactUs) {
-                      return ContactUsListTile(
-                        contactUs: contactUs,
-                        contactUsController: contactUsController,
-                      );
-                    }),
-                    if (contactUsList.length % 10 == 0)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.text_4,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      )
-                    else if (contactUsList.isNotEmpty)
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: Text(
-                            "No more data",
-                            style: regular.copyWith(color: AppColors.text_4),
-                          ),
-                        ),
-                      ),
+          child: contactUsController.isLoading.value
+              ? ListView(
+                  children: const [
+                    InboxLoadingListTile(count: 10),
                   ],
-                ),
+                )
+              : contactUsList.isEmpty
+                  ? const EmptyState()
+                  : ListView(
+                      controller: scrollController,
+                      children: [
+                        ...contactUsList.map((contactUs) {
+                          return ContactUsListTile(
+                            contactUs: contactUs,
+                            contactUsController: contactUsController,
+                          );
+                        }),
+                        if (contactUsList.length % 10 == 0)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.text_4,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          )
+                        else if (contactUsList.isNotEmpty)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: Text(
+                                "No more data",
+                                style: regular.copyWith(color: AppColors.text_4),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
           // : ListView.builder(
           //     controller: scrollController,
           //     itemCount: quotationController.filteredCaseStudies.length,

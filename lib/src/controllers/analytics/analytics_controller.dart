@@ -26,8 +26,9 @@ enum AnalyticsType { quotationTraffic, topServices, topPICs, quotationTrends }
 enum AnalyticsFilterType { category, pic, clientSource, utm, status }
 
 class AnalyticsController extends GetxController {
-  RxBool isFilterLoading = false.obs;
-  RxBool isExportLoading = false.obs;
+  Rx<bool> isFilterLoading = false.obs;
+  Rx<bool> isExportLoading = false.obs;
+  Rx<bool> isLoading = false.obs;
   Rx<SortOption?> selectedSortOption = Rx<SortOption?>(SortOption.newestDate);
 
   Rx<DateType?> initialDateType = (DateType.daily).obs;

@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/inbox/contact_us_model.dart';
@@ -33,6 +34,9 @@ class ContactUsController extends InboxController {
       }
 
       if (!isLoadMore && !refreshData) {
+        isLoading(true);
+        await Future.delayed(Durations.short2);
+
         start.value = 0;
         limit.value = 10;
       }
@@ -66,7 +70,10 @@ class ContactUsController extends InboxController {
           if (refreshData) limit.value = 10;
         }
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      if (!isLoadMore) isLoading(false);
+    }
   }
 
   @override

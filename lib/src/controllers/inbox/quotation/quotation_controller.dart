@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
@@ -33,6 +34,9 @@ class QuotationController extends InboxController {
       }
 
       if (!isLoadMore && !refreshData) {
+        isLoading(true);
+        await Future.delayed(Durations.short2);
+
         start.value = 0;
         limit.value = 10;
       }
@@ -63,7 +67,10 @@ class QuotationController extends InboxController {
           if (refreshData) limit.value = 10;
         }
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      if (!isLoadMore) isLoading(false);
+    }
   }
 
   // Quotation cannot be exported

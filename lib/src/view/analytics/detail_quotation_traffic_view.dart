@@ -10,6 +10,7 @@ import '../../utils/color.dart';
 import '../../widgets/analytics/details/date_type_button.dart';
 import '../../widgets/analytics/details/quick_sort_button.dart';
 import '../../widgets/analytics/details/quotation_overview_card.dart';
+import '../../widgets/analytics/details/quotation_overview_loading_card.dart';
 import '../../widgets/analytics/details/sort_option_radio.dart';
 import '../../widgets/analytics/quotation_traffic_card.dart';
 import '../../widgets/default_appbar.dart';
@@ -102,7 +103,7 @@ class _DetailQuotationTrafficViewState extends State<DetailQuotationTrafficView>
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${controller.quotationTraffic.value?.totalQuotation}  ',
+                            text: '${controller.quotationTraffic.value?.totalQuotation ?? 0}  ',
                             style: regular.copyWith(fontSize: 12, color: Colors.blue),
                           ),
                           TextSpan(
@@ -165,21 +166,23 @@ class _DetailQuotationTrafficViewState extends State<DetailQuotationTrafficView>
                   ),
                   const SizedBox(height: 16),
                   Obx(
-                    () => Column(
-                      children: controller.dataLength > 0
-                          ? List.generate(
-                              controller.dataLength,
-                              (index) => QuotationOverviewCard(
-                                date: controller.data?.labels[index] ?? '',
-                                totalQuotation: controller.data?.data[index].total ?? 0,
-                                newCount: controller.data?.data[index].statusSummary['new'] ?? 0,
-                                followedUpCount: controller.data?.data[index].statusSummary['followed_up'] ?? 0,
-                                acceptedCount: controller.data?.data[index].statusSummary['accepted'] ?? 0,
-                                rejectedCount: controller.data?.data[index].statusSummary['rejected'] ?? 0,
-                              ),
-                            )
-                          : [const EmptyState()],
-                    ),
+                    () => controller.isLoading.value
+                        ? const QuotationOverviewLoadingListCard()
+                        : Column(
+                            children: controller.dataLength > 0
+                                ? List.generate(
+                                    controller.dataLength,
+                                    (index) => QuotationOverviewCard(
+                                      date: controller.data?.labels[index] ?? '',
+                                      totalQuotation: controller.data?.data[index].total ?? 0,
+                                      newCount: controller.data?.data[index].statusSummary['new'] ?? 0,
+                                      followedUpCount: controller.data?.data[index].statusSummary['followed_up'] ?? 0,
+                                      acceptedCount: controller.data?.data[index].statusSummary['accepted'] ?? 0,
+                                      rejectedCount: controller.data?.data[index].statusSummary['rejected'] ?? 0,
+                                    ),
+                                  )
+                                : [const EmptyState()],
+                          ),
                   ),
                   const SizedBox(height: 16),
                 ],

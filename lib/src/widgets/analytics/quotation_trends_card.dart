@@ -23,49 +23,57 @@ class _QuotationTrendsCardState extends State<QuotationTrendsCard> {
     final controller = Get.find<QuotationTrendsController>();
 
     return Obx(
-      () => controller.data == null || controller.compareLastTwo == null || controller.lineChart == null
-          ? EmptyChartCard(
+      () => controller.isLoading.value
+          ? ChartLoadingCard(
               title: 'Quotation Trends',
               subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.monthly),
               onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrendsView) : null,
             )
-          : ChartCard(
-              title: 'Quotation Trends',
-              subtitle: '${controller.compareLastTwo?.fromPeriod} vs ${controller.compareLastTwo?.toPeriod}',
-              value: (controller.compareLastTwo?.percentChange ?? 0) > 0
-                  ? '+ ${controller.compareLastTwo?.percentChange.toInt()}%'
-                  : '${controller.compareLastTwo?.percentChange.toInt()}%',
-              valueColor: (controller.compareLastTwo?.percentChange ?? 0) > 0 ? AppColors.green : AppColors.red,
-              chart: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  SfCartesianChart(
-                    primaryXAxis: const CategoryAxis(),
-                    tooltipBehavior: TooltipBehavior(enable: true),
-                    series: <CartesianSeries>[
-                      LineSeries<QuotationTrendsData, String>(
-                        name: 'Total Quotation',
-                        dataSource: controller.lineChart,
-                        xValueMapper: (d, _) => d.period,
-                        yValueMapper: (d, _) => d.count,
-                        width: 1.5,
-                        markerSettings: const MarkerSettings(isVisible: true),
-                        dataLabelSettings: const DataLabelSettings(
-                          isVisible: true,
-                          labelAlignment: ChartDataLabelAlignment.top,
-                        ),
+          : controller.data == null || controller.compareLastTwo == null || controller.lineChart == null
+              ? ChartEmptyCard(
+                  title: 'Quotation Trends',
+                  subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.monthly),
+                  onTapViewDetails:
+                      widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrendsView) : null,
+                )
+              : ChartCard(
+                  title: 'Quotation Trends',
+                  subtitle: '${controller.compareLastTwo?.fromPeriod} vs ${controller.compareLastTwo?.toPeriod}',
+                  value: (controller.compareLastTwo?.percentChange ?? 0) > 0
+                      ? '+ ${controller.compareLastTwo?.percentChange.toInt()}%'
+                      : '${controller.compareLastTwo?.percentChange.toInt()}%',
+                  valueColor: (controller.compareLastTwo?.percentChange ?? 0) > 0 ? AppColors.green : AppColors.red,
+                  chart: Column(
+                    children: [
+                      const SizedBox(height: 10),
+                      SfCartesianChart(
+                        primaryXAxis: const CategoryAxis(),
+                        tooltipBehavior: TooltipBehavior(enable: true),
+                        series: <CartesianSeries>[
+                          LineSeries<QuotationTrendsData, String>(
+                            name: 'Total Quotation',
+                            dataSource: controller.lineChart,
+                            xValueMapper: (d, _) => d.period,
+                            yValueMapper: (d, _) => d.count,
+                            width: 1.5,
+                            markerSettings: const MarkerSettings(isVisible: true),
+                            dataLabelSettings: const DataLabelSettings(
+                              isVisible: true,
+                              labelAlignment: ChartDataLabelAlignment.top,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              chartDescriptions: const [],
-              onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrendsView) : null,
-              onTapExport: () async {
-                await controller.exportData();
-                Get.back();
-              },
-            ),
+                  chartDescriptions: const [],
+                  onTapViewDetails:
+                      widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrendsView) : null,
+                  onTapExport: () async {
+                    await controller.exportData();
+                    Get.back();
+                  },
+                ),
     );
   }
 }

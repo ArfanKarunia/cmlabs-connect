@@ -1,6 +1,7 @@
 // ignore_for_file: overridden_fields
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/analytics/quotation_trends_model.dart';
@@ -32,6 +33,9 @@ class QuotationTrendsController extends AnalyticsController {
   @override
   Future<void> fetchData() async {
     try {
+      isLoading(true);
+      await Future.delayed(Durations.short2);
+
       String? accessToken = userController.accesToken.value;
       final response = await dio.get(
         constructFilteredUrl(
@@ -45,7 +49,10 @@ class QuotationTrendsController extends AnalyticsController {
       if (response.statusCode == 200) {
         quotationTrends.value = QuotationTrends.fromJson(response.data);
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      isLoading(false);
+    }
   }
 
   @override

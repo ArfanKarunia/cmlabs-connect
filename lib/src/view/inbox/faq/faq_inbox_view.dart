@@ -8,6 +8,7 @@ import '../../../models/inbox/faq_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/inbox/inbox_list_tile.dart';
+import '../../../widgets/inbox/inbox_loading_tile.dart';
 
 class FaqInbox extends StatelessWidget {
   final RefreshController refreshController;
@@ -56,40 +57,46 @@ class FaqInbox extends StatelessWidget {
             refreshController.loadComplete();
           },
           controller: refreshController,
-          child: faqList.isEmpty
-              ? const EmptyState()
-              : ListView(
-                  controller: scrollController,
-                  children: [
-                    ...faqList.map((faq) {
-                      return FaqListTile(
-                        faq: faq,
-                        faqController: faqController,
-                      );
-                    }),
-                    if (faqList.length % 10 == 0)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.text_4,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      )
-                    else if (faqList.isNotEmpty)
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: Text(
-                            "No more data",
-                            style: regular.copyWith(color: AppColors.text_4),
-                          ),
-                        ),
-                      ),
+          child: faqController.isLoading.value
+              ? ListView(
+                  children: const [
+                    InboxLoadingListTile(count: 10),
                   ],
-                ),
+                )
+              : faqList.isEmpty
+                  ? const EmptyState()
+                  : ListView(
+                      controller: scrollController,
+                      children: [
+                        ...faqList.map((faq) {
+                          return FaqListTile(
+                            faq: faq,
+                            faqController: faqController,
+                          );
+                        }),
+                        if (faqList.length % 10 == 0)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.text_4,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          )
+                        else if (faqList.isNotEmpty)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: Text(
+                                "No more data",
+                                style: regular.copyWith(color: AppColors.text_4),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
           // : ListView.builder(
           //     controller: scrollController,
           //     itemCount: quotationController.filteredCaseStudies.length,

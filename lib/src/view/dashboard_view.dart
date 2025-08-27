@@ -20,6 +20,7 @@ import '../utils/color.dart';
 import '../widgets/custom_avatar.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/inbox/inbox_list_tile.dart';
+import '../widgets/inbox/inbox_loading_tile.dart';
 import '../widgets/metric_card.dart';
 import '../widgets/select_status.dart';
 
@@ -163,16 +164,22 @@ class _DashboardViewState extends State<DashboardView> {
                             () {
                               List<Quotation> quotationList =
                                   quotationController.quotationList.take(3).toList();
-                              return quotationList.isNotEmpty
-                                  ? Column(
-                                      children: quotationList.map((quotation) {
-                                        return QuotationListTile(
-                                          quotation: quotation,
-                                          quotationController: quotationController,
+
+                              return quotationController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : quotationList.isNotEmpty
+                                      ? Column(
+                                          children: quotationList.map((quotation) {
+                                            return QuotationListTile(
+                                              quotation: quotation,
+                                              quotationController: quotationController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
                                         );
-                                      }).toList(),
-                                    )
-                                  : const SizedBox(height: 150, child: EmptyState());
                             },
                           ),
 
@@ -213,16 +220,22 @@ class _DashboardViewState extends State<DashboardView> {
                             () {
                               List<CaseStudies> caseStudiesList =
                                   caseStudiesController.caseStudiesList.take(3).toList();
-                              return caseStudiesList.isNotEmpty
-                                  ? Column(
-                                      children: caseStudiesList.map((caseStudies) {
-                                        return CaseStudiesListTile(
-                                          caseStudies: caseStudies,
-                                          caseStudiesController: caseStudiesController,
+
+                              return caseStudiesController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : caseStudiesList.isNotEmpty
+                                      ? Column(
+                                          children: caseStudiesList.map((caseStudies) {
+                                            return CaseStudiesListTile(
+                                              caseStudies: caseStudies,
+                                              caseStudiesController: caseStudiesController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
                                         );
-                                      }).toList(),
-                                    )
-                                  : const SizedBox(height: 150, child: EmptyState());
                             },
                           ),
                           const SizedBox(height: 20),
@@ -262,16 +275,22 @@ class _DashboardViewState extends State<DashboardView> {
                             () {
                               List<ContactUs> contactUsList =
                                   contactUsController.contactUsList.take(3).toList();
-                              return contactUsList.isNotEmpty
-                                  ? Column(
-                                      children: contactUsList.map((contactUs) {
-                                        return ContactUsListTile(
-                                          contactUs: contactUs,
-                                          contactUsController: contactUsController,
+
+                              return contactUsController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : contactUsList.isNotEmpty
+                                      ? Column(
+                                          children: contactUsList.map((contactUs) {
+                                            return ContactUsListTile(
+                                              contactUs: contactUs,
+                                              contactUsController: contactUsController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
                                         );
-                                      }).toList(),
-                                    )
-                                  : const SizedBox(height: 150, child: EmptyState());
                             },
                           ),
                           const SizedBox(height: 20),
@@ -308,16 +327,22 @@ class _DashboardViewState extends State<DashboardView> {
                           Obx(
                             () {
                               List<Faq> faqList = faqController.faqList.take(3).toList();
-                              return faqList.isNotEmpty
-                                  ? Column(
-                                      children: faqList.map((faq) {
-                                        return FaqListTile(
-                                          faq: faq,
-                                          faqController: faqController,
+
+                              return faqController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : faqList.isNotEmpty
+                                      ? Column(
+                                          children: faqList.map((faq) {
+                                            return FaqListTile(
+                                              faq: faq,
+                                              faqController: faqController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
                                         );
-                                      }).toList(),
-                                    )
-                                  : const SizedBox(height: 150, child: EmptyState());
                             },
                           ),
 

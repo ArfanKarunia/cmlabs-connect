@@ -11,6 +11,7 @@ import '../../utils/string_utils.dart';
 import '../../widgets/analytics/details/date_type_button.dart';
 import '../../widgets/analytics/details/quick_sort_button.dart';
 import '../../widgets/analytics/details/quotation_overview_card.dart';
+import '../../widgets/analytics/details/quotation_overview_loading_card.dart';
 import '../../widgets/analytics/details/sort_option_radio.dart';
 import '../../widgets/analytics/top_pics_card.dart';
 import '../../widgets/default_appbar.dart';
@@ -111,7 +112,7 @@ class _DetailTopPICsViewState extends State<DetailTopPICsView> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${controller.topPICs.value?.totalQuotation}  ',
+                            text: '${controller.topPICs.value?.totalQuotation ?? 0}  ',
                             style: regular.copyWith(fontSize: 12, color: Colors.blue),
                           ),
                           TextSpan(
@@ -175,25 +176,27 @@ class _DetailTopPICsViewState extends State<DetailTopPICsView> {
 
                   // Top Services Data
                   Obx(
-                    () => Column(
-                      children: controller.dataLength > 0
-                          ? List.generate(
-                              controller.dataLength,
-                              (index) => QuotationOverviewCard(
-                                date: formatPICName(controller.data?.topPics[index].picName ?? ''),
-                                totalQuotation: controller.data?.topPics[index].quotationCount ?? 0,
-                                percentage: controller.data?.topPics[index].percentage ?? 0,
-                                newCount: controller.data?.topPics[index].newCount ?? 0,
-                                followedUpCount: controller.data?.topPics[index].followedUp ?? 0,
-                                acceptedCount: controller.data?.topPics[index].accepted ?? 0,
-                                rejectedCount: controller.data?.topPics[index].rejected ?? 0,
-                              ),
-                            )
-                          : [
-                              const SizedBox(height: 20),
-                              const EmptyState(),
-                            ],
-                    ),
+                    () => controller.isLoading.value
+                        ? const QuotationOverviewLoadingListCard()
+                        : Column(
+                            children: controller.dataLength > 0
+                                ? List.generate(
+                                    controller.dataLength,
+                                    (index) => QuotationOverviewCard(
+                                      date: formatPICName(controller.data?.topPics[index].picName ?? ''),
+                                      totalQuotation: controller.data?.topPics[index].quotationCount ?? 0,
+                                      percentage: controller.data?.topPics[index].percentage ?? 0,
+                                      newCount: controller.data?.topPics[index].newCount ?? 0,
+                                      followedUpCount: controller.data?.topPics[index].followedUp ?? 0,
+                                      acceptedCount: controller.data?.topPics[index].accepted ?? 0,
+                                      rejectedCount: controller.data?.topPics[index].rejected ?? 0,
+                                    ),
+                                  )
+                                : [
+                                    const SizedBox(height: 20),
+                                    const EmptyState(),
+                                  ],
+                          ),
                   ),
                   const SizedBox(height: 16),
                 ],

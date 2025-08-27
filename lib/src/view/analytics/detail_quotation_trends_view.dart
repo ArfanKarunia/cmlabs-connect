@@ -10,6 +10,7 @@ import '../../utils/color.dart';
 import '../../widgets/analytics/details/date_type_button.dart';
 import '../../widgets/analytics/details/quick_sort_button.dart';
 import '../../widgets/analytics/details/quotation_overview_card.dart';
+import '../../widgets/analytics/details/quotation_overview_loading_card.dart';
 import '../../widgets/analytics/details/sort_option_radio.dart';
 import '../../widgets/analytics/quotation_trends_card.dart';
 import '../../widgets/default_appbar.dart';
@@ -175,22 +176,24 @@ class _DetailQuotationTrendsViewState extends State<DetailQuotationTrendsView> {
 
                   // Top Services Data
                   Obx(
-                    () => Column(
-                      children: controller.dataLength > 0
-                          ? List.generate(
-                              controller.dataLength,
-                              (index) => QuotationOverviewCard(
-                                date: controller.lineChart?[index].period ?? '',
-                                totalQuotation: controller.lineChart?[index].count ?? 0,
-                                percentage: controller.lineChart?[index].percentChange ?? 0,
-                                isGrowth: true,
-                              ),
-                            )
-                          : [
-                              const SizedBox(height: 20),
-                              const EmptyState(),
-                            ],
-                    ),
+                    () => controller.isLoading.value
+                        ? const QuotationOverviewLoadingListCard(height: 79)
+                        : Column(
+                            children: controller.dataLength > 0
+                                ? List.generate(
+                                    controller.dataLength,
+                                    (index) => QuotationOverviewCard(
+                                      date: controller.lineChart?[index].period ?? '',
+                                      totalQuotation: controller.lineChart?[index].count ?? 0,
+                                      percentage: controller.lineChart?[index].percentChange ?? 0,
+                                      isGrowth: true,
+                                    ),
+                                  )
+                                : [
+                                    const SizedBox(height: 20),
+                                    const EmptyState(),
+                                  ],
+                          ),
                   ),
                   const SizedBox(height: 16),
                 ],

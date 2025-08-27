@@ -8,6 +8,7 @@ import '../../../models/inbox/quotation_model.dart';
 import '../../../utils/color.dart';
 import '../../../widgets/empty_state.dart';
 import '../../../widgets/inbox/inbox_list_tile.dart';
+import '../../../widgets/inbox/inbox_loading_tile.dart';
 
 class QuotationInbox extends StatelessWidget {
   final RefreshController refreshController;
@@ -56,41 +57,47 @@ class QuotationInbox extends StatelessWidget {
             refreshController.loadComplete();
           },
           controller: refreshController,
-          child: quotationList.isEmpty
-              ? const EmptyState()
-              : ListView(
-                  controller: scrollController,
-                  children: [
-                    ...quotationList.map((quotation) {
-                      return QuotationListTile(
-                        quotation: quotation,
-                        quotationController: quotationController,
-                      );
-                    }),
-                    if (quotationList.length % 10 == 0)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.text_4,
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      )
-                    else if (quotationList.isNotEmpty)
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 10),
-                        child: Center(
-                          child: Text(
-                            "No more data",
-                            style: regular.copyWith(color: AppColors.text_4),
-                          ),
-                        ),
-                      ),
-                    const SizedBox(height: 10),
+          child: quotationController.isLoading.value
+              ? ListView(
+                  children: const [
+                    InboxLoadingListTile(count: 10),
                   ],
-                ),
+                )
+              : quotationList.isEmpty
+                  ? const EmptyState()
+                  : ListView(
+                      controller: scrollController,
+                      children: [
+                        ...quotationList.map((quotation) {
+                          return QuotationListTile(
+                            quotation: quotation,
+                            quotationController: quotationController,
+                          );
+                        }),
+                        if (quotationList.length % 10 == 0)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.text_4,
+                                strokeWidth: 2,
+                              ),
+                            ),
+                          )
+                        else if (quotationList.isNotEmpty)
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            child: Center(
+                              child: Text(
+                                "No more data",
+                                style: regular.copyWith(color: AppColors.text_4),
+                              ),
+                            ),
+                          ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
           // : ListView.builder(
           //     controller: scrollController,
           //     itemCount: quotationList.length,

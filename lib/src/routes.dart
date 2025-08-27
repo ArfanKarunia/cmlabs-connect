@@ -34,7 +34,7 @@ import 'models/inbox/quotation_model.dart';
 import 'view/analytics/analytics_filter_view.dart';
 import 'view/analytics/analytics_view.dart';
 import 'view/analytics/detail_quotation_traffic_view.dart';
-import 'view/analytics/detail_quotation_trends.dart';
+import 'view/analytics/detail_quotation_trends_view.dart';
 import 'view/analytics/detail_top_pics_view.dart';
 import 'view/analytics/detail_top_services_view.dart';
 import 'view/auth_wrapper.dart';

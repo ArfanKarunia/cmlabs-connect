@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../utils/toast.dart';
 
 abstract class InboxController extends GetxController {
+  Rx<bool> isLoading = false.obs;
   Rx<int> start = 0.obs;
   Rx<int> limit = 10.obs;
   RxList<String> filterCategory = <String>[].obs;
