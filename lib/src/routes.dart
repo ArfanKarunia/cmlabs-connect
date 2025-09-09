@@ -299,7 +299,7 @@ class AppRoutes {
     GetPage(
       name: editQuotation,
       page: () {
-        final DetailQuotation quotation = Get.arguments['quotation'];
+        final Quotation quotation = Get.arguments['quotation'];
         return QuotationEditView(quotation: quotation);
       },
     ),
