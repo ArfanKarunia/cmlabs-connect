@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
@@ -33,6 +34,9 @@ class FaqController extends InboxController {
       }
 
       if (!isLoadMore && !refreshData) {
+        isLoading(true);
+        await Future.delayed(Durations.short2);
+
         start.value = 0;
         limit.value = 10;
       }
@@ -45,6 +49,11 @@ class FaqController extends InboxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
+        if (!isLoadMore) {
+          final res = response.data['pagination']['total'];
+          totalLeads.value = res;
+        }
+
         final rawData = response.data['data'];
 
         if (rawData != null && rawData is List) {
@@ -61,7 +70,10 @@ class FaqController extends InboxController {
           if (refreshData) limit.value = 10;
         }
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      if (!isLoadMore) isLoading(false);
+    }
   }
 
   @override
@@ -71,22 +83,6 @@ class FaqController extends InboxController {
 
     clearAll();
     await fetchList();
-  }
-
-  @override
-  Future<void> fetchTotalLeads() async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/faq/count-all-faq',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        totalLeads.value = response.data['data'];
-      }
-    } catch (_) {}
   }
 
   @override
@@ -152,7 +148,7 @@ class FaqController extends InboxController {
   String constructFilteredUrl(String url) {
     String finalUrl = '$url?start=${start.value}&limit=${limit.value}';
     if (filterStatus.value != null) {
-      finalUrl += 'status=${Uri.encodeComponent(filterStatus.value!)}';
+      finalUrl += '&status=${Uri.encodeComponent(filterStatus.value ?? '')}';
     }
 
     return finalUrl;

@@ -49,106 +49,73 @@ class _QuotationDetailViewState extends State<QuotationDetailView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Obx(
-                    () => Text(
-                      controller.quotation.value?.companyName ?? widget.quotation.data?.company ?? '-',
-                      style: bold.copyWith(fontSize: 18),
-                    ),
+                  Text(
+                    widget.quotation.data?.company ?? '-',
+                    style: bold.copyWith(fontSize: 18),
                   ),
                   const Divider(
                     color: AppColors.text_2,
                     thickness: 0.25,
                     height: 18,
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'ID',
-                      content: '${controller.quotation.value?.id ?? widget.quotation.id ?? '-'}',
+                  InboxDetailTile(
+                    title: 'ID',
+                    content: '${widget.quotation.id ?? '-'}',
+                  ),
+                  InboxDetailTile(
+                    title: 'Joined at',
+                    content: DateFormat('d MMMM yyyy, HH:mm:ss').format(
+                      (widget.quotation.createdAt ?? DateTime.now()).toLocal(),
                     ),
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Joined at',
-                      content: DateFormat('d MMMM yyyy, HH:mm:ss').format(
-                        (controller.quotation.value?.createdAt ?? widget.quotation.createdAt ?? DateTime.now())
-                            .toLocal(),
-                      ),
-                    ),
+                  InboxDetailTile(
+                    title: 'Status',
+                    content: statusLead[widget.quotation.status ?? 0].title,
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Status',
-                      content: statusLead[controller.quotation.value?.status ?? widget.quotation.status ?? 0].title,
-                    ),
+                  InboxDetailTile(
+                    title: 'Category',
+                    content: widget.quotation.data?.category?.map((e) => formatServiceName(e)).join(', ') ?? '-',
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Category',
-                      content: controller.quotation.value?.category?.map((e) => formatServiceName(e)).join(', ') ??
-                          widget.quotation.data?.category?.map((e) => formatServiceName(e)).join(', ') ??
-                          '-',
-                    ),
+                  InboxDetailTile(
+                    title: 'Client Source',
+                    content: widget.quotation.data?.clientSource?.name ?? '-',
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Client Source',
-                      content:
-                          controller.quotation.value?.clientSource ?? widget.quotation.data?.clientSource?.name ?? '-',
-                    ),
+                  InboxDetailTile(
+                    title: 'Name',
+                    content: widget.quotation.data?.name ?? '-',
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Name',
-                      content:
-                          controller.quotation.value?.clientSourceDetail?.name ?? widget.quotation.data?.name ?? '-',
-                    ),
+                  InboxDetailTile(
+                    title: 'Email',
+                    content: widget.quotation.email ?? '-',
                   ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Email',
-                      content: controller.quotation.value?.email ?? widget.quotation.email ?? '-',
-                    ),
-                  ),
-                  Obx(
-                    () => InboxDetailTile(
-                      title: 'Whatsapp',
-                      content: controller.quotation.value?.phoneNumber ?? widget.quotation.data?.phoneNumber ?? '-',
-                    ),
+                  InboxDetailTile(
+                    title: 'Whatsapp',
+                    content: widget.quotation.data?.phoneNumber ?? '-',
                   ),
                   if (isShowMore) ...[
-                    Obx(
-                      () => InboxDetailTile(
-                        title: 'Company Website',
-                        content: controller.quotation.value?.companyWebsite ?? widget.quotation.data?.website ?? '-',
-                      ),
+                    InboxDetailTile(
+                      title: 'Company Website',
+                      content: widget.quotation.data?.website ?? '-',
                     ),
                     InboxDetailTile(
                       title: 'Reg Status',
                       content: widget.quotation.data?.registrationStatus ?? '-',
                     ),
-                    Obx(
-                      () => InboxDetailTile(
-                        title: 'Company Name',
-                        content: controller.quotation.value?.companyName ?? widget.quotation.data?.company ?? '-',
-                      ),
+                    InboxDetailTile(
+                      title: 'Company Name',
+                      content: widget.quotation.data?.company ?? '-',
                     ),
                     InboxDetailTile(
                       title: 'Company Profile',
                       content: widget.quotation.data?.companyProfile ?? '-',
                     ),
-                    Obx(
-                      () => InboxDetailTile(
-                        title: 'Page Source',
-                        content: controller.quotation.value?.url ?? widget.quotation.url ?? '-',
-                      ),
+                    InboxDetailTile(
+                      title: 'Page Source',
+                      content: widget.quotation.url ?? '-',
                     ),
-                    Obx(
-                      () => InboxDetailTile(
-                        title: 'Service',
-                        content: controller.quotation.value?.category?.map((e) => formatServiceName(e)).join(', ') ??
-                            widget.quotation.data?.category?.map((e) => formatServiceName(e)).join(', ') ??
-                            '-',
-                      ),
+                    InboxDetailTile(
+                      title: 'Service',
+                      content: widget.quotation.data?.category?.map((e) => formatServiceName(e)).join(', ') ?? '-',
                     ),
                     InboxDetailTile(
                       title: 'Region',

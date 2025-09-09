@@ -1,6 +1,7 @@
 // ignore_for_file: overridden_fields
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/analytics/top_services_model.dart';
@@ -33,6 +34,9 @@ class TopServicesController extends AnalyticsController {
   @override
   Future<void> fetchData() async {
     try {
+      isLoading(true);
+      await Future.delayed(Durations.short2);
+
       String? accessToken = userController.accesToken.value;
 
       final response = await dio.get(
@@ -51,7 +55,10 @@ class TopServicesController extends AnalyticsController {
       if (e.response?.statusCode == 404) {
         topServices.value = null;
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      isLoading(false);
+    }
   }
 
   @override

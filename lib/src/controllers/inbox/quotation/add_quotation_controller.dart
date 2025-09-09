@@ -102,8 +102,14 @@ class AddQuotationController extends GetxController {
   }
 
   Future<bool> validateForm(File? file) async {
-    companyNameError.value = companyName.value == null ? 'The company name must not be empty.' : null;
-    companyWebsiteError.value = companyWebsite.value == null ? 'The company website must not be empty.' : null;
+    companyNameError.value =
+        companyName.value == null ? 'The company name must not be empty.' : null;
+    companyWebsiteError.value = companyWebsite.value == null
+        ? 'The company website must not be empty.'
+        : !((companyWebsite.value?['value'] ?? '').startsWith("http") ||
+                (companyWebsite.value?['value'] ?? '').startsWith("https"))
+            ? "The company website must start with http or https"
+            : null;
     phoneNumberError.value = phoneNumber.value.text.isEmpty
         ? 'The company phone number must not be empty.'
         : phoneNumber.value.text.length > 13
@@ -112,12 +118,15 @@ class AddQuotationController extends GetxController {
 
     projectServiceError.value = projectService.isEmpty ? 'The service must not be empty.' : null;
     projectPicError.value = projectPic.value == null ? 'The CMLABS PIC must not be empty.' : null;
-    projectPriorityError.value = projectPriority.value == null ? 'The priority must not be empty.' : null;
-    projectClientSourceError.value = projectClientSource.value == null ? 'The client source must not be empty.' : null;
+    projectPriorityError.value =
+        projectPriority.value == null ? 'The priority must not be empty.' : null;
+    projectClientSourceError.value =
+        projectClientSource.value == null ? 'The client source must not be empty.' : null;
     projectStatusError.value = projectStatus.value == null ? 'The status must not be empty.' : null;
     projectTypeError.value = projectType.isEmpty ? 'The type must not be empty.' : null;
 
-    activityNameError.value = activityName.value.text.isEmpty ? 'The activity name must not be empty.' : null;
+    activityNameError.value =
+        activityName.value.text.isEmpty ? 'The activity name must not be empty.' : null;
     activityTypeError.value = activityType.isEmpty ? 'The activity type must not be empty.' : null;
     if (file != null) {
       final fileSize = await file.length();
@@ -137,7 +146,8 @@ class AddQuotationController extends GetxController {
           : picPositionControllers[i].text.length > 20
               ? 'The maximum character of position is 20 characters.'
               : null;
-      picContactErrors[i] = picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
+      picContactErrors[i] =
+          picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
     }
 
     bool isFormValid = companyNameError.value == null &&
@@ -205,6 +215,9 @@ class AddQuotationController extends GetxController {
           'label': data['company']?.toString() ?? '',
         };
       }).toList();
+      companyNames.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
 
       companyNameList.assignAll(companyNames);
     }
@@ -225,6 +238,10 @@ class AddQuotationController extends GetxController {
           'label': data['company_website']?.toString() ?? '',
         };
       }).toList();
+      companyWebsites.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       companyWebsiteList.assignAll(companyWebsites);
     }
   }
@@ -244,6 +261,10 @@ class AddQuotationController extends GetxController {
           'label': service['text']?.toString() ?? '',
         };
       }).toList();
+      services.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       projectServiceList.assignAll(services);
     }
   }
@@ -263,6 +284,10 @@ class AddQuotationController extends GetxController {
           'label': pic['label']?.toString() ?? '',
         };
       }).toList();
+      pics.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       projectPicList.assignAll(pics);
     }
   }
@@ -282,6 +307,10 @@ class AddQuotationController extends GetxController {
           'label': priority['label']?.toString() ?? '',
         };
       }).toList();
+      priorities.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       projectPriorityList.assignAll(priorities);
     }
   }
@@ -302,6 +331,10 @@ class AddQuotationController extends GetxController {
         };
       }).toList();
 
+      data.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       projectClientSourceList.assignAll(data);
     }
   }
@@ -321,6 +354,10 @@ class AddQuotationController extends GetxController {
           'label': status['label']?.toString() ?? '',
         };
       }).toList();
+      statuses.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       projectStatusList.assignAll(statuses);
     }
   }
@@ -351,6 +388,10 @@ class AddQuotationController extends GetxController {
           'label': type,
         };
       }).toList();
+      mapTypes.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       projectTypeList.assignAll(mapTypes);
     }
   }
@@ -371,6 +412,10 @@ class AddQuotationController extends GetxController {
           'label': type,
         };
       }).toList();
+      mapTypes.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       activityTypeList.assignAll(mapTypes);
     }
   }
@@ -524,7 +569,8 @@ class AddQuotationController extends GetxController {
 
         "agent": agent,
 
-        if (file != null) "file": await http.MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
+        if (file != null)
+          "file": await http.MultipartFile.fromFile(file.path, filename: file.path.split('/').last),
       });
 
       final response = await dio.post(

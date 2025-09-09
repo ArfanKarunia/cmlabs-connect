@@ -1,5 +1,6 @@
 import 'package:cmlabs_connect/src/constant/config.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/inbox/contact_us_model.dart';
@@ -33,6 +34,9 @@ class ContactUsController extends InboxController {
       }
 
       if (!isLoadMore && !refreshData) {
+        isLoading(true);
+        await Future.delayed(Durations.short2);
+
         start.value = 0;
         limit.value = 10;
       }
@@ -45,6 +49,11 @@ class ContactUsController extends InboxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
+        if (!isLoadMore) {
+          final res = response.data['total'];
+          totalLeads.value = res;
+        }
+
         final rawData = response.data['data'];
 
         if (rawData != null && rawData is List) {
@@ -61,7 +70,10 @@ class ContactUsController extends InboxController {
           if (refreshData) limit.value = 10;
         }
       }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      if (!isLoadMore) isLoading(false);
+    }
   }
 
   @override
@@ -71,22 +83,6 @@ class ContactUsController extends InboxController {
 
     clearAll();
     await fetchList();
-  }
-
-  @override
-  Future<void> fetchTotalLeads() async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/contact-us/count-all-contact-us',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        totalLeads.value = response.data['data'];
-      }
-    } catch (_) {}
   }
 
   @override

@@ -22,14 +22,30 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
   final TextEditingController startDateController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
 
+  String? dateError;
+  bool validateDateRange() {
+    dateError = widget.controller.selectedStartDate.value == null ||
+            widget.controller.selectedEndDate.value == null
+        ? 'Please select date range'
+        : widget.controller.selectedEndDate.value!
+                .isBefore(widget.controller.selectedStartDate.value!)
+            ? 'End date must be after start date'
+            : null;
+    setState(() {});
+
+    return dateError == null;
+  }
+
   @override
   void initState() {
     super.initState();
     if (widget.controller.selectedStartDate.value != null) {
-      startDateController.text = DateFormat('dd MMM yyyy').format(widget.controller.selectedStartDate.value!);
+      startDateController.text =
+          DateFormat('dd MMM yyyy').format(widget.controller.selectedStartDate.value!);
     }
     if (widget.controller.selectedEndDate.value != null) {
-      endDateController.text = DateFormat('dd MMM yyyy').format(widget.controller.selectedEndDate.value!);
+      endDateController.text =
+          DateFormat('dd MMM yyyy').format(widget.controller.selectedEndDate.value!);
     }
   }
 
@@ -65,7 +81,14 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
                           child: widget.controller.isFilterLoading.value
                               ? const CustomLoading()
                               : GestureDetector(
-                                  onTap: () async => await widget.controller.resetFilter(),
+                                  onTap: () async {
+                                    startDateController.text = '';
+                                    endDateController.text = '';
+                                    dateError = null;
+                                    setState(() {});
+
+                                    await widget.controller.resetFilter();
+                                  },
                                   child: Text(
                                     'Reset Filters',
                                     style: regular.copyWith(
@@ -144,7 +167,7 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
       width: double.infinity,
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(10)),
         boxShadow: [
           BoxShadow(
@@ -165,8 +188,10 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
                 : CustomSubmitButton(
                     title: 'Save',
                     onTap: () async {
-                      await widget.controller.applyFilters();
-                      Get.back();
+                      if (validateDateRange()) {
+                        await widget.controller.applyFilters();
+                        Get.back();
+                      }
                     },
                   ),
           ),
@@ -191,6 +216,7 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
               const SizedBox(height: 8),
               AnalyticsFilterDateField(
                 controller: startDateController,
+                errorText: dateError,
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
@@ -216,6 +242,7 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
               const SizedBox(height: 8),
               AnalyticsFilterDateField(
                 controller: endDateController,
+                errorText: dateError,
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
@@ -240,21 +267,26 @@ class _AnalyticsFilterViewState extends State<AnalyticsFilterView> {
 class AnalyticsFilterDateField extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback? onTap;
+  final String? errorText;
   const AnalyticsFilterDateField({
     super.key,
     required this.controller,
     this.onTap,
+    this.errorText,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: regular.copyWith(fontSize: 13, color: AppColors.primary),
+      style: regular.copyWith(
+        fontSize: 13,
+        color: errorText != null ? AppColors.danger : AppColors.primary,
+      ),
       decoration: InputDecoration(
         focusColor: AppColors.primary,
-        suffixIcon: const Icon(
+        suffixIcon: Icon(
           Ionicons.calendar_outline,
-          color: AppColors.primary,
+          color: errorText != null ? AppColors.danger : AppColors.primary,
         ),
         hintText: "Select date",
         hintStyle: regular.copyWith(fontSize: 13, color: AppColors.primary),
@@ -269,6 +301,17 @@ class AnalyticsFilterDateField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(color: AppColors.primary),
+        ),
+        errorText: errorText,
+        errorStyle: regular.copyWith(color: AppColors.danger),
+        errorMaxLines: 2,
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.danger),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: AppColors.danger),
         ),
       ),
       readOnly: true,
@@ -320,7 +363,8 @@ class AnalyticsFilterSectionState extends State<AnalyticsFilterSection> {
             // Lebar item untuk 2 kolom: (screenWidth - crossAxisSpacing) / crossAxisCount
             const double crossAxisSpacing = 8.0;
             const int crossAxisCount = 2; // Ubah menjadi 2 kolom
-            final double itemWidth = (screenWidth - (crossAxisSpacing * (crossAxisCount - 1))) / crossAxisCount;
+            final double itemWidth =
+                (screenWidth - (crossAxisSpacing * (crossAxisCount - 1))) / crossAxisCount;
             const double itemHeight = 40; // Tinggi tetap untuk pill
 
             return GridView.builder(
@@ -339,8 +383,10 @@ class AnalyticsFilterSectionState extends State<AnalyticsFilterSection> {
                   () => _buildFilterPill(
                     label: option['label'] ?? '',
                     isSelected:
-                        widget.controller.getSelectedFilterOption(type: widget.type)['value'] == option['value'],
-                    onTap: () => widget.controller.setSelectedFilterOption(type: widget.type, option: option),
+                        widget.controller.getSelectedFilterOption(type: widget.type)['value'] ==
+                            option['value'],
+                    onTap: () => widget.controller
+                        .setSelectedFilterOption(type: widget.type, option: option),
                   ),
                 );
               },

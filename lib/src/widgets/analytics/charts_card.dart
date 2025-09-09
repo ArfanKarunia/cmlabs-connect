@@ -226,11 +226,11 @@ class ChartDataDescription extends StatelessWidget {
   }
 }
 
-class EmptyChartCard extends StatelessWidget {
+class ChartEmptyCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback? onTapViewDetails;
-  const EmptyChartCard({super.key, required this.title, required this.subtitle, this.onTapViewDetails});
+  const ChartEmptyCard({super.key, required this.title, required this.subtitle, this.onTapViewDetails});
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +238,24 @@ class EmptyChartCard extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       chart: const SizedBox(height: 200, child: EmptyState()),
+      chartDescriptions: const [],
+      onTapViewDetails: onTapViewDetails,
+    );
+  }
+}
+
+class ChartLoadingCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTapViewDetails;
+  const ChartLoadingCard({super.key, required this.title, required this.subtitle, this.onTapViewDetails});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChartCard(
+      title: title,
+      subtitle: subtitle,
+      chart: const SizedBox(height: 200, child: Center(child: CustomLoading())),
       chartDescriptions: const [],
       onTapViewDetails: onTapViewDetails,
     );

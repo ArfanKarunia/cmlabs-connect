@@ -34,9 +34,10 @@ import 'models/inbox/quotation_model.dart';
 import 'view/analytics/analytics_filter_view.dart';
 import 'view/analytics/analytics_view.dart';
 import 'view/analytics/detail_quotation_traffic_view.dart';
-import 'view/analytics/detail_quotation_trends.dart';
+import 'view/analytics/detail_quotation_trends_view.dart';
 import 'view/analytics/detail_top_pics_view.dart';
 import 'view/analytics/detail_top_services_view.dart';
+import 'view/auth_wrapper.dart';
 import 'view/filter/filter_view.dart';
 import 'view/historical_lead/historical_lead_select_view.dart';
 import 'view/home_view.dart';
@@ -67,9 +68,9 @@ import 'view/notification/notification_select_view.dart';
 import 'view/filter/select_filter_view.dart';
 
 class AppRoutes {
-  // initialization url of route
-  static const String home = '/';
-  static const String loginForm = '/login';
+  static const String first = '/';
+  static const String login = '/login';
+  static const String home = '/home';
 
   static const String addQuotation = '/addQuotation';
   static const String addQuotationSelect = '/addQuotationSelect';
@@ -147,7 +148,11 @@ class AppRoutes {
   // List of Route
   static List<GetPage> routes = [
     GetPage(
-      name: loginForm,
+      name: first,
+      page: () => const AuthWrapper(),
+    ),
+    GetPage(
+      name: login,
       page: () => const LoginView(),
     ),
     GetPage(
@@ -294,7 +299,7 @@ class AppRoutes {
     GetPage(
       name: editQuotation,
       page: () {
-        final DetailQuotation quotation = Get.arguments['quotation'];
+        final Quotation quotation = Get.arguments['quotation'];
         return QuotationEditView(quotation: quotation);
       },
     ),

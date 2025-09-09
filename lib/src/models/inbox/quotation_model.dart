@@ -12,6 +12,7 @@ class Quotation {
   final String? email;
   final QuotationData? data;
   final AgentData? agent;
+  final List<ProjectHistory>? activities;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? section;
@@ -28,6 +29,7 @@ class Quotation {
     this.email,
     this.data,
     this.agent,
+    this.activities,
     this.createdAt,
     this.updatedAt,
     this.section,
@@ -37,7 +39,15 @@ class Quotation {
     this.deletedAt,
   });
 
-  factory Quotation.fromJson(Map<String, dynamic> json) {
+  factory Quotation.fromDetail(Map<String, dynamic> json) {
+    List<ProjectHistory> activitiesList = [];
+    if (json['activities'] is List) {
+      activitiesList = (json['activities'] as List<dynamic>?)
+              ?.map((activityJson) => ProjectHistory.fromJson(activityJson))
+              .toList() ??
+          [];
+    }
+
     return Quotation(
       id: json['id'],
       userId: json['user_id'].toString(),
@@ -45,6 +55,35 @@ class Quotation {
       url: json['url'],
       email: json['email'],
       data: json['data'] != null ? QuotationData.fromJson(json['data']) : null,
+      activities: activitiesList,
+      agent: json['agent'] != null ? AgentData.fromJson(json['agent']) : null,
+      createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
+      updatedAt: json['updated_at'] != null ? DateTime.tryParse(json['updated_at']) : null,
+      section: json['section'],
+      priority: json['priority'],
+      // status: json['status'],
+      isRead: json['is_read'],
+      deletedAt: json['deleted_at'] != null ? DateTime.tryParse(json['deleted_at']) : null,
+    );
+  }
+
+  factory Quotation.fromJson(Map<String, dynamic> json) {
+    List<ProjectHistory> activitiesList = [];
+    if (json['activities'] is List) {
+      activitiesList = (json['activities'] as List<dynamic>?)
+              ?.map((activityJson) => ProjectHistory.fromJson(activityJson))
+              .toList() ??
+          [];
+    }
+
+    return Quotation(
+      id: json['id'],
+      userId: json['user_id'].toString(),
+      feature: json['feature'],
+      url: json['url'],
+      email: json['email'],
+      data: json['data'] != null ? QuotationData.fromJson(json['data']) : null,
+      activities: activitiesList,
       agent: json['agent'] != null ? AgentData.fromJson(json['agent']) : null,
       createdAt: json['created_at'] != null ? DateTime.tryParse(json['created_at']) : null,
       updatedAt: json['updated_at'] != null ? DateTime.tryParse(json['updated_at']) : null,
@@ -65,6 +104,7 @@ class Quotation {
       'email': email,
       'data': data?.toJson(),
       'agent': agent?.toJson(),
+      'activities': activities?.map((x) => x.toJson()).toList(),
       'created_at': createdAt?.toIso8601String(),
       'updated_at': updatedAt?.toIso8601String(),
       'section': section,
@@ -83,6 +123,7 @@ class Quotation {
     String? email,
     QuotationData? data,
     AgentData? agent,
+    List<ProjectHistory>? activities,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? section,
@@ -99,6 +140,7 @@ class Quotation {
       email: email ?? this.email,
       data: data ?? this.data,
       agent: agent ?? this.agent,
+      activities: activities ?? this.activities,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       section: section ?? this.section,
@@ -125,7 +167,7 @@ class QuotationData {
   final ClientSource? clientSource;
   final List<String?>? type;
 
-  final List<ProjectHistory?>? activities;
+  final UrlTracking? urlTracking;
   final String? remarks;
   final String? notes;
 
@@ -146,7 +188,7 @@ class QuotationData {
     this.pic,
     this.clientSource,
     this.type,
-    this.activities,
+    this.urlTracking,
     this.remarks,
     this.notes,
     this.clientPIC,
@@ -176,6 +218,8 @@ class QuotationData {
           types = List<String>.from(json['type'].where((element) => element != null));
         }
       }
+    } else if (json['typeInformation'] != null) {
+      types = json['typeInformation'] is List ? List<String>.from(json['typeInformation']) : [json['typeInformation']];
     }
 
     List<String> categories = [];
@@ -201,6 +245,7 @@ class QuotationData {
       pic: json['pic'] ?? '-',
       remarks: json['remarks'] ?? '-',
       notes: json['notes'] ?? '-',
+      urlTracking: json['url_tracking'] != null ? UrlTracking.fromJson(json['url_tracking']) : null,
       clientSource: ClientSource.fromJson(
         {'client_source': json['client_source'], ...?json['client_source_detail']},
       ),
@@ -220,7 +265,8 @@ class QuotationData {
       'client_pic': clientPIC, // Ubah ini sesuai struktur ClientPic
       'remarks': remarks,
       'notes': notes,
-      'client_source': clientSource?.toJson()
+      'url_tracking': urlTracking?.toJson(),
+      'client_source': clientSource?.toJson(),
     };
   }
 
@@ -237,7 +283,7 @@ class QuotationData {
     String? pic,
     ClientSource? clientSource,
     List<String?>? type,
-    List<ProjectHistory?>? activities,
+    UrlTracking? urlTracking,
     String? remarks,
     String? notes,
     List<ClientPic?>? clientPIC,
@@ -256,7 +302,7 @@ class QuotationData {
       pic: pic ?? this.pic,
       clientSource: clientSource ?? this.clientSource,
       type: type ?? this.type,
-      activities: activities ?? this.activities,
+      urlTracking: urlTracking ?? this.urlTracking,
       remarks: remarks ?? this.remarks,
       notes: notes ?? this.notes,
       clientPIC: clientPIC ?? this.clientPIC,
@@ -306,177 +352,5 @@ class AgentData {
       'platform': platform,
       'devices': devices,
     };
-  }
-}
-
-class DetailQuotation {
-  final int? id;
-  final String? companyName;
-  final String? companyWebsite;
-  final String? phoneNumber;
-  final String? phoneCode;
-  final List<String>? typeInformation;
-  final String? clientSource;
-  final ClientSource? clientSourceDetail;
-  final int? status;
-  final int? priority;
-  final DateTime? createdAt;
-  final String? feature;
-  final String? section;
-  final String? url;
-  final List<ClientPic>? clientPic;
-  final String? cmlabspic;
-  final List<String>? category;
-  final AgentData? agent;
-  final String? email;
-  final UrlTracking? urlTracking;
-  final List<ProjectHistory>? activities;
-
-  DetailQuotation({
-    this.id,
-    this.companyName,
-    this.companyWebsite,
-    this.phoneNumber,
-    this.phoneCode,
-    this.typeInformation,
-    this.clientSource,
-    this.clientSourceDetail,
-    this.status,
-    this.priority,
-    this.createdAt,
-    this.feature,
-    this.section,
-    this.url,
-    this.clientPic,
-    this.cmlabspic,
-    this.category,
-    this.agent,
-    this.email,
-    this.urlTracking,
-    this.activities,
-  });
-
-  factory DetailQuotation.fromJson(Map<String, dynamic> json) {
-    List<ClientPic> clientPics = [];
-    if (json['data']['client_pic'] is List) {
-      clientPics =
-          (json['data']['client_pic'] as List<dynamic>?)?.map((picJson) => ClientPic.fromJson(picJson)).toList() ?? [];
-    }
-
-    List<ProjectHistory> activitiesList = [];
-    if (json['activities'] is List) {
-      activitiesList = (json['activities'] as List<dynamic>?)
-              ?.map((activityJson) => ProjectHistory.fromJson(activityJson))
-              .toList() ??
-          [];
-    }
-
-    return DetailQuotation(
-      id: json['data']['id'],
-      companyName: json['data']['company_name'],
-      companyWebsite: json['data']['company_website'],
-      phoneNumber: json['data']['phone_number'],
-      phoneCode: json['data']['phone_code'],
-      typeInformation: json['data']['typeInformation'] != null
-          ? json['data']['typeInformation'] is List
-              ? List<String>.from(json['data']['typeInformation'])
-              : [json['data']['typeInformation']]
-          : null,
-      clientSource: json['data']['client_source'],
-      clientSourceDetail: json['data']['client_source_detail'] != null
-          ? ClientSource.fromJson(json['data']['client_source_detail'])
-          : null,
-      status: json['data']['status'],
-      priority: json['data']['priority'],
-      createdAt: json['data']['created_at'] != null ? DateTime.tryParse(json['data']['created_at']) : null,
-      feature: json['data']['feature'],
-      section: json['data']['section'],
-      url: json['data']['url'],
-      clientPic: clientPics,
-      cmlabspic: json['data']['cmlabspic'],
-      category: json['data']['category'] != null
-          ? json['data']['category'] is List
-              ? List<String>.from(json['data']['category'])
-              : [json['data']['category']]
-          : null,
-      // agent: json['data']['agent'] != null ? AgentData.fromJson(json['data']['agent']) : null,
-      email: json['data']['email'],
-      urlTracking: json['data']['url_tracking'] != null ? UrlTracking.fromJson(json['data']['url_tracking']) : null,
-      activities: activitiesList,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'company_name': companyName,
-      'company_website': companyWebsite,
-      'phone_number': phoneNumber,
-      'phone_code': phoneCode,
-      'typeInformation': typeInformation,
-      'client_source': clientSource,
-      'client_source_detail': clientSourceDetail?.toJson(),
-      'status': status,
-      'priority': priority,
-      'created_at': createdAt?.toIso8601String(),
-      'feature': feature,
-      'section': section,
-      'url': url,
-      'client_pic': clientPic?.map((pic) => pic.toJson()).toList(),
-      'cmlabspic': cmlabspic,
-      'category': category,
-      'agent': agent?.toJson(),
-      'email': email,
-      'url_tracking': urlTracking?.toJson(),
-      'activities': activities?.map((activity) => activity.toJson()).toList(),
-    };
-  }
-
-  DetailQuotation copyWith({
-    int? id,
-    String? companyName,
-    String? companyWebsite,
-    String? phoneNumber,
-    String? phoneCode,
-    List<String>? typeInformation,
-    String? clientSource,
-    ClientSource? clientSourceDetail,
-    int? status,
-    int? priority,
-    DateTime? createdAt,
-    String? feature,
-    String? section,
-    String? url,
-    List<ClientPic>? clientPic,
-    String? cmlabspic,
-    List<String>? category,
-    AgentData? agent,
-    String? email,
-    UrlTracking? urlTracking,
-    List<ProjectHistory>? activities,
-  }) {
-    return DetailQuotation(
-      id: id ?? this.id,
-      companyName: companyName ?? this.companyName,
-      companyWebsite: companyWebsite ?? this.companyWebsite,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      phoneCode: phoneCode ?? this.phoneCode,
-      typeInformation: typeInformation ?? this.typeInformation,
-      clientSource: clientSource ?? this.clientSource,
-      clientSourceDetail: clientSourceDetail ?? this.clientSourceDetail,
-      status: status ?? this.status,
-      priority: priority ?? this.priority,
-      createdAt: createdAt ?? this.createdAt,
-      feature: feature ?? this.feature,
-      section: section ?? this.section,
-      url: url ?? this.url,
-      clientPic: clientPic ?? this.clientPic,
-      cmlabspic: cmlabspic ?? this.cmlabspic,
-      category: category ?? this.category,
-      agent: agent ?? this.agent,
-      email: email ?? this.email,
-      urlTracking: urlTracking ?? this.urlTracking,
-      activities: activities ?? this.activities,
-    );
   }
 }

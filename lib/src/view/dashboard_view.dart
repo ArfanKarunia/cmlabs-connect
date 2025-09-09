@@ -2,7 +2,6 @@ import 'package:cmlabs_connect/src/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:get/get.dart';
-// import 'package:pull_to_refresh_new/pull_to_refresh.dart';
 
 import '../controllers/inbox/case_studies/case_studies_controller.dart';
 import '../controllers/inbox/contact_us/contact_us_controller.dart';
@@ -12,7 +11,6 @@ import '../models/inbox/faq_model.dart';
 import '../routes.dart';
 import '../constant/fontstyle.dart';
 import '../controllers/dashboard/dashboard_controller.dart';
-// import '../controllers/historical_lead_controller.dart';
 import '../controllers/notification/notification_controller.dart';
 import '../controllers/inbox/quotation/quotation_controller.dart';
 import '../controllers/user/user_controller.dart';
@@ -22,6 +20,7 @@ import '../utils/color.dart';
 import '../widgets/custom_avatar.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/inbox/inbox_list_tile.dart';
+import '../widgets/inbox/inbox_loading_tile.dart';
 import '../widgets/metric_card.dart';
 import '../widgets/select_status.dart';
 
@@ -35,7 +34,6 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   final NotificationController notificationController = Get.find<NotificationController>();
-
   final DashboardController dashboardController = Get.find<DashboardController>();
   final UserController userController = Get.find<UserController>();
 
@@ -46,261 +44,329 @@ class _DashboardViewState extends State<DashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    notificationController.fetchAmountUnreadNotification();
     final user = userController.user.value;
 
-    return Scaffold(
-      backgroundColor: AppColors.primary,
-      body: CustomScrollView(
-        slivers: [
-          _buildDashboardOverview(user),
-
-          SliverToBoxAdapter(
-            child: Stack(
-              children: [
-                Container(color: AppColors.primary),
-                Container(
-                  height: 12,
-                  decoration: const BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SliverStickyHeader(
-            header: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-              decoration: const BoxDecoration(
-                color: AppColors.white,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return Container(
+      color: AppColors.primary,
+      child: RefreshIndicator(
+        color: AppColors.primary,
+        onRefresh: () => handleRefreshDashboard(),
+        child: CustomScrollView(
+          slivers: [
+            _buildDashboardOverview(user),
+            SliverToBoxAdapter(
+              child: Stack(
                 children: [
-                  Text(
-                    "Inbox Leads",
-                    style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
-                  ),
-                  const SizedBox(height: 7),
-                  Row(
-                    children: [
-                      Obx(
-                        () => Text(
-                          "${quotationController.totalLeads.value} ",
-                          style: regular.copyWith(fontSize: 12, color: AppColors.primary),
-                        ),
-                      ),
-                      Text(
-                        "Leads",
-                        style: regular.copyWith(fontSize: 12, color: AppColors.primaryText),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 7),
-
-                  // Select Status, Filter Section, & Historical Lead History
-                  SelectStatus(
-                    controllers: [
-                      quotationController,
-                      caseStudiesController,
-                      contactUsController,
-                      faqController,
-                    ],
-                    enableFilter: true,
-                    enableHistory: true,
+                  Container(color: AppColors.primary),
+                  Container(
+                    height: 12,
+                    decoration: const BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+                    ),
                   ),
                 ],
               ),
             ),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+            SliverStickyHeader(
+              header: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                decoration: const BoxDecoration(
                   color: AppColors.white,
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Quotations',
-                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
-                          ),
-                          GestureDetector(
-                            onTap: () => widget.updateIndex(1),
-                            child: Text(
-                              "View all",
-                              style: regular.copyWith(
-                                fontSize: 12,
-                                color: AppColors.primary,
-                                decoration: TextDecoration.underline,
-                                decorationColor: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Obx(() {
-                        List<Quotation> quotationList = quotationController.quotationList.take(3).toList();
-                        return quotationList.isNotEmpty
-                            ? Column(
-                                children: quotationList.map((quotation) {
-                                  return QuotationListTile(
-                                    quotation: quotation,
-                                    quotationController: quotationController,
-                                  );
-                                }).toList(),
-                              )
-                            : const SizedBox(height: 150, child: EmptyState());
-                      }),
-
-                      const SizedBox(height: 20),
-
-                      // CASE STUDIES LIST
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Case Studies',
-                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
-                          ),
-                          DashboardViewAllInbox(
-                            onTap: () => widget.updateIndex(1),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Obx(() {
-                        List<CaseStudies> caseStudiesList = caseStudiesController.caseStudiesList.take(3).toList();
-                        return caseStudiesList.isNotEmpty
-                            ? Column(
-                                children: caseStudiesList.map((caseStudies) {
-                                  return CaseStudiesListTile(
-                                    caseStudies: caseStudies,
-                                    caseStudiesController: caseStudiesController,
-                                  );
-                                }).toList(),
-                              )
-                            : const SizedBox(height: 150, child: EmptyState());
-                      }),
-                      const SizedBox(height: 20),
-
-                      // CONTACT US LIST
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Contact Us',
-                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
-                          ),
-                          DashboardViewAllInbox(
-                            onTap: () => widget.updateIndex(1),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Obx(() {
-                        List<ContactUs> contactUsList = contactUsController.contactUsList.take(3).toList();
-                        return contactUsList.isNotEmpty
-                            ? Column(
-                                children: contactUsList.map((contactUs) {
-                                  return ContactUsListTile(
-                                    contactUs: contactUs,
-                                    contactUsController: contactUsController,
-                                  );
-                                }).toList(),
-                              )
-                            : const SizedBox(height: 150, child: EmptyState());
-                      }),
-                      const SizedBox(height: 20),
-
-                      // FAQ LIST
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'FAQ',
-                            style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
-                          ),
-                          DashboardViewAllInbox(
-                            onTap: () => widget.updateIndex(1),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Obx(() {
-                        List<Faq> faqList = faqController.faqList.take(3).toList();
-                        return faqList.isNotEmpty
-                            ? Column(
-                                children: faqList.map((faq) {
-                                  return FaqListTile(
-                                    faq: faq,
-                                    faqController: faqController,
-                                  );
-                                }).toList(),
-                              )
-                            : const SizedBox(height: 150, child: EmptyState());
-                      }),
-
-                      const SizedBox(height: 10),
-                    ],
-                  ),
                 ),
-              ]),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Inbox Leads",
+                      style: bold.copyWith(fontSize: 20, color: AppColors.primaryText),
+                    ),
+                    const SizedBox(height: 7),
+                    Row(
+                      children: [
+                        Obx(
+                          () {
+                            final totalLeads = quotationController.totalLeads.value +
+                                caseStudiesController.totalLeads.value +
+                                contactUsController.totalLeads.value +
+                                faqController.totalLeads.value;
+
+                            return Text(
+                              "$totalLeads ",
+                              style: regular.copyWith(fontSize: 12, color: AppColors.primary),
+                            );
+                          },
+                        ),
+                        Text(
+                          "Leads",
+                          style: regular.copyWith(fontSize: 12, color: AppColors.primaryText),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 7),
+
+                    // Select Status, Filter Section, & Historical Lead History
+                    SelectStatus(
+                      controllers: [
+                        quotationController,
+                        caseStudiesController,
+                        contactUsController,
+                        faqController,
+                      ],
+                      enableFilter: true,
+                      enableHistory: true,
+                    ),
+                  ],
+                ),
+              ),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      color: AppColors.white,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Quotations',
+                                    style: bold.copyWith(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${quotationController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              DashboardViewAllInbox(
+                                onTap: () => widget.updateIndex(1),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Obx(
+                            () {
+                              List<Quotation> quotationList =
+                                  quotationController.quotationList.take(3).toList();
+
+                              return quotationController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : quotationList.isNotEmpty
+                                      ? Column(
+                                          children: quotationList.map((quotation) {
+                                            return QuotationListTile(
+                                              quotation: quotation,
+                                              quotationController: quotationController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
+                                        );
+                            },
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // CASE STUDIES LIST
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Case Studies',
+                                    style: bold.copyWith(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${caseStudiesController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              DashboardViewAllInbox(
+                                onTap: () => widget.updateIndex(1),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Obx(
+                            () {
+                              List<CaseStudies> caseStudiesList =
+                                  caseStudiesController.caseStudiesList.take(3).toList();
+
+                              return caseStudiesController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : caseStudiesList.isNotEmpty
+                                      ? Column(
+                                          children: caseStudiesList.map((caseStudies) {
+                                            return CaseStudiesListTile(
+                                              caseStudies: caseStudies,
+                                              caseStudiesController: caseStudiesController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
+                                        );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+
+                          // CONTACT US LIST
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'Contact Us',
+                                    style: bold.copyWith(
+                                      fontSize: 20,
+                                      color: AppColors.primaryText,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${contactUsController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              DashboardViewAllInbox(
+                                onTap: () => widget.updateIndex(1),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Obx(
+                            () {
+                              List<ContactUs> contactUsList =
+                                  contactUsController.contactUsList.take(3).toList();
+
+                              return contactUsController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : contactUsList.isNotEmpty
+                                      ? Column(
+                                          children: contactUsList.map((contactUs) {
+                                            return ContactUsListTile(
+                                              contactUs: contactUs,
+                                              contactUsController: contactUsController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
+                                        );
+                            },
+                          ),
+                          const SizedBox(height: 20),
+
+                          // FAQ LIST
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    'FAQ',
+                                    style:
+                                        bold.copyWith(fontSize: 20, color: AppColors.primaryText),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Obx(
+                                    () => Text(
+                                      "(${faqController.totalLeads.value})",
+                                      style: semibold.copyWith(
+                                        fontSize: 16,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              DashboardViewAllInbox(
+                                onTap: () => widget.updateIndex(1),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          Obx(
+                            () {
+                              List<Faq> faqList = faqController.faqList.take(3).toList();
+
+                              return faqController.isLoading.value
+                                  ? const InboxLoadingListTile()
+                                  : faqList.isNotEmpty
+                                      ? Column(
+                                          children: faqList.map((faq) {
+                                            return FaqListTile(
+                                              faq: faq,
+                                              faqController: faqController,
+                                            );
+                                          }).toList(),
+                                        )
+                                      : const SizedBox(
+                                          height: 150,
+                                          child: EmptyState(),
+                                        );
+                            },
+                          ),
+
+                          const SizedBox(height: 10),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-
-          // Obx(
-          //   () => quotationController.newQuotationCount.value > 0
-          //       ? Padding(
-          //           padding: const EdgeInsets.only(bottom: 10),
-          //           child: IntrinsicWidth(
-          //             child: ElevatedButton(
-          //               style: ButtonStyle(
-          //                 shape: WidgetStatePropertyAll(
-          //                   RoundedRectangleBorder(
-          //                     borderRadius: BorderRadius.circular(5),
-          //                   ),
-          //                 ),
-          //                 backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
-          //                 foregroundColor: const WidgetStatePropertyAll(AppColors.white_1),
-          //                 overlayColor: const WidgetStatePropertyAll(Colors.white30),
-          //               ),
-          //               onPressed: () {
-          //                 quotationController.clearFilter();
-
-          //                 quotationController.refreshNewData();
-
-          //                 quotationController.fetchQuotation();
-          //               },
-          //               child: Row(
-          //                 mainAxisAlignment: MainAxisAlignment.center,
-          //                 children: [
-          //                   const Icon(
-          //                     Ionicons.arrow_up_outline,
-          //                     size: 18,
-          //                   ),
-          //                   const SizedBox(width: 10),
-          //                   Text(
-          //                     "${quotationController.newQuotationCount.value}+ New Leads",
-          //                     style: regular.copyWith(fontSize: 12),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           ),
-          //         )
-          //       : const SizedBox.shrink(),
-          // ),
-        ],
+          ],
+        ),
       ),
     );
+  }
+
+  Future<void> handleRefreshDashboard() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    dashboardController.fetchDashboardData();
+    await quotationController.fetchList(refreshData: true);
+    caseStudiesController.fetchList(refreshData: true);
+    contactUsController.fetchList(refreshData: true);
+    faqController.fetchList(refreshData: true);
   }
 
   SliverToBoxAdapter _buildDashboardOverview(User? user) {
@@ -318,28 +384,35 @@ class _DashboardViewState extends State<DashboardView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CustomAvatar(
-                      radius: 24,
-                      link: user?.picUrl,
-                    ),
-                    const SizedBox(width: 15),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user?.name ?? 'cmlabs User',
-                          style: bold.copyWith(fontSize: 16),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CustomAvatar(
+                        radius: 24,
+                        link: user?.picUrl,
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              user?.name ?? 'cmlabs User',
+                              style: bold.copyWith(fontSize: 16),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              userController.roleName.value,
+                              style: regular.copyWith(fontSize: 12, color: AppColors.text_2),
+                            )
+                          ],
                         ),
-                        Text(
-                          userController.roleName.value,
-                          style: regular.copyWith(fontSize: 12, color: AppColors.text_2),
-                        )
-                      ],
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
                 Stack(
                   alignment: Alignment.center,

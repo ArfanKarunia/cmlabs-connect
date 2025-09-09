@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../constant/config.dart';
@@ -33,6 +34,9 @@ class QuotationController extends InboxController {
       }
 
       if (!isLoadMore && !refreshData) {
+        isLoading(true);
+        await Future.delayed(Durations.short2);
+
         start.value = 0;
         limit.value = 10;
       }
@@ -45,8 +49,10 @@ class QuotationController extends InboxController {
       );
 
       if (response.statusCode == 200 && response.data != null) {
-        final rawData = response.data['data'];
+        final res = response.data['total'];
+        totalLeads.value = res;
 
+        final rawData = response.data['data'];
         if (rawData != null && rawData is List) {
           List<Quotation> quotations = rawData.map<Quotation>((item) {
             return Quotation.fromJson(item);
@@ -61,23 +67,10 @@ class QuotationController extends InboxController {
           if (refreshData) limit.value = 10;
         }
       }
-    } catch (_) {}
-  }
-
-  @override
-  Future<void> fetchTotalLeads() async {
-    try {
-      String? accessToken = userController.accesToken.value;
-
-      final response = await dio.get(
-        '$baseUrl/dashboard/total_all',
-        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
-      );
-
-      if (response.statusCode == 200 && response.data != null) {
-        if (response.data['status'] == 'success') totalLeads.value = response.data['data'];
-      }
-    } catch (_) {}
+    } catch (_) {
+    } finally {
+      if (!isLoadMore) isLoading(false);
+    }
   }
 
   // Quotation cannot be exported

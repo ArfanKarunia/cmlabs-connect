@@ -104,8 +104,10 @@ class EditFormController extends GetxController {
 
   Future<bool> validateForm() async {
     projectPicError.value = selectedPic.value == null ? 'The CMLABS PIC must not be empty.' : null;
-    projectPriorityError.value = selectedPriority.value == null ? 'The priority must not be empty.' : null;
-    projectStatusError.value = selectedStatus.value == null ? 'The status must not be empty.' : null;
+    projectPriorityError.value =
+        selectedPriority.value == null ? 'The priority must not be empty.' : null;
+    projectStatusError.value =
+        selectedStatus.value == null ? 'The status must not be empty.' : null;
     projectTypeError.value = selectedType.isEmpty ? 'The type must not be empty.' : null;
 
     for (int i = 0; i < picNameControllers.length; i++) {
@@ -121,7 +123,8 @@ class EditFormController extends GetxController {
           : picPositionControllers[i].text.length > 20
               ? 'The maximum character of position is 20 characters.'
               : null;
-      picContactErrors[i] = picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
+      picContactErrors[i] =
+          picClients[i].contacts.isEmpty ? 'The contact field is required.' : null;
     }
 
     bool isFormValid = projectPicError.value == null &&
@@ -216,6 +219,10 @@ class EditFormController extends GetxController {
           'label': pic['label']?.toString() ?? '',
         };
       }).toList();
+      pics.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       picList.assignAll(pics);
     }
   }
@@ -235,6 +242,10 @@ class EditFormController extends GetxController {
           'label': priority['label']?.toString() ?? '',
         };
       }).toList();
+      priorities.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       priorityList.assignAll(priorities);
     }
   }
@@ -254,6 +265,10 @@ class EditFormController extends GetxController {
           'label': status['label']?.toString() ?? '',
         };
       }).toList();
+      statuses.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       statusList.assignAll(statuses);
     }
   }
@@ -284,6 +299,10 @@ class EditFormController extends GetxController {
           'label': type,
         };
       }).toList();
+      mapTypes.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       typeList.assignAll(mapTypes);
     }
   }
@@ -304,6 +323,10 @@ class EditFormController extends GetxController {
           'label': type,
         };
       }).toList();
+      mapTypes.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
+
       activityTypeList.assignAll(mapTypes);
     }
   }
@@ -467,8 +490,9 @@ class EditFormController extends GetxController {
     for (int i = 0; i < itemCount; i++) {
       Map<String, dynamic> activityItem = {
         "meeting_topic": activityName[i].text,
-        "meeting_schedule":
-            activitySchedule[i] != null ? DateFormat('yyyy-MM-dd HH:mm:ss').format(activitySchedule[i]!) : null,
+        "meeting_schedule": activitySchedule[i] != null
+            ? DateFormat('yyyy-MM-dd HH:mm:ss').format(activitySchedule[i]!)
+            : null,
         "meeting_status": activityStatus[i]?['value'],
         "meeting_type": activityType[i]?['value'],
         "meeting_available_to_user": activityAvailableToUser[i] ? 1 : 0,

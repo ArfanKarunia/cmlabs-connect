@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:cmlabs_connect/src/controllers/user/user_controller.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +14,7 @@ import '../../utils/toast.dart';
 
 class AuthenticationController extends GetxController {
   RxBool isLoading = false.obs;
+  RxBool isLogoutLoading = false.obs;
   RxBool isRememberMe = false.obs;
   final roleList = Rx<List<Map<String, dynamic>>>([]);
 
@@ -57,7 +59,16 @@ class AuthenticationController extends GetxController {
       final email = await getEmail();
       final password = await getPassword();
 
-      if (email != null && password != null) await login(email, password);
+      if (email != null && password != null) {
+        final response = await login(email, password);
+        if (response['code'] == '400') {
+          Get.offAllNamed(AppRoutes.home);
+        } else {
+          Get.offAllNamed(AppRoutes.login);
+        }
+      } else {
+        Get.offAllNamed(AppRoutes.login);
+      }
     } finally {
       isLoading(false);
     }
@@ -102,14 +113,15 @@ class AuthenticationController extends GetxController {
       userController.saveUser(user);
       userController.password.value = password;
 
-      await storeDeviceToken(userController.deviceToken.value ?? '', userController.user.value!.id.toString());
+      await storeDeviceToken(
+        token: userController.deviceToken.value ?? '',
+        userId: userController.user.value?.id.toString() ?? '',
+      );
 
       if (isRememberMe.value) {
         await setEmail(email);
         await setPassword(password);
       }
-
-      Get.offAndToNamed(AppRoutes.home);
 
       await analyticsService.logEvent(
         'login_success',
@@ -145,38 +157,31 @@ class AuthenticationController extends GetxController {
     }
   }
 
-  Future<void> storeDeviceToken(String token, String userId) async {
-    Dio dio = Dio();
-
-    final apiUrl = "$baseUrl/notification/store_device_token";
-
-    var requestData = {
-      "token": token,
-      "user_id": userId,
-    };
-
-    var body = jsonEncode(requestData);
-
+  Future<void> storeDeviceToken({required String token, required String userId}) async {
     try {
       await dio.post(
-        apiUrl,
+        '$baseUrl/notification/store_device_token',
         options: Options(
           headers: {
             'Authorization': 'Bearer ${userController.accesToken.value}',
             'Content-Type': 'application/json',
           },
         ),
-        data: body,
+        data: jsonEncode({
+          "token": token,
+          "user_id": userId,
+        }),
       );
-
-    } catch (_) {
-
-    }
+    } catch (_) {}
   }
 
   Future<void> logout() async {
+    if (isLogoutLoading.isTrue) return;
+
     try {
-      var response = await dio.post(
+      isLogoutLoading(true);
+
+      final response = await dio.post(
         '$baseUrl/auth/logout',
         options: Options(headers: {'Authorization': 'Bearer ${userController.accesToken.value}'}),
       );
@@ -185,18 +190,23 @@ class AuthenticationController extends GetxController {
         await clearEmail();
         await clearPassword();
 
-        showSuccessToast('Succses: Logout');
-        Get.offAllNamed('/login');
+        showSuccessToast('Success: Logout');
+        Get.offAllNamed(AppRoutes.login);
         userController.user.value = null;
         userController.accesToken.value = '';
         userController.tokenType.value = '';
       }
     } catch (_) {
       showErrorToast("Error: An unexpected error occurred.");
+    } finally {
+      Future.delayed(Durations.medium4, () {
+        isLogoutLoading(false);
+      });
     }
   }
 
-  Future<void> changePassword(String oldPassword, String newPassword, String confirmPassword) async {
+  Future<void> changePassword(
+      String oldPassword, String newPassword, String confirmPassword) async {
     isLoading(true);
     try {
       final response = await dio.post(
@@ -222,10 +232,8 @@ class AuthenticationController extends GetxController {
       }
     } on DioException catch (e) {
       showErrorToast("Error: ${(e.response?.data['message'] ?? 'Failed to change password')}");
-      
     } catch (_) {
       showErrorToast("Error: An unexpected error occurred.");
-      
     } finally {
       isLoading(false);
     }

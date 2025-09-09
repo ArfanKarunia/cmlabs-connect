@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../utils/toast.dart';
 
 abstract class InboxController extends GetxController {
+  Rx<bool> isLoading = false.obs;
   Rx<int> start = 0.obs;
   Rx<int> limit = 10.obs;
   RxList<String> filterCategory = <String>[].obs;
@@ -24,7 +25,6 @@ abstract class InboxController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    fetchTotalLeads();
     fetchList();
     // checkNewQuotationsPeriodically();
   }
@@ -42,9 +42,6 @@ abstract class InboxController extends GetxController {
   }
 
   Future<void> exportData();
-
-  // Total Leads
-  Future<void> fetchTotalLeads();
 
   // Filter
   void addFilterStatus(String status) {
@@ -147,14 +144,14 @@ abstract class InboxController extends GetxController {
     if (filterStatus.value != null) {
       queryParams.add('status=${Uri.encodeComponent(filterStatus.value ?? '')}');
     }
-     if (filterUtm.value != null) {
-      queryParams.add('utm[]=${Uri.encodeComponent(filterUtm.value!)}'); // Asumsi format UTM adalah array
+    if (filterUtm.value != null) {
+      queryParams.add('utm[]=${Uri.encodeComponent(filterUtm.value ?? '')}');
     }
-
 
     // Handle category filter with array format
     if (filterCategory.isNotEmpty) {
-      queryParams.addAll(filterCategory.map((category) => 'category[]=${Uri.encodeComponent(category)}'));
+      queryParams
+          .addAll(filterCategory.map((category) => 'category[]=${Uri.encodeComponent(category)}'));
     }
 
     // Combine all query parameters
@@ -173,7 +170,8 @@ abstract class InboxController extends GetxController {
 
   String constructExportUrl(String url, {required String feature}) {
     String queryString = filterQueryString(url);
-    final finalUrl = queryString.isEmpty ? '$url?feature=$feature' : '$url?$queryString&feature=$feature';
+    final finalUrl =
+        queryString.isEmpty ? '$url?feature=$feature' : '$url?$queryString&feature=$feature';
 
     return finalUrl;
   }
@@ -188,7 +186,8 @@ abstract class InboxController extends GetxController {
     }
 
     if (phoneCode == null || phoneCode.isEmpty) {
-      await launchUrl(Uri.parse("https://wa.me/$phoneNumber"), mode: LaunchMode.externalApplication);
+      await launchUrl(Uri.parse("https://wa.me/$phoneNumber"),
+          mode: LaunchMode.externalApplication);
       return;
     }
 

@@ -36,8 +36,8 @@ final List<StatusLead> statusLead = [
     title: 'On Hold',
     query: 'on-hold',
     isEnabled: true,
-    bgColor: AppColors.bgPrimary,
-    color: AppColors.primary,
+    bgColor: AppColors.scaffoldBgColor,
+    color: AppColors.textLight,
   ),
 ];
 

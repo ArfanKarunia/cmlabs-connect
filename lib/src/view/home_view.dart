@@ -4,6 +4,7 @@ import 'package:double_tap_to_exit/double_tap_to_exit.dart';
 
 import '../constant/fontstyle.dart';
 import '../utils/color.dart';
+import '../widgets/lazy_animated_indexed_stack.dart';
 import 'account/account_view.dart';
 import 'analytics/analytics_view.dart';
 import 'dashboard_view.dart';
@@ -32,58 +33,68 @@ class _HomeViewState extends State<HomeView> {
       const AccountView(),
     ];
 
-    return SafeArea(
-      child: DoubleTapToExit(
-        snackBar: const SnackBar(content: Text('Double tap to exit')),
-        child: Scaffold(
-          body: pages[_currentIndex],
-          bottomNavigationBar: Container(
-            decoration: const BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  offset: Offset(0, -4),
-                  blurRadius: 20,
-                  color: Color.fromARGB(12, 53, 53, 53),
+    final paddingBottom = MediaQuery.of(context).padding.bottom - 10;
+
+    return DoubleTapToExit(
+      snackBar: const SnackBar(content: Text('Double tap to exit')),
+      child: Scaffold(
+        backgroundColor: AppColors.scaffoldBgColor2,
+        appBar: AppBar(
+          toolbarHeight: 0,
+          backgroundColor: _currentIndex == 0 ? AppColors.primary : AppColors.scaffoldBgColor2,
+          surfaceTintColor: _currentIndex == 0 ? AppColors.primary : AppColors.scaffoldBgColor2,
+        ),
+        body: LazyAnimatedIndexedStack(
+          index: _currentIndex,
+          children: pages,
+        ),
+        bottomNavigationBar: Container(
+          padding: EdgeInsets.only(bottom: paddingBottom),
+          decoration: const BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                offset: Offset(0, -4),
+                blurRadius: 20,
+                color: Color(0x0B353535),
+              ),
+            ],
+            color: AppColors.white,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: HomeMenu(
+                  icon: Ionicons.cube_outline,
+                  label: 'Home',
+                  isActive: _currentIndex == 0,
+                  onTap: () => setState(() => _currentIndex = 0),
                 ),
-              ],
-              color: Colors.white,
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: HomeMenu(
-                    icon: Ionicons.cube_outline,
-                    label: 'Home',
-                    isActive: _currentIndex == 0,
-                    onTap: () => setState(() => _currentIndex = 0),
-                  ),
+              ),
+              Expanded(
+                child: HomeMenu(
+                  icon: Ionicons.file_tray_full_outline,
+                  label: 'Inbox Lead',
+                  isActive: _currentIndex == 1,
+                  onTap: () => setState(() => _currentIndex = 1),
                 ),
-                Expanded(
-                  child: HomeMenu(
-                    icon: Ionicons.file_tray_full_outline,
-                    label: 'Inbox Lead',
-                    isActive: _currentIndex == 1,
-                    onTap: () => setState(() => _currentIndex = 1),
-                  ),
+              ),
+              Expanded(
+                child: HomeMenu(
+                  icon: Ionicons.stats_chart,
+                  label: 'Analytics',
+                  isActive: _currentIndex == 2,
+                  onTap: () => setState(() => _currentIndex = 2),
                 ),
-                Expanded(
-                  child: HomeMenu(
-                    icon: Ionicons.stats_chart,
-                    label: 'Analytics',
-                    isActive: _currentIndex == 2,
-                    onTap: () => setState(() => _currentIndex = 2),
-                  ),
+              ),
+              Expanded(
+                child: HomeMenu(
+                  icon: Ionicons.person_outline,
+                  label: 'Account',
+                  isActive: _currentIndex == 3,
+                  onTap: () => setState(() => _currentIndex = 3),
                 ),
-                Expanded(
-                  child: HomeMenu(
-                    icon: Ionicons.person_outline,
-                    label: 'Account',
-                    isActive: _currentIndex == 3,
-                    onTap: () => setState(() => _currentIndex = 3),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -96,7 +107,8 @@ class HomeMenu extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback? onTap;
-  const HomeMenu({super.key, required this.icon, required this.label, required this.isActive, this.onTap});
+  const HomeMenu(
+      {super.key, required this.icon, required this.label, required this.isActive, this.onTap});
 
   @override
   Widget build(BuildContext context) {

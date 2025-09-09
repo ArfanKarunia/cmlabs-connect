@@ -102,18 +102,6 @@ class EditQuotationController extends EditFormController {
       if (response.statusCode == 200) {
         showSuccessToast('Berhasil mengubah Quotation!');
         parent.fetchDetails(quotationId);
-        // parent.quotation.value = parent.quotation.value?.copyWith(
-        //   cmlabspic: selectedPic.value?['value'],
-        //   status: int.tryParse(selectedStatus.value?['value'] ?? '0'),
-        //   priority: int.tryParse(selectedPriority.value?['value'] ?? '0'),
-        //   typeInformation: selectedType.map((type) => type['value'].toString()).toList(),
-        //   clientPic: picClients,
-        //   activities: historyList,
-        //   urlTracking: UrlTracking(
-        //     url: urlTrackingUrl.value,
-        //     password: urlTrackingPassword.value.text,
-        //   ),
-        // );
         Get.back();
       }
     } on http.DioException catch (e) {

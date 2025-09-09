@@ -41,41 +41,48 @@ class _QuotationTrafficCardState extends State<QuotationTrafficCard> {
         List<QuotationTrafficModified> chartData = _parseChartData();
         List<String> sources = _extractAllSources(chartData);
 
-        return controller.quotationTraffic.value == null || controller.quotationTraffic.value?.totalQuotation == 0
-            ? EmptyChartCard(
+        return controller.isLoading.value
+            ? ChartLoadingCard(
                 title: 'Quotation Traffic',
                 subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.daily),
                 onTapViewDetails:
                     widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
               )
-            : ChartCard(
-                title: 'Quotation Traffic',
-                subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.daily),
-                value: '${controller.quotationTraffic.value?.totalQuotation} Quotations',
-                chart: SfCartesianChart(
-                  primaryXAxis: const CategoryAxis(),
-                  primaryYAxis: const NumericAxis(minimum: 0, interval: 20),
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: _buildStackedBarSeries(chartData, sources),
-                ),
-                chartDescriptions: List.generate(
-                  sources.length,
-                  (index) => ChartDataDescription(
-                    label: _formatSourceName(sources[index]),
-                    color: colors[index],
-                    isSelected: selectedCategory == sources[index],
-                    onTap: () {
-                      setState(() => selectedCategory = selectedCategory == sources[index] ? null : sources[index]);
+            : controller.quotationTraffic.value == null || controller.quotationTraffic.value?.totalQuotation == 0
+                ? ChartEmptyCard(
+                    title: 'Quotation Traffic',
+                    subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.daily),
+                    onTapViewDetails:
+                        widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
+                  )
+                : ChartCard(
+                    title: 'Quotation Traffic',
+                    subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.daily),
+                    value: '${controller.quotationTraffic.value?.totalQuotation} Quotations',
+                    chart: SfCartesianChart(
+                      primaryXAxis: const CategoryAxis(),
+                      primaryYAxis: const NumericAxis(minimum: 0, interval: 20),
+                      tooltipBehavior: TooltipBehavior(enable: true),
+                      series: _buildStackedBarSeries(chartData, sources),
+                    ),
+                    chartDescriptions: List.generate(
+                      sources.length,
+                      (index) => ChartDataDescription(
+                        label: _formatSourceName(sources[index]),
+                        color: colors[index],
+                        isSelected: selectedCategory == sources[index],
+                        onTap: () {
+                          setState(() => selectedCategory = selectedCategory == sources[index] ? null : sources[index]);
+                        },
+                      ),
+                    ),
+                    onTapViewDetails:
+                        widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
+                    onTapExport: () async {
+                      await controller.exportData();
+                      Get.back();
                     },
-                  ),
-                ),
-                onTapViewDetails:
-                    widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailQuotationTrafficView) : null,
-                onTapExport: () async {
-                  await controller.exportData();
-                  Get.back();
-                },
-              );
+                  );
       },
     );
   }

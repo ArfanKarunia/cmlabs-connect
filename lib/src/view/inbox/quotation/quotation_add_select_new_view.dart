@@ -13,7 +13,8 @@ class QuotationAddSelectNewView extends StatefulWidget {
   final String title;
   final String data;
   final int maxDigit;
-  const QuotationAddSelectNewView({super.key, required this.title, required this.data, required this.maxDigit});
+  const QuotationAddSelectNewView(
+      {super.key, required this.title, required this.data, required this.maxDigit});
 
   @override
   State<QuotationAddSelectNewView> createState() => _QuotationAddSelectNewViewState();
@@ -33,9 +34,16 @@ class _QuotationAddSelectNewViewState extends State<QuotationAddSelectNewView> {
     } else if (choice.any((map) => map['label'] == fieldController.text)) {
       fieldError = "'${fieldController.text}' already exists in the database!";
     } else if (fieldController.text.length > widget.maxDigit) {
-      fieldError = "The ${widget.title} character is too long! maximum ${widget.maxDigit} characters.";
+      fieldError =
+          "The ${widget.title} character is too long! maximum ${widget.maxDigit} characters.";
     } else {
       fieldError = null;
+    }
+    if (widget.data == 'companyWebsite') {
+      fieldError = !(fieldController.text.startsWith("http://") ||
+              fieldController.text.startsWith("https://"))
+          ? "The company website must start with http:// or https://"
+          : null;
     }
 
     setState(() => isFormValid = fieldError == null);

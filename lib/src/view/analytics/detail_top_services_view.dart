@@ -10,6 +10,7 @@ import '../../utils/string_utils.dart';
 import '../../widgets/analytics/details/date_type_button.dart';
 import '../../widgets/analytics/details/quick_sort_button.dart';
 import '../../widgets/analytics/details/quotation_overview_card.dart';
+import '../../widgets/analytics/details/quotation_overview_loading_card.dart';
 import '../../widgets/analytics/top_services_card.dart';
 import '../../widgets/default_appbar.dart';
 import '../../widgets/empty_state.dart';
@@ -109,7 +110,7 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
                       text: TextSpan(
                         children: [
                           TextSpan(
-                            text: '${controller.topServices.value?.totalQuotation}  ',
+                            text: '${controller.topServices.value?.totalQuotation ?? 0}  ',
                             style: regular.copyWith(fontSize: 12, color: Colors.blue),
                           ),
                           TextSpan(
@@ -149,21 +150,23 @@ class _DetailTopServicesViewState extends State<DetailTopServicesView> {
 
                   // Top Services Data
                   Obx(
-                    () => Column(
-                      children: controller.dataLength > 0
-                          ? List.generate(
-                              controller.dataLength,
-                              (index) => QuotationOverviewCard(
-                                date: formatServiceName(controller.data?.topServices[index].serviceName ?? ''),
-                                totalQuotation: controller.data?.topServices[index].quotationCount ?? 0,
-                                percentage: controller.data?.topServices[index].percentage ?? 0,
-                              ),
-                            )
-                          : [
-                              const SizedBox(height: 20),
-                              const EmptyState(),
-                            ],
-                    ),
+                    () => controller.isLoading.value
+                        ? const QuotationOverviewLoadingListCard(height: 79)
+                        : Column(
+                            children: controller.dataLength > 0
+                                ? List.generate(
+                                    controller.dataLength,
+                                    (index) => QuotationOverviewCard(
+                                      date: formatServiceName(controller.data?.topServices[index].serviceName ?? ''),
+                                      totalQuotation: controller.data?.topServices[index].quotationCount ?? 0,
+                                      percentage: controller.data?.topServices[index].percentage ?? 0,
+                                    ),
+                                  )
+                                : [
+                                    const SizedBox(height: 20),
+                                    const EmptyState(),
+                                  ],
+                          ),
                   ),
                   const SizedBox(height: 16),
                 ],

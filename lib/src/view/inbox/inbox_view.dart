@@ -52,19 +52,31 @@ class _InboxViewState extends State<InboxView> {
     pages = [
       InboxPage(
         title: 'Quotation',
-        child: QuotationInbox(refreshController: RefreshController(), scrollController: scrollController),
+        child: QuotationInbox(
+          refreshController: RefreshController(),
+          scrollController: scrollController,
+        ),
       ),
       InboxPage(
         title: 'Case Studies',
-        child: CaseStudiesInbox(refreshController: RefreshController(), scrollController: scrollController),
+        child: CaseStudiesInbox(
+          refreshController: RefreshController(),
+          scrollController: scrollController,
+        ),
       ),
       InboxPage(
         title: 'Contact Us',
-        child: ContactUsInbox(refreshController: RefreshController(), scrollController: scrollController),
+        child: ContactUsInbox(
+          refreshController: RefreshController(),
+          scrollController: scrollController,
+        ),
       ),
       InboxPage(
         title: 'FAQ',
-        child: FaqInbox(refreshController: RefreshController(), scrollController: scrollController),
+        child: FaqInbox(
+          refreshController: RefreshController(),
+          scrollController: scrollController,
+        ),
       ),
     ];
 
@@ -81,238 +93,209 @@ class _InboxViewState extends State<InboxView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: AppColors.scaffoldBgColor2,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () => handleSwitchInbox(context),
+            child: Row(
+              children: [
+                Text(
+                  pages[index].title,
+                  style: bold.copyWith(color: AppColors.text_1, fontSize: 20),
+                ),
+                const SizedBox(width: 10),
+                const Icon(
+                  Icons.keyboard_arrow_down,
+                  color: AppColors.text_1,
+                  size: 24,
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+
+          Row(
             children: [
-              Row(
-                children: [
-                  Text(
-                    pages[index].title,
-                    style: bold.copyWith(color: AppColors.text_1, fontSize: 20),
-                  ),
-                  IconButton(
-                    onPressed: () => showCustomBottomSheet(
-                      context,
-                      children: [
-                        Text(
-                          'Switch Inbox',
-                          style: bold.copyWith(fontSize: 18),
-                        ),
-                        const SizedBox(height: 18),
-                        Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: AppColors.text_4),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            children: List.generate(
-                              pages.length,
-                              (i) {
-                                return ListTile(
-                                  leading: const Icon(Ionicons.briefcase_outline),
-                                  title: Text(
-                                    'Inbox ${pages[i].title}',
-                                    style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
-                                  ),
-                                  onTap: () {
-                                    Get.back();
-                                    if (i < controller.length) {
-                                      controller[i].addSearch(searchController.text);
-                                    }
-                                    setState(() => index = i);
-                                  },
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                      ],
-                    ),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: AppColors.text_1,
-                    ),
-                  ),
-                ],
+              Text(
+                "Total Leads ",
+                style: regular.copyWith(
+                  fontSize: 12,
+                  color: AppColors.text_2,
+                ),
               ),
-              Row(
-                children: [
-                  Text(
-                    "Total Leads ",
-                    style: regular.copyWith(
-                      fontSize: 12,
-                      color: AppColors.text_2,
-                    ),
+              Obx(
+                () => Text(
+                  controller[index].totalLeads.value.toString(),
+                  style: regular.copyWith(
+                    fontSize: 12,
+                    color: AppColors.primary,
                   ),
-                  Obx(
-                    () => Text(
-                      controller[index].totalLeads.value.toString(),
-                      style: regular.copyWith(
-                        fontSize: 12,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: index != 3 ? 16 : 20),
-
-              Row(
-                children: [
-                  // Search Field Input
-                  Expanded(
-                    child: SizedBox(
-                      height: 40,
-                      child: TextFormField(
-                        controller: searchController,
-                        onChanged: (value) async {
-                          await Future.delayed(Durations.medium4);
-                          if (index < controller.length) {
-                            controller[index].addSearch(value);
-                          }
-                        },
-                        style: regular.copyWith(fontSize: 12),
-                        decoration: InputDecoration(
-                          hintText: "Company name, email, etc",
-                          hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
-                          prefixIcon: const Icon(Ionicons.search_outline, size: 18),
-                          isDense: true,
-                          contentPadding: const EdgeInsets.only(top: 0, bottom: 5),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(color: AppColors.primary, width: 1),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          focusColor: AppColors.primary,
-                          border: OutlineInputBorder(
-                            borderSide: const BorderSide(color: AppColors.text_3, width: 1),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  if (index != 3) ...[
-                    const SizedBox(width: 10),
-
-                    // Button Filter (do not show for FAQ)
-                    Obx(
-                      () => Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: InkWell(
-                              borderRadius: BorderRadius.circular(5),
-                              onTap: () => Get.toNamed(AppRoutes.filter),
-                              child: Ink(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  color: AppColors.white_1,
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: Border.all(color: AppColors.text_3, width: 1),
-                                ),
-                                child: const Icon(
-                                  Ionicons.options_outline,
-                                  color: AppColors.text_3,
-                                  size: 28,
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (filterController.isFilterApplied)
-                            const CircleAvatar(radius: 6, backgroundColor: AppColors.primary),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-
-              SizedBox(height: index != 3 ? 14 : 18),
-
-              SelectStatus(controllers: controller),
-
-              const SizedBox(height: 20),
-
-              // Obx(
-              //   () => quotationController.newQuotationCount.value > 0
-              //       ? Padding(
-              //           padding: const EdgeInsets.only(bottom: 10),
-              //           child: IntrinsicWidth(
-              //             child: ElevatedButton(
-              //               style: ButtonStyle(
-              //                 shape: WidgetStatePropertyAll(
-              //                   RoundedRectangleBorder(
-              //                     borderRadius: BorderRadius.circular(5),
-              //                   ),
-              //                 ),
-              //                 backgroundColor: const WidgetStatePropertyAll(AppColors.primary),
-              //                 foregroundColor: const WidgetStatePropertyAll(AppColors.white_1),
-              //                 overlayColor: const WidgetStatePropertyAll(Colors.white30),
-              //               ),
-              //               onPressed: () {
-              //                 quotationController.fetchQuotation();
-              //               },
-              //               child: Row(
-              //                 mainAxisAlignment: MainAxisAlignment.center,
-              //                 children: [
-              //                   const Icon(
-              //                     Ionicons.arrow_up_outline,
-              //                     size: 18,
-              //                   ),
-              //                   const SizedBox(
-              //                     width: 10,
-              //                   ),
-              //                   Text(
-              //                     "${quotationController.newQuotationCount.value}+ New Leads",
-              //                     style: regular.copyWith(fontSize: 12),
-              //                   ),
-              //                 ],
-              //               ),
-              //             ),
-              //           ),
-              //         )
-              //       : const SizedBox.shrink(),
-              // ),
-
-              Align(
-                alignment: Alignment.centerRight,
-                child: index == 0
-                    ? const InboxAddQuotationButton()
-                    : Obx(
-                        () => controller[index].isExportLoading.value
-                            ? const InboxActionLoadingButton()
-                            : InboxExportDataButton(
-                                onTap: () => controller[index].exportData(),
-                              ),
-                      ),
-              ),
-              const SizedBox(height: 10),
-
-              Expanded(
-                child: Container(child: pages[index].child),
+                ),
               ),
             ],
           ),
-        ),
+
+          SizedBox(height: index != 3 ? 16 : 20),
+
+          Row(
+            children: [
+              // Search Field Input
+              Expanded(
+                child: SizedBox(
+                  height: 40,
+                  child: TextFormField(
+                    controller: searchController,
+                    onChanged: (value) async {
+                      await Future.delayed(Durations.medium4);
+                      if (index < controller.length) {
+                        controller[index].addSearch(value);
+                      }
+                    },
+                    style: regular.copyWith(fontSize: 12),
+                    decoration: InputDecoration(
+                      hintText: "Company name, email, etc",
+                      hintStyle: regular.copyWith(fontSize: 12, color: AppColors.text_4),
+                      prefixIcon: const Icon(Ionicons.search_outline, size: 18),
+                      isDense: true,
+                      contentPadding: const EdgeInsets.only(top: 0, bottom: 5),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: AppColors.primary, width: 1),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      focusColor: AppColors.primary,
+                      border: OutlineInputBorder(
+                        borderSide: const BorderSide(color: AppColors.text_3, width: 1),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              if (index != 3) ...[
+                const SizedBox(width: 10),
+
+                // Button Filter (do not show for FAQ)
+                Obx(
+                  () => Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(4),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(5),
+                          onTap: () => Get.toNamed(AppRoutes.filter),
+                          child: Ink(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: AppColors.white_1,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(color: AppColors.text_3, width: 1),
+                            ),
+                            child: const Icon(
+                              Ionicons.options_outline,
+                              color: AppColors.text_3,
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                      ),
+                      if (filterController.isFilterApplied)
+                        const CircleAvatar(radius: 6, backgroundColor: AppColors.primary),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+
+          // Menyesuaikan tinggi search field dengan tombol filter
+          // (FAQ tidak ada filter)
+          SizedBox(height: index != 3 ? 14 : 18),
+
+          // Quick Sort by Status
+          SelectStatus(controllers: controller),
+
+          const SizedBox(height: 20),
+
+          // Button Add Quotation or Export Data
+          Align(
+            alignment: Alignment.centerRight,
+            child: index == 0
+                ? const InboxAddQuotationButton()
+                : Obx(
+                    () => controller[index].isExportLoading.value
+                        ? const InboxActionLoadingButton()
+                        : InboxExportDataButton(
+                            onTap: () => controller[index].exportData(),
+                          ),
+                  ),
+          ),
+
+          const SizedBox(height: 10),
+
+          // Inbox List
+          Expanded(
+            child: Container(child: pages[index].child),
+          ),
+        ],
       ),
+    );
+  }
+
+  Future<void> handleSwitchInbox(BuildContext context) {
+    return showCustomBottomSheet(
+      context,
+      children: [
+        Text(
+          'Switch Inbox',
+          style: bold.copyWith(fontSize: 18),
+        ),
+        const SizedBox(height: 18),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.text_4),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: List.generate(
+              pages.length,
+              (i) {
+                return ListTile(
+                  leading: const Icon(Ionicons.briefcase_outline),
+                  title: Text(
+                    'Inbox ${pages[i].title}',
+                    style: bold.copyWith(fontSize: 16, color: AppColors.text_1),
+                  ),
+                  onTap: () {
+                    Get.back();
+                    if (i < controller.length) {
+                      controller[i].addSearch(searchController.text);
+                    }
+                    setState(() => index = i);
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 
   Future<void> scrollToLoadMore() async {
     // Mengecek apakah sudah mencapai bagian bawah list
-    if (scrollController.position.pixels == scrollController.position.maxScrollExtent && !isLoadMoreInProgress) {
-      if (isLoadMoreInProgress) return; // Mencegah pemanggilan load more jika masih ada proses load more sebelumnya
+    if (scrollController.position.pixels == scrollController.position.maxScrollExtent &&
+        !isLoadMoreInProgress) {
+      // Mencegah pemanggilan load more jika masih ada proses load more sebelumnya
+      if (isLoadMoreInProgress) return;
 
       // Tandai bahwa proses load more sedang berlangsung
       isLoadMoreInProgress = true;

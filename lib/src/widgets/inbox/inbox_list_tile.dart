@@ -103,7 +103,9 @@ class InboxListTile extends StatelessWidget {
                               style: regular.copyWith(fontSize: 10, color: AppColors.text_4),
                             ),
                             const SizedBox(height: 7),
-                            status != null ? StatusLeadTag(status: statusLead[status ?? 0]) : Container(),
+                            status != null
+                                ? StatusLeadTag(status: statusLead[status ?? 0])
+                                : Container(),
                           ],
                         ),
                       ),
@@ -212,7 +214,8 @@ class CaseStudiesListTile extends StatelessWidget {
   final CaseStudies caseStudies;
   final CaseStudiesController caseStudiesController;
 
-  const CaseStudiesListTile({super.key, required this.caseStudies, required this.caseStudiesController});
+  const CaseStudiesListTile(
+      {super.key, required this.caseStudies, required this.caseStudiesController});
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +225,7 @@ class CaseStudiesListTile extends StatelessWidget {
       phoneNumber: caseStudies.data?.phoneNumber ?? '-',
       email: caseStudies.email ?? '-',
       createdAt: caseStudies.createdAt ?? DateTime.now(),
+      status: caseStudies.status,
       onTap: () => Get.toNamed(
         AppRoutes.detailCaseStudies,
         arguments: {'caseStudies': caseStudies},

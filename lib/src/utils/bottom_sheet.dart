@@ -13,10 +13,10 @@ Future<void> showCustomBottomSheet(
     context: context,
     showDragHandle: true,
     isScrollControlled: true,
+    backgroundColor: AppColors.scaffoldBgColor2,
     builder: (context) {
       return SafeArea(
-        child: Container(
-          width: double.infinity,
+        child: Padding(
           padding: const EdgeInsets.all(14),
           child: Column(
             mainAxisSize: MainAxisSize.min,

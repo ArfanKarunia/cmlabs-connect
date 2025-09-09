@@ -23,6 +23,20 @@ class FilterView extends StatefulWidget {
 class _FilterViewState extends State<FilterView> {
   final FilterController controller = Get.find<FilterController>();
 
+  String? dateError;
+
+  bool validateForm() {
+    dateError = controller.startDate.value == null
+        ? 'Start date must be filled'
+        : controller.endDate.value != null &&
+                (controller.endDate.value!.isBefore(controller.startDate.value!))
+            ? 'End date must be after start date'
+            : null;
+    setState(() {});
+
+    return dateError == null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +63,10 @@ class _FilterViewState extends State<FilterView> {
                   style: bold.copyWith(fontSize: 16),
                 ),
                 InkWell(
-                  onTap: () => controller.clearFilter(),
+                  onTap: () {
+                    setState(() => dateError = null);
+                    controller.clearFilter();
+                  },
                   child: Ink(
                     child: Text(
                       "Clear filter",
@@ -72,6 +89,7 @@ class _FilterViewState extends State<FilterView> {
             const SizedBox(height: 15),
             SizedBox(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
                     child: Obx(
@@ -87,15 +105,15 @@ class _FilterViewState extends State<FilterView> {
                             );
                             if (pickedDate != null) controller.startDate.value = pickedDate;
                           },
-                          errorText: controller.startDateError.value,
+                          errorText: dateError,
                           child: InboxTextOnField(
                             title: 'Select date',
                             selected: controller.startDate.value != null
                                 ? {
-                                    'value':
-                                        DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
-                                    'label':
-                                        DateFormat('dd MMM yyyy').format(controller.startDate.value ?? DateTime.now()),
+                                    'value': DateFormat('dd MMM yyyy')
+                                        .format(controller.startDate.value ?? DateTime.now()),
+                                    'label': DateFormat('dd MMM yyyy')
+                                        .format(controller.startDate.value ?? DateTime.now()),
                                   }
                                 : null,
                           ),
@@ -104,9 +122,12 @@ class _FilterViewState extends State<FilterView> {
                     ),
                   ),
                   const SizedBox(width: 10), // Spasi antar form
-                  Text(
-                    "to",
-                    style: regular.copyWith(fontSize: 12),
+                  Center(
+                    heightFactor: 3,
+                    child: Text(
+                      "to",
+                      style: regular.copyWith(fontSize: 12),
+                    ),
                   ),
                   const SizedBox(width: 10), // Spasi antar form
                   Expanded(
@@ -123,15 +144,15 @@ class _FilterViewState extends State<FilterView> {
                             );
                             if (pickedDate != null) controller.endDate.value = pickedDate;
                           },
-                          errorText: controller.endDateError.value,
+                          errorText: dateError,
                           child: InboxTextOnField(
                             title: 'Select date',
                             selected: controller.endDate.value != null
                                 ? {
-                                    'value':
-                                        DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
-                                    'label':
-                                        DateFormat('dd MMM yyyy').format(controller.endDate.value ?? DateTime.now()),
+                                    'value': DateFormat('dd MMM yyyy')
+                                        .format(controller.endDate.value ?? DateTime.now()),
+                                    'label': DateFormat('dd MMM yyyy')
+                                        .format(controller.endDate.value ?? DateTime.now()),
                                   }
                                 : null,
                           ),
@@ -190,7 +211,8 @@ class _FilterViewState extends State<FilterView> {
                                       return FittedBox(
                                         child: TagButton(
                                           statusLabel: category['label'].toString(),
-                                          onPressed: () => controller.deleteFilterCategory(category),
+                                          onPressed: () =>
+                                              controller.deleteFilterCategory(category),
                                         ),
                                       );
                                     },
@@ -238,7 +260,8 @@ class _FilterViewState extends State<FilterView> {
                             padding: const EdgeInsets.all(7),
                             child: Text(
                               pic != null ? pic['label'].toString() : 'All',
-                              style: regular.copyWith(color: pic != null ? AppColors.text_1 : AppColors.text_3),
+                              style: regular.copyWith(
+                                  color: pic != null ? AppColors.text_1 : AppColors.text_3),
                             ),
                           );
                         },
@@ -283,8 +306,9 @@ class _FilterViewState extends State<FilterView> {
                             padding: const EdgeInsets.all(7),
                             child: Text(
                               clientSource != null ? clientSource['label'].toString() : 'All',
-                              style:
-                                  regular.copyWith(color: clientSource != null ? AppColors.text_1 : AppColors.text_3),
+                              style: regular.copyWith(
+                                  color:
+                                      clientSource != null ? AppColors.text_1 : AppColors.text_3),
                             ),
                           );
                         },
@@ -305,7 +329,11 @@ class _FilterViewState extends State<FilterView> {
                     ? const CustomLoadingButton()
                     : CustomSubmitButton(
                         title: 'Search',
-                        onTap: () => controller.applyFilter(),
+                        onTap: () {
+                          if (validateForm()) {
+                            controller.applyFilter();
+                          }
+                        },
                       );
               },
             ),

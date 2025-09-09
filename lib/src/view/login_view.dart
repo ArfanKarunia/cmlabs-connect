@@ -23,7 +23,6 @@ class _LoginViewState extends State<LoginView> {
   String? emailError;
   TextEditingController passwordController = TextEditingController();
   String? passwordError;
-  bool isCheckedRememberme = false;
 
   void _validateForm() {
     if (emailController.text.isEmpty) {
@@ -55,7 +54,7 @@ class _LoginViewState extends State<LoginView> {
       final status = response['status'];
       final message = response['message'];
 
-      if (status == "Success") {
+      if (code == "400") {
         Get.snackbar(
           'Login Successful',
           message ?? 'Selamat Datang!',
@@ -93,7 +92,6 @@ class _LoginViewState extends State<LoginView> {
   @override
   void initState() {
     super.initState();
-    authController.loadRememberedUser();
     emailController.addListener(_validateForm);
     passwordController.addListener(_validateForm);
   }
@@ -156,7 +154,10 @@ class _LoginViewState extends State<LoginView> {
                       // Login Form
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
-                        decoration: BoxDecoration(color: AppColors.white_2, borderRadius: BorderRadius.circular(15)),
+                        decoration: BoxDecoration(
+                          color: AppColors.white_2,
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                         child: Column(
                           children: [
                             Text(

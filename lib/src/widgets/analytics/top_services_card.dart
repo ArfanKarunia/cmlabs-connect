@@ -42,6 +42,14 @@ class _TopServicesCardState extends State<TopServicesCard> {
         List<TopServicesData> rawData = controller.topServices.value?.topServices ?? [];
         List<TopServicesData> filteredData = [];
 
+        if (controller.isLoading.value) {
+          return ChartLoadingCard(
+            title: 'Top Services',
+            subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
+            onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,
+          );
+        }
+
         if (_selectedService == null) {
           filteredData = rawData;
         } else {
@@ -50,7 +58,7 @@ class _TopServicesCardState extends State<TopServicesCard> {
 
         int totalFilteredQuotations = filteredData.fold(0, (sum, item) => sum + item.quotationCount);
         if (totalFilteredQuotations == 0) {
-          return EmptyChartCard(
+          return ChartEmptyCard(
             title: 'Top Services',
             subtitle: controller.getChartSubtitle(controller.selectedDateType.value ?? DateType.weekly),
             onTapViewDetails: widget.showViewDetails ? () => Get.toNamed(AppRoutes.detailTopServicesView) : null,

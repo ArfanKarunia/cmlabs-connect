@@ -5,6 +5,6 @@ import 'quotation_trends_controller.dart';
 class QuotationTrendsBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => QuotationTrendsController());
+    Get.lazyPut(() => QuotationTrendsController(), fenix: true);
   }
 }

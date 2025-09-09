@@ -42,16 +42,6 @@ class FilterController extends GetxController {
       filterCategoryList.isNotEmpty ||
       startDate.value != null ||
       endDate.value != null;
-
-  // Error message variables
-  Rx<String?> startDateError = null.obs;
-  Rx<String?> endDateError = null.obs;
-  void validateDateFields() {
-    if (startDate.value == null && endDate.value != null) {
-      startDateError.value = 'Start date must be filled';
-    }
-  }
-
   // Loading
   Rx<bool> isLoading = false.obs;
 
@@ -100,14 +90,17 @@ class FilterController extends GetxController {
     );
 
     if (response.statusCode == 200 && response.data != null) {
-      final data = response.data['data'].map<Map<String, String>>((clientSource) {
+      final clientSources = (response.data['data'] as List<dynamic>).map((clientSource) {
         return {
           'value': clientSource['value']?.toString() ?? '',
           'label': clientSource['label']?.toString() ?? '',
         };
       }).toList();
+      clientSources.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
 
-      clientSourceList.assignAll(data);
+      clientSourceList.assignAll(clientSources);
     }
   }
 
@@ -120,14 +113,17 @@ class FilterController extends GetxController {
     );
 
     if (response.statusCode == 200 && response.data != null) {
-      final data = response.data['data'].map<Map<String, String>>((pic) {
+      final pics = (response.data['data'] as List<dynamic>).map((pic) {
         return {
           'value': pic['value']?.toString() ?? '',
           'label': pic['label']?.toString() ?? '',
         };
       }).toList();
+      pics.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
 
-      picList.addAll(data);
+      picList.addAll(pics);
     }
   }
 
@@ -140,14 +136,17 @@ class FilterController extends GetxController {
     );
 
     if (response.statusCode == 200 && response.data != null) {
-      final data = response.data['data'].map<Map<String, String>>((category) {
+      final categories = (response.data['data'] as List<dynamic>).map((category) {
         return {
           'value': category['id']?.toString() ?? '',
           'label': category['text']?.toString() ?? '',
         };
       }).toList();
+      categories.sort(
+        (a, b) => (a['label'] ?? '').toLowerCase().compareTo((b['label'] ?? '').toLowerCase()),
+      );
 
-      categoryList.addAll(data);
+      categoryList.addAll(categories);
     }
   }
 
@@ -223,15 +222,18 @@ class FilterController extends GetxController {
     switch (filter) {
       case InboxFilterType.clientSource:
         return clientSourceList
-            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .where((element) =>
+                element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
             .toList();
       case InboxFilterType.pic:
         return picList
-            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .where((element) =>
+                element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
             .toList();
       case InboxFilterType.category:
         return categoryList
-            .where((element) => element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
+            .where((element) =>
+                element['label']?.toLowerCase().contains(search.value.toLowerCase()) ?? false)
             .toList();
     }
   }
@@ -325,11 +327,7 @@ class FilterController extends GetxController {
 
   Future<void> applyFilter() async {
     if (isLoading.isTrue) return;
-
     isLoading(true);
-
-    validateDateFields();
-    if (startDateError.value != null || endDateError.value != null) return;
 
     filterByClientSource();
     filterByPic();

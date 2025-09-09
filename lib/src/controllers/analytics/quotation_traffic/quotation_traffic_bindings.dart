@@ -5,6 +5,6 @@ import 'quotation_traffic_controller.dart';
 class QuotationTrafficBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => QuotationTrafficController());
+    Get.lazyPut(() => QuotationTrafficController(), fenix: true);
   }
 }

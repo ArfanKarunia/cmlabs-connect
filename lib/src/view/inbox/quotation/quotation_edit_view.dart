@@ -23,7 +23,7 @@ import '../../../widgets/inbox/inbox_history_tile.dart';
 import '../../../widgets/tag_button.dart';
 
 class QuotationEditView extends StatefulWidget {
-  final DetailQuotation quotation;
+  final Quotation quotation;
   const QuotationEditView({super.key, required this.quotation});
 
   @override
@@ -40,13 +40,15 @@ class _QuotationEditViewState extends State<QuotationEditView> {
   void initState() {
     super.initState();
     InboxEditForm editForm = InboxEditForm(
-      pic: widget.quotation.cmlabspic,
+      pic: widget.quotation.data?.pic,
       priority: widget.quotation.priority,
       status: widget.quotation.status,
-      type: widget.quotation.typeInformation,
-      picClientSide: widget.quotation.clientPic,
+      type: widget.quotation.data?.type?.map((e) => e ?? '').toList(),
+      picClientSide: widget.quotation.data?.clientPIC?.map((e) => e!).toList(),
       projectHistory: widget.quotation.activities,
-      urlTracking: widget.quotation.urlTracking,
+      remarks: widget.quotation.data?.remarks,
+      additionalNotes: widget.quotation.data?.notes,
+      urlTracking: widget.quotation.data?.urlTracking,
     );
     controller.quotationId = widget.quotation.id ?? 0;
     controller.setInitialValue(editForm);

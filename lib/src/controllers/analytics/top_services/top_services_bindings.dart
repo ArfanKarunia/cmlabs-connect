@@ -5,6 +5,6 @@ import 'top_services_controller.dart';
 class TopServicesBindings extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut(() => TopServicesController());
+    Get.lazyPut(() => TopServicesController(), fenix: true);
   }
 }
